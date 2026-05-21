@@ -2,7 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = 3002;
+const PORTS = [3001, 3002, 3003];
 const BASE_DIR = __dirname;
 
 const MIME_TYPES = {
@@ -17,7 +17,7 @@ const MIME_TYPES = {
   '.ico': 'image/x-icon'
 };
 
-const server = http.createServer((req, res) => {
+const requestHandler = (req, res) => {
   let reqUrl = req.url;
   
   // Clean query strings or hash parameters if present
@@ -70,12 +70,16 @@ const server = http.createServer((req, res) => {
     });
     stream.pipe(res);
   });
-});
+};
 
-server.listen(PORT, 'localhost', () => {
-  console.log(`================================================================`);
-  console.log(`🚀 Exam Proctoring Application Developer Server Started Successfully!`);
-  console.log(`🔗 Local Access: http://localhost:${PORT}/`);
-  console.log(`📂 Workspace Root: ${BASE_DIR}`);
-  console.log(`================================================================`);
+console.log(`================================================================`);
+console.log(`🚀 Exam Proctoring Application Developer Server Started Successfully!`);
+console.log(`📂 Workspace Root: ${BASE_DIR}`);
+
+PORTS.forEach(port => {
+  const server = http.createServer(requestHandler);
+  server.listen(port, 'localhost', () => {
+    console.log(`🔗 Local Access: http://localhost:${port}/`);
+  });
 });
+console.log(`================================================================`);

@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en" data-t="light">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="data:,">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SecureProctor AI - Candidate Portal for Learning and AI-Proctored Exams">
+  <title>Student Portal - SecureProctor AI</title>
+
+  <!-- Font and Icon Resources -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+  <!-- ECharts for Performance Data -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  
+  <!-- Styling -->
+  <link rel="stylesheet" href="candidate.css">
+</head>
+
+<body>
+
+  <!-- ==================== MAIN APPLICATION HEADER ==================== -->
+  <header class="app-header hidden" id="main-header">
+    <div class="brand">
+      <div class="badge">SP</div>
+      <div>
+        <div class="brand-txt">SecureProctor <span class="ai-pill">Candidate</span></div>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button class="icon-btn" data-target="cand-notifications" aria-label="Notifications">
+        <i class="material-icons">notifications</i>
+      </button>
+      <button class="icon-btn theme-toggle" aria-label="Toggle Theme">
+        <i class="material-icons">dark_mode</i>
+      </button>
+      <div class="user-profile-sm" data-target="cand-dashboard">
+        <img src="https://ui-avatars.com/api/?name=Alex+Rivera&background=f9ad00&color=fff" alt="Alex Rivera">
+        <div class="user-profile-sm-info">
+          <span class="user-profile-sm-name">Alex Rivera</span>
+          <span class="user-profile-sm-role">CAN-092</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== VIEW ROUTER CONTAINER ==================== -->
+
+  <!-- 1. AUTHENTICATION VIEW -->
+  <div id="cand-auth-view" class="view-panel active">
+    <div class="auth-bg">
+      <div class="auth-shapes">
+        <div class="auth-shape"></div>
+        <div class="auth-shape"></div>
+      </div>
+      <div class="auth-container">
+        <div class="card auth-card">
+          <div class="auth-brand">
+            <div class="badge">SP</div>
+          </div>
+          
+          <div id="login-form-container">
+            <h1 class="auth-title">Candidate Login</h1>
+            <p class="auth-subtitle">Sign in to access your learning materials and upcoming exams.</p>
+            
+            <form onsubmit="handleLogin(event)">
+              <div class="inp-group">
+                <label class="inp-label">Student Email</label>
+                <div class="inp-wrapper">
+                  <i class="material-icons inp-icon">mail</i>
+                  <input class="inp" type="email" required placeholder="alex@student.edu" value="alex@student.edu">
+                </div>
+              </div>
+              <div class="inp-group">
+                <label class="inp-label">Password / Voucher PIN</label>
+                <div class="inp-wrapper">
+                  <i class="material-icons inp-icon">lock</i>
+                  <input class="inp" type="password" required placeholder="••••••••" value="demo123">
+                </div>
+              </div>
+              <button type="submit" class="mdbtn btn-filled" id="login-btn" style="width: 100%; margin-top: 16px;">
+                <span>Secure Sign In</span>
+                <i class="material-icons">arrow_forward</i>
+              </button>
+            </form>
+          </div>
+
+          <!-- First Login Password Reset Flow -->
+          <div id="reset-form-container" class="hidden">
+            <h1 class="auth-title">Set New Password</h1>
+            <p class="auth-subtitle">For security, please set a new password for your first login.</p>
+            
+            <form onsubmit="handleReset(event)">
+              <div class="inp-group">
+                <label class="inp-label">New Password</label>
+                <div class="inp-wrapper">
+                  <i class="material-icons inp-icon">vpn_key</i>
+                  <input class="inp" type="password" required placeholder="Enter new password">
+                </div>
+              </div>
+              <div class="inp-group" style="margin-top: 32px; background: var(--sur-var); padding: 16px; border-radius: 8px; text-align: left; font-size: 12px; border: 1px solid var(--out-var);">
+                <label style="display: flex; gap: 12px; cursor: pointer; align-items: flex-start;">
+                  <input type="checkbox" required style="margin-top: 2px;">
+                  <span>I agree to the <strong>SecureProctor Exam Guidelines</strong>, <strong>Privacy Policy</strong>, and consent to AI monitoring during exams via webcam and microphone.</span>
+                </label>
+              </div>
+              <button type="submit" class="mdbtn btn-filled" id="reset-btn" style="width: 100%; margin-top: 16px;">
+                <span>Accept & Continue</span>
+                <i class="material-icons">check_circle</i>
+              </button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. ONBOARDING WALKTHROUGH -->
+  <div id="cand-onboard-view" class="view-panel">
+    <div class="auth-bg">
+      <div class="auth-container" style="max-width: 600px;">
+        <div class="card" style="padding: 40px;">
+          <div class="onboard-carousel">
+            <div class="onboard-slider" id="onboard-slider" style="display: flex; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); width: 400%;">
+              
+              <!-- Slide 1 -->
+              <div class="onboard-slide">
+                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&q=80" alt="Learning" class="onboard-img">
+                <h3>1. Master Your Material</h3>
+                <p>Access your assigned eBooks, video lectures, and study notes directly from your mobile-friendly dashboard. Progress is saved automatically.</p>
+              </div>
+
+              <!-- Slide 2 -->
+              <div class="onboard-slide">
+                <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&q=80" alt="Practice" class="onboard-img">
+                <h3>2. Take Practice Tests</h3>
+                <p>Prepare for the final assessment with unlimited practice attempts. Review topic-wise performance to identify weak areas.</p>
+              </div>
+
+              <!-- Slide 3 -->
+              <div class="onboard-slide">
+                <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400&q=80" alt="Requirements" class="onboard-img">
+                <h3>3. Prepare Your Environment</h3>
+                <p>Final exams require a desktop or laptop. You will need a working webcam, microphone, and a stable internet connection.</p>
+              </div>
+
+              <!-- Slide 4 -->
+              <div class="onboard-slide">
+                <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400&q=80" alt="Proctoring" class="onboard-img">
+                <h3>4. AI Proctored Security</h3>
+                <p>During the exam, our AI will monitor your screen, face, and audio to ensure academic integrity. Follow the rules to avoid flags.</p>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="onboard-controls">
+            <button class="mdbtn btn-text" onclick="skipOnboarding()">Skip</button>
+            <div class="onboard-dots">
+              <div class="dot active"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+            </div>
+            <button class="mdbtn btn-filled" onclick="nextOnboardStep(1)">Next <i class="material-icons">arrow_forward</i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. DASHBOARD -->
+  <div id="cand-dashboard" class="view-panel">
+    <div class="content-container">
+      <div class="dashboard-header">
+        <h1 class="dashboard-title">Welcome back, Alex.</h1>
+        <p class="dashboard-subtitle">Pick up right where you left off in your learning journey.</p>
+      </div>
+
+      <!-- Hero Course Card -->
+      <div class="card dashboard-hero-card mb-4 card-interactive" data-target="cand-learning">
+        <div class="hero-meta">
+          <div>
+            <div class="course-label">Assigned Course</div>
+            <div class="course-title">Advanced Computer Science (CS101)</div>
+          </div>
+          <span class="status-badge status-success" style="background: rgba(255,255,255,0.2); color: #fff; border:none; backdrop-filter: blur(4px);">Active</span>
+        </div>
+
+        <div class="progress-container">
+          <div class="progress-meta">
+            <span>Learning Progress</span>
+            <span id="dash-days-left">7 Days Left</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="dash-prog-fill" style="width: 0%;"></div>
+          </div>
+          <div style="font-size: 12px; margin-top: 8px; opacity: 0.8;">68% Completed. Next up: "Module 4 - Tree Traversal"</div>
+        </div>
+      </div>
+
+      <!-- Quick Links Grid -->
+      <h3 class="mb-2" style="font-size: 20px;">Quick Access</h3>
+      <div class="grid-3">
+        <!-- Learning -->
+        <div class="card card-interactive quick-action-card" data-target="cand-learning">
+          <div class="qa-icon"><i class="material-icons">menu_book</i></div>
+          <div>
+            <div class="qa-title">Learning Materials</div>
+            <div class="qa-desc">Access eBooks, video lectures, and study notes for your course.</div>
+          </div>
+          <div class="qa-meta" style="color: var(--pri);">12 <span>Items Left</span></div>
+        </div>
+
+        <!-- Practice -->
+        <div class="card card-interactive quick-action-card" data-target="cand-practice">
+          <div class="qa-icon" style="background: var(--sur-var); color: var(--sec);"><i class="material-icons">quiz</i></div>
+          <div>
+            <div class="qa-title">Practice Tests</div>
+            <div class="qa-desc">Take unlimited mock tests to prepare for the final assessment.</div>
+          </div>
+          <div class="qa-meta" style="color: var(--sec);">92% <span>Best Score</span></div>
+        </div>
+
+        <!-- Exam Prep -->
+        <div class="card card-interactive quick-action-card" data-target="cand-exam-prep">
+          <div class="qa-icon" style="background: rgba(179, 38, 30, 0.1); color: var(--err);"><i class="material-icons">verified_user</i></div>
+          <div>
+            <div class="qa-title">Final Examination</div>
+            <div class="qa-desc">Complete system checks and enter the live AI-proctored exam environment.</div>
+          </div>
+          <div class="qa-meta" style="color: var(--err);">Pending <span>Validation</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. LEARNING MATERIALS -->
+  <div id="cand-learning" class="view-panel">
+    <div class="content-container">
+      <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 32px;">
+        <button class="icon-btn" data-target="cand-dashboard"><i class="material-icons">arrow_back</i></button>
+        <div>
+          <h1 class="dashboard-title" style="margin-bottom: 0;">Course Materials</h1>
+          <p class="dashboard-subtitle">Advanced Computer Science (CS101)</p>
+        </div>
+      </div>
+
+      <div class="tabs-container">
+        <button class="tab-btn active" onclick="switchLearningTab('all', this)">All Materials</button>
+        <button class="tab-btn" onclick="switchLearningTab('video', this)">Video Lectures</button>
+        <button class="tab-btn" onclick="switchLearningTab('pdf', this)">eBooks & PDFs</button>
+      </div>
+
+      <div class="grid-2">
+        <div class="module-list">
+          <h3 class="mb-2" style="font-size: 16px; color: var(--on-sur-var);">Module 3: Data Structures</h3>
+          
+          <div class="module-item">
+            <div class="module-icon"><i class="material-icons">play_circle_filled</i></div>
+            <div class="module-content">
+              <div class="module-title">Advanced Linked Lists</div>
+              <div class="module-desc">Video lecture covering doubly and circular linked lists.</div>
+              <div class="module-meta">
+                <span><i class="material-icons">schedule</i> 45 mins</span>
+                <span class="status-badge status-success" style="padding: 2px 8px; font-size: 10px;">Completed</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="module-item">
+            <div class="module-icon" style="color: var(--err);"><i class="material-icons">picture_as_pdf</i></div>
+            <div class="module-content">
+              <div class="module-title">Tree Traversal Algorithms</div>
+              <div class="module-desc">In-depth reading on inorder, preorder, and postorder traversal.</div>
+              <div class="module-meta">
+                <span><i class="material-icons">menu_book</i> 12 Pages</span>
+                <span style="color: var(--pri);"><i class="material-icons">bookmark</i> Last read: pg 4</span>
+              </div>
+            </div>
+            <div class="module-action">
+              <button class="icon-btn"><i class="material-icons">play_arrow</i></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-list">
+          <h3 class="mb-2" style="font-size: 16px; color: var(--on-sur-var);">Module 4: Algorithms</h3>
+          
+          <div class="module-item" style="opacity: 0.7;">
+            <div class="module-icon" style="color: var(--err);"><i class="material-icons">picture_as_pdf</i></div>
+            <div class="module-content">
+              <div class="module-title">Sorting & Searching</div>
+              <div class="module-desc">Big O notation, quicksort, mergesort, and binary search.</div>
+              <div class="module-meta">
+                <span><i class="material-icons">menu_book</i> 24 Pages</span>
+                <span>Not started</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. PRACTICE TESTS -->
+  <div id="cand-practice" class="view-panel">
+    <div class="content-container">
+      <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 32px;">
+        <button class="icon-btn" data-target="cand-dashboard"><i class="material-icons">arrow_back</i></button>
+        <div>
+          <h1 class="dashboard-title" style="margin-bottom: 0;">Practice Tests</h1>
+          <p class="dashboard-subtitle">Take unlimited mock tests to assess your readiness.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3 class="mb-4">Available Mock Tests</h3>
+          
+          <div class="module-item mb-2" style="border-color: var(--pri);">
+            <div class="module-icon" style="background: var(--pri-con); color: var(--pri);"><i class="material-icons">assignment</i></div>
+            <div class="module-content">
+              <div class="module-title">Comprehensive CS101 Mock</div>
+              <div class="module-desc">Full length mock test mirroring the final exam format.</div>
+              <div class="module-meta">
+                <span><i class="material-icons">format_list_numbered</i> 50 Qs</span>
+                <span><i class="material-icons">timer</i> 60 mins</span>
+              </div>
+            </div>
+            <div class="module-action">
+              <button class="mdbtn btn-tonal" onclick="showToast('Mock test starting...')">Start</button>
+            </div>
+          </div>
+
+          <div class="module-item">
+            <div class="module-icon" style="background: var(--sur-var); color: var(--sec);"><i class="material-icons">assignment</i></div>
+            <div class="module-content">
+              <div class="module-title">Module 3 Pop Quiz</div>
+              <div class="module-desc">Short quiz focused purely on Data Structures.</div>
+              <div class="module-meta">
+                <span><i class="material-icons">format_list_numbered</i> 15 Qs</span>
+                <span><i class="material-icons">timer</i> 15 mins</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="mb-4">Performance History</h3>
+          <div style="height: 200px; display: flex; align-items: flex-end; gap: 16px; padding: 24px; background: var(--sur-var); border-radius: 12px; border: 1px solid var(--glass-border);">
+            <!-- Mock Bar Chart -->
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+              <div style="width: 100%; background: var(--pri); border-radius: 4px 4px 0 0; height: 40%; opacity: 0.5;"></div>
+              <span style="font-size: 11px; font-weight: 600;">Att 1</span>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+              <div style="width: 100%; background: var(--pri); border-radius: 4px 4px 0 0; height: 60%; opacity: 0.6;"></div>
+              <span style="font-size: 11px; font-weight: 600;">Att 2</span>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+              <div style="width: 100%; background: var(--pri); border-radius: 4px 4px 0 0; height: 85%; opacity: 0.8;"></div>
+              <span style="font-size: 11px; font-weight: 600;">Att 3</span>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+              <div style="width: 100%; background: var(--suc); border-radius: 4px 4px 0 0; height: 92%;"></div>
+              <span style="font-size: 11px; font-weight: 600;">Att 4</span>
+            </div>
+          </div>
+          <div class="text-center mt-2" style="font-size: 13px; font-weight: 600;">Current Readiness: <span style="color: var(--suc);">High</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. EXAM PREPARATION / SYSTEM CHECK -->
+  <div id="cand-exam-prep" class="view-panel">
+    <div class="content-container" style="max-width: 800px;">
+      <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 32px;">
+        <button class="icon-btn" data-target="cand-dashboard"><i class="material-icons">arrow_back</i></button>
+        <div>
+          <h1 class="dashboard-title" style="margin-bottom: 0;">Final Examination</h1>
+          <p class="dashboard-subtitle">Pre-exam validation and system checks.</p>
+        </div>
+      </div>
+
+      <div class="card" style="border: 2px solid var(--pri);">
+        <div style="background: var(--pri-con); color: var(--pri-con-ct); padding: 16px; border-radius: 12px; margin-bottom: 24px; display: flex; gap: 12px; align-items: flex-start;">
+          <i class="material-icons">info</i>
+          <p style="font-size: 13px;"><strong>Desktop/Laptop Required.</strong> You cannot take the final exam on a mobile device. You must complete the hardware validation checks before the 'Start Exam' button activates.</p>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 24px; margin-bottom: 24px;">
+          <div>
+            <h2 style="font-size: 24px;">CS101 Final Assessment</h2>
+            <div class="mt-2" style="display: flex; gap: 16px; font-size: 13px; color: var(--on-sur-var);">
+              <span style="display: flex; align-items: center; gap: 4px;"><i class="material-icons" style="font-size: 16px;">timer</i> 60 Minutes</span>
+              <span style="display: flex; align-items: center; gap: 4px;"><i class="material-icons" style="font-size: 16px;">format_list_numbered</i> 5 Questions</span>
+              <span style="display: flex; align-items: center; gap: 4px;"><i class="material-icons" style="font-size: 16px;">visibility</i> AI Monitored</span>
+            </div>
+          </div>
+        </div>
+
+        <h3 style="font-size: 16px;">Hardware Validation</h3>
+        <div class="sys-check-list">
+          <div class="sys-check-item" id="check-cam">
+            <div class="sys-check-info">
+              <div class="sys-check-icon"><i class="material-icons">videocam</i></div>
+              <div class="sys-check-text">
+                <h4>Webcam Access</h4>
+                <p>Required for identity verification and AI proctoring.</p>
+              </div>
+            </div>
+            <div class="sys-check-status"><i class="material-icons">hourglass_empty</i></div>
+          </div>
+
+          <div class="sys-check-item" id="check-mic">
+            <div class="sys-check-info">
+              <div class="sys-check-icon"><i class="material-icons">mic</i></div>
+              <div class="sys-check-text">
+                <h4>Microphone Access</h4>
+                <p>Required for ambient noise detection.</p>
+              </div>
+            </div>
+            <div class="sys-check-status"><i class="material-icons">hourglass_empty</i></div>
+          </div>
+
+          <div class="sys-check-item" id="check-net">
+            <div class="sys-check-info">
+              <div class="sys-check-icon"><i class="material-icons">wifi</i></div>
+              <div class="sys-check-text">
+                <h4>Network Stability</h4>
+                <p>Ensuring you won't disconnect during the test.</p>
+              </div>
+            </div>
+            <div class="sys-check-status"><i class="material-icons">hourglass_empty</i></div>
+          </div>
+
+          <div class="sys-check-item" id="check-win">
+            <div class="sys-check-info">
+              <div class="sys-check-icon"><i class="material-icons">desktop_windows</i></div>
+              <div class="sys-check-text">
+                <h4>Fullscreen & Browser</h4>
+                <p>Validating modern browser support and screen lock.</p>
+              </div>
+            </div>
+            <div class="sys-check-status"><i class="material-icons">hourglass_empty</i></div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--glass-border);">
+          <button class="mdbtn btn-outlined" id="run-check-btn" onclick="runSystemCheck()">
+            <i class="material-icons">insights</i>
+            <span>Run System Validation</span>
+          </button>
+          <button class="mdbtn btn-tonal" id="start-exam-btn" disabled onclick="navigateTo('cand-exam-live')">
+            <i class="material-icons">lock</i>
+            <span>Run Checks First</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. LIVE AI PROCTORED EXAM (LOCKED DOWN UI) -->
+  <div id="cand-exam-live" class="view-panel" style="background: #000;">
+    <div class="exam-mode">
+      
+      <!-- Top Bar -->
+      <div class="exam-header">
+        <div class="exam-brand">
+          <div class="badge" style="width: 28px; height: 28px; font-size: 12px;">SP</div>
+          <span>CS101 Final</span>
+        </div>
+        
+        <div class="exam-timer" id="exam-timer-display">60:00</div>
+        
+        <div class="exam-status">
+          <div class="pulse-dot"></div>
+          AI Monitor Active
+        </div>
+      </div>
+
+      <!-- Warning Toast -->
+      <div class="exam-warning-toast" id="exam-warning">
+        <i class="material-icons warning-icon">warning</i>
+        <div>
+          <strong style="display: block; font-size: 15px; margin-bottom: 2px;">PROCTOR WARNING</strong>
+          <span id="exam-warning-text" style="font-size: 13px;">Multiple faces detected in frame.</span>
+        </div>
+      </div>
+
+      <!-- Main Body -->
+      <div class="exam-body">
+        
+        <!-- Left Sidebar: Webcam feed & Question Nav -->
+        <div class="exam-sidebar">
+          <div class="exam-cam-preview">
+            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80" style="width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7) contrast(1.2);" alt="Candidate Feed">
+            <div class="exam-cam-overlay"></div>
+            <div style="position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.6); color: #fff; padding: 2px 6px; font-size: 10px; font-family: monospace; border-radius: 4px;">LIVE REC • CAN-092</div>
+          </div>
+          
+          <div class="exam-nav">
+            <div style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Question Navigation</div>
+            <div class="nav-grid" id="exam-nav-grid">
+              <!-- JS Populated -->
+            </div>
+            
+            <div style="margin-top: 32px; font-size: 11px; color: #666;">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;"><div style="width: 12px; height: 12px; background: rgba(74, 222, 128, 0.15); border: 1px solid #4ade80; border-radius: 2px;"></div> Answered</div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;"><div style="width: 12px; height: 12px; background: #222; border: 1px solid #444; border-radius: 2px;"></div> Unanswered</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side: Question Content -->
+        <div class="exam-content">
+          <div style="max-width: 800px; margin: 0 auto;">
+            
+            <div class="question-meta">
+              <span id="q-meta-text">Question 1 of 5</span>
+              <span>1 Mark</span>
+            </div>
+
+            <div class="question-text" id="q-text">
+              Loading question...
+            </div>
+
+            <div class="options-list" id="q-options">
+              <!-- JS Populated -->
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Bar Controls -->
+      <div class="exam-footer">
+        <button class="mdbtn" style="background: transparent; color: #fff; border: 1px solid #555;" id="btn-prev-q" onclick="navQuestion(-1)">
+          <i class="material-icons">arrow_back</i> <span>Previous</span>
+        </button>
+        
+        <button class="mdbtn" style="background: #f9ad00; color: #000;" id="btn-next-q" onclick="navQuestion(1)">
+          <span>Next Question</span> <i class="material-icons">arrow_forward</i>
+        </button>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- 8. RESULTS -->
+  <div id="cand-results" class="view-panel">
+    <div class="content-container" style="max-width: 600px;">
+      
+      <div class="card">
+        <div class="result-hero">
+          <div class="score-circle pass" id="res-score-circle">
+            <span class="score-val">85</span>
+            <span class="score-label">Passed</span>
+          </div>
+          <h1 style="font-size: 24px; margin-bottom: 8px;">Assessment Complete</h1>
+          <p style="color: var(--on-sur-var);">Your exam has been successfully submitted and auto-graded.</p>
+        </div>
+
+        <div style="padding: 0 24px;">
+          <h3 class="mb-4" style="font-size: 16px;">Topic Performance Breakdown</h3>
+          <div id="res-topics">
+            <!-- JS Populated -->
+          </div>
+        </div>
+
+        <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--glass-border); display: flex; justify-content: center; gap: 16px;">
+          <button class="mdbtn btn-tonal" onclick="navigateTo('cand-dashboard')">
+            <i class="material-icons">home</i> <span>Return to Dashboard</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 9. NOTIFICATIONS PANEL (MOCK DROP-DOWN / OVERLAY) -->
+  <div id="cand-notifications" class="view-panel" style="background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);">
+    <div style="position: absolute; right: 0; top: 0; bottom: 0; width: 400px; background: var(--sur); box-shadow: var(--shadow-lg); border-left: 1px solid var(--glass-border); display: flex; flex-direction: column;">
+      
+      <div style="padding: 24px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="font-size: 18px;">Notifications</h2>
+        <button class="icon-btn" data-target="cand-dashboard"><i class="material-icons">close</i></button>
+      </div>
+
+      <div style="flex: 1; overflow-y: auto; padding: 16px;">
+        <div style="padding: 16px; background: var(--sur-var); border-radius: 12px; margin-bottom: 12px; border-left: 4px solid var(--inf);">
+          <div style="font-weight: 700; margin-bottom: 4px; font-size: 13px;">Course Unlocked</div>
+          <div style="font-size: 12px; color: var(--on-sur-var);">You have been assigned CS101. You have 7 days to complete the material.</div>
+        </div>
+        <div style="padding: 16px; background: var(--sur-var); border-radius: 12px; margin-bottom: 12px; border-left: 4px solid var(--pri);">
+          <div style="font-weight: 700; margin-bottom: 4px; font-size: 13px;">Exam Approaching</div>
+          <div style="font-size: 12px; color: var(--on-sur-var);">Your final exam window opens in 24 hours. Ensure your hardware is ready.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="candidate.js"></script>
+</body>
+</html>

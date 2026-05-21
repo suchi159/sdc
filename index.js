@@ -439,10 +439,8 @@ function renderCameraGrid() {
   const gridContainer = document.getElementById("live-camera-grid");
   if (!gridContainer) return;
 
-  // Clear container
   gridContainer.innerHTML = "";
 
-  // Fetch slice of candidates based on grid configuration size
   const activeFeedsCount = Math.min(ACTIVE_GRID_SIZE, CANDIDATES.length);
   const activeFeedsEl = document.getElementById("val-active-feeds");
   if (activeFeedsEl) activeFeedsEl.textContent = activeFeedsCount;
@@ -466,7 +464,7 @@ function renderCameraGrid() {
           ${c.status === 'danger' ? 'critical' : (c.status === 'warning' ? 'warning' : 'clear')}
         </span>
       </div>
-      <canvas id="canvas-${c.id}" width="320" height="200"></canvas>
+      <div id="svg-container-${c.id}" style="width: 100%; height: 100%; background: ${THEME === 'dark' ? '#141416' : '#2d2d35'}; position: relative; overflow: hidden;"></div>
       <div class="candidate-actions-overlay" style="display: flex; gap: 4px; justify-content: center; width: 100%; padding: 8px;">
         <button class="mdbtn btn-tonal action-btn" onclick="openSupervisorPanel('${c.id}')" style="min-height: 28px; font-size: 10px; padding: 2px 8px; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 2px;" aria-label="Take custom action">
           <i class="material-icons" style="font-size: 14px;">explore</i> Act
@@ -481,250 +479,130 @@ function renderCameraGrid() {
     `;
 
     gridContainer.appendChild(card);
-
-    // Launch vector canvas drawing engine loop
     launchCandidateCanvasLoop(c);
   }
 
-  // Re-calibrate notifications count
   updateIncidentCounter();
 }
 
 function launchCandidateCanvasLoop(c) {
-  const canvas = document.getElementById(`canvas-${c.id}`);
-  if (!canvas) return;
+  const container = document.getElementById(`svg-container-${c.id}`);
+  if (!container) return;
 
-  const ctx = canvas.getContext("2d");
+  const w = 320;
+  const h = 200;
+  
+  const boxColor = c.status === "danger" ? "var(--err)" : (c.status === "warning" ? "var(--wrn)" : "var(--suc)");
+  const strokeColor = THEME === "dark" ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.06)";
+  const wireColor = "rgba(255,255,255,0.2)";
 
-  // Store canvas coordinates variables inside the loop
-  c.x = canvas.width / 2;
-  c.y = canvas.height / 2 + 10;
+  const hX = w / 2;
+  const hY = h / 2 - 12;
 
-  // Stop existing frame requests if running
-  if (CANVAS_LOOPS[c.id]) {
-    cancelAnimationFrame(CANVAS_LOOPS[c.id]);
+  let secondaryBody = "";
+  if (c.id === "CAN-754" && c.status === "danger") {
+    secondaryBody = `
+      <circle cx="${hX - 48}" cy="${hY + 12}" r="24" stroke="rgba(239, 68, 68, 0.4)" stroke-width="1.5" fill="none" />
+      <rect x="${hX - 48 - 28}" y="${hY + 12 - 28}" width="56" height="56" stroke="var(--err)" stroke-width="1.5" fill="none" />
+      <text x="${hX - 48 - 28}" y="${hY + 12 - 32}" fill="var(--err)" style="font-family:'JetBrains Mono';font-size:9px;font-weight:bold;">UNREG. PROFILE</text>
+    `;
+  }
+  
+  let alertBanner = "";
+  if (c.status !== "clear") {
+    const ruleText = c.status === "danger" ? "CRITICAL: MULTIPLE PROFILES DETECTED" : "WARNING: GAZE DEVIATION LIMIT EXCEEDED";
+    alertBanner = `
+      <rect x="0" y="${h - 24}" width="${w}" height="24" fill="rgba(0,0,0,0.5)" />
+      <text x="10" y="${h - 7}" fill="${boxColor}" style="font-family:'Inter';font-size:10px;font-weight:bold;">${ruleText}</text>
+    `;
   }
 
-  function drawFrame() {
-    if (!document.getElementById(`canvas-${c.id}`)) return; // Element destroyed
+  const boxW = 86;
+  const boxH = 92;
+  const boxX = hX - boxW / 2;
+  const boxY = hY - boxH / 2 - 4;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const svgStr = `
+    <svg width="100%" height="100%" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,${h*0.3} L${w},${h*0.3} M${w*0.25},0 L${w*0.25},${h*0.3} M${w*0.75},0 L${w*0.75},${h*0.3}" stroke="${strokeColor}" stroke-width="1.5" />
+      <path d="M${hX-60},${h} Q${hX-45},${hY+50} ${hX-25},${hY+32} L${hX+25},${hY+32} Q${hX+45},${hY+50} ${hX+60},${h} Z" stroke="${wireColor}" stroke-width="2" fill="none" />
+      <path d="M${hX-12},${hY+20} L${hX-12},${hY+35} M${hX+12},${hY+20} L${hX+12},${hY+35}" stroke="${wireColor}" stroke-width="2" />
+      <circle cx="${hX}" cy="${hY}" r="28" stroke="${wireColor}" stroke-width="2" fill="none" />
+      
+      <path d="M${hX-28},${hY} L${hX+28},${hY} M${hX},${hY-28} L${hX},${hY+28}" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+      <circle cx="${hX-10}" cy="${hY-2}" r="4" fill="rgba(255, 255, 255, 0.8)" />
+      <circle cx="${hX+10}" cy="${hY-2}" r="4" fill="rgba(255, 255, 255, 0.8)" />
+      
+      <circle id="pupil-l-${c.id}" cx="${hX-10}" cy="${hY-2}" r="1.8" fill="#000" />
+      <circle id="pupil-r-${c.id}" cx="${hX+10}" cy="${hY-2}" r="1.8" fill="#000" />
+      
+      <path d="M${hX-6},${hY+12} Q${hX},${hY+16} ${hX+6},${hY+12}" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" fill="none" />
+      
+      ${secondaryBody}
+      
+      <rect x="${boxX}" y="${boxY}" width="${boxW}" height="${boxH}" stroke="${boxColor}" stroke-width="1.5" fill="none" />
+      <text x="${boxX + 4}" y="${boxY + 14}" fill="${boxColor}" style="font-family:'JetBrains Mono';font-size:9px;font-weight:bold;">ID: ${c.id}</text>
+      
+      <g fill="${boxColor}">
+        <circle cx="${hX-10}" cy="${hY-2}" r="1.5" />
+        <circle cx="${hX+10}" cy="${hY-2}" r="1.5" />
+        <circle cx="${hX}" cy="${hY+5}" r="1.5" />
+        <circle cx="${hX-8}" cy="${hY+13}" r="1.5" />
+        <circle cx="${hX+8}" cy="${hY+13}" r="1.5" />
+        <circle cx="${hX-20}" cy="${hY-8}" r="1.5" />
+        <circle cx="${hX+20}" cy="${hY-8}" r="1.5" />
+        <circle cx="${hX}" cy="${hY+24}" r="1.5" />
+      </g>
+      
+      ${alertBanner}
+      
+      <rect x="10" y="${h-35}" width="60" height="4" fill="rgba(255, 255, 255, 0.15)" />
+      <rect id="audio-${c.id}" x="10" y="${h-35}" width="20" height="4" fill="var(--suc)" />
+    </svg>
+  `;
 
-    // 1. Draw Mock Camera background scan grid
-    ctx.fillStyle = THEME === "dark" ? "#141416" : "#2d2d35";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Draw wireframe vector background wall corners
-    ctx.strokeStyle = THEME === "dark" ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.06)";
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(0, canvas.height * 0.3);
-    ctx.lineTo(canvas.width, canvas.height * 0.3);
-    ctx.moveTo(canvas.width * 0.25, 0);
-    ctx.lineTo(canvas.width * 0.25, canvas.height * 0.3);
-    ctx.moveTo(canvas.width * 0.75, 0);
-    ctx.lineTo(canvas.width * 0.75, canvas.height * 0.3);
-    ctx.stroke();
-
-    // Custom suspended offline card overlay
-    if (c.actionStatus === "Suspended") {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "var(--err)";
-      ctx.font = "bold 13px 'Inter'";
-      ctx.textAlign = "center";
-      ctx.fillText("FEED CLOSED - SESSION SUSPENDED", canvas.width / 2, canvas.height / 2 - 10);
-      ctx.fillStyle = "#fff";
-      ctx.font = "11px 'Inter'";
-      ctx.fillText("Candidate connection terminated by proctor admin.", canvas.width / 2, canvas.height / 2 + 10);
+  container.innerHTML = svgStr;
+  
+  if (CANVAS_LOOPS[c.id]) {
+    clearInterval(CANVAS_LOOPS[c.id]);
+  }
+  
+  c.pulse = 0;
+  
+  CANVAS_LOOPS[c.id] = setInterval(() => {
+    if (!document.getElementById(`svg-container-${c.id}`)) {
+      clearInterval(CANVAS_LOOPS[c.id]);
       return;
     }
-
-    if (c.actionStatus === "Paused") {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "var(--pri)";
-      ctx.font = "bold 13px 'Inter'";
-      ctx.textAlign = "center";
-      ctx.fillText("EXAM SESSION PAUSED", canvas.width / 2, canvas.height / 2 - 10);
-      ctx.fillStyle = "#fff";
-      ctx.font = "11px 'Inter'";
-      ctx.fillText("Candidate browser window locked.", canvas.width / 2, canvas.height / 2 + 10);
-      return;
-    }
-
-    // 2. Animate Candidate Head/Eye micro-movements
-    c.pulse += 0.03;
-    c.stateTimer++;
-
-    // State machine to trigger occasional gaze deviations or body offsets
-    if (c.stateTimer > 200) {
-      c.stateTimer = 0;
-      // Change look target
+    
+    c.pulse += 0.5;
+    
+    if (Math.random() > 0.95) {
       if (c.id === "CAN-183" && c.status === "warning") {
-        // Beatrice Vance gaze violation simulation trigger
-        c.eyes.x = 24; // Looks way to the right
-        c.eyes.y = -2;
-      } else if (c.id === "CAN-754" && c.status === "danger") {
-        // Clara Oswald double person simulation
-        c.eyes.x = -4;
-        c.eyes.y = 2;
+        c.eyes.x = 24; c.eyes.y = -2;
       } else {
-        // Normal random eye glances
-        c.eyes.x = Math.sin(c.pulse * 0.5) * 6;
-        c.eyes.y = Math.cos(c.pulse * 0.3) * 3;
+        c.eyes.x = (Math.random() - 0.5) * 12;
+        c.eyes.y = (Math.random() - 0.5) * 6;
+      }
+      
+      const pl = document.getElementById(`pupil-l-${c.id}`);
+      const pr = document.getElementById(`pupil-r-${c.id}`);
+      if (pl && pr) {
+        pl.setAttribute('cx', hX - 10 + (c.eyes.x * 0.15));
+        pl.setAttribute('cy', hY - 2 + (c.eyes.y * 0.15));
+        pr.setAttribute('cx', hX + 10 + (c.eyes.x * 0.15));
+        pr.setAttribute('cy', hY - 2 + (c.eyes.y * 0.15));
       }
     }
-
-    const headX = canvas.width / 2 + Math.sin(c.pulse * 0.2) * 5;
-    const headY = canvas.height / 2 - 12 + Math.cos(c.pulse * 0.15) * 3;
-
-    // 3. Draw Candidate Wireframe Outline
-    ctx.strokeStyle = "rgba(255,255,255,0.2)";
-    ctx.lineWidth = 2;
-
-    // Shoulders
-    ctx.beginPath();
-    ctx.moveTo(headX - 60, canvas.height);
-    ctx.quadraticCurveTo(headX - 45, headY + 50, headX - 25, headY + 32);
-    ctx.lineTo(headX + 25, headY + 32);
-    ctx.quadraticCurveTo(headX + 45, headY + 50, headX + 60, canvas.height);
-    ctx.stroke();
-
-    // Neck
-    ctx.beginPath();
-    ctx.moveTo(headX - 12, headY + 20);
-    ctx.lineTo(headX - 12, headY + 35);
-    ctx.moveTo(headX + 12, headY + 20);
-    ctx.lineTo(headX + 12, headY + 35);
-    ctx.stroke();
-
-    // Secondary outline silhouette (Clara Oswald double person flag simulation)
-    if (c.id === "CAN-754" && c.status === "danger") {
-      ctx.strokeStyle = "rgba(239, 68, 68, 0.4)";
-      ctx.lineWidth = 1.5;
-
-      const secHeadX = headX - 48;
-      const secHeadY = headY + 12;
-
-      // Secondary head outline
-      ctx.beginPath();
-      ctx.arc(secHeadX, secHeadY, 24, 0, Math.PI * 2);
-      ctx.stroke();
-
-      // Bounding box secondary
-      ctx.strokeStyle = "var(--err)";
-      ctx.strokeRect(secHeadX - 28, secHeadY - 28, 56, 56);
-      ctx.fillStyle = "var(--err)";
-      ctx.font = "bold 9px 'JetBrains Mono'";
-      ctx.fillText(`UNREG. PROFILE`, secHeadX - 28, secHeadY - 32);
-
-      // Reset stroke styles
-      ctx.strokeStyle = "rgba(255,255,255,0.2)";
-      ctx.lineWidth = 2;
+    
+    const audioBar = document.getElementById(`audio-${c.id}`);
+    if (audioBar) {
+      let aud = 20 + (Math.random() - 0.5) * 30;
+      aud = Math.max(2, Math.min(60, aud));
+      audioBar.setAttribute('width', aud);
+      audioBar.setAttribute('fill', aud > 40 ? "var(--err)" : "var(--suc)");
     }
-
-    // Primary Head circle
-    ctx.beginPath();
-    ctx.arc(headX, headY, 28, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // Glasses details or face guides lines
-    ctx.strokeStyle = "rgba(255,255,255,0.08)";
-    ctx.beginPath();
-    ctx.moveTo(headX - 28, headY);
-    ctx.lineTo(headX + 28, headY);
-    ctx.moveTo(headX, headY - 28);
-    ctx.lineTo(headX, headY + 28);
-    ctx.stroke();
-
-    // Eyes & Pupils
-    ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
-    ctx.beginPath();
-    ctx.arc(headX - 10, headY - 2, 4, 0, Math.PI * 2); // Left eye
-    ctx.arc(headX + 10, headY - 2, 4, 0, Math.PI * 2); // Right eye
-    ctx.fill();
-
-    ctx.fillStyle = "#000";
-    ctx.beginPath();
-    ctx.arc(headX - 10 + (c.eyes.x * 0.15), headY - 2 + (c.eyes.y * 0.15), 1.8, 0, Math.PI * 2);
-    ctx.arc(headX + 10 + (c.eyes.x * 0.15), headY - 2 + (c.eyes.y * 0.15), 1.8, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Mouth (slight curve)
-    ctx.strokeStyle = "rgba(255,255,255,0.6)";
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.arc(headX, headY + 12, 6, 0.1, Math.PI - 0.1);
-    ctx.stroke();
-
-    // 4. Draw AI Computer Vision Face Bounding Box overlay
-    const boxColor = c.status === "danger" ? "var(--err)" : (c.status === "warning" ? "var(--wrn)" : "var(--suc)");
-    ctx.strokeStyle = boxColor;
-    ctx.lineWidth = 1.5;
-
-    const boxW = 86;
-    const boxH = 92;
-    const boxX = headX - boxW / 2;
-    const boxY = headY - boxH / 2 - 4;
-    ctx.strokeRect(boxX, boxY, boxW, boxH);
-
-    // Draw box corners
-    ctx.fillStyle = boxColor;
-    const cl = 8; // Corner line length
-    ctx.fillRect(boxX - 2, boxY - 2, cl, 3);
-    ctx.fillRect(boxX - 2, boxY - 2, 3, cl);
-    ctx.fillRect(boxX + boxW - cl + 2, boxY - 2, cl, 3);
-    ctx.fillRect(boxX + boxW - 1, boxY - 2, 3, cl);
-    ctx.fillRect(boxX - 2, boxY + boxH - 1, cl, 3);
-    ctx.fillRect(boxX - 2, boxY + boxH - cl + 2, 3, cl);
-    ctx.fillRect(boxX + boxW - cl + 2, boxY + boxH - 1, cl, 3);
-    ctx.fillRect(boxX + boxW - 1, boxY + boxH - cl + 2, 3, cl);
-
-    // Bounding label text
-    ctx.font = "bold 9px 'JetBrains Mono'";
-    ctx.fillText(`ID: ${c.id}`, boxX + 4, boxY + 14);
-
-    // Add real-time landmark dots (AI face mesh simulation)
-    ctx.fillStyle = boxColor;
-    const dots = [
-      { dx: -10, dy: -2 }, { dx: 10, dy: -2 }, // eyes
-      { dx: 0, dy: 5 },                      // nose
-      { dx: -8, dy: 13 }, { dx: 8, dy: 13 },   // mouth corners
-      { dx: -20, dy: -8 }, { dx: 20, dy: -8 }, // eyebrows
-      { dx: 0, dy: 24 }                      // chin
-    ];
-
-    dots.forEach(d => {
-      ctx.beginPath();
-      ctx.arc(headX + d.dx, headY + d.dy, 1.5, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
-    // If warning/danger, overlay a glowing alert banner on the canvas
-    if (c.status !== "clear") {
-      ctx.fillStyle = "rgba(0,0,0,0.5)";
-      ctx.fillRect(0, canvas.height - 24, canvas.width, 24);
-      ctx.fillStyle = boxColor;
-      ctx.font = "bold 10px 'Inter'";
-      ctx.textAlign = "left";
-      const ruleText = c.status === "danger" ? "CRITICAL: MULTIPLE PROFILES DETECTED" : "WARNING: GAZE DEVIATION LIMIT EXCEEDED";
-      ctx.fillText(ruleText, 10, canvas.height - 7);
-    }
-
-    // Real-time audio waveform feedback overlay
-    c.audio += (Math.random() - 0.5) * 4;
-    c.audio = Math.max(2, Math.min(60, c.audio));
-    ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
-    ctx.fillRect(10, canvas.height - 35, 60, 4);
-    ctx.fillStyle = c.audio > 40 ? "var(--err)" : "var(--suc)";
-    ctx.fillRect(10, canvas.height - 35, c.audio, 4);
-
-    // Request next animation frame
-    CANVAS_LOOPS[c.id] = requestAnimationFrame(drawFrame);
-  }
-
-  drawFrame();
+  }, 100);
 }
 
 // --------------------------------------------------------------------------
@@ -1392,80 +1270,71 @@ function openIncidentDrawer(incId) {
   // Store targeted incident ID in a custom drawer property for resolution saving
   drawer.setAttribute("data-active-incident", inc.id);
 
-  // Draw wireframe video replay capture loop inside drawer canvas
-  const canvas = document.getElementById("drawer-recorded-canvas");
-  const ctx = canvas.getContext("2d");
-
+  // Draw wireframe video replay capture loop inside drawer SVG
+  const container = document.getElementById("drawer-recorded-canvas");
+  
   if (DRAWER_CANVAS_LOOP) clearInterval(DRAWER_CANVAS_LOOP);
 
   let loopTimer = 0;
+  const w = 340;
+  const h = 200;
+  const headX = w / 2;
+  const headY = h / 2 - 10;
+  
+  let gazeLines = "";
+  if (inc.rule.includes("Gaze")) {
+    gazeLines = `
+      <path d="M${headX-10},${headY-2} L${w-20},${headY-30} M${headX+10},${headY-2} L${w-20},${headY-30}" stroke="rgba(239, 68, 68, 0.4)" stroke-width="1" />
+    `;
+  }
+  
+  const svgStr = `
+    <svg width="100%" height="100%" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="10" width="${w-20}" height="${h-20}" stroke="rgba(255,255,255,0.06)" stroke-width="1" fill="none" />
+      
+      <!-- Shoulders -->
+      <path d="M${headX-50},${h} Q${headX-35},${headY+50} ${headX-20},${headY+30} L${headX+20},${headY+30} Q${headX+35},${headY+50} ${headX+50},${h}" stroke="rgba(255,255,255,0.25)" stroke-width="2" fill="none" />
+      
+      <!-- Head and Eyes Group -->
+      <g id="drawer-head-group">
+        <circle cx="${headX}" cy="${headY}" r="26" stroke="rgba(255,255,255,0.25)" stroke-width="2" fill="none" />
+        <circle cx="${headX-10}" cy="${headY-2}" r="3" fill="rgba(255,255,255,0.8)" />
+        <circle cx="${headX+10}" cy="${headY-2}" r="3" fill="rgba(255,255,255,0.8)" />
+        <circle id="drawer-pupil-l" cx="${headX-10}" cy="${headY-2}" r="1.2" fill="#000" />
+        <circle id="drawer-pupil-r" cx="${headX+10}" cy="${headY-2}" r="1.2" fill="#000" />
+      </g>
+      
+      <!-- Gaze lines if applicable -->
+      ${gazeLines}
+      
+      <!-- Bounding Box -->
+      <rect id="drawer-bbox" x="${headX-42}" y="${headY-42}" width="84" height="84" stroke="var(--err)" stroke-width="1" fill="none" />
+    </svg>
+  `;
+  container.innerHTML = svgStr;
+
   DRAWER_CANVAS_LOOP = setInterval(() => {
     loopTimer += 0.05;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Draw room back grid
-    ctx.fillStyle = "#1e1e24";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.strokeStyle = "rgba(255,255,255,0.06)";
-    ctx.lineWidth = 1;
-    ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
-
-    // Head coordinates
-    const headX = canvas.width / 2 + Math.sin(loopTimer) * 14;
-    const headY = canvas.height / 2 - 10;
-
-    // Wireframe candidate outline
-    ctx.strokeStyle = "rgba(255,255,255,0.25)";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(headX, headY, 26, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // Shoulders
-    ctx.beginPath();
-    ctx.moveTo(headX - 50, canvas.height);
-    ctx.quadraticCurveTo(headX - 35, headY + 50, headX - 20, headY + 30);
-    ctx.lineTo(headX + 20, headY + 30);
-    ctx.quadraticCurveTo(headX + 35, headY + 50, headX + 50, canvas.height);
-    ctx.stroke();
-
-    // Deviated gaze simulation inside loop
-    ctx.fillStyle = "rgba(255,255,255,0.8)";
-    ctx.beginPath();
-    ctx.arc(headX - 10, headY - 2, 3, 0, Math.PI * 2);
-    ctx.arc(headX + 10, headY - 2, 3, 0, Math.PI * 2);
-    ctx.fill();
-
-    // If Gaze Deviation rule is open, draw look lines extending from eyes to corners
-    if (inc.rule.includes("Gaze")) {
-      ctx.fillStyle = "#000";
-      ctx.beginPath();
-      ctx.arc(headX - 10 + 2.5, headY - 2, 1.2, 0, Math.PI * 2); // Look right
-      ctx.arc(headX + 10 + 2.5, headY - 2, 1.2, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.strokeStyle = "rgba(239, 68, 68, 0.4)";
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(headX - 10, headY - 2);
-      ctx.lineTo(canvas.width - 20, headY - 30);
-      ctx.moveTo(headX + 10, headY - 2);
-      ctx.lineTo(canvas.width - 20, headY - 30);
-      ctx.stroke();
-    } else {
-      // Normal pupil positions
-      ctx.fillStyle = "#000";
-      ctx.beginPath();
-      ctx.arc(headX - 10, headY - 2, 1.2, 0, Math.PI * 2);
-      ctx.arc(headX + 10, headY - 2, 1.2, 0, Math.PI * 2);
-      ctx.fill();
+    if (!document.getElementById("drawer-recorded-canvas")) {
+      clearInterval(DRAWER_CANVAS_LOOP);
+      return;
     }
-
-    // Draw Bounding box Red Alert
-    ctx.strokeStyle = "var(--err)";
-    ctx.strokeRect(headX - 42, headY - 42, 84, 84);
-
+    
+    const headGroup = document.getElementById("drawer-head-group");
+    const bbox = document.getElementById("drawer-bbox");
+    const pl = document.getElementById("drawer-pupil-l");
+    const pr = document.getElementById("drawer-pupil-r");
+    
+    if (headGroup && bbox) {
+      const offsetX = Math.sin(loopTimer) * 14;
+      headGroup.setAttribute('transform', `translate(${offsetX}, 0)`);
+      bbox.setAttribute('x', headX - 42 + offsetX);
+      
+      if (inc.rule.includes("Gaze")) {
+        pl.setAttribute('cx', headX - 10 + 2.5);
+        pr.setAttribute('cx', headX + 10 + 2.5);
+      }
+    }
   }, 50);
 }
 
@@ -3028,5 +2897,36 @@ function saveModalShift() {
   renderCalendar();
   renderAgendaList();
 }
+
+// --------------------------------------------------------------------------
+// THEME CONFIGURATOR FUNCTIONS
+// --------------------------------------------------------------------------
+function applyCorporateTheme() {
+  document.documentElement.style.setProperty('--pri', '#0f172a');
+  document.documentElement.style.setProperty('--pri-dk', '#1e293b');
+  document.documentElement.style.setProperty('--pri-con', '#f1f5f9');
+  document.documentElement.style.setProperty('--pri-con-ct', '#0f172a');
+  document.documentElement.style.setProperty('--sec', '#334155');
+  document.documentElement.style.setProperty('--sidebar-active-bg', 'rgba(15, 23, 42, 0.1)');
+  document.documentElement.style.setProperty('--sidebar-active-text', '#0f172a');
+  pushToast("Theme Updated", "Corporate Navy/Slate palette applied.", "success");
+}
+
+function applyFlatTheme() {
+  // Add CSS rules directly to document to override borders and shadows
+  const style = document.createElement('style');
+  style.innerHTML = `
+    * {
+      border-radius: 4px !important;
+    }
+    .kpi-card, .table-card, .drawer, .modal, .view-panel {
+      box-shadow: none !important;
+      border: 1px solid rgba(0,0,0,0.1) !important;
+    }
+  `;
+  document.head.appendChild(style);
+  pushToast("Layout Updated", "Flat layout and sharp borders applied.", "success");
+}
+
 
 

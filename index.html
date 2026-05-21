@@ -1163,6 +1163,7 @@
                 <button class="tab on" onclick="toggleSettingsSubTab('profile', this)">Profile Details</button>
                 <button class="tab" onclick="toggleSettingsSubTab('notifications', this)">Notification Channels</button>
                 <button class="tab" onclick="toggleSettingsSubTab('security', this)">System Security & AI</button>
+                <button class="tab" onclick="toggleSettingsSubTab('theme', this)">Theme Configurator</button>
               </div>
 
               <!-- Profile Sub-Tab -->
@@ -1299,6 +1300,43 @@
                       </div>
                       <button class="mdbtn btn-tonal" onclick="startAppTour()"><i class="material-icons">explore</i>
                         Relaunch Quick Tour</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Theme Configurator Sub-Tab -->
+              <div class="settings-panel-sub" id="settings-sub-theme">
+                <div class="kpi-card" style="padding: 24px;">
+                  <h3 class="chart-title">Theme & UI Configurator</h3>
+                  <p class="chart-subtitle" style="margin-bottom: 20px;">Dynamically configure the platform's visual appearance.</p>
+
+                  <div class="preferences-container">
+                    <div class="preference-item">
+                      <div class="pref-desc">
+                        <h4>Dark Mode</h4>
+                        <p>Toggle high-contrast dark theme for low-light environments.</p>
+                      </div>
+                      <label class="switch">
+                        <input type="checkbox" id="settings-theme-dark-toggle" onchange="toggleTheme()">
+                        <span class="switch-slider"></span>
+                      </label>
+                    </div>
+
+                    <div class="preference-item">
+                      <div class="pref-desc">
+                        <h4>Professional Navy/Slate Palette</h4>
+                        <p>Apply the corporate slate color scheme (overrides default amber/purple).</p>
+                      </div>
+                      <button class="mdbtn btn-outlined" onclick="applyCorporateTheme()" style="font-size: 11px;">Apply Corporate Colors</button>
+                    </div>
+                    
+                    <div class="preference-item">
+                      <div class="pref-desc">
+                        <h4>Flat & Sharp Borders</h4>
+                        <p>Remove heavy dropshadows and use 4px corner radiuses.</p>
+                      </div>
+                      <button class="mdbtn btn-outlined" onclick="applyFlatTheme()" style="font-size: 11px;">Apply Flat Layout</button>
                     </div>
                   </div>
                 </div>
@@ -1563,7 +1601,7 @@
     <div class="drawer-content">
       <!-- Simulated recorded video capture -->
       <div class="drawer-video-container">
-        <canvas id="drawer-recorded-canvas" width="340" height="200"></canvas>
+        <div id="drawer-recorded-canvas" style="width: 340px; height: 200px; background: #1e1e24; overflow: hidden; position: relative;"></div>
         <div class="drawer-video-overlay">
           <i class="material-icons">play_arrow</i>
           <span>Simulated Security Capture Loop</span>
