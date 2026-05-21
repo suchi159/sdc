@@ -28,8 +28,12 @@ const requestHandler = (req, res) => {
     reqUrl = reqUrl.split('#')[0];
   }
 
+  // Determine default HTML based on port
+  const port = req.socket.localPort;
+  const defaultHtml = (port === 3002 || port === 3003) ? 'candidate.html' : 'index.html';
+
   // Handle default route
-  let filePath = path.join(BASE_DIR, reqUrl === '/' ? 'index.html' : reqUrl);
+  let filePath = path.join(BASE_DIR, reqUrl === '/' ? defaultHtml : reqUrl);
   
   // Prevent directory traversal attacks
   if (!filePath.startsWith(BASE_DIR)) {
@@ -40,9 +44,9 @@ const requestHandler = (req, res) => {
 
   fs.stat(filePath, (err, stats) => {
     if (err || !stats.isFile()) {
-      // Return 404 with index.html fallback for SPA router (optional, but let's just return 404 for missing assets or index.html for unknown paths)
+      // Return 404 with appropriate fallback for SPA router
       if (reqUrl !== '/' && !path.extname(reqUrl)) {
-        filePath = path.join(BASE_DIR, 'index.html');
+        filePath = path.join(BASE_DIR, defaultHtml);
       } else {
         res.statusCode = 404;
         res.setHeader('Content-Type', 'text/plain');

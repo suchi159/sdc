@@ -13,7 +13,8 @@ let CANDIDATE_STATE = {
   learningProgress: 68,
   examDate: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
   theme: "light",
-  isExamMode: false
+  isExamMode: false,
+  flowMode: "online" // 'online' or 'in-class'
 };
 
 const PRACTICE_SCORES = [72, 78, 85, 92];
@@ -52,7 +53,17 @@ window.addEventListener("DOMContentLoaded", () => {
       const target = e.currentTarget.getAttribute("data-target");
       if (target) navigateTo(target);
     });
-  });
+  // Init flow mode based on port
+  if (window.location.port === "3003") {
+    CANDIDATE_STATE.flowMode = "in-class";
+  } else {
+    CANDIDATE_STATE.flowMode = "online";
+  }
+
+  const titleEl = document.getElementById("dash-exam-title");
+  if (titleEl) {
+    titleEl.textContent = CANDIDATE_STATE.flowMode === "online" ? "Online AI-Proctored Exam" : "In-Class Proctored Exam";
+  }
 
   // Init values
   updateDashboardValues();
@@ -197,6 +208,14 @@ function switchLearningTab(tabId, btn) {
 // SYSTEM CHECK & EXAM PREP
 // --------------------------------------------------------------------------
 function initSystemCheck() {
+  // Hide AI checks if in-class
+  if (CANDIDATE_STATE.flowMode === "in-class") {
+    const camCheck = document.getElementById("check-cam");
+    const micCheck = document.getElementById("check-mic");
+    if (camCheck) camCheck.style.display = "none";
+    if (micCheck) micCheck.style.display = "none";
+  }
+
   // Reset states
   document.querySelectorAll(".sys-check-item").forEach(item => {
     item.className = "sys-check-item";
@@ -226,7 +245,10 @@ function runSystemCheck() {
   btn.disabled = true;
   btn.innerHTML = `<i class="material-icons spin">sync</i> Validating...`;
 
-  const checks = ["check-cam", "check-mic", "check-net", "check-win"];
+  let checks = ["check-cam", "check-mic", "check-net", "check-win"];
+  if (CANDIDATE_STATE.flowMode === "in-class") {
+    checks = ["check-net", "check-win"];
+  }
   
   checks.forEach((id, index) => {
     setTimeout(() => {
@@ -258,14 +280,24 @@ function startExam() {
   // Hide normal header
   document.getElementById("main-header").classList.add("hidden");
   
+  // Adjust UI based on flow mode
+  if (CANDIDATE_STATE.flowMode === "in-class") {
+    const sidebar = document.getElementById("exam-sidebar-panel");
+    const statusBadge = document.getElementById("exam-status-badge");
+    if (sidebar) sidebar.style.display = "none";
+    if (statusBadge) statusBadge.style.display = "none";
+  }
+
   renderQuestion();
   renderExamNav();
   
   EXAM_TIMER_INTERVAL = setInterval(updateExamTimer, 1000);
   updateExamTimer();
 
-  // Start AI Surveillance Mock
-  startAIPolling();
+  // Start AI Surveillance Mock if online
+  if (CANDIDATE_STATE.flowMode === "online") {
+    startAIPolling();
+  }
 }
 
 function updateExamTimer() {

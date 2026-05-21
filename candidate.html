@@ -232,8 +232,8 @@
         <div class="card card-interactive quick-action-card" data-target="cand-exam-prep">
           <div class="qa-icon" style="background: rgba(179, 38, 30, 0.1); color: var(--err);"><i class="material-icons">verified_user</i></div>
           <div>
-            <div class="qa-title">Final Examination</div>
-            <div class="qa-desc">Complete system checks and enter the live AI-proctored exam environment.</div>
+            <div class="qa-title" id="dash-exam-title">Final Examination</div>
+            <div class="qa-desc">Complete system checks and enter the live exam environment.</div>
           </div>
           <div class="qa-meta" style="color: var(--err);">Pending <span>Validation</span></div>
         </div>
@@ -481,7 +481,7 @@
         
         <div class="exam-timer" id="exam-timer-display">60:00</div>
         
-        <div class="exam-status">
+        <div class="exam-status" id="exam-status-badge">
           <div class="pulse-dot"></div>
           AI Monitor Active
         </div>
@@ -500,7 +500,7 @@
       <div class="exam-body">
         
         <!-- Left Sidebar: Webcam feed & Question Nav -->
-        <div class="exam-sidebar">
+        <div class="exam-sidebar" id="exam-sidebar-panel">
           <div class="exam-cam-preview">
             <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80" style="width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7) contrast(1.2);" alt="Candidate Feed">
             <div class="exam-cam-overlay"></div>
