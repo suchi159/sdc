@@ -1,614 +1,1613 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" data-t="light">
 
 <head>
-  <meta charset="UTF-8">
-  <link rel="icon" href="data:,">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="SecureProctor AI - Candidate Portal for Learning and AI-Proctored Exams">
-  <title>Student Portal - SecureProctor AI</title>
-
-  <!-- Font and Icon Resources -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-
-  <!-- ECharts for Performance Data -->
-  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
-  
-  <!-- Styling -->
-  <link rel="stylesheet" href="candidate.css">
+  <meta charset="UTF-8" />
+  <link rel="icon" href="data:," />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="SDC Candidate Learning Platform" />
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src * data: blob: 'unsafe-inline'; script-src * 'unsafe-inline'; connect-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src *; style-src * 'unsafe-inline';" />
+  <title>Candidate Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=JetBrains+Mono:wght@400;600;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  <link rel="stylesheet" href="candidate.css?v=2.7.0" />
 </head>
 
 <body>
-
-  <!-- ==================== MAIN APPLICATION HEADER ==================== -->
-  <header class="app-header hidden" id="main-header">
+  <!-- HEADER -->
+  <header class="app-header hidden" id="main-header" role="banner">
     <div class="brand">
-      <div class="badge">SP</div>
-      <div>
-        <div class="brand-txt">SecureProctor <span class="ai-pill">Candidate</span></div>
-      </div>
+      <img src="sdc_hat_logo.png" alt="SDC Hat Logo" style="height: 32px; width: auto; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));" onerror="this.onerror=null; this.src=SDC_LOGO_B64;"/>
+      <div class="brand-txt" id="header-app-title">SDC Certification Learning Material - Culinary Institute</div>
     </div>
-
     <div class="header-actions">
-      <button class="icon-btn" data-target="cand-notifications" aria-label="Notifications">
-        <i class="material-icons">notifications</i>
+      <button class="icon-btn theme-toggle" aria-label="Toggle Theme" data-tooltip="Switch Theme">
+        <i class="material-icons" aria-hidden="true">dark_mode</i>
       </button>
-      <button class="icon-btn theme-toggle" aria-label="Toggle Theme">
-        <i class="material-icons">dark_mode</i>
-      </button>
-      <div class="user-profile-sm" data-target="cand-dashboard">
-        <img src="https://ui-avatars.com/api/?name=Alex+Rivera&background=f9ad00&color=fff" alt="Alex Rivera">
-        <div class="user-profile-sm-info">
-          <span class="user-profile-sm-name">Alex Rivera</span>
-          <span class="user-profile-sm-role">CAN-092</span>
-        </div>
-      </div>
     </div>
   </header>
 
-  <!-- ==================== VIEW ROUTER CONTAINER ==================== -->
-
-  <!-- 1. AUTHENTICATION VIEW -->
-  <div id="cand-auth-view" class="view-panel active">
+  <!-- 1. AUTH & EXAM ANCHOR -->
+  <main id="cand-auth-view" class="view-panel active" style="padding-bottom: 0" role="main">
     <div class="auth-bg">
-      <div class="auth-shapes">
-        <div class="auth-shape"></div>
-        <div class="auth-shape"></div>
+      <div class="card anchor-card">
+        <img src="sdc_hat_logo.png" alt="SDC Hat Logo" style="
+              width: 80px;
+              height: auto;
+              margin: 0 auto 24px;
+              display: block;
+            " onerror="this.onerror=null; this.src=SDC_LOGO_B64;"/>
+
+        <div id="login-step">
+          <h1 class="anchor-title" id="login-main-title">Candidate Login</h1>
+          <p class="anchor-subtitle">Access your learning portal.</p>
+          <form onsubmit="handleLogin(event)" novalidate id="login-form">
+            <div class="inp-group">
+              <label class="inp-label" for="login-email">Email Address</label>
+              <div class="inp-wrapper">
+                <i class="material-icons inp-icon" aria-hidden="true">mail</i>
+                <input class="inp" type="email" id="login-email" required placeholder="alex@student.edu"
+                  value="alex@student.edu" aria-describedby="email-error" />
+              </div>
+              <span class="form-error" id="email-error" role="alert">Please enter a valid email.</span>
+            </div>
+            <div class="inp-group">
+              <label class="inp-label" for="login-pass">Password</label>
+              <div class="inp-wrapper">
+                <i class="material-icons inp-icon" aria-hidden="true">lock</i>
+                <input class="inp" type="password" id="login-pass" required placeholder="••••••••" value="demo123"
+                  aria-describedby="pass-error" />
+              </div>
+              <span class="form-error" id="pass-error" role="alert">Password is required.</span>
+            </div>
+            <button type="submit" class="mdbtn btn-filled" id="login-btn" style="width: 100%">
+              <span>Sign In</span>
+              <i class="material-icons" aria-hidden="true">arrow_forward</i>
+            </button>
+          </form>
+        </div>
       </div>
-      <div class="auth-container">
-        <div class="card auth-card">
-          <div class="auth-brand">
-            <div class="badge">SP</div>
+    </div>
+  </main>
+
+  <!-- 2. DASHBOARD -->
+  <main id="cand-home" class="view-panel" tabindex="-1">
+    <div class="content-container">
+      <!-- Dashboard Greeting -->
+      <div style="margin-bottom: 32px">
+        <h1 style="
+              font-size: 28px;
+              font-weight: 800;
+              color: var(--on-sur);
+              margin-bottom: 8px;
+            ">
+          Welcome back, Alex! 👋
+        </h1>
+        <p style="font-size: 15px; color: var(--on-sur-var)">
+          Here is your food safety training overview. Keep up the great work!
+        </p>
+        <p id="time-spent-display" style="font-size: 15px; font-weight: bold; color: var(--pri); margin-top: 8px;">
+          Time spent today: 0h 0m 0s
+        </p>
+      </div>
+
+      <!-- Top Metrics: Combined Exam Scheduler -->
+      <div id="exam-scheduler-container" style="margin-bottom: 32px">
+        <div class="card exam-scheduler-card">
+          <div class="scheduler-top-row">
+            <div class="scheduler-info-block">
+              <div class="scheduler-icon-wrapper">
+                <i class="material-icons">event_available</i>
+              </div>
+              <div class="scheduler-text-details">
+                <div class="scheduler-label">Upcoming Certification Exam</div>
+                <h2 class="scheduler-title">Food Protection Manager Certification</h2>
+                <div class="scheduler-date-subtext">
+                  <i class="material-icons">schedule</i>
+                  <span>Scheduled Date: </span>
+                  <span id="dash-date-display">Aug 15, 2026</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Countdown Pill Badge -->
+            <div class="scheduler-countdown-badge">
+              <i class="material-icons">hourglass_empty</i>
+              <span id="dash-countdown" aria-live="polite">80 Days</span>
+              <span class="scheduler-countdown-sub">Remaining</span>
+            </div>
           </div>
           
-          <div id="login-form-container">
-            <h1 class="auth-title">Candidate Login</h1>
-            <p class="auth-subtitle">Sign in to access your learning materials and upcoming exams.</p>
-            
-            <form onsubmit="handleLogin(event)">
-              <div class="inp-group">
-                <label class="inp-label">Student Email</label>
-                <div class="inp-wrapper">
-                  <i class="material-icons inp-icon">mail</i>
-                  <input class="inp" type="email" required placeholder="alex@student.edu" value="alex@student.edu">
-                </div>
-              </div>
-              <div class="inp-group">
-                <label class="inp-label">Password / Voucher PIN</label>
-                <div class="inp-wrapper">
-                  <i class="material-icons inp-icon">lock</i>
-                  <input class="inp" type="password" required placeholder="••••••••" value="demo123">
-                </div>
-              </div>
-              <button type="submit" class="mdbtn btn-filled" id="login-btn" style="width: 100%; margin-top: 16px;">
-                <span>Secure Sign In</span>
-                <i class="material-icons">arrow_forward</i>
-              </button>
-            </form>
+          <!-- CTA Action Row -->
+          <div class="scheduler-action-row">
+            <div class="scheduler-help-text">
+              <i class="material-icons">info_outline</i>
+              <span>Exam launches automatically when unlocked by your proctor.</span>
+            </div>
+            <button class="mdbtn btn-filled locked-cta-btn" disabled>
+              <i class="material-icons">lock</i>
+              Start Exam (Locked)
+            </button>
           </div>
-
-          <!-- First Login Password Reset Flow -->
-          <div id="reset-form-container" class="hidden">
-            <h1 class="auth-title">Set New Password</h1>
-            <p class="auth-subtitle">For security, please set a new password for your first login.</p>
-            
-            <form onsubmit="handleReset(event)">
-              <div class="inp-group">
-                <label class="inp-label">New Password</label>
-                <div class="inp-wrapper">
-                  <i class="material-icons inp-icon">vpn_key</i>
-                  <input class="inp" type="password" required placeholder="Enter new password">
-                </div>
-              </div>
-              <div class="inp-group" style="margin-top: 32px; background: var(--sur-var); padding: 16px; border-radius: 8px; text-align: left; font-size: 12px; border: 1px solid var(--out-var);">
-                <label style="display: flex; gap: 12px; cursor: pointer; align-items: flex-start;">
-                  <input type="checkbox" required style="margin-top: 2px;">
-                  <span>I agree to the <strong>SecureProctor Exam Guidelines</strong>, <strong>Privacy Policy</strong>, and consent to AI monitoring during exams via webcam and microphone.</span>
-                </label>
-              </div>
-              <button type="submit" class="mdbtn btn-filled" id="reset-btn" style="width: 100%; margin-top: 16px;">
-                <span>Accept & Continue</span>
-                <i class="material-icons">check_circle</i>
-              </button>
-            </form>
-          </div>
-
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- 2. ONBOARDING WALKTHROUGH -->
-  <div id="cand-onboard-view" class="view-panel">
-    <div class="auth-bg">
-      <div class="auth-container" style="max-width: 600px;">
-        <div class="card" style="padding: 40px;">
-          <div class="onboard-carousel">
-            <div class="onboard-slider" id="onboard-slider" style="display: flex; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); width: 400%;">
-              
-              <!-- Slide 1 -->
-              <div class="onboard-slide">
-                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&q=80" alt="Learning" class="onboard-img">
-                <h3>1. Master Your Material</h3>
-                <p>Access your assigned eBooks, video lectures, and study notes directly from your mobile-friendly dashboard. Progress is saved automatically.</p>
+      <!-- Progress and Continue -->
+      <div class="dash-content-grid" style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+          ">
+        <!-- Progress Ring -->
+        <div class="card" tabindex="0" aria-label="Course Progress Ring" style="
+              padding: 32px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+            ">
+          <h3 style="
+                font-size: 16px;
+                font-weight: 700;
+                width: 100%;
+                text-align: left;
+                margin-bottom: 24px;
+              ">
+            Course Progress
+          </h3>
+          <div style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: relative;
+              ">
+            <svg viewBox="0 0 160 160" aria-hidden="true" style="width: 180px; height: 180px">
+              <circle cx="80" cy="80" r="70" style="stroke: var(--out-var); stroke-width: 14; fill: none"></circle>
+              <circle id="main-prog-ring" cx="80" cy="80" r="70" style="
+                    stroke: var(--pri);
+                    stroke-width: 14;
+                    fill: none;
+                    stroke-dasharray: 439.8;
+                    stroke-dashoffset: 439.8;
+                    stroke-linecap: round;
+                    transition: 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+                    transform: rotate(-90deg);
+                    transform-origin: 50% 50%;
+                  "></circle>
+            </svg>
+            <div style="position: absolute; text-align: center">
+              <div id="main-prog-text" style="
+                    font-size: 40px;
+                    font-weight: 800;
+                    color: var(--on-sur);
+                    line-height: 1;
+                  ">
+                0%
               </div>
-
-              <!-- Slide 2 -->
-              <div class="onboard-slide">
-                <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&q=80" alt="Practice" class="onboard-img">
-                <h3>2. Take Practice Tests</h3>
-                <p>Prepare for the final assessment with unlimited practice attempts. Review topic-wise performance to identify weak areas.</p>
+              <div style="
+                    font-size: 12px;
+                    color: var(--on-sur-var);
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
+                    margin-top: 4px;
+                  ">
+                Completed
               </div>
+            </div>
+          </div>
+        </div>
 
-              <!-- Slide 3 -->
-              <div class="onboard-slide">
-                <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400&q=80" alt="Requirements" class="onboard-img">
-                <h3>3. Prepare Your Environment</h3>
-                <p>Final exams require a desktop or laptop. You will need a working webcam, microphone, and a stable internet connection.</p>
+        <div style="display: flex; flex-direction: column; gap: 24px">
+          <!-- Objective -->
+          <div class="card" style="padding: 24px; border-left: 4px solid var(--sec)">
+            <div style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 16px;
+                ">
+              <h3 style="
+                    font-size: 14px;
+                    font-weight: 700;
+                    color: var(--on-sur-var);
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
+                  ">
+                Today's Objective
+              </h3>
+              <div style="
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: #d97706;
+                    background: #fef3c7;
+                    padding: 4px 8px;
+                    border-radius: 12px;
+                  ">
+                2 Day Streak 🔥
               </div>
-
-              <!-- Slide 4 -->
-              <div class="onboard-slide">
-                <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400&q=80" alt="Proctoring" class="onboard-img">
-                <h3>4. AI Proctored Security</h3>
-                <p>During the exam, our AI will monitor your screen, face, and audio to ensure academic integrity. Follow the rules to avoid flags.</p>
+            </div>
+            <div style="display: flex; align-items: flex-start; gap: 16px">
+              <div style="
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    background: #e1f0f9;
+                    color: var(--sec);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-shrink: 0;
+                  ">
+                <i class="material-icons" style="font-size: 20px">flag</i>
               </div>
-
+              <div>
+                <div style="
+                      font-weight: 700;
+                      font-size: 16px;
+                      margin-bottom: 4px;
+                      line-height: 1.4;
+                    ">
+                  Complete Module 01 Audio + 10 questions
+                </div>
+                <div style="font-size: 13px; color: var(--on-sur-var)">
+                  Stay on track for your target exam date.
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="onboard-controls">
-            <button class="mdbtn btn-text" onclick="skipOnboarding()">Skip</button>
-            <div class="onboard-dots">
-              <div class="dot active"></div>
-              <div class="dot"></div>
-              <div class="dot"></div>
-              <div class="dot"></div>
+          <!-- Continue Action -->
+          <div class="continue-card card-interactive" onclick="navigateTo('cand-learn')" tabindex="0" role="button"
+            aria-label="Continue reading The Detailed Guide" style="
+                background: linear-gradient(135deg, var(--pri), #311b92);
+                color: white;
+                padding: 32px 24px;
+                border-radius: 16px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border: none;
+                box-shadow: 0 8px 24px rgba(49, 27, 146, 0.2);
+              ">
+            <div>
+              <span style="
+                    font-size: 12px;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
+                    opacity: 0.8;
+                    margin-bottom: 8px;
+                    display: block;
+                  ">Pick up where you left off</span>
+              <h2 style="
+                    font-size: 20px;
+                    font-weight: 800;
+                    line-height: 1.3;
+                    margin: 0;
+                  ">
+                The Detailed Guide: Ch 1
+              </h2>
             </div>
-            <button class="mdbtn btn-filled" onclick="nextOnboardStep(1)">Next <i class="material-icons">arrow_forward</i></button>
+            <div style="
+                  width: 48px;
+                  height: 48px;
+                  border-radius: 50%;
+                  background: rgba(255, 255, 255, 0.2);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  flex-shrink: 0;
+                  backdrop-filter: blur(4px);
+                ">
+              <i class="material-icons" style="font-size: 28px; color: white" aria-hidden="true">arrow_forward</i>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </main>
 
-  <!-- 3. DASHBOARD -->
-  <div id="cand-dashboard" class="view-panel">
+  <!-- 3. LEARN & AI SEARCH (Mature Curriculum) -->
+  <main id="cand-learn" class="view-panel" tabindex="-1">
     <div class="content-container">
-      <div class="dashboard-header">
-        <h1 class="dashboard-title">Welcome back, Alex.</h1>
-        <p class="dashboard-subtitle">Pick up right where you left off in your learning journey.</p>
+      <!-- 1. Learning Module Header -->
+      <div class="lm-header-card card" style="margin-bottom: 24px; padding: 24px">
+        <div style="
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+              flex-wrap: wrap;
+              gap: 16px;
+              margin-bottom: 24px;
+            ">
+          <div>
+            <h1 style="
+                  font-size: 24px;
+                  font-weight: 800;
+                  margin-bottom: 8px;
+                  line-height: 1.2;
+                ">
+              Food Safety Management Certification
+            </h1>
+            <div style="
+                  font-size: 14px;
+                  color: var(--on-sur-var);
+                  font-weight: 500;
+                ">
+              By Chef Dominic Hawkes MCGB & Daniel John Stine
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 16px">
+            <div style="text-align: right">
+              <div style="font-size: 20px; font-weight: 800; color: var(--sec)">
+                12h 45m
+              </div>
+              <div style="
+                    font-size: 12px;
+                    color: var(--on-sur-var);
+                    font-weight: 600;
+                  ">
+                Total Hours Read
+              </div>
+            </div>
+            <!-- Radial Progress Indicator -->
+            <div style="position: relative; width: 64px; height: 64px">
+              <svg viewBox="0 0 60 60" style="width: 100%; height: 100%; transform: rotate(-90deg)">
+                <circle cx="30" cy="30" r="26" style="fill: none; stroke: var(--out-var); stroke-width: 6"></circle>
+                <circle cx="30" cy="30" r="26" style="
+                      fill: none;
+                      stroke: var(--sec);
+                      stroke-width: 6;
+                      stroke-dasharray: 163.3;
+                      stroke-dashoffset: 49;
+                      stroke-linecap: round;
+                    "></circle>
+              </svg>
+              <div style="
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 13px;
+                    font-weight: 800;
+                    color: var(--sec);
+                  ">
+                70%
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contextual Search -->
+        <div class="ai-search-box" style="margin-bottom: 8px">
+          <label for="lm-search-input" class="sr-only">Search learning material</label>
+          <i class="material-icons ai-search-icon" aria-hidden="true">auto_awesome</i>
+          <input type="text" class="ai-search-input" id="lm-search-input"
+            placeholder="Search this learning material (e.g. 'What is the danger zone?')"
+            aria-label="RAG Semantic Search" />
+          <span class="ai-search-badge" data-tooltip="Retrieval-Augmented Generation">SEARCH</span>
+        </div>
+        <p style="
+              font-size: 12px;
+              color: var(--on-sur-var);
+              margin-left: 16px;
+              font-style: italic;
+            ">
+          Note: This helps in finding only content from this material.
+        </p>
       </div>
 
-      <!-- Hero Course Card -->
-      <div class="card dashboard-hero-card mb-4 card-interactive" data-target="cand-learning">
-        <div class="hero-meta">
-          <div>
-            <div class="course-label">Assigned Course</div>
-            <div class="course-title">Advanced Computer Science (CS101)</div>
-          </div>
-          <span class="status-badge status-success" style="background: rgba(255,255,255,0.2); color: #fff; border:none; backdrop-filter: blur(4px);">Active</span>
-        </div>
-
-        <div class="progress-container">
-          <div class="progress-meta">
-            <span>Learning Progress</span>
-            <span id="dash-days-left">7 Days Left</span>
-          </div>
-          <div class="progress-bar-bg">
-            <div class="progress-bar-fill" id="dash-prog-fill" style="width: 0%;"></div>
-          </div>
-          <div style="font-size: 12px; margin-top: 8px; opacity: 0.8;">68% Completed. Next up: "Module 4 - Tree Traversal"</div>
-        </div>
+      <!-- 2. Resource Navigation Tabs -->
+      <div class="learning-tabs" role="tablist" style="margin-bottom: 24px">
+        <button class="l-tab active" role="tab" onclick="switchLmTab('ebooks')">
+          Ebook
+        </button>
+        <button class="l-tab" role="tab" onclick="switchLmTab('videos')">
+          Video
+        </button>
+        <button class="l-tab" role="tab" onclick="switchLmTab('podcasts')">
+          Podcast
+        </button>
+        <button class="l-tab" role="tab" onclick="switchLmTab('flashcards')">
+          Flashcards
+        </button>
+        <button class="l-tab" role="tab" onclick="switchLmTab('practice')">
+          Practice Test
+        </button>
       </div>
 
-      <!-- Quick Links Grid -->
-      <h3 class="mb-2" style="font-size: 20px;">Quick Access</h3>
-      <div class="grid-3">
-        <!-- Learning -->
-        <div class="card card-interactive quick-action-card" data-target="cand-learning">
-          <div class="qa-icon"><i class="material-icons">menu_book</i></div>
-          <div>
-            <div class="qa-title">Learning Materials</div>
-            <div class="qa-desc">Access eBooks, video lectures, and study notes for your course.</div>
-          </div>
-          <div class="qa-meta" style="color: var(--pri);">12 <span>Items Left</span></div>
-        </div>
-
-        <!-- Practice -->
-        <div class="card card-interactive quick-action-card" data-target="cand-practice">
-          <div class="qa-icon" style="background: var(--sur-var); color: var(--sec);"><i class="material-icons">quiz</i></div>
-          <div>
-            <div class="qa-title">Practice Tests</div>
-            <div class="qa-desc">Take unlimited mock tests to prepare for the final assessment.</div>
-          </div>
-          <div class="qa-meta" style="color: var(--sec);">92% <span>Best Score</span></div>
-        </div>
-
-        <!-- Exam Prep -->
-        <div class="card card-interactive quick-action-card" data-target="cand-exam-prep">
-          <div class="qa-icon" style="background: rgba(179, 38, 30, 0.1); color: var(--err);"><i class="material-icons">verified_user</i></div>
-          <div>
-            <div class="qa-title" id="dash-exam-title">Final Examination</div>
-            <div class="qa-desc">Complete system checks and enter the live exam environment.</div>
-          </div>
-          <div class="qa-meta" style="color: var(--err);">Pending <span>Validation</span></div>
-        </div>
+      <!-- 3. Dynamic Content Card Grid -->
+      <div class="lm-grid-container" id="lm-content-grid" style="
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+          ">
+        <!-- Rendered by JS -->
       </div>
     </div>
-  </div>
+  </main>
 
-  <!-- 4. LEARNING MATERIALS -->
-  <div id="cand-learning" class="view-panel">
+  <!-- 4. PRACTICE & FLASHCARDS -->
+  <main id="cand-practice" class="view-panel" tabindex="-1">
     <div class="content-container">
-      <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 32px;">
-        <button class="icon-btn" data-target="cand-dashboard"><i class="material-icons">arrow_back</i></button>
-        <div>
-          <h1 class="dashboard-title" style="margin-bottom: 0;">Course Materials</h1>
-          <p class="dashboard-subtitle">Advanced Computer Science (CS101)</p>
-        </div>
-      </div>
-
-      <div class="tabs-container">
-        <button class="tab-btn active" onclick="switchLearningTab('all', this)">All Materials</button>
-        <button class="tab-btn" onclick="switchLearningTab('video', this)">Video Lectures</button>
-        <button class="tab-btn" onclick="switchLearningTab('pdf', this)">eBooks & PDFs</button>
+      <div class="section-header">
+        <h1 class="section-title">
+          <i class="material-icons" style="color: var(--pri)">quiz</i>
+          Practice & Readiness
+        </h1>
       </div>
 
       <div class="grid-2">
-        <div class="module-list">
-          <h3 class="mb-2" style="font-size: 16px; color: var(--on-sur-var);">Module 3: Data Structures</h3>
-          
-          <div class="module-item">
-            <div class="module-icon"><i class="material-icons">play_circle_filled</i></div>
-            <div class="module-content">
-              <div class="module-title">Advanced Linked Lists</div>
-              <div class="module-desc">Video lecture covering doubly and circular linked lists.</div>
-              <div class="module-meta">
-                <span><i class="material-icons">schedule</i> 45 mins</span>
-                <span class="status-badge status-success" style="padding: 2px 8px; font-size: 10px;">Completed</span>
-              </div>
+        <!-- Mock Exam -->
+        <div class="card card-interactive" onclick="openMockExam()" tabindex="0" role="button"
+          aria-label="Start Mock Exam 1">
+          <div class="flex-between mb-4">
+            <div class="c-icon" style="background: rgba(249, 173, 0, 0.1); color: var(--pri)">
+              <i class="material-icons">assignment</i>
             </div>
+            <span class="status-badge status-neutral">Adaptive</span>
           </div>
-
-          <div class="module-item">
-            <div class="module-icon" style="color: var(--err);"><i class="material-icons">picture_as_pdf</i></div>
-            <div class="module-content">
-              <div class="module-title">Tree Traversal Algorithms</div>
-              <div class="module-desc">In-depth reading on inorder, preorder, and postorder traversal.</div>
-              <div class="module-meta">
-                <span><i class="material-icons">menu_book</i> 12 Pages</span>
-                <span style="color: var(--pri);"><i class="material-icons">bookmark</i> Last read: pg 4</span>
-              </div>
-            </div>
-            <div class="module-action">
-              <button class="icon-btn"><i class="material-icons">play_arrow</i></button>
-            </div>
-          </div>
-        </div>
-
-        <div class="module-list">
-          <h3 class="mb-2" style="font-size: 16px; color: var(--on-sur-var);">Module 4: Algorithms</h3>
-          
-          <div class="module-item" style="opacity: 0.7;">
-            <div class="module-icon" style="color: var(--err);"><i class="material-icons">picture_as_pdf</i></div>
-            <div class="module-content">
-              <div class="module-title">Sorting & Searching</div>
-              <div class="module-desc">Big O notation, quicksort, mergesort, and binary search.</div>
-              <div class="module-meta">
-                <span><i class="material-icons">menu_book</i> 24 Pages</span>
-                <span>Not started</span>
-              </div>
-            </div>
+          <h2 style="font-size: 18px; margin-bottom: 8px">
+            Full Mock Exam (90 Questions)
+          </h2>
+          <p style="
+                font-size: 13px;
+                color: var(--on-sur-var);
+                margin-bottom: 24px;
+              ">
+            No hints. Locked down simulation matching the actual ACF Manager
+            Exam.
+          </p>
+          <div class="flex-between" style="font-size: 13px; font-weight: 600">
+            <span><i class="material-icons" style="
+                    font-size: 16px;
+                    vertical-align: bottom;
+                    color: var(--out);
+                  ">timer</i>
+              90 Mins</span>
+            <span style="color: var(--sec)">Start Simulation &rarr;</span>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </main>
 
-  <!-- 5. PRACTICE TESTS -->
-  <div id="cand-practice" class="view-panel">
+  <!-- 6. PROFILE & ACCOUNT SETTINGS -->
+  <main id="cand-profile" class="view-panel" tabindex="-1">
+    <div class="content-container" style="max-width: 600px; margin: 0 auto;">
+
+      <!-- Profile Header Card -->
+      <div class="card mb-4" style="display: flex; align-items: center; gap: 20px; padding: 24px;">
+        <div style="width: 68px; height: 68px; border-radius: 50%; background: linear-gradient(135deg, var(--pri), var(--sec)); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 800; flex-shrink: 0; box-shadow: var(--shadow-md);">
+          AR
+        </div>
+        <div style="flex: 1;">
+          <h1 style="font-size: 20px; font-weight: 800; color: var(--on-sur); margin-bottom: 4px;">Alex Rivera</h1>
+          <p style="color: var(--on-sur-var); font-family: var(--font-mono); font-size: 12px;">ID: CAN-092</p>
+        </div>
+        <span class="badge" style="background: var(--suc-container); color: var(--suc); font-size: 12px; padding: 6px 12px;">Active</span>
+      </div>
+
+      <!-- Account Settings Card -->
+      <div class="card mb-4" style="padding: 24px;">
+        <h2 style="font-size: 16px; font-weight: 700; color: var(--on-sur); margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+          <i class="material-icons" style="font-size: 20px; color: var(--pri);">manage_accounts</i>
+          Account Settings
+        </h2>
+
+        <!-- Email Field -->
+        <div class="inp-group" style="margin-bottom: 16px;">
+          <label class="inp-label" for="profile-email" style="font-size: 13px; font-weight: 700;">Email Address</label>
+          <div class="inp-wrapper">
+            <i class="material-icons inp-icon" aria-hidden="true">mail</i>
+            <input class="inp" type="email" id="profile-email" value="alex@student.edu" placeholder="your@email.com" aria-label="Email Address" />
+          </div>
+        </div>
+
+        <!-- New Password Field -->
+        <div class="inp-group" style="margin-bottom: 16px;">
+          <label class="inp-label" for="profile-new-pass" style="font-size: 13px; font-weight: 700;">New Password</label>
+          <div class="inp-wrapper">
+            <i class="material-icons inp-icon" aria-hidden="true">lock</i>
+            <input class="inp" type="password" id="profile-new-pass" placeholder="Enter new password" aria-label="New Password" />
+          </div>
+        </div>
+
+        <!-- Confirm Password Field -->
+        <div class="inp-group" style="margin-bottom: 24px;">
+          <label class="inp-label" for="profile-confirm-pass" style="font-size: 13px; font-weight: 700;">Confirm Password</label>
+          <div class="inp-wrapper">
+            <i class="material-icons inp-icon" aria-hidden="true">lock_reset</i>
+            <input class="inp" type="password" id="profile-confirm-pass" placeholder="Re-enter new password" aria-label="Confirm Password" />
+          </div>
+        </div>
+
+        <button class="mdbtn btn-filled" onclick="saveProfileChanges()" style="width: 100%;">
+          <i class="material-icons" style="font-size: 18px;">save</i> Save Changes
+        </button>
+      </div>
+
+
+    </div>
+  </main>
+
+  <!-- BOTTOM NAVIGATION -->
+  <nav class="bottom-nav hidden" id="main-nav" role="navigation" aria-label="Main Navigation">
+    <button class="nav-item active" data-target="cand-home" tabindex="0" aria-current="page">
+      <i class="material-icons">dashboard</i><span>Home</span>
+    </button>
+    <button class="nav-item" data-target="cand-learn" tabindex="0">
+      <i class="material-icons">menu_book</i><span>Learning Materials</span>
+    </button>
+    <button class="nav-item" data-target="cand-practice" tabindex="0">
+      <i class="material-icons">quiz</i><span>Practice</span>
+    </button>
+
+    <button class="nav-item" data-target="cand-certs" tabindex="0" aria-label="My Certificates">
+      <i class="material-icons">workspace_premium</i><span>Certificates</span>
+    </button>
+
+    <button class="nav-item" data-target="cand-profile" tabindex="0">
+      <i class="material-icons">person</i><span>Profile</span>
+    </button>
+
+    <!-- Logout ghost button at bottom of nav -->
+    <button class="nav-logout-btn" onclick="handleLogout()" tabindex="0" aria-label="Sign Out">
+      <i class="material-icons">logout</i><span>Sign Out</span>
+    </button>
+  </nav>
+
+  <!-- ==================== MY CERTIFICATES VIEW ==================== -->
+  <main id="cand-certs" class="view-panel" tabindex="-1">
     <div class="content-container">
-      <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 32px;">
-        <button class="icon-btn" data-target="cand-dashboard"><i class="material-icons">arrow_back</i></button>
+      <!-- Page Header -->
+      <div style="margin-bottom: 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
         <div>
-          <h1 class="dashboard-title" style="margin-bottom: 0;">Practice Tests</h1>
-          <p class="dashboard-subtitle">Take unlimited mock tests to assess your readiness.</p>
+          <h1 style="font-size: 28px; font-weight: 800; color: var(--on-sur); margin-bottom: 6px;">My Certificates</h1>
+          <p style="font-size: 14px; color: var(--on-sur-var);">Your earned credentials, verified and ready to share.</p>
+        </div>
+        <span class="badge" style="background: var(--suc-container); color: var(--suc); font-size: 14px; padding: 8px 16px; border-radius: 20px;">
+          <i class="material-icons" style="font-size: 16px; vertical-align: middle; margin-right: 4px;">verified</i>1 Active
+        </span>
+      </div>
+
+      <!-- Credential Card Grid -->
+      <div class="cred-card-grid">
+        <!-- CARD 1 -->
+        <div class="cred-card" id="cred-card-1" role="article" aria-label="Food Safety Manager Certificate">
+          <!-- Mobile triple-dot menu -->
+          <button class="cred-mobile-menu-btn" onclick="openCredMobileSheet('cred-card-1')" aria-label="Certificate options">
+            <i class="material-icons">more_vert</i>
+          </button>
+
+          <!-- Card Body -->
+          <div class="cred-card-icon">
+            <i class="material-icons" style="font-size: 40px; color: white;">workspace_premium</i>
+          </div>
+          <div class="cred-card-body">
+            <h3 class="cred-card-title">Food Safety Manager</h3>
+            <div class="cred-card-ref">SDC-ACF-2026-04827193</div>
+            <span class="cred-pass-badge">✓ Pass</span>
+          </div>
+
+          <!-- Hover Dock (desktop) -->
+          <div class="cred-hover-dock" role="toolbar" aria-label="Quick actions">
+            <button class="cred-dock-btn" onclick="credCopyLink(this)" title="Copy Verification Link" aria-label="Copy verification link">
+              <i class="material-icons">link</i>
+              <span>Copy Link</span>
+            </button>
+            <button class="cred-dock-btn" onclick="credShareLinkedIn()" title="Share to LinkedIn" aria-label="Share to LinkedIn" style="color: #0077B5;">
+              <i class="material-icons" style="color: #0077B5; font-size: 18px;">work</i>
+              <span>LinkedIn</span>
+            </button>
+            <button class="cred-dock-btn" onclick="credDownloadPDF(this)" title="Download PDF" aria-label="Download PDF certificate">
+              <i class="material-icons">picture_as_pdf</i>
+              <span>Download</span>
+            </button>
+            <button class="cred-dock-btn" onclick="openCredentialHub()" title="View Full Hub" aria-label="Open Credential Hub" style="color: var(--pri);">
+              <i class="material-icons">open_in_new</i>
+              <span>View Hub</span>
+            </button>
+          </div>
         </div>
       </div>
 
-      <div class="grid-2">
-        <div class="card">
-          <h3 class="mb-4">Available Mock Tests</h3>
+      <!-- Empty state placeholder (shown if no certs) -->
+      <div class="cred-empty" id="cred-empty-state" style="display: none;">
+        <i class="material-icons" style="font-size: 64px; color: var(--on-sur-var); margin-bottom: 16px;">workspace_premium</i>
+        <h3 style="font-size: 18px; font-weight: 700; color: var(--on-sur); margin-bottom: 8px;">No Certificates Yet</h3>
+        <p style="color: var(--on-sur-var);">Complete your exam to earn your first credential.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==================== CREDENTIAL DETAIL HUB OVERLAY ==================== -->
+  <div id="credential-hub-overlay" class="reader-view" role="dialog" aria-modal="true" aria-label="Credential Hub" style="background: #f4f6fb; overflow-y: auto; display: flex; flex-direction: column;">
+    
+    <!-- Hub Header -->
+    <div class="reader-header" style="background: var(--sur); border-bottom: 3px solid var(--pri); padding: 0 20px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <button class="icon-btn" onclick="closeCredentialHub()" aria-label="Back to Certificates">
+          <i class="material-icons">arrow_back</i>
+        </button>
+        <span style="font-weight: 700; font-size: 16px; color: var(--on-sur);">Credential Hub</span>
+      </div>
+      <span class="badge" style="background: var(--suc-container); color: var(--suc); margin-right: 32px;">Active · Verified</span>
+    </div>
+
+    <!-- Hub Body: 2-Column Layout -->
+    <div class="cred-hub-body">
+
+      <!-- LEFT COLUMN: Visual Proof Viewport -->
+      <div class="cred-hub-left">
+        <!-- 3-way toggle -->
+        <div class="cred-seg-toggle" role="tablist" aria-label="Credential View Selector">
+          <button class="cred-seg-btn active" role="tab" aria-selected="true" onclick="switchCredView('certificate', this)" id="seg-tab-cert">Certificate</button>
+          <button class="cred-seg-btn" role="tab" aria-selected="false" onclick="switchCredView('badge', this)" id="seg-tab-badge">Digital Badge</button>
+          <button class="cred-seg-btn" role="tab" aria-selected="false" onclick="switchCredView('web', this)" id="seg-tab-web">Web Preview</button>
+        </div>
+
+        <!-- Viewer Window -->
+        <div class="cred-viewer-window" id="cred-viewer-window">
           
-          <div class="module-item mb-2" style="border-color: var(--pri);">
-            <div class="module-icon" style="background: var(--pri-con); color: var(--pri);"><i class="material-icons">assignment</i></div>
-            <div class="module-content">
-              <div class="module-title">Comprehensive CS101 Mock</div>
-              <div class="module-desc">Full length mock test mirroring the final exam format.</div>
-              <div class="module-meta">
-                <span><i class="material-icons">format_list_numbered</i> 50 Qs</span>
-                <span><i class="material-icons">timer</i> 60 mins</span>
+          <!-- Certificate View -->
+          <div id="cred-view-certificate" class="cred-view-pane active">
+            <div class="cred-cert-frame">
+              <div class="cred-cert-inner">
+                <div class="cred-cert-top-row">
+                  <div class="cred-cert-logo-area">
+                    <img src="sdc_hat_logo.png" style="height: 36px;" alt="SDC Logo" onerror="this.onerror=null; this.src=SDC_LOGO_B64;"/>
+                    <div>
+                      <div style="font-weight: 800; font-size: 13px; color: #1a3a6b;">SDC Certifications</div>
+                      <div style="font-size: 10px; color: #4a7ab5; font-weight: 600;">ACF Manager Exam</div>
+                    </div>
+                  </div>
+                  <div style="text-align: right; font-size: 10px; color: #4a7ab5; font-weight: 600; line-height: 1.6;">
+                    <div>AMERICAN CULINARY</div><div>FEDERATION</div>
+                  </div>
+                </div>
+                <div class="cred-cert-divider"></div>
+                <div style="text-align: center; font-size: 11px; color: #4a7ab5; font-weight: 700; letter-spacing: 0.1em; margin-bottom: 4px;">THIS IS TO CERTIFY THAT</div>
+                <div style="text-align: center; font-family: Georgia, serif; font-size: 32px; font-weight: 700; color: #1a3a6b; margin: 4px 0;">Daniel R. Stine</div>
+                <div class="cred-cert-divider"></div>
+                <div style="text-align: center; font-size: 11px; color: #555; line-height: 1.6; margin: 12px 0;">has successfully completed the requirements of the</div>
+                <div style="text-align: center; font-weight: 800; font-size: 15px; color: #1a3a6b; line-height: 1.4;">American Culinary Federation<br>Food Safety Manager Certification Exam</div>
+                <div style="font-size: 10px; color: #777; text-align: center; margin: 12px 0; line-height: 1.5;">Administered by SDC Certifications in cooperation with the American Culinary Federation, and accredited by ANSI.</div>
+                <div class="cred-cert-footer">
+                  <div>
+                    <div style="font-size: 10px; color: #4a7ab5; font-weight: 700;">CERTIFICATE NUMBER</div>
+                    <div style="font-size: 11px; font-weight: 800; color: #1a3a6b; font-family: monospace;">SDC-ACF-2026-04827193</div>
+                  </div>
+                  <div style="text-align: center;">
+                    <div class="cred-cert-seal">✓</div>
+                    <div style="font-size: 9px; color: #4a7ab5; font-weight: 700;">CERTIFIED</div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-size: 10px; color: #4a7ab5; font-weight: 700;">DATE OF EXPIRATION</div>
+                    <div style="font-size: 11px; font-weight: 800; color: #1a3a6b;">April 14, 2031</div>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div class="module-action">
-              <button class="mdbtn btn-tonal" onclick="showToast('Mock test starting...')">Start</button>
             </div>
           </div>
 
-          <div class="module-item">
-            <div class="module-icon" style="background: var(--sur-var); color: var(--sec);"><i class="material-icons">assignment</i></div>
-            <div class="module-content">
-              <div class="module-title">Module 3 Pop Quiz</div>
-              <div class="module-desc">Short quiz focused purely on Data Structures.</div>
-              <div class="module-meta">
-                <span><i class="material-icons">format_list_numbered</i> 15 Qs</span>
-                <span><i class="material-icons">timer</i> 15 mins</span>
+          <!-- Digital Badge View -->
+          <div id="cred-view-badge" class="cred-view-pane" style="display: none;">
+            <div class="cred-badge-frame">
+              <div class="cred-badge-bg">
+                <div class="cred-badge-watermark">SDC CERTIFICATIONS ACF MANAGER EXAM AUTHENTIC</div>
+                <div class="cred-badge-shield">
+                  <div class="cred-badge-header-row">
+                    <img src="sdc_hat_logo.png" style="height: 28px; filter: brightness(10);" alt="SDC Logo" onerror="this.onerror=null; this.src=SDC_LOGO_B64;"/>
+                    <div style="color: white; font-size: 10px; font-weight: 700; line-height: 1.3; text-align: right;">SDC Certifications<br><em>ACF Manager Exam</em></div>
+                  </div>
+                  <div style="color: rgba(255,255,255,0.8); font-size: 10px; letter-spacing: 0.1em; font-weight: 700; text-align: center; margin-top: 20px;">AMERICAN CULINARY FEDERATION</div>
+                  <div style="color: white; font-size: 20px; font-weight: 800; text-align: center; line-height: 1.3; margin: 8px 0; font-style: italic;">Food Safety Manager<br>Certification Exam</div>
+                  <div style="color: rgba(255,255,255,0.8); font-size: 10px; letter-spacing: 0.12em; font-weight: 700; text-align: center;">CERTIFIED PROFESSIONAL</div>
+                  <div class="cred-badge-seal-circle">
+                    <i class="material-icons" style="font-size: 28px; color: white;">restaurant</i>
+                    <div style="font-size: 9px; color: white; font-weight: 700; letter-spacing: 0.05em;">ACF</div>
+                  </div>
+                </div>
+                <div class="cred-badge-ribbon">
+                  <div style="font-size: 9px; color: white; font-weight: 700; letter-spacing: 0.1em; text-align: center;">AWARDED TO</div>
+                  <div style="font-size: 18px; font-style: italic; font-weight: 800; color: white; text-align: center; font-family: Georgia, serif;">Daniel R. Stine</div>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 8px 16px; font-size: 9px; color: rgba(255,255,255,0.6);">
+                  <span>SDC-ACF-2026-04827193</span><span>EXP April 14, 2031</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Web Preview View -->
+          <div id="cred-view-web" class="cred-view-pane" style="display: none;">
+            <div class="cred-web-preview-frame">
+              <div class="cred-web-header">
+                <img src="sdc_hat_logo.png" style="height: 24px; filter: brightness(10);" alt="SDC Logo" onerror="this.onerror=null; this.src=SDC_LOGO_B64;"/>
+                <div style="color: white;">
+                  <div style="font-size: 11px; font-weight: 600;">SDC CERTIFICATIONS</div>
+                  <div style="font-size: 9px; opacity: 0.7;"><em>American Culinary Federation</em></div>
+                </div>
+              </div>
+              <div class="cred-web-profile">
+                <div style="font-size: 9px; color: rgba(255,255,255,0.7); letter-spacing: 0.1em; text-transform: uppercase;">AMERICAN CULINARY FEDERATION</div>
+                <div style="font-size: 10px; color: rgba(255,255,255,0.7);">FOOD SAFETY MANAGER CERTIFICATION EXAM</div>
+                <div style="font-size: 22px; font-weight: 800; color: white; font-family: Georgia, serif; margin: 6px 0;">Daniel R. Stine</div>
+                <div style="display: flex; gap: 16px; margin-top: 8px;">
+                  <div><div style="font-size: 9px; color: rgba(255,255,255,0.6);">EXPIRES</div><div style="font-size: 13px; font-weight: 700; color: white;">April 14, 2031</div></div>
+                  <div><div style="font-size: 9px; color: rgba(255,255,255,0.6);">STATUS</div><div style="font-size: 13px; font-weight: 700; color: #7ed07e;">● ACTIVE</div></div>
+                </div>
+              </div>
+              <div class="cred-web-body">
+                <div style="font-size: 9px; color: var(--on-sur-var); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px;">CERTIFICATE NUMBER</div>
+                <div style="font-size: 11px; font-weight: 800; font-family: monospace; color: var(--on-sur); margin-bottom: 12px;">SDC-ACF-2026-04827193</div>
+                <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+                  <div><div style="font-size: 9px; color: var(--on-sur-var); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">EXAM FORM</div><div style="font-size: 11px; font-weight: 700; color: var(--on-sur);">ACFM-2026-A</div></div>
+                  <div><div style="font-size: 9px; color: var(--on-sur-var); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">DATE OF EXAM</div><div style="font-size: 11px; font-weight: 700; color: var(--on-sur);">April 14, 2026</div></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 16px;">
+                  <!-- QR Code mock -->
+                  <div style="width: 72px; height: 72px; border: 2px solid var(--out-var); border-radius: 4px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; padding: 6px; background: white;">
+                    <div style="grid-column: 1/4; grid-row: 1/4; background: #000; border-radius: 1px;"></div>
+                    <div style="grid-column: 5/8; grid-row: 1/4; background: #000; border-radius: 1px;"></div>
+                    <div style="grid-column: 1/4; grid-row: 5/8; background: #000; border-radius: 1px;"></div>
+                    <div style="grid-column: 5; grid-row: 4; background: #000;"></div>
+                    <div style="grid-column: 6; grid-row: 5; background: #000;"></div>
+                    <div style="grid-column: 7; grid-row: 6; background: #000;"></div>
+                    <div style="grid-column: 5; grid-row: 7; background: #000;"></div>
+                  </div>
+                  <div>
+                    <div style="font-size: 9px; color: var(--on-sur-var); font-weight: 700; text-align: center; text-transform: uppercase;">SCAN TO VERIFY</div>
+                    <div class="cred-web-seal">
+                      <i class="material-icons" style="font-size: 20px; color: white;">check_circle</i>
+                      <div style="font-size: 8px; color: white; font-weight: 700;">ACF</div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="card">
-          <h3 class="mb-4">Performance History</h3>
-          <div style="height: 200px; display: flex; align-items: flex-end; gap: 16px; padding: 24px; background: var(--sur-var); border-radius: 12px; border: 1px solid var(--glass-border);">
-            <!-- Mock Bar Chart -->
-            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-              <div style="width: 100%; background: var(--pri); border-radius: 4px 4px 0 0; height: 40%; opacity: 0.5;"></div>
-              <span style="font-size: 11px; font-weight: 600;">Att 1</span>
+        <!-- Verification Link -->
+        <div class="cred-verify-bar">
+          <span class="cred-verify-url" id="cred-verify-url">https://verify.sdccertifications.com/SDC-ACF-2026-04827193</span>
+          <button class="cred-copy-btn" onclick="credCopyVerifyLink(this)" aria-label="Copy verification link">
+            <i class="material-icons" style="font-size: 16px;">content_copy</i> Copy
+          </button>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: Executive Utilities Panel -->
+      <div class="cred-hub-right">
+        <!-- Status Box -->
+        <div class="cred-status-box">
+          <div class="cred-status-item"><span class="cred-status-label">Score</span><span class="cred-status-value" style="color: var(--suc);">100%</span></div>
+          <div class="cred-status-divider"></div>
+          <div class="cred-status-item"><span class="cred-status-label">Issued</span><span class="cred-status-value">May 14, 2026</span></div>
+          <div class="cred-status-divider"></div>
+          <div class="cred-status-item"><span class="cred-status-label">Expires</span><span class="cred-status-value">May 14, 2031</span></div>
+        </div>
+
+        <!-- Action Button Stack -->
+        <div class="cred-action-stack">
+          <!-- LinkedIn Primary -->
+          <button class="cred-linkedin-btn" onclick="credShareLinkedIn()" id="cred-linkedin-btn" aria-label="Add to LinkedIn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            <span>Add to LinkedIn</span>
+          </button>
+
+          <!-- Download PDF -->
+          <button class="cred-action-btn" onclick="credDownloadPDF(this)" id="cred-dl-pdf-btn" aria-label="Download PDF Certificate">
+            <i class="material-icons">picture_as_pdf</i>
+            <span>Download PDF Certificate</span>
+          </button>
+
+          <!-- Download Badge -->
+          <button class="cred-action-btn" onclick="credDownloadBadge(this)" id="cred-dl-badge-btn" aria-label="Download Badge Image">
+            <i class="material-icons">download</i>
+            <span>Download High-Res Badge</span>
+          </button>
+        </div>
+
+        <!-- Wallet Row -->
+        <div class="cred-wallet-row">
+          <div class="cred-wallet-label">Save to Device</div>
+          <div class="cred-wallet-chips">
+            <button class="cred-wallet-chip apple" onclick="credAddAppleWallet()" aria-label="Add to Apple Wallet">
+              <svg viewBox="0 0 165.521 165.521" width="20" height="20" fill="white"><path d="M150.379 118.024a90.28 90.28 0 0 1-8.924 16.013c-4.695 6.686-8.534 11.313-11.493 13.881-4.59 4.223-9.508 6.383-14.785 6.504-3.785 0-8.353-1.078-13.671-3.262-5.335-2.176-10.235-3.254-14.714-3.254-4.694 0-9.724 1.078-15.091 3.254-5.374 2.184-9.705 3.323-13.019 3.443-5.066.216-10.107-2.005-15.122-6.685-3.218-2.806-7.226-7.596-12.013-14.373-5.155-7.22-9.386-15.596-12.696-25.144-3.539-10.296-5.311-20.269-5.311-29.92 0-11.066 2.392-20.604 7.184-28.58 3.764-6.418 8.768-11.478 15.032-15.184 6.263-3.706 13.03-5.598 20.314-5.72 3.986 0 9.21 1.231 15.697 3.651 6.469 2.427 10.618 3.658 12.43 3.658 1.36 0 5.971-1.439 13.797-4.308 7.393-2.661 13.631-3.763 18.74-3.32 13.846 1.117 24.249 6.578 31.163 16.419-12.383 7.502-18.51 18.012-18.387 31.497.112 10.497 3.923 19.228 11.41 26.158 3.396 3.225 7.192 5.718 11.414 7.483-.915 2.654-1.881 5.195-2.956 7.647zM114.661 3.319c0 8.224-3.004 15.901-8.993 23.006-7.226 8.449-15.965 13.333-25.43 12.565a25.64 25.64 0 0 1-.191-3.134c0-7.891 3.436-16.34 9.537-23.246 3.046-3.498 6.916-6.406 11.607-8.724 4.683-2.285 9.108-3.548 13.268-3.77.122 1.1.202 2.205.202 3.303z"/></svg>
+              <span style="font-size: 11px; font-weight: 700; line-height: 1.2;">Add to<br><strong style="font-size: 13px;">Apple Wallet</strong></span>
+            </button>
+            <button class="cred-wallet-chip google" onclick="credAddGoogleWallet()" aria-label="Add to Google Wallet">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><path d="M12 0C5.372 0 0 5.373 0 12s5.372 12 12 12 12-5.373 12-12S18.628 0 12 0z" fill="#4285F4"/><path d="M12 6.545c1.618 0 2.727.703 3.355 1.29l2.472-2.41C16.345 4.067 14.4 3.272 12 3.272c-3.763 0-7.011 2.181-8.6 5.368l2.883 2.237C7.127 8.4 9.332 6.545 12 6.545z" fill="#EA4335"/><path d="M23.49 12.273c0-.814-.072-1.6-.208-2.355H12v4.455h6.451c-.278 1.5-1.12 2.773-2.39 3.628l3.668 2.845c2.146-1.979 3.761-4.9 3.761-8.573z" fill="#4285F4"/><path d="M3.392 14.327A8.617 8.617 0 0 1 3 12a8.645 8.645 0 0 1 .392-2.327L.51 7.437A11.907 11.907 0 0 0 0 12c0 1.64.271 3.218.51 4.563l2.882-2.236z" fill="#FBBC05"/><path d="M12 20.727c2.392 0 4.4-.791 5.868-2.149l-2.865-2.223a7.237 7.237 0 0 1-3.003.645c-2.668 0-4.873-1.855-5.718-4.327L3.4 14.91C4.989 18.1 8.237 20.727 12 20.727z" fill="#34A853"/></svg>
+              <span style="font-size: 11px; font-weight: 700; color: white; line-height: 1.2;">Add to<br><strong style="font-size: 13px;">Google Wallet</strong></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Open Badge JSON-LD Accordion -->
+        <div class="cred-accordion" id="cred-jsonld-accordion">
+          <div class="cred-accordion-header" onclick="toggleCredAccordion()">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <i class="material-icons" style="font-size: 18px; color: var(--on-sur-var);">code</i>
+              <span style="font-size: 13px; font-weight: 700; color: var(--on-sur);">Open Badge 2.0 Compliance Schema</span>
             </div>
-            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-              <div style="width: 100%; background: var(--pri); border-radius: 4px 4px 0 0; height: 60%; opacity: 0.6;"></div>
-              <span style="font-size: 11px; font-weight: 600;">Att 2</span>
-            </div>
-            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-              <div style="width: 100%; background: var(--pri); border-radius: 4px 4px 0 0; height: 85%; opacity: 0.8;"></div>
-              <span style="font-size: 11px; font-weight: 600;">Att 3</span>
-            </div>
-            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-              <div style="width: 100%; background: var(--suc); border-radius: 4px 4px 0 0; height: 92%;"></div>
-              <span style="font-size: 11px; font-weight: 600;">Att 4</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <button class="cred-copy-schema-btn" onclick="event.stopPropagation(); credCopySchema(this)" aria-label="Copy schema without opening">
+                <i class="material-icons" style="font-size: 14px;">content_copy</i> Copy Schema
+              </button>
+              <i class="material-icons cred-accordion-chevron" style="font-size: 20px; color: var(--on-sur-var); transition: transform 0.3s;">expand_more</i>
             </div>
           </div>
-          <div class="text-center mt-2" style="font-size: 13px; font-weight: 600;">Current Readiness: <span style="color: var(--suc);">High</span></div>
+          <div class="cred-accordion-body" id="cred-accordion-body" style="display: none;">
+            <pre class="cred-json-block" id="cred-json-content">{
+  "@context": "https://w3id.org/openbadges/v2",
+  "@type": "Assertion",
+  "id": "https://verify.sdccertifications.com/SDC-ACF-2026-04827193",
+  "recipient": {
+    "type": "email",
+    "identity": "sha256$abc123...",
+    "hashed": true
+  },
+  "badge": {
+    "@type": "BadgeClass",
+    "id": "https://sdccertifications.com/badges/food-safety-manager",
+    "name": "Food Safety Manager Certification",
+    "description": "ACF Food Safety Manager Certification issued by SDC Certifications",
+    "image": "https://sdccertifications.com/badges/food-safety-manager.png",
+    "criteria": { "narrative": "Pass the Food Safety Manager Exam with ≥75%" },
+    "issuer": {
+      "@type": "Profile",
+      "id": "https://sdccertifications.com",
+      "name": "SDC Certifications",
+      "url": "https://sdccertifications.com",
+      "email": "support@sdccertifications.com"
+    }
+  },
+  "issuedOn": "2026-05-14T00:00:00Z",
+  "expires": "2031-05-14T00:00:00Z",
+  "verification": { "type": "hosted" }
+}</pre>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 6. EXAM PREPARATION / SYSTEM CHECK -->
-  <div id="cand-exam-prep" class="view-panel">
-    <div class="content-container" style="max-width: 800px;">
-      <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 32px;">
-        <button class="icon-btn" data-target="cand-dashboard"><i class="material-icons">arrow_back</i></button>
-        <div>
-          <h1 class="dashboard-title" style="margin-bottom: 0;">Final Examination</h1>
-          <p class="dashboard-subtitle">Pre-exam validation and system checks.</p>
+  <!-- MOBILE BOTTOM SHEET FOR CERT CARD -->
+  <div id="cred-mobile-sheet" class="cred-mobile-sheet-overlay" onclick="closeCredMobileSheet()" role="dialog" aria-modal="true" aria-label="Certificate Options">
+    <div class="cred-mobile-sheet-panel" onclick="event.stopPropagation()">
+      <div class="cred-mobile-sheet-handle"></div>
+      <h4 style="font-size: 16px; font-weight: 700; padding: 0 16px 16px; color: var(--on-sur);">Certificate Actions</h4>
+      <button class="cred-sheet-item" onclick="credCopyLink(this); closeCredMobileSheet();">
+        <i class="material-icons" style="color: var(--pri);">link</i>
+        <span>Copy Verification Link</span>
+      </button>
+      <button class="cred-sheet-item" onclick="credShareLinkedIn(); closeCredMobileSheet();" style="color: #0077B5;">
+        <i class="material-icons" style="color: #0077B5; font-size: 20px;">work</i>
+        <span>Share to LinkedIn</span>
+      </button>
+      <button class="cred-sheet-item" onclick="credDownloadPDF(this); closeCredMobileSheet();">
+        <i class="material-icons" style="color: var(--err);">picture_as_pdf</i>
+        <span>Download PDF</span>
+      </button>
+      <button class="cred-sheet-item" onclick="openCredentialHub(); closeCredMobileSheet();">
+        <i class="material-icons" style="color: var(--sec);">open_in_new</i>
+        <span>View Full Credential Hub</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast-container" style="position: fixed; top: 72px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none;"></div>
+
+  <!-- ==================== OVERLAYS & MODALS ==================== -->
+
+  <!-- NOTE CRUD MODAL -->
+  <div class="modal-overlay" id="note-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-content">
+      <h2 id="modal-title" class="mb-4" style="font-size: 18px">Add Note</h2>
+      <div class="inp-group">
+        <label class="inp-label" for="note-topic">Topic / Context</label>
+        <input type="text" id="note-topic" class="inp" placeholder="e.g. Domain 2" tabindex="0" />
+      </div>
+      <div class="inp-group">
+        <label class="inp-label" for="note-body">Note Details</label>
+        <textarea id="note-body" class="inp" rows="4" placeholder="Write your note here..." tabindex="0"></textarea>
+      </div>
+      <div class="flex-between mt-4">
+        <button class="mdbtn btn-outlined" onclick="closeNoteModal()" tabindex="0">
+          Cancel
+        </button>
+        <button class="mdbtn btn-filled" onclick="saveNote()" tabindex="0">
+          Save Note
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- READER OVERLAY -->
+  <!-- READER OVERLAY -->
+  <div id="reader-overlay" class="reader-view" role="dialog" aria-modal="true" aria-label="Document Reader">
+    <div class="reader-wrapper">
+      <!-- Collapsible Table of Contents Sidebar -->
+      <aside class="toc-sidebar" id="reader-toc-sidebar" aria-label="Table of Contents">
+        <div class="toc-header">
+
+          <span class="toc-title">Table of Contents</span>
+          <button class="icon-btn" onclick="toggleTOC()" aria-label="Collapse Table of Contents">
+            <i class="material-icons">chevron_left</i>
+          </button>
+        </div>
+        <ul class="toc-list" id="reader-toc-list">
+          <!-- Loaded dynamically -->
+        </ul>
+      </aside>
+
+      <!-- Main Reading Well -->
+      <main class="reading-well">
+        <!-- Header -->
+        <header class="reader-header">
+          <!-- Left CTAs -->
+          <div style="flex: 1; display: flex; align-items: center; justify-content: flex-start; gap: 8px">
+            <button class="icon-btn" id="toc-toggle-btn" onclick="toggleTOC()" aria-label="Toggle Table of Contents">
+              <i class="material-icons">menu</i>
+            </button>
+          </div>
+          <!-- Center Title -->
+          <div style="flex: 2; text-align: center; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--on-sur); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="reader-title">
+            Loading...
+          </div>
+          <!-- Right Tools & Exit -->
+          <div style="flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 12px">
+            <div style="
+                  display: flex;
+                  background: var(--sur-var);
+                  border-radius: 4px;
+                  padding: 2px;
+                  border: 1px solid var(--out-var);
+                " aria-label="Font Size Controls">
+              <button class="icon-btn" style="width: 28px; height: 28px; font-size: 12px; border-radius: 2px;" onclick="setReaderFontSize(16)" aria-label="Small font (16px)">A</button>
+              <button class="icon-btn" style="width: 28px; height: 28px; font-size: 14px; border-radius: 2px;" onclick="setReaderFontSize(20)" aria-label="Medium font (20px)">A</button>
+              <button class="icon-btn" style="width: 28px; height: 28px; font-size: 16px; border-radius: 2px;" onclick="setReaderFontSize(24)" aria-label="Large font (24px)">A</button>
+            </div>
+            <button class="btn btn-outlined" onclick="toggleAIDrawer()" style="display: flex; align-items: center; gap: 8px; margin-right: 8px;">
+              <i class="material-icons" style="font-size: 18px">assistant</i> Ask AI / Notes
+            </button>
+            <button class="icon-btn" onclick="closeReader()" aria-label="Exit Reader" style="color: var(--err);">
+              <i class="material-icons">close</i>
+            </button>
+          </div>
+        </header>
+
+        <!-- Content Area (Textbook Well) -->
+        <div class="reader-content-wrap">
+          <article class="textbook-canvas" id="reader-pdf" tabindex="0" aria-label="Textbook Page Content">
+            <!-- Loaded dynamically via JS -->
+          </article>
+        </div>
+
+        <!-- Pagination & Jump Footer -->
+        <footer style="
+              background: var(--sur);
+              border-top: 1px solid var(--glass-border);
+              padding: 12px 24px;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              z-index: 10;
+            ">
+          <div style="display: flex; align-items: center; gap: 8px">
+            <button class="icon-btn" onclick="readerPage(-1)" aria-label="Previous Page">
+              <i class="material-icons">chevron_left</i>
+            </button>
+            <span style="
+                  font-size: 13px;
+                  font-weight: 600;
+                  font-family: var(--font-mono);
+                  color: #fff;
+                " id="reader-page-indicator">Pg 1 / 1</span>
+            <button class="icon-btn" onclick="readerPage(1)" aria-label="Next Page">
+              <i class="material-icons">chevron_right</i>
+            </button>
+          </div>
+          <!-- Page Jump Input -->
+          <div style="
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 13px;
+                color: var(--on-sur-var);
+              ">
+            <label for="page-jump-input">Go to page:</label>
+            <input type="number" id="page-jump-input" class="neumorphic-input"
+              style="width: 60px; padding: 4px 8px; text-align: center; color: #1c1c1c;" min="1" onkeydown="
+                  if (event.key === 'Enter')
+                    jumpToReaderPage(parseInt(this.value));
+                " />
+          </div>
+          <!-- Progress bar -->
+          <div style="width: 200px; display: flex; align-items: center; gap: 8px">
+            <div style="
+                  flex: 1;
+                  height: 6px;
+                  background: #e0e0e0;
+                  border-radius: 3px;
+                  overflow: hidden;
+                ">
+              <div id="reader-progress-bar" style="
+                    width: 0%;
+                    height: 100%;
+                    background: var(--pri);
+                    transition: width 0.2s ease;
+                  "></div>
+            </div>
+            <span id="reader-progress-percent" style="
+                  font-size: 11px;
+                  font-weight: 700;
+                  font-family: var(--font-mono);
+                  color: var(--on-sur-var);
+                ">0%</span>
+          </div>
+        </footer>
+      </main>
+
+      <!-- Right-side AI & Notes Sidebar Drawer -->
+      <aside class="ai-drawer collapsed" id="reader-ai-drawer" aria-label="AI Assistant and Notes">
+        <div class="drawer-header">
+          <div style="display: flex; align-items: center; gap: 8px">
+            <i class="material-icons" style="color: var(--sec)">assistant</i>
+            <span class="drawer-title" id="drawer-mode-title">My Notes</span>
+          </div>
+          <button class="icon-btn" onclick="toggleAIDrawer(false)" aria-label="Close Sidebar">
+            <i class="material-icons">close</i>
+          </button>
+        </div>
+
+        <div class="drawer-body">
+          <!-- Toggle Panel Header inside drawer -->
+          <div style="
+                display: flex;
+                background: #f0f1f3;
+                padding: 4px;
+                border-radius: 8px;
+                margin-bottom: 8px;
+              ">
+            <button id="drawer-tab-notes" class="chip active" onclick="switchDrawerMode('notes')" style="
+                  flex: 1;
+                  border: none;
+                  padding: 8px 0;
+                  font-size: 12px;
+                  font-weight: 700;
+                  text-align: center;
+                  border-radius: 6px;
+                  cursor: pointer;
+                ">
+              My Notes
+            </button>
+            <button id="drawer-tab-query" class="chip" onclick="switchDrawerMode('query')" style="
+                  flex: 1;
+                  border: none;
+                  padding: 8px 0;
+                  font-size: 12px;
+                  font-weight: 700;
+                  text-align: center;
+                  border-radius: 6px;
+                  cursor: pointer;
+                ">
+              Ask AI
+            </button>
+          </div>
+
+          <!-- Notes Mode Panel -->
+          <div id="drawer-panel-notes" style="display: flex; flex-direction: column; gap: 16px; flex: 1">
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <label style="
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: var(--on-sur-var);
+                  ">Selected Text (context for note):</label>
+              <div id="note-selection-display" class="outset-quote"
+                style="max-height: 80px; overflow-y: auto; font-size: 12px">
+                No text selected. Highlight text on the page to attach a note.
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <label for="note-editor" style="
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: var(--on-sur-var);
+                  ">Your Annotation:</label>
+              <textarea id="note-editor" class="neumorphic-input" style="height: 100px; resize: none; padding: 12px"
+                placeholder="Write your thoughts, reminders or formulas here..."></textarea>
+            </div>
+            <button class="btn btn-filled" onclick="saveHighlightNote()" style="
+                  width: 100%;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  gap: 8px;
+                ">
+              <i class="material-icons">save</i> Save Note
+            </button>
+            <hr style="
+                  border: none;
+                  border-top: 1px solid var(--glass-border);
+                  margin: 8px 0;
+                " />
+            <div style="flex: 1; overflow-y: auto">
+              <h4 style="
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: var(--on-sur-var);
+                    margin-bottom: 8px;
+                  ">
+                Saved Notes on this Material
+              </h4>
+              <div id="drawer-saved-notes-list" style="display: flex; flex-direction: column; gap: 10px">
+                <!-- Loaded dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Query Mode Panel -->
+          <div id="drawer-panel-query" style="
+                display: none;
+                flex-direction: column;
+                gap: 16px;
+                flex: 1;
+                height: 100%;
+              ">
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <label style="
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: var(--on-sur-var);
+                  ">Selected Passage:</label>
+              <div id="query-selection-display" class="outset-quote"
+                style="max-height: 80px; overflow-y: auto; font-size: 12px">
+                No passage selected. Highlight text on the page to ask AI
+                about it.
+              </div>
+            </div>
+
+            <div style="
+                  flex: 1;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 10px;
+                  border: 1px solid var(--glass-border);
+                  border-radius: 12px;
+                  padding: 12px;
+                  background: #fbfbfb;
+                  max-height: 220px;
+                  overflow-y: auto;
+                " id="chat-history-container">
+              <div class="chat-bubble ai">
+                Hello! I am your Food Safety study assistant. Highlight any
+                text in the textbook and select "Query" or type your question
+                below. I can help explain key concepts, temperatures, or HACCP
+                steps!
+              </div>
+            </div>
+
+            <div style="
+                  display: flex;
+                  gap: 8px;
+                  align-items: center;
+                  margin-top: auto;
+                ">
+              <label for="chat-input" class="sr-only">Ask AI a question</label>
+              <input type="text" id="chat-input" class="neumorphic-input" style="flex: 1"
+                placeholder="Ask AI about this selection..."
+                onkeydown="if (event.key === 'Enter') sendAIChatMessage();" />
+              <button class="icon-btn" onclick="sendAIChatMessage()" style="
+                    background: var(--sec);
+                    color: white;
+                    border-radius: 50%;
+                    width: 36px;
+                    height: 36px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  ">
+                <i class="material-icons" style="font-size: 18px">send</i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- FLOATING ACTION PILL FOR TEXT SELECTION -->
+  <div id="reader-floating-pill" class="floating-pill" role="toolbar" aria-label="Text Selection Tools">
+    <button class="pill-btn" onclick="triggerPillAction('highlight')">
+      <i class="material-icons">border_color</i>
+      Highlight
+    </button>
+    <button class="pill-btn" onclick="triggerPillAction('note')">
+      <i class="material-icons">edit_note</i> Note
+    </button>
+    <button class="pill-btn" onclick="triggerPillAction('query')">
+      <i class="material-icons">assistant</i> Query AI
+    </button>
+  </div>
+
+  <!-- VIDEO OVERLAY (YOUTUBE STRUCTURE) -->
+  <div id="video-overlay" class="reader-view" role="dialog" aria-modal="true" aria-label="Video Player"
+    style="background: var(--md-bg); color: var(--on-sur); overflow-y: auto;">
+    
+    <!-- Top Header -->
+    <div class="video-header" style="height: 64px; min-height: 64px; flex-shrink: 0; box-sizing: border-box; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid var(--pri); background: var(--sur); position: sticky; top: 0; z-index: 100;">
+      <!-- Left CTA (Empty) -->
+      <div style="flex: 1; display: flex; justify-content: flex-start; align-items: center;"></div>
+      
+      <!-- Center Title -->
+      <div style="flex: 2; text-align: center; font-weight: 700; font-size: 16px; color: var(--on-sur); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+        SDC Video Portal
+      </div>
+
+      <!-- Right Exit Button -->
+      <div style="flex: 1; display: flex; justify-content: flex-end; align-items: center;">
+        <button class="icon-btn" onclick="closeVideo()" tabindex="0" aria-label="Close Video" style="color: var(--err);">
+          <i class="material-icons">close</i>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Youtube Container Split Layout -->
+    <div class="youtube-layout-container">
+      
+      <!-- Left Panel: Video + Description + Transcript -->
+      <div class="youtube-main-panel">
+        <!-- Video Viewport -->
+        <div class="youtube-player-viewport">
+          <div class="yt-mock-bg" id="yt-mock-bg-img" style="position: absolute; inset: 0; background: url('Dashboard.png') center/cover; opacity: 0.35;"></div>
+          <!-- Centered Big Play Button -->
+          <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+            <button style="width: 72px; height: 72px; border-radius: 50%; background: rgba(0, 0, 0, 0.7); border: 2px solid #fff; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: scale 0.2s;">
+              <i class="material-icons" style="font-size: 40px; margin-left: 4px;">play_arrow</i>
+            </button>
+          </div>
+          <!-- Custom Red Playbar -->
+          <div style="position: absolute; bottom: 0; left: 0; width: 100%; padding: 16px 20px; background: linear-gradient(transparent, rgba(0,0,0,0.85)); display: flex; align-items: center; gap: 16px; color: white; z-index: 5;">
+            <button class="icon-btn" style="color: white; background: transparent; border: none; cursor: pointer;">
+              <i class="material-icons">play_arrow</i>
+            </button>
+            <div style="flex: 1; height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 2px; position: relative; cursor: pointer;">
+              <div style="width: 45%; height: 100%; background: #ff0000; border-radius: 2px; position: relative;">
+                <div style="width: 12px; height: 12px; border-radius: 50%; background: #ff0000; position: absolute; right: -6px; top: -4px;"></div>
+              </div>
+            </div>
+            <span id="yt-time-display" style="font-family: var(--font-mono); font-size: 12px;">04:20 / 15:00</span>
+            <button class="icon-btn" style="color: white; background: transparent; border: none;"><i class="material-icons">volume_up</i></button>
+            <button class="icon-btn" style="color: white; background: transparent; border: none;"><i class="material-icons">subtitles</i></button>
+            <button class="icon-btn" style="color: white; background: transparent; border: none;"><i class="material-icons">settings</i></button>
+            <button class="icon-btn" style="color: white; background: transparent; border: none;"><i class="material-icons">fullscreen</i></button>
+          </div>
+        </div>
+        
+        <!-- Video Title -->
+        <h1 id="active-video-title" style="font-size: 20px; font-weight: 700; color: var(--on-sur); margin: 12px 0 8px 0; line-height: 1.3;">Video Title Loading...</h1>
+        
+
+        
+        <!-- Transcript Box (At the bottom of video) -->
+        <div class="youtube-transcript-box">
+          <div class="transcript-header">
+            <h3 style="font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; color: var(--on-sur); margin: 0;">
+              <i class="material-icons" style="color: var(--pri)">description</i>
+              Video Transcript
+            </h3>
+            <span style="font-size: 11px; color: var(--on-sur-var); background: var(--sur-var); padding: 4px 8px; border-radius: 4px;">Click timestamp to seek</span>
+          </div>
+          <div class="transcript-lines-list" id="active-video-transcript">
+            <!-- Dynamically populated lines -->
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Panel: Related Videos Sidebar (YouTube Style) -->
+      <div class="youtube-sidebar">
+        <h3 style="font-size: 15px; font-weight: 700; color: var(--on-sur); margin-bottom: 8px;">Course Modules</h3>
+        <div id="youtube-sidebar-list">
+          <!-- Dynamically populated with other videos -->
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- AUDIO OVERLAY -->
+  <div id="audio-overlay" class="reader-view spotify-audio" role="dialog" aria-modal="true" aria-label="Audio Player">
+    <div class="spotify-header" style="display: flex; align-items: center; justify-content: space-between; height: 64px; min-height: 64px; flex-shrink: 0; box-sizing: border-box; padding: 0 24px; border-bottom: 3px solid var(--pri);">
+      <!-- Left CTA -->
+      <div style="flex: 1; display: flex; justify-content: flex-start;"></div>
+      <!-- Center Title -->
+      <div style="flex: 2; text-align: center; font-size: 12px; font-weight: 700; color: var(--on-sur); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.1em;">
+        PLAYING FROM COURSE
+      </div>
+      <!-- Right CTA -->
+      <div style="flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
+        <button class="icon-btn" onclick="closeAudio()" tabindex="0" aria-label="Close Audio" style="color: var(--err);">
+          <i class="material-icons">close</i>
+        </button>
+      </div>
+    </div>
+
+    <div class="spotify-main">
+      <div class="spotify-art-container">
+        <img id="audio-cover-art" src="course_thumb_food_safety.png" alt="Course Cover Art" onerror="this.onerror=null; this.src=SDC_LOGO_B64;">
+      </div>
+      
+      <div class="spotify-track-info">
+        <div class="spotify-track-text">
+          <h2 id="audio-title">Loading...</h2>
+          <p id="audio-author">SDC Expert Series</p>
+        </div>
+        <button class="icon-btn spotify-heart" aria-label="Save">
+          <i class="material-icons">favorite_border</i>
+        </button>
+      </div>
+
+      <div class="spotify-progress-container">
+        <div class="spotify-progress-bar">
+          <div class="spotify-progress-fill"></div>
+          <div class="spotify-progress-thumb"></div>
+        </div>
+        <div class="spotify-time-row">
+          <span>04:20</span><span>28:00</span>
         </div>
       </div>
 
-      <div class="card" style="border: 2px solid var(--pri);">
-        <div style="background: var(--pri-con); color: var(--pri-con-ct); padding: 16px; border-radius: 12px; margin-bottom: 24px; display: flex; gap: 12px; align-items: flex-start;">
-          <i class="material-icons">info</i>
-          <p style="font-size: 13px;"><strong>Desktop/Laptop Required.</strong> You cannot take the final exam on a mobile device. You must complete the hardware validation checks before the 'Start Exam' button activates.</p>
-        </div>
+      <div class="spotify-controls">
+        <button class="icon-btn spotify-secondary-btn" aria-label="Shuffle">
+          <i class="material-icons">shuffle</i>
+        </button>
+        <button class="icon-btn spotify-skip-btn" aria-label="Previous">
+          <i class="material-icons">skip_previous</i>
+        </button>
+        <button class="icon-btn spotify-play-btn" aria-label="Play/Pause">
+          <i class="material-icons">play_circle_filled</i>
+        </button>
+        <button class="icon-btn spotify-skip-btn" aria-label="Next">
+          <i class="material-icons">skip_next</i>
+        </button>
+        <button class="icon-btn spotify-secondary-btn" aria-label="Repeat">
+          <i class="material-icons">repeat</i>
+        </button>
+      </div>
+    </div>
+  </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 24px; margin-bottom: 24px;">
+  <!-- GAMIFIED FLASHCARD OVERLAY -->
+  <div id="flashcard-overlay" class="reader-view" role="dialog" aria-modal="true" aria-label="Flashcard Deck"
+    style="background: var(--md-bg)">
+    
+    <!-- Header -->
+    <div class="reader-header" style="
+          background: var(--sur);
+          border-bottom: 3px solid var(--pri);
+          box-shadow: var(--shadow-sm);
+          padding: 0 24px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          height: 64px;
+        ">
+      <!-- Left CTA -->
+      <div style="flex: 1; display: flex; justify-content: flex-start; align-items: center;"></div>
+      
+      <!-- Center Title -->
+      <div style="flex: 2; text-align: center; font-weight: 700; font-size: 16px; color: var(--on-sur); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="flashcard-title">
+        Flashcard Challenge
+      </div>
+
+      <!-- Right Exit -->
+      <div style="flex: 1; display: flex; justify-content: flex-end; align-items: center;">
+        <button class="icon-btn" onclick="closeFlashcards()" tabindex="0" aria-label="Close Flashcards" style="color: var(--err);">
+          <i class="material-icons">close</i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Active Game Screen (Centered Layout) -->
+    <div id="fc-game-screen" style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; height: calc(100% - 64px); background: var(--md-bg); overflow: hidden; padding: 24px;">
+      
+      <!-- Fixed Left Toggle Button -->
+      <button class="btn btn-outlined" onclick="toggleFlashcardDrawer()" id="fc-drawer-toggle-btn" style="position: absolute; left: 24px; top: 24px; z-index: 101; display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; font-size: 14px; background: var(--sur); box-shadow: var(--shadow-sm); border-radius: 8px;">
+        <i class="material-icons" id="fc-drawer-icon" style="font-size: 18px;">menu_open</i> <span id="fc-drawer-text">Answers</span>
+      </button>
+
+      <!-- Flashcard Left Drawer -->
+      <div id="fc-left-drawer" style="position: absolute; left: -320px; top: 0; bottom: 0; width: 320px; background: var(--sur); z-index: 100; transition: left 0.3s ease; border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; box-shadow: var(--shadow-lg); padding-top: 80px;">
+        <div style="padding: 16px; flex: 1; overflow-y: auto;">
           <div>
-            <h2 style="font-size: 24px;">CS101 Final Assessment</h2>
-            <div class="mt-2" style="display: flex; gap: 16px; font-size: 13px; color: var(--on-sur-var);">
-              <span style="display: flex; align-items: center; gap: 4px;"><i class="material-icons" style="font-size: 16px;">timer</i> 60 Minutes</span>
-              <span style="display: flex; align-items: center; gap: 4px;"><i class="material-icons" style="font-size: 16px;">format_list_numbered</i> 5 Questions</span>
-              <span style="display: flex; align-items: center; gap: 4px;"><i class="material-icons" style="font-size: 16px;">visibility</i> AI Monitored</span>
+            <label style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--on-sur-var); margin-bottom: 8px; display: block;">History</label>
+            <!-- History Area -->
+            <div id="fc-history-area" style="display: flex; flex-direction: column; gap: 12px; padding-bottom: 24px;">
+              <!-- Dynamically populated history items -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sleek Integrated Header for Score & Progress -->
+      <div style="display: flex; flex-direction: column; width: 100%; max-width: 500px; margin-bottom: 24px; gap: 12px; z-index: 10;">
+        
+        <!-- Control Bar -->
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+          <!-- Difficulty Segmented Control -->
+          <div class="fc-segment-control" style="display: flex; background: var(--sur); padding: 4px; border-radius: 8px; border: 1px solid var(--glass-border); width: 100%; justify-content: space-between;">
+            <button class="fc-segment-btn active" data-mode="adaptive" onclick="setFlashcardMode('adaptive')">Adaptive</button>
+            <button class="fc-segment-btn" data-mode="low" onclick="setFlashcardMode('low')">Low</button>
+            <button class="fc-segment-btn" data-mode="moderate" onclick="setFlashcardMode('moderate')">Moderate</button>
+            <button class="fc-segment-btn" data-mode="difficult" onclick="setFlashcardMode('difficult')">Difficult</button>
+          </div>
+        </div>
+
+        <!-- Score & Tracker Bar -->
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 12px 20px; background: var(--sur); border: 1px solid var(--glass-border); border-radius: 12px;">
+          <div style="font-weight: 700; color: var(--on-sur-var);">Score: <span id="fc-score" style="color: var(--pri);">0</span> / <span id="fc-total">0</span></div>
+          <div style="font-family: var(--font-mono); font-size: 13px; font-weight: 600; color: var(--on-sur-var);" id="fc-tracker">Card 1 of 20</div>
+        </div>
+      </div>
+
+      <!-- Main Area (Card) -->
+      <div class="fc-main-area" id="fc-main-card-area" style="width: 100%; max-width: 500px; display: flex; flex-direction: column; align-items: center; padding: 0;">
+        <div class="flashcard-container" style="width: 100%; max-width: 500px; margin-bottom: 32px">
+          <div class="flashcard" id="fc-deck-card" tabindex="0" role="button" aria-label="Flip Flashcard" onclick="flipGamifiedCard()">
+            <div class="flashcard-face flashcard-front" style="padding: 40px; display: flex; flex-direction: column; justify-content: center; background: var(--sur); border-radius: 16px; box-shadow: var(--shadow-md);">
+              <span class="fc-label" style="margin-bottom: 16px; color: var(--on-sur); font-weight: 700; text-transform: uppercase;">Question</span>
+              <div class="fc-text" id="fc-deck-q" style="font-size: 24px; text-align: center; color: var(--on-sur);">
+                Question loading...
+              </div>
+              <div style="margin-top: auto; font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--on-sur); text-align: center; padding-top: 24px;">
+                <i class="material-icons" style="font-size: 16px; vertical-align: middle">touch_app</i> Tap to flip
+              </div>
+            </div>
+            <div class="flashcard-face flashcard-back" style="padding: 40px; display: flex; flex-direction: column; justify-content: center; background: var(--pri-con); border-radius: 16px; box-shadow: var(--shadow-md);">
+              <span class="fc-label" style="margin-bottom: 16px; color: #1c1c1c; font-weight: 700; text-transform: uppercase;">Answer</span>
+              <div class="fc-text" id="fc-deck-a" style="font-size: 28px; text-align: center; font-weight: 700; color: #1c1c1c;">
+                Answer loading...
+              </div>
             </div>
           </div>
         </div>
 
-        <h3 style="font-size: 16px;">Hardware Validation</h3>
-        <div class="sys-check-list">
-          <div class="sys-check-item" id="check-cam">
-            <div class="sys-check-info">
-              <div class="sys-check-icon"><i class="material-icons">videocam</i></div>
-              <div class="sys-check-text">
-                <h4>Webcam Access</h4>
-                <p>Required for identity verification and AI proctoring.</p>
-              </div>
-            </div>
-            <div class="sys-check-status"><i class="material-icons">hourglass_empty</i></div>
-          </div>
-
-          <div class="sys-check-item" id="check-mic">
-            <div class="sys-check-info">
-              <div class="sys-check-icon"><i class="material-icons">mic</i></div>
-              <div class="sys-check-text">
-                <h4>Microphone Access</h4>
-                <p>Required for ambient noise detection.</p>
-              </div>
-            </div>
-            <div class="sys-check-status"><i class="material-icons">hourglass_empty</i></div>
-          </div>
-
-          <div class="sys-check-item" id="check-net">
-            <div class="sys-check-info">
-              <div class="sys-check-icon"><i class="material-icons">wifi</i></div>
-              <div class="sys-check-text">
-                <h4>Network Stability</h4>
-                <p>Ensuring you won't disconnect during the test.</p>
-              </div>
-            </div>
-            <div class="sys-check-status"><i class="material-icons">hourglass_empty</i></div>
-          </div>
-
-          <div class="sys-check-item" id="check-win">
-            <div class="sys-check-info">
-              <div class="sys-check-icon"><i class="material-icons">desktop_windows</i></div>
-              <div class="sys-check-text">
-                <h4>Fullscreen & Browser</h4>
-                <p>Validating modern browser support and screen lock.</p>
-              </div>
-            </div>
-            <div class="sys-check-status"><i class="material-icons">hourglass_empty</i></div>
-          </div>
+        <div id="fc-gamified-controls" class="fc-controls" style="display: none; gap: 16px; width: 100%; max-width: 500px; justify-content: center;">
+          <button class="mdbtn btn-outlined fc-wrong-btn" onclick="scoreCard(false)">
+            <i class="material-icons">close</i> Got it Wrong
+          </button>
+          <button class="mdbtn btn-primary fc-right-btn" onclick="scoreCard(true)">
+            <i class="material-icons">check</i> Got it Right
+          </button>
         </div>
-
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--glass-border);">
-          <button class="mdbtn btn-outlined" id="run-check-btn" onclick="runSystemCheck()">
-            <i class="material-icons">insights</i>
-            <span>Run System Validation</span>
-          </button>
-          <button class="mdbtn btn-tonal" id="start-exam-btn" disabled onclick="navigateTo('cand-exam-live')">
-            <i class="material-icons">lock</i>
-            <span>Run Checks First</span>
-          </button>
+        
+        <div id="fc-complete-msg" style="display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 500px; padding: 32px; background: var(--sur); border-radius: 16px; border: 1px solid var(--glass-border);">
+          <i class="material-icons" style="font-size: 64px; color: var(--suc); margin-bottom: 16px;">emoji_events</i>
+          <h2>Deck Complete!</h2>
+          <p style="color: var(--on-sur-var); margin-bottom: 24px;">Great job testing your knowledge.</p>
+          <button class="mdbtn btn-primary" onclick="resetFlashcards()" style="color: #1c1c1c;">Play Again</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 7. LIVE AI PROCTORED EXAM (LOCKED DOWN UI) -->
-  <div id="cand-exam-live" class="view-panel" style="background: #000;">
-    <div class="exam-mode">
-      
-      <!-- Top Bar -->
-      <div class="exam-header">
-        <div class="exam-brand">
-          <div class="badge" style="width: 28px; height: 28px; font-size: 12px;">SP</div>
-          <span>CS101 Final</span>
-        </div>
-        
-        <div class="exam-timer" id="exam-timer-display">60:00</div>
-        
-        <div class="exam-status" id="exam-status-badge">
-          <div class="pulse-dot"></div>
-          AI Monitor Active
-        </div>
+  <!-- MOCK EXAM LOCKDOWN -->
+  <!-- MOCK EXAM LOCKDOWN -->
+  <div id="mock-exam-env" class="mock-env" role="dialog" aria-modal="true" aria-label="Exam Simulation">
+    <div class="mock-header">
+      <div style="font-weight: 700; display: flex; align-items: center; gap: 8px; font-size: 18px">
+        <i class="material-icons" style="color: var(--pri)">assignment</i> Mock Exam Simulation
       </div>
-
-      <!-- Warning Toast -->
-      <div class="exam-warning-toast" id="exam-warning">
-        <i class="material-icons warning-icon">warning</i>
-        <div>
-          <strong style="display: block; font-size: 15px; margin-bottom: 2px;">PROCTOR WARNING</strong>
-          <span id="exam-warning-text" style="font-size: 13px;">Multiple faces detected in frame.</span>
-        </div>
+      <div style="
+            font-family: var(--font-mono);
+            font-weight: 800;
+            font-size: 20px;
+            color: var(--err);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          " aria-live="polite">
+        <i class="material-icons">timer</i>
+        <span id="mock-timer">90:00</span>
       </div>
-
-      <!-- Main Body -->
-      <div class="exam-body">
-        
-        <!-- Left Sidebar: Webcam feed & Question Nav -->
-        <div class="exam-sidebar" id="exam-sidebar-panel">
-          <div class="exam-cam-preview">
-            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80" style="width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7) contrast(1.2);" alt="Candidate Feed">
-            <div class="exam-cam-overlay"></div>
-            <div style="position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.6); color: #fff; padding: 2px 6px; font-size: 10px; font-family: monospace; border-radius: 4px;">LIVE REC • CAN-092</div>
-          </div>
-          
-          <div class="exam-nav">
-            <div style="font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase;">Question Navigation</div>
-            <div class="nav-grid" id="exam-nav-grid">
-              <!-- JS Populated -->
-            </div>
-            
-            <div style="margin-top: 32px; font-size: 11px; color: #666;">
-              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;"><div style="width: 12px; height: 12px; background: rgba(74, 222, 128, 0.15); border: 1px solid #4ade80; border-radius: 2px;"></div> Answered</div>
-              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;"><div style="width: 12px; height: 12px; background: #222; border: 1px solid #444; border-radius: 2px;"></div> Unanswered</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right Side: Question Content -->
-        <div class="exam-content">
-          <div style="max-width: 800px; margin: 0 auto;">
-            
-            <div class="question-meta">
-              <span id="q-meta-text">Question 1 of 5</span>
-              <span>1 Mark</span>
-            </div>
-
-            <div class="question-text" id="q-text">
-              Loading question...
-            </div>
-
-            <div class="options-list" id="q-options">
-              <!-- JS Populated -->
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      <!-- Bottom Bar Controls -->
-      <div class="exam-footer">
-        <button class="mdbtn" style="background: transparent; color: #fff; border: 1px solid #555;" id="btn-prev-q" onclick="navQuestion(-1)">
-          <i class="material-icons">arrow_back</i> <span>Previous</span>
+      <div style="display: flex; align-items: center; gap: 12px">
+        <button class="mdbtn btn-outlined" onclick="exitMock()" tabindex="0" id="mock-top-exit" style="border-color: var(--out-var); color: var(--on-sur); font-weight: 600">
+          Exit Exam
         </button>
-        
-        <button class="mdbtn" style="background: #f9ad00; color: #000;" id="btn-next-q" onclick="navQuestion(1)">
-          <span>Next Question</span> <i class="material-icons">arrow_forward</i>
+        <button class="mdbtn btn-filled" onclick="submitMock()" tabindex="0" id="mock-top-submit" style="background: var(--pri); color: var(--on-pri); font-weight: 600">
+          Submit Exam
         </button>
       </div>
-      
     </div>
-  </div>
-
-  <!-- 8. RESULTS -->
-  <div id="cand-results" class="view-panel">
-    <div class="content-container" style="max-width: 600px;">
-      
-      <div class="card">
-        <div class="result-hero">
-          <div class="score-circle pass" id="res-score-circle">
-            <span class="score-val">85</span>
-            <span class="score-label">Passed</span>
+    <div class="mock-body">
+      <div class="mock-layout-container">
+        <!-- Sidebar Navigation Panel -->
+        <div class="mock-sidebar">
+          <div class="mock-sidebar-header" onclick="toggleMockGrid()" style="cursor: pointer;" aria-label="Toggle Question Grid" role="button" tabindex="0">
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+              <span class="mock-sidebar-title">Question Grid</span>
+              <i class="material-icons" id="mock-grid-icon">expand_more</i>
+            </div>
+            <div class="mock-sidebar-stats">
+              <span class="stat-badge answered-badge" id="stats-answered">Answered: 0/90</span>
+              <span class="stat-badge flagged-badge" id="stats-flagged">Flagged: 0/90</span>
+            </div>
           </div>
-          <h1 style="font-size: 24px; margin-bottom: 8px;">Assessment Complete</h1>
-          <p style="color: var(--on-sur-var);">Your exam has been successfully submitted and auto-graded.</p>
-        </div>
-
-        <div style="padding: 0 24px;">
-          <h3 class="mb-4" style="font-size: 16px;">Topic Performance Breakdown</h3>
-          <div id="res-topics">
-            <!-- JS Populated -->
+          <div class="mock-grid" id="mock-question-grid" style="display: none;">
+            <!-- Dynamically populated with 90 buttons -->
           </div>
-        </div>
-
-        <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--glass-border); display: flex; justify-content: center; gap: 16px;">
-          <button class="mdbtn btn-tonal" onclick="navigateTo('cand-dashboard')">
-            <i class="material-icons">home</i> <span>Return to Dashboard</span>
+          <button class="mdbtn btn-filled submit-test-btn" onclick="submitMock()" id="sidebar-submit-btn" style="background: var(--pri); color: var(--on-pri); width: 100%; font-weight: 600; font-size: 14px; padding: 12px; display: none;">
+            Submit Exam
           </button>
         </div>
-      </div>
 
+        <!-- Main Question Panel -->
+        <div class="mock-main-content">
+          <div class="mock-content" tabindex="0" id="mock-focus-trap">
+            <div class="mock-q-header">
+              <span id="mock-q-meta" style="color: var(--out); font-family: var(--font-mono); font-weight: 600; font-size: 14px;">
+                Question 1 of 90
+              </span>
+              <button class="mdbtn btn-outlined flag-btn" onclick="toggleFlagCurrentQuestion()" id="mock-flag-btn" style="padding: 6px 12px; font-size: 13px; display: flex; align-items: center; gap: 6px;">
+                <i class="material-icons" style="font-size: 16px;">flag</i>
+                <span id="mock-flag-btn-text">Flag Question</span>
+              </button>
+            </div>
+            
+            <div style="
+                  font-size: 20px;
+                  font-weight: 600;
+                  margin-bottom: 30px;
+                  line-height: 1.5;
+                  color: var(--on-sur);
+                " id="mock-q-text" aria-live="polite">
+              Loading...
+            </div>
+            <div id="mock-q-options" role="radiogroup" aria-labelledby="mock-q-text"></div>
+          </div>
+
+          <div class="mock-footer">
+            <div id="mock-score-live" style="font-weight: 600; font-family: var(--font-mono); color: var(--on-sur)">
+              Your Score: 0 of 90
+            </div>
+            <div class="mock-copyright">Copyright 2026 SDC Certifications</div>
+            <div style="display: flex; align-items: center; gap: 16px">
+              <button class="mdbtn btn-outlined" onclick="navMock(-1)" id="mock-prev-btn" tabindex="0"
+                style="padding: 12px 24px; font-size: 16px; border-color: var(--out-var); color: var(--on-sur); font-weight: 600;">
+                PREVIOUS
+              </button>
+              <button class="mdbtn btn-filled" onclick="navMock(1)" id="mock-next-btn" tabindex="0" style="
+                    background: var(--pri);
+                    color: var(--on-pri);
+                    padding: 12px 32px;
+                    font-size: 16px;
+                    font-weight: 600;
+                  ">
+                NEXT
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- 9. NOTIFICATIONS PANEL (MOCK DROP-DOWN / OVERLAY) -->
-  <div id="cand-notifications" class="view-panel" style="background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);">
-    <div style="position: absolute; right: 0; top: 0; bottom: 0; width: 400px; background: var(--sur); box-shadow: var(--shadow-lg); border-left: 1px solid var(--glass-border); display: flex; flex-direction: column;">
-      
-      <div style="padding: 24px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
-        <h2 style="font-size: 18px;">Notifications</h2>
-        <button class="icon-btn" data-target="cand-dashboard"><i class="material-icons">close</i></button>
-      </div>
-
-      <div style="flex: 1; overflow-y: auto; padding: 16px;">
-        <div style="padding: 16px; background: var(--sur-var); border-radius: 12px; margin-bottom: 12px; border-left: 4px solid var(--inf);">
-          <div style="font-weight: 700; margin-bottom: 4px; font-size: 13px;">Course Unlocked</div>
-          <div style="font-size: 12px; color: var(--on-sur-var);">You have been assigned CS101. You have 7 days to complete the material.</div>
-        </div>
-        <div style="padding: 16px; background: var(--sur-var); border-radius: 12px; margin-bottom: 12px; border-left: 4px solid var(--pri);">
-          <div style="font-weight: 700; margin-bottom: 4px; font-size: 13px;">Exam Approaching</div>
-          <div style="font-size: 12px; color: var(--on-sur-var);">Your final exam window opens in 24 hours. Ensure your hardware is ready.</div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <script src="candidate.js"></script>
+  <script src="candidate.js?v=2.10.0"></script>
 </body>
+
 </html>

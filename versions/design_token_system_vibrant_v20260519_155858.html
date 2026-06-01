@@ -1,0 +1,394 @@
+
+<style>
+:root {
+  --accent: #f9ad00;
+  --accent-dark: #d4920a;
+  --bg: #ffffff;
+  --bg-secondary: #f5f6fa;
+  --text: #111827;
+  --text-secondary: #374151;
+  --text-muted: #6b7280;
+  --border: #e5e7eb;
+  --border-hover: #d1d5db;
+}
+[data-theme="dark"] {
+  --bg: #0f1117;
+  --bg-secondary: #1a1d2e;
+  --text: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+  --border: #1e2535;
+  --border-hover: #2d3748;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;}
+.wrap{max-width:680px;margin:0 auto;padding:1.25rem 1rem;}
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:0.5px solid var(--border);}
+.logo{display:flex;align-items:center;gap:8px;}
+.logodot{width:24px;height:24px;border-radius:6px;background:#f9ad00;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#000;}
+.logotxt{font-weight:700;font-size:14px;color:var(--text);}
+.logosub{font-size:10px;color:var(--text-muted);margin-top:1px;}
+.ttoggle{display:flex;align-items:center;background:var(--bg-secondary);border:0.5px solid var(--border);border-radius:20px;padding:3px;gap:2px;}
+.tbtn{padding:4px 12px;border-radius:16px;border:none;font-size:11px;font-weight:600;cursor:pointer;background:transparent;color:var(--text-muted);transition:all .15s;}
+.tbtn.on{background:#f9ad00;color:#000;}
+.tabs{display:flex;gap:0;margin-bottom:1.25rem;border-bottom:0.5px solid var(--border);}
+.tab{padding:7px 14px;border:none;background:transparent;font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s;}
+.tab:hover{color:var(--text);}
+.tab.on{color:#d4920a;border-bottom-color:#f9ad00;}
+.panel{display:none;}.panel.on{display:block;}
+.slabel{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin:1.25rem 0 .6rem;}
+.slabel:first-child{margin-top:0;}
+.scale{display:flex;gap:2px;margin-bottom:6px;}
+.sw{height:34px;flex:1;border-radius:4px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:3px;}
+.sw span{font-size:9px;font-weight:700;}
+.trow{display:grid;grid-template-columns:28px 1fr 1fr 1fr;align-items:center;border:0.5px solid var(--border);border-radius:6px;margin-bottom:4px;overflow:hidden;background:var(--bg);}
+.trow:hover{border-color:var(--border-hover);}
+.tsw{height:28px;width:28px;}
+.tname{font-family:'SF Mono',monospace;font-size:10px;color:var(--text-secondary);padding:0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.thex{font-family:'SF Mono',monospace;font-size:10px;color:var(--text-muted);padding:0 8px;}
+.tdesc{font-size:10px;color:var(--text-muted);padding:0 8px;}
+.scards{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:8px;}
+.sc{border-radius:6px;padding:10px 12px;border:0.5px solid transparent;}
+.sc .sl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;}
+.sc .sn{font-size:11px;font-weight:600;margin-top:2px;}
+.sc .sh{font-family:monospace;font-size:10px;margin-top:1px;}
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;}
+.chip{padding:3px 9px;border-radius:4px;font-size:11px;font-weight:600;}
+.gchips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;}
+.gc{display:flex;align-items:center;gap:7px;border:0.5px solid var(--border);border-radius:6px;padding:6px 10px;background:var(--bg);}
+.gdot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+.gn{font-size:11px;font-weight:600;color:var(--text);}
+.gh{font-family:monospace;font-size:10px;color:var(--text-muted);}
+.tyrow{display:flex;align-items:baseline;gap:12px;padding:10px 12px;border-radius:6px;background:var(--bg-secondary);margin-bottom:4px;}
+.tymeta{font-size:10px;color:var(--text-muted);font-family:monospace;white-space:nowrap;}
+.div{height:0.5px;background:var(--border);margin:1.25rem 0;}
+</style>
+
+<div class="wrap">
+<h2 class="sr-only">Design token system with vibrant color palette, light and dark mode</h2>
+<div class="hdr">
+  <div class="logo">
+    <div class="logodot">DS</div>
+    <div><div class="logotxt">Design Tokens · Vibrant</div><div class="logosub">Jira-inspired · accent #f9ad00</div></div>
+  </div>
+  <div class="ttoggle">
+    <button class="tbtn on" onclick="setTheme('light')">Light</button>
+    <button class="tbtn" onclick="setTheme('dark')">Dark</button>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab on" onclick="go('colors',this)">Colors</button>
+  <button class="tab" onclick="go('semantic',this)">Semantic</button>
+  <button class="tab" onclick="go('graph',this)">Graph</button>
+  <button class="tab" onclick="go('type',this)">Typography</button>
+  <button class="tab" onclick="go('all',this)">All tokens</button>
+</div>
+
+<div class="panel on" id="p-colors">
+
+<div class="slabel">Accent — #f9ad00 brand amber</div>
+<div class="scale">
+  <div class="sw" style="background:#fff8e6;"><span style="color:#b37a00">50</span></div>
+  <div class="sw" style="background:#ffedaa;"><span style="color:#8a5e00">100</span></div>
+  <div class="sw" style="background:#ffd966;"><span style="color:#6b4800">200</span></div>
+  <div class="sw" style="background:#ffbe1a;"><span style="color:#4a3200">300</span></div>
+  <div class="sw" style="background:#f9ad00; outline:2px solid #c88a00; outline-offset:-2px;"><span style="color:#3a2700">400✦</span></div>
+  <div class="sw" style="background:#d4920a;"><span style="color:#fff8e6">500</span></div>
+  <div class="sw" style="background:#a86e00;"><span style="color:#ffedaa">600</span></div>
+  <div class="sw" style="background:#7a4e00;"><span style="color:#ffd966">700</span></div>
+  <div class="sw" style="background:#4d3000;"><span style="color:#ffbe1a">800</span></div>
+  <div class="sw" style="background:#2a1800;"><span style="color:#f9ad00">900</span></div>
+</div>
+
+<div class="slabel">Neutral</div>
+<div class="scale">
+  <div class="sw" style="background:#ffffff;border:0.5px solid #e5e7eb;"><span style="color:#6b7280">0</span></div>
+  <div class="sw" style="background:#f5f6fa;"><span style="color:#6b7280">50</span></div>
+  <div class="sw" style="background:#e9ebf0;"><span style="color:#374151">100</span></div>
+  <div class="sw" style="background:#d1d5db;"><span style="color:#1f2937">200</span></div>
+  <div class="sw" style="background:#9ca3af;"><span style="color:#111827">300</span></div>
+  <div class="sw" style="background:#6b7280;"><span style="color:#f9fafb">400</span></div>
+  <div class="sw" style="background:#4b5563;"><span style="color:#f3f4f6">500</span></div>
+  <div class="sw" style="background:#374151;"><span style="color:#e5e7eb">600</span></div>
+  <div class="sw" style="background:#1f2937;"><span style="color:#d1d5db">700</span></div>
+  <div class="sw" style="background:#111827;"><span style="color:#9ca3af">800</span></div>
+  <div class="sw" style="background:#030712;"><span style="color:#6b7280">900</span></div>
+</div>
+
+<div class="slabel">Blue — vibrant</div>
+<div class="scale">
+  <div class="sw" style="background:#dbeafe;"><span style="color:#1d4ed8">50</span></div>
+  <div class="sw" style="background:#bfdbfe;"><span style="color:#1d4ed8">100</span></div>
+  <div class="sw" style="background:#93c5fd;"><span style="color:#1e40af">200</span></div>
+  <div class="sw" style="background:#3b82f6;"><span style="color:#fff">400</span></div>
+  <div class="sw" style="background:#2563eb;"><span style="color:#bfdbfe">500</span></div>
+  <div class="sw" style="background:#1d4ed8;"><span style="color:#bfdbfe">600</span></div>
+  <div class="sw" style="background:#1e40af;"><span style="color:#93c5fd">800</span></div>
+</div>
+
+<div class="slabel">Green — vibrant OK</div>
+<div class="scale">
+  <div class="sw" style="background:#d1fae5;"><span style="color:#047857">50</span></div>
+  <div class="sw" style="background:#a7f3d0;"><span style="color:#047857">100</span></div>
+  <div class="sw" style="background:#6ee7b7;"><span style="color:#065f46">200</span></div>
+  <div class="sw" style="background:#10b981;"><span style="color:#fff">400</span></div>
+  <div class="sw" style="background:#059669;"><span style="color:#d1fae5">500</span></div>
+  <div class="sw" style="background:#047857;"><span style="color:#a7f3d0">600</span></div>
+  <div class="sw" style="background:#065f46;"><span style="color:#6ee7b7">800</span></div>
+</div>
+
+<div class="slabel">Red — vibrant danger</div>
+<div class="scale">
+  <div class="sw" style="background:#fee2e2;"><span style="color:#dc2626">50</span></div>
+  <div class="sw" style="background:#fecaca;"><span style="color:#dc2626">100</span></div>
+  <div class="sw" style="background:#fca5a5;"><span style="color:#991b1b">200</span></div>
+  <div class="sw" style="background:#f87171;"><span style="color:#7f1d1d">300</span></div>
+  <div class="sw" style="background:#ef4444;"><span style="color:#fff">400</span></div>
+  <div class="sw" style="background:#dc2626;"><span style="color:#fecaca">600</span></div>
+  <div class="sw" style="background:#991b1b;"><span style="color:#fca5a5">800</span></div>
+</div>
+
+<div class="slabel">Yellow — vibrant warning</div>
+<div class="scale">
+  <div class="sw" style="background:#fef9c3;"><span style="color:#a16207">50</span></div>
+  <div class="sw" style="background:#fef08a;"><span style="color:#854d0e">100</span></div>
+  <div class="sw" style="background:#fde047;"><span style="color:#713f12">200</span></div>
+  <div class="sw" style="background:#facc15;"><span style="color:#422006">300</span></div>
+  <div class="sw" style="background:#eab308;"><span style="color:#fff">400</span></div>
+  <div class="sw" style="background:#a16207;"><span style="color:#fef9c3">600</span></div>
+  <div class="sw" style="background:#713f12;"><span style="color:#fef08a">800</span></div>
+</div>
+
+<div class="slabel">Purple · Violet · Teal · Orange · Pink · Lime</div>
+<div class="scale">
+  <div class="sw" style="background:#ede9fe; border-radius:4px 0 0 4px;"><span style="color:#6d28d9">Vi</span></div>
+  <div class="sw" style="background:#a78bfa;"><span style="color:#fff">—</span></div>
+  <div class="sw" style="background:#7c3aed;"><span style="color:#ede9fe">—</span></div>
+  <div class="sw" style="background:#4c1d95; border-radius:0 4px 4px 0;"><span style="color:#a78bfa">—</span></div>
+</div>
+<div class="scale">
+  <div class="sw" style="background:#ccfbf1; border-radius:4px 0 0 4px;"><span style="color:#0d9488">Te</span></div>
+  <div class="sw" style="background:#2dd4bf;"><span style="color:#042f2e">—</span></div>
+  <div class="sw" style="background:#0d9488;"><span style="color:#ccfbf1">—</span></div>
+  <div class="sw" style="background:#042f2e; border-radius:0 4px 4px 0;"><span style="color:#2dd4bf">—</span></div>
+</div>
+<div class="scale">
+  <div class="sw" style="background:#ffedd5; border-radius:4px 0 0 4px;"><span style="color:#c2410c">Or</span></div>
+  <div class="sw" style="background:#fb923c;"><span style="color:#431407">—</span></div>
+  <div class="sw" style="background:#ea580c;"><span style="color:#ffedd5">—</span></div>
+  <div class="sw" style="background:#431407; border-radius:0 4px 4px 0;"><span style="color:#fed7aa">—</span></div>
+</div>
+<div class="scale">
+  <div class="sw" style="background:#fce7f3; border-radius:4px 0 0 4px;"><span style="color:#be185d">Pk</span></div>
+  <div class="sw" style="background:#f472b6;"><span style="color:#500724">—</span></div>
+  <div class="sw" style="background:#ec4899;"><span style="color:#fce7f3">—</span></div>
+  <div class="sw" style="background:#500724; border-radius:0 4px 4px 0;"><span style="color:#fbcfe8">—</span></div>
+</div>
+<div class="scale">
+  <div class="sw" style="background:#ecfccb; border-radius:4px 0 0 4px;"><span style="color:#4d7c0f">Li</span></div>
+  <div class="sw" style="background:#a3e635;"><span style="color:#1a2e05">—</span></div>
+  <div class="sw" style="background:#65a30d;"><span style="color:#ecfccb">—</span></div>
+  <div class="sw" style="background:#1a2e05; border-radius:0 4px 4px 0;"><span style="color:#a3e635">—</span></div>
+</div>
+</div>
+
+<div class="panel" id="p-semantic">
+<div class="slabel">Brand</div>
+<div class="scards">
+  <div class="sc" style="background:#fff8e6;border-color:#ffd966;"><div class="sl" style="color:#a86e00">Brand Subtle</div><div class="sn" style="color:#7a4e00">color.brand.subtle</div><div class="sh" style="color:#a86e00">#fff8e6</div></div>
+  <div class="sc" style="background:#ffbe1a;border-color:#f9ad00;"><div class="sl" style="color:#3a2700">Brand Tint</div><div class="sn" style="color:#2a1800">color.brand.tint</div><div class="sh" style="color:#4d3000">#ffbe1a</div></div>
+  <div class="sc" style="background:#f9ad00;border-color:#d4920a;"><div class="sl" style="color:#2a1800">Brand Default</div><div class="sn" style="color:#1a1000">color.brand.default</div><div class="sh" style="color:#3a2700">#f9ad00</div></div>
+  <div class="sc" style="background:#7a4e00;border-color:#4d3000;"><div class="sl" style="color:#ffedaa">Brand Bold</div><div class="sn" style="color:#ffd966">color.brand.bold</div><div class="sh" style="color:#ffbe1a">#7a4e00</div></div>
+</div>
+
+<div class="slabel">Warning</div>
+<div class="scards">
+  <div class="sc" style="background:#fef9c3;border-color:#fef08a;"><div class="sl" style="color:#a16207">Subtle</div><div class="sn" style="color:#713f12">color.warning.subtle</div><div class="sh" style="color:#a16207">#fef9c3</div></div>
+  <div class="sc" style="background:#fde047;border-color:#eab308;"><div class="sl" style="color:#422006">Surface</div><div class="sn" style="color:#422006">color.warning.surface</div><div class="sh" style="color:#713f12">#fde047</div></div>
+  <div class="sc" style="background:#eab308;border-color:#a16207;"><div class="sl" style="color:#1a0f00">Default</div><div class="sn" style="color:#1a0f00">color.warning.default</div><div class="sh" style="color:#422006">#eab308</div></div>
+  <div class="sc" style="background:#713f12;border-color:#422006;"><div class="sl" style="color:#fef9c3">Bold</div><div class="sn" style="color:#fef08a">color.warning.bold</div><div class="sh" style="color:#fde047">#713f12</div></div>
+</div>
+<div class="chips">
+  <span class="chip" style="background:#fef9c3;color:#713f12;">color.warning.text #713f12</span>
+  <span class="chip" style="background:#fef9c3;color:#a16207;">color.warning.icon #eab308</span>
+  <span class="chip" style="background:#fef9c3;color:#a16207;">color.warning.border #fef08a</span>
+</div>
+
+<div class="slabel">OK / Success</div>
+<div class="scards">
+  <div class="sc" style="background:#d1fae5;border-color:#a7f3d0;"><div class="sl" style="color:#047857">Subtle</div><div class="sn" style="color:#065f46">color.success.subtle</div><div class="sh" style="color:#047857">#d1fae5</div></div>
+  <div class="sc" style="background:#6ee7b7;border-color:#10b981;"><div class="sl" style="color:#065f46">Surface</div><div class="sn" style="color:#065f46">color.success.surface</div><div class="sh" style="color:#047857">#6ee7b7</div></div>
+  <div class="sc" style="background:#10b981;border-color:#059669;"><div class="sl" style="color:#d1fae5">Default</div><div class="sn" style="color:#d1fae5">color.success.default</div><div class="sh" style="color:#a7f3d0">#10b981</div></div>
+  <div class="sc" style="background:#065f46;border-color:#047857;"><div class="sl" style="color:#a7f3d0">Bold</div><div class="sn" style="color:#a7f3d0">color.success.bold</div><div class="sh" style="color:#6ee7b7">#065f46</div></div>
+</div>
+<div class="chips">
+  <span class="chip" style="background:#d1fae5;color:#065f46;">color.success.text #065f46</span>
+  <span class="chip" style="background:#d1fae5;color:#047857;">color.success.icon #10b981</span>
+  <span class="chip" style="background:#d1fae5;color:#047857;">color.success.border #a7f3d0</span>
+</div>
+
+<div class="slabel">Danger / Error</div>
+<div class="scards">
+  <div class="sc" style="background:#fee2e2;border-color:#fecaca;"><div class="sl" style="color:#dc2626">Subtle</div><div class="sn" style="color:#991b1b">color.danger.subtle</div><div class="sh" style="color:#dc2626">#fee2e2</div></div>
+  <div class="sc" style="background:#fca5a5;border-color:#f87171;"><div class="sl" style="color:#991b1b">Surface</div><div class="sn" style="color:#7f1d1d">color.danger.surface</div><div class="sh" style="color:#991b1b">#fca5a5</div></div>
+  <div class="sc" style="background:#ef4444;border-color:#dc2626;"><div class="sl" style="color:#fef2f2">Default</div><div class="sn" style="color:#fee2e2">color.danger.default</div><div class="sh" style="color:#fecaca">#ef4444</div></div>
+  <div class="sc" style="background:#991b1b;border-color:#7f1d1d;"><div class="sl" style="color:#fecaca">Bold</div><div class="sn" style="color:#fecaca">color.danger.bold</div><div class="sh" style="color:#fca5a5">#991b1b</div></div>
+</div>
+
+<div class="slabel">Information</div>
+<div class="scards">
+  <div class="sc" style="background:#dbeafe;border-color:#bfdbfe;"><div class="sl" style="color:#1d4ed8">Subtle</div><div class="sn" style="color:#1e40af">color.info.subtle</div><div class="sh" style="color:#1d4ed8">#dbeafe</div></div>
+  <div class="sc" style="background:#3b82f6;border-color:#2563eb;"><div class="sl" style="color:#dbeafe">Default</div><div class="sn" style="color:#bfdbfe">color.info.default</div><div class="sh" style="color:#93c5fd">#3b82f6</div></div>
+</div>
+
+<div class="slabel">Status badges</div>
+<div class="chips">
+  <span class="chip" style="background:#dbeafe;color:#1e40af;">In Progress</span>
+  <span class="chip" style="background:#d1fae5;color:#065f46;">Done</span>
+  <span class="chip" style="background:#fee2e2;color:#991b1b;">Blocked</span>
+  <span class="chip" style="background:#fef9c3;color:#713f12;">At Risk</span>
+  <span class="chip" style="background:#ffedd5;color:#9a3412;">Impeded</span>
+  <span class="chip" style="background:#ede9fe;color:#4c1d95;">In Review</span>
+  <span class="chip" style="background:#f3f4f6;color:#374151;">To Do</span>
+  <span class="chip" style="background:#fff8e6;color:#7a4e00;">Brand</span>
+  <span class="chip" style="background:#fce7f3;color:#831843;">Blocked Ext</span>
+  <span class="chip" style="background:#ccfbf1;color:#042f2e;">QA</span>
+</div>
+</div>
+
+<div class="panel" id="p-graph">
+<div class="slabel">Categorical series — 10 colors</div>
+<div class="gchips">
+  <div class="gc"><div class="gdot" style="background:#3b82f6;"></div><div><div class="gn">Blue S1</div><div class="gh">graph.01 · #3b82f6</div></div></div>
+  <div class="gc"><div class="gdot" style="background:#f9ad00;"></div><div><div class="gn">Amber S2</div><div class="gh">graph.02 · #f9ad00</div></div></div>
+  <div class="gc"><div class="gdot" style="background:#10b981;"></div><div><div class="gn">Emerald S3</div><div class="gh">graph.03 · #10b981</div></div></div>
+  <div class="gc"><div class="gdot" style="background:#ef4444;"></div><div><div class="gn">Red S4</div><div class="gh">graph.04 · #ef4444</div></div></div>
+  <div class="gc"><div class="gdot" style="background:#8b5cf6;"></div><div><div class="gn">Violet S5</div><div class="gh">graph.05 · #8b5cf6</div></div></div>
+  <div class="gc"><div class="gdot" style="background:#06b6d4;"></div><div><div class="gn">Cyan S6</div><div class="gh">graph.06 · #06b6d4</div></div></div>
+  <div class="gc"><div class="gdot" style="background:#f97316;"></div><div><div class="gn">Orange S7</div><div class="gh">graph.07 · #f97316</div></div></div>
+  <div class="gc"><div class="gdot" style="background:#ec4899;"></div><div><div class="gn">Pink S8</div><div class="gh">graph.08 · #ec4899</div></div></div>
+  <div class="gc"><div class="gdot" style="background:#84cc16;"></div><div><div class="gn">Lime S9</div><div class="gh">graph.09 · #84cc16</div></div></div>
+  <div class="gc"><div class="gdot" style="background:#9ca3af;"></div><div><div class="gn">Gray S10</div><div class="gh">graph.10 · #9ca3af</div></div></div>
+</div>
+
+<div class="div"></div>
+<div class="slabel">Sequential — Blue</div>
+<div class="scale">
+  <div class="sw" style="background:#eff6ff;"><span style="color:#1d4ed8">10</span></div>
+  <div class="sw" style="background:#dbeafe;"><span style="color:#1d4ed8">20</span></div>
+  <div class="sw" style="background:#93c5fd;"><span style="color:#1e40af">40</span></div>
+  <div class="sw" style="background:#3b82f6;"><span style="color:#fff">60</span></div>
+  <div class="sw" style="background:#2563eb;"><span style="color:#bfdbfe">80</span></div>
+  <div class="sw" style="background:#1d4ed8;"><span style="color:#bfdbfe">90</span></div>
+  <div class="sw" style="background:#1e3a8a;"><span style="color:#93c5fd">100</span></div>
+</div>
+
+<div class="slabel">Sequential — Amber brand</div>
+<div class="scale">
+  <div class="sw" style="background:#fff8e6;"><span style="color:#a86e00">10</span></div>
+  <div class="sw" style="background:#ffedaa;"><span style="color:#8a5e00">20</span></div>
+  <div class="sw" style="background:#ffd966;"><span style="color:#6b4800">40</span></div>
+  <div class="sw" style="background:#f9ad00;"><span style="color:#2a1800">60</span></div>
+  <div class="sw" style="background:#d4920a;"><span style="color:#fff8e6">80</span></div>
+  <div class="sw" style="background:#7a4e00;"><span style="color:#ffd966">90</span></div>
+  <div class="sw" style="background:#2a1800;"><span style="color:#f9ad00">100</span></div>
+</div>
+
+<div class="slabel">Diverging — Blue to Amber</div>
+<div class="scale">
+  <div class="sw" style="background:#1e3a8a;"><span style="color:#93c5fd">−3</span></div>
+  <div class="sw" style="background:#2563eb;"><span style="color:#fff">−2</span></div>
+  <div class="sw" style="background:#93c5fd;"><span style="color:#1e3a8a">−1</span></div>
+  <div class="sw" style="background:#f5f6fa;border:0.5px solid #e5e7eb;"><span style="color:#9ca3af">0</span></div>
+  <div class="sw" style="background:#ffd966;"><span style="color:#6b4800">+1</span></div>
+  <div class="sw" style="background:#f9ad00;"><span style="color:#2a1800">+2</span></div>
+  <div class="sw" style="background:#4d3000;"><span style="color:#f9ad00">+3</span></div>
+</div>
+
+<div class="slabel">Diverging — Red to Green (risk / health)</div>
+<div class="scale">
+  <div class="sw" style="background:#7f1d1d;"><span style="color:#fca5a5">−3</span></div>
+  <div class="sw" style="background:#ef4444;"><span style="color:#fff">−2</span></div>
+  <div class="sw" style="background:#fca5a5;"><span style="color:#7f1d1d">−1</span></div>
+  <div class="sw" style="background:#f5f6fa;border:0.5px solid #e5e7eb;"><span style="color:#9ca3af">0</span></div>
+  <div class="sw" style="background:#6ee7b7;"><span style="color:#065f46">+1</span></div>
+  <div class="sw" style="background:#10b981;"><span style="color:#fff">+2</span></div>
+  <div class="sw" style="background:#065f46;"><span style="color:#6ee7b7">+3</span></div>
+</div>
+</div>
+
+<div class="panel" id="p-type">
+<div class="slabel">Font families</div>
+<div class="trow"><div class="tsw" style="background:#f9ad00;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#000;">Aa</div><div class="tname">font.family.body</div><div class="thex">-apple-system, 'Segoe UI', sans-serif</div><div class="tdesc">UI default</div></div>
+<div class="trow"><div class="tsw" style="background:#f5f6fa;display:flex;align-items:center;justify-content:center;font-size:11px;font-style:italic;font-weight:700;color:var(--text);">Aa</div><div class="tname">font.family.display</div><div class="thex">Georgia, 'Times New Roman', serif</div><div class="tdesc">Headings</div></div>
+<div class="trow"><div class="tsw" style="background:#111827;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#9ca3af;font-family:monospace;">01</div><div class="tname">font.family.mono</div><div class="thex">'SF Mono', 'Cascadia Code', monospace</div><div class="tdesc">Code</div></div>
+
+<div class="slabel">Type scale</div>
+<div class="tyrow"><div style="font-size:30px;font-weight:700;color:var(--text);line-height:1.1;">Display 2xl</div><div class="tymeta">30px / w700 / lh 1.1</div></div>
+<div class="tyrow"><div style="font-size:24px;font-weight:700;color:var(--text);line-height:1.15;">Heading xl</div><div class="tymeta">24px / w700 / lh 1.15</div></div>
+<div class="tyrow"><div style="font-size:20px;font-weight:600;color:var(--text);line-height:1.25;">Heading lg</div><div class="tymeta">20px / w600 / lh 1.25</div></div>
+<div class="tyrow"><div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.35;">Subheading md</div><div class="tymeta">16px / w600 / lh 1.35</div></div>
+<div class="tyrow"><div style="font-size:14px;font-weight:400;color:var(--text);line-height:1.5;">Body sm — main UI prose, lists, form fields and descriptions at comfortable reading size.</div><div class="tymeta">14px / w400 / lh 1.5</div></div>
+<div class="tyrow"><div style="font-size:12px;font-weight:400;color:var(--text-secondary);line-height:1.5;">Caption xs — metadata, timestamps, helper</div><div class="tymeta">12px / w400 / lh 1.5</div></div>
+<div class="tyrow"><div style="font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-muted);line-height:1.4;">LABEL 2XS</div><div class="tymeta">11px / w700 / ls 0.09em / caps</div></div>
+
+<div class="slabel">Spacing (4px base grid)</div>
+<div class="chips">
+  <span class="chip" style="background:#f9ad00;color:#000;">space.1 · 4px</span>
+  <span class="chip" style="background:#f9ad00;color:#000;">space.2 · 8px</span>
+  <span class="chip" style="background:#f9ad00;color:#000;">space.3 · 12px</span>
+  <span class="chip" style="background:#f9ad00;color:#000;">space.4 · 16px</span>
+  <span class="chip" style="background:#f9ad00;color:#000;">space.5 · 20px</span>
+  <span class="chip" style="background:#f9ad00;color:#000;">space.6 · 24px</span>
+  <span class="chip" style="background:#f9ad00;color:#000;">space.8 · 32px</span>
+  <span class="chip" style="background:#f9ad00;color:#000;">space.10 · 40px</span>
+</div>
+
+<div class="slabel">Border radius</div>
+<div class="chips">
+  <span class="chip" style="background:var(--bg-secondary);color:var(--text);border-radius:2px;border:0.5px solid var(--border);">radius.xs · 2px</span>
+  <span class="chip" style="background:var(--bg-secondary);color:var(--text);border-radius:4px;border:0.5px solid var(--border);">radius.sm · 4px</span>
+  <span class="chip" style="background:var(--bg-secondary);color:var(--text);border-radius:6px;border:0.5px solid var(--border);">radius.md · 6px</span>
+  <span class="chip" style="background:var(--bg-secondary);color:var(--text);border-radius:8px;border:0.5px solid var(--border);">radius.lg · 8px</span>
+  <span class="chip" style="background:var(--bg-secondary);color:var(--text);border-radius:12px;border:0.5px solid var(--border);">radius.xl · 12px</span>
+  <span class="chip" style="background:var(--bg-secondary);color:var(--text);border-radius:9999px;border:0.5px solid var(--border);">radius.full</span>
+</div>
+</div>
+
+<div class="panel" id="p-all">
+<div class="slabel">Background tokens</div>
+<div class="trow"><div class="tsw" style="background:#ffffff;border-right:0.5px solid #e5e7eb;"></div><div class="tname">color.bg.default</div><div class="thex">#ffffff / #0f1117</div><div class="tdesc">Page bg</div></div>
+<div class="trow"><div class="tsw" style="background:#f5f6fa;"></div><div class="tname">color.bg.secondary</div><div class="thex">#f5f6fa / #1a1d2e</div><div class="tdesc">Sidebar, card</div></div>
+<div class="trow"><div class="tsw" style="background:#e9ebf0;"></div><div class="tname">color.bg.tertiary</div><div class="thex">#e9ebf0 / #1e2535</div><div class="tdesc">Hover, input</div></div>
+<div class="trow"><div class="tsw" style="background:#f9ad00;"></div><div class="tname">color.bg.brand</div><div class="thex">#f9ad00</div><div class="tdesc">Accent bg</div></div>
+<div class="trow"><div class="tsw" style="background:#dbeafe;"></div><div class="tname">color.bg.info</div><div class="thex">#dbeafe / #1e3a8a</div><div class="tdesc">Info state</div></div>
+<div class="trow"><div class="tsw" style="background:#d1fae5;"></div><div class="tname">color.bg.success</div><div class="thex">#d1fae5 / #065f46</div><div class="tdesc">Success bg</div></div>
+<div class="trow"><div class="tsw" style="background:#fef9c3;"></div><div class="tname">color.bg.warning</div><div class="thex">#fef9c3 / #713f12</div><div class="tdesc">Warning bg</div></div>
+<div class="trow"><div class="tsw" style="background:#fee2e2;"></div><div class="tname">color.bg.danger</div><div class="thex">#fee2e2 / #7f1d1d</div><div class="tdesc">Danger bg</div></div>
+
+<div class="slabel">Text tokens</div>
+<div class="trow"><div class="tsw" style="background:#111827;"></div><div class="tname">color.text.primary</div><div class="thex">#111827 / #f1f5f9</div><div class="tdesc">Main text</div></div>
+<div class="trow"><div class="tsw" style="background:#374151;"></div><div class="tname">color.text.secondary</div><div class="thex">#374151 / #cbd5e1</div><div class="tdesc">Supporting</div></div>
+<div class="trow"><div class="tsw" style="background:#6b7280;"></div><div class="tname">color.text.muted</div><div class="thex">#6b7280 / #64748b</div><div class="tdesc">Placeholder</div></div>
+<div class="trow"><div class="tsw" style="background:#d4920a;"></div><div class="tname">color.text.brand</div><div class="thex">#d4920a / #f9ad00</div><div class="tdesc">Brand links</div></div>
+<div class="trow"><div class="tsw" style="background:#2563eb;"></div><div class="tname">color.text.link</div><div class="thex">#2563eb / #3b82f6</div><div class="tdesc">Default links</div></div>
+<div class="trow"><div class="tsw" style="background:#ef4444;"></div><div class="tname">color.text.danger</div><div class="thex">#ef4444 / #f87171</div><div class="tdesc">Error text</div></div>
+<div class="trow"><div class="tsw" style="background:#10b981;"></div><div class="tname">color.text.success</div><div class="thex">#10b981 / #6ee7b7</div><div class="tdesc">Success text</div></div>
+<div class="trow"><div class="tsw" style="background:#a16207;"></div><div class="tname">color.text.warning</div><div class="thex">#a16207 / #fde047</div><div class="tdesc">Warning text</div></div>
+
+<div class="slabel">Border tokens</div>
+<div class="trow"><div class="tsw" style="background:#e5e7eb;"></div><div class="tname">color.border.default</div><div class="thex">#e5e7eb / #1e2535</div><div class="tdesc">Default</div></div>
+<div class="trow"><div class="tsw" style="background:#d1d5db;"></div><div class="tname">color.border.hover</div><div class="thex">#d1d5db / #2d3748</div><div class="tdesc">Hover</div></div>
+<div class="trow"><div class="tsw" style="background:#f9ad00;"></div><div class="tname">color.border.brand</div><div class="thex">#f9ad00</div><div class="tdesc">Focus ring</div></div>
+<div class="trow"><div class="tsw" style="background:#3b82f6;"></div><div class="tname">color.border.info</div><div class="thex">#3b82f6 / #2563eb</div><div class="tdesc">Info</div></div>
+<div class="trow"><div class="tsw" style="background:#10b981;"></div><div class="tname">color.border.success</div><div class="thex">#10b981 / #6ee7b7</div><div class="tdesc">Success</div></div>
+<div class="trow"><div class="tsw" style="background:#eab308;"></div><div class="tname">color.border.warning</div><div class="thex">#eab308 / #fde047</div><div class="tdesc">Warning</div></div>
+<div class="trow"><div class="tsw" style="background:#ef4444;"></div><div class="tname">color.border.danger</div><div class="thex">#ef4444 / #f87171</div><div class="tdesc">Danger</div></div>
+</div>
+</div>
+
+<script>
+function setTheme(t){document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'');document.querySelectorAll('.tbtn').forEach(b=>b.classList.toggle('on',b.textContent.toLowerCase()===t));}
+function go(id,el){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));document.getElementById('p-'+id).classList.add('on');el.classList.add('on');}
+</script>

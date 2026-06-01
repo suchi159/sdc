@@ -1,0 +1,6 @@
+Date,Project,Task Description
+2026-05-20,Data proctor,Initial commit: Saved Data proctor application codebase and assets
+2026-05-22,Data proctor,Split candidate flow into online and in-class based on port
+2026-05-22,Data proctor,"Implement candidate flow and run servers on 3001, 3002, 3003"
+2026-06-01,Data proctor,"Working on localhost:3008 (Hours spent: [PENDING])"
+2026-06-01,Data proctor,"Working on localhost:3007/v3 (Hours spent: [PENDING])"

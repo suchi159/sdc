@@ -1,0 +1,65 @@
+services:
+  - type: web
+    name: sdc-certifications
+    runtime: node
+    region: singapore  # change to: oregon | frankfurt | ohio | virginia | singapore
+    plan: starter       # free | starter | standard | pro
+    buildCommand: pnpm install && pnpm build
+    startCommand: node dist/index.js
+    healthCheckPath: /api/health
+    autoDeploy: true
+
+    envVars:
+      # ── Core ──────────────────────────────────────────────────────────────
+      - key: NODE_ENV
+        value: production
+
+      # ── Database (MySQL / PlanetScale / TiDB Cloud) ────────────────────
+      # Format: mysql://USER:PASSWORD@HOST:PORT/DATABASE?ssl={"rejectUnauthorized":true}
+      - key: DATABASE_URL
+        sync: false   # set manually in Render dashboard
+
+      # ── Auth ──────────────────────────────────────────────────────────────
+      - key: JWT_SECRET
+        generateValue: true   # Render auto-generates a secure random value
+
+      # ── LLM (OpenAI-compatible) ────────────────────────────────────────
+      # Point to OpenAI or any OpenAI-compatible endpoint (Together, Groq, etc.)
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_API_URL
+        value: https://api.openai.com   # override for other providers
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini              # override as needed
+
+      # ── AWS S3 (file storage) ──────────────────────────────────────────
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_REGION
+        value: us-east-1
+      - key: AWS_S3_BUCKET
+        sync: false
+
+      # ── Stripe ────────────────────────────────────────────────────────
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: VITE_STRIPE_PUBLISHABLE_KEY
+        sync: false
+
+      # ── Email (Resend) ─────────────────────────────────────────────────
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM_EMAIL
+        value: noreply@yourdomain.com
+
+      # ── App URL (used for redirect URLs, email links) ──────────────────
+      - key: APP_URL
+        sync: false   # e.g. https://sdc-certifications.onrender.com
+
+      # ── Vite public vars (baked into frontend bundle at build time) ────
+      - key: VITE_APP_TITLE
+        value: SDC Certifications

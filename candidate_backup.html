@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en" data-t="light">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="data:,">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="SDC Candidate Learning Platform">
+  <meta http-equiv="Content-Security-Policy" content="default-src * data: blob: 'unsafe-inline'; script-src * 'unsafe-inline'; connect-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src *; style-src * 'unsafe-inline';">
+  <title>Candidate Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="candidate.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="app-header hidden" id="main-header" role="banner">
+    <div class="brand">
+      <div class="badge" aria-hidden="true">SDC</div>
+      <div class="brand-txt" id="header-app-title">Learning Portal</div>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn theme-toggle" aria-label="Toggle Theme" data-tooltip="Switch Theme">
+        <i class="material-icons" aria-hidden="true">dark_mode</i>
+      </button>
+    </div>
+  </header>
+
+  <!-- 1. AUTH & EXAM ANCHOR -->
+  <main id="cand-auth-view" class="view-panel active" style="padding-bottom: 0;" role="main">
+    <div class="auth-bg">
+      <div class="card anchor-card">
+        <div class="badge" style="margin: 0 auto 24px;" aria-hidden="true">SDC</div>
+        
+        <div id="login-step">
+          <h1 class="anchor-title" id="login-main-title">Candidate Login</h1>
+          <p class="anchor-subtitle">Access your food safety learning materials.</p>
+          <form onsubmit="handleLogin(event)" novalidate id="login-form">
+            <div class="inp-group">
+              <label class="inp-label" for="login-email">Email Address</label>
+              <div class="inp-wrapper">
+                <i class="material-icons inp-icon" aria-hidden="true">mail</i>
+                <input class="inp" type="email" id="login-email" required placeholder="alex@student.edu" value="alex@student.edu" aria-describedby="email-error">
+              </div>
+              <span class="form-error" id="email-error" role="alert">Please enter a valid email.</span>
+            </div>
+            <div class="inp-group">
+              <label class="inp-label" for="login-pass">Password</label>
+              <div class="inp-wrapper">
+                <i class="material-icons inp-icon" aria-hidden="true">lock</i>
+                <input class="inp" type="password" id="login-pass" required placeholder="••••••••" value="demo123" aria-describedby="pass-error">
+              </div>
+              <span class="form-error" id="pass-error" role="alert">Password is required.</span>
+            </div>
+            <button type="submit" class="mdbtn btn-filled" id="login-btn" style="width: 100%;">
+              <span>Sign In</span> <i class="material-icons" aria-hidden="true">arrow_forward</i>
+            </button>
+          </form>
+        </div>
+
+        <div id="anchor-step" class="hidden">
+          <h1 class="anchor-title">Welcome, Alex.</h1>
+          <p class="anchor-subtitle">To build your personalized study schedule, tell us: <strong id="exam-date-label">When is your exam?</strong></p>
+          <div class="date-picker-wrap">
+            <input type="date" id="exam-date-input" aria-labelledby="exam-date-label" required>
+          </div>
+          <button class="mdbtn btn-filled" onclick="setAnchorDate()" style="width: 100%;">
+            <span>Start Learning</span> <i class="material-icons" aria-hidden="true">rocket_launch</i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 2. DASHBOARD -->
+  <main id="cand-home" class="view-panel" tabindex="-1">
+    <div class="content-container">
+      
+      <!-- Operations Console Style Top Metrics -->
+      <div class="grid-2 mb-4">
+        <!-- Target Exam -->
+        <div class="card metric-card">
+          <div class="metric-header">
+            <span class="metric-title">Target Exam Date</span>
+            <i class="material-icons" style="color: var(--sec);">event</i>
+          </div>
+          <div class="metric-value" id="dash-date-display">...</div>
+          <div class="metric-sub" style="font-weight: 600;">Food Protection Manager Certification</div>
+        </div>
+
+        <!-- Countdown -->
+        <div class="card metric-card">
+          <div class="metric-header">
+            <span class="metric-title">Time Remaining</span>
+            <i class="material-icons" style="color: var(--pri);">timer</i>
+          </div>
+          <div class="metric-value" style="color: var(--pri);" id="dash-countdown" aria-live="polite">-- Days</div>
+          <div class="metric-sub">Until locked exam simulation</div>
+        </div>
+      </div>
+
+      <div class="grid-2 mt-4">
+        <div class="card text-center" tabindex="0" aria-label="Course Progress Ring">
+          <h3 class="mb-4" style="text-align: left; font-size: 14px;">Course Progress</h3>
+          <div style="display:flex; justify-content:center; align-items:center; position:relative; padding: 24px;">
+            <svg viewBox="0 0 160 160" aria-hidden="true" style="width:140px; height:140px;">
+              <circle cx="80" cy="80" r="70" style="stroke:var(--sur-var); stroke-width:12; fill:none;"></circle>
+              <circle id="main-prog-ring" cx="80" cy="80" r="70" style="stroke:var(--sec); stroke-width:12; fill:none; stroke-dasharray:439.8; stroke-dashoffset:439.8; stroke-linecap:round; transition: 1s; transform:rotate(-90deg); transform-origin:50% 50%;"></circle>
+            </svg>
+            <div style="position:absolute;">
+              <div id="main-prog-text" style="font-size:32px; font-weight:800; font-family:var(--font-mono); color:var(--sec);">0%</div>
+              <div style="font-size:11px; color:var(--out); text-transform:uppercase; letter-spacing:0.05em;">Completed</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:24px;">
+          <div class="card">
+            <h3 style="font-size: 14px; margin-bottom: 16px;">Today's Objective</h3>
+            <div class="flex-start mb-4">
+              <i class="material-icons" style="font-size:32px; color:var(--sec);">flag</i>
+              <div>
+                <div style="font-weight: 700;">Complete Module 01 Audio + 10 questions</div>
+                <div style="font-size: 12px; color: var(--on-sur-var);">2 days streak 🔥</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="continue-card card-interactive" onclick="openReader('pdf')" tabindex="0" role="button" aria-label="Continue reading The Detailed Guide">
+            <div>
+              <span class="metric-title">Continue where you left off</span>
+              <h2>The Detailed Guide: Ch 1</h2>
+            </div>
+            <i class="material-icons" style="font-size: 32px; color:var(--sec);" aria-hidden="true">play_circle_filled</i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 3. LEARN & AI SEARCH (Mature Curriculum) -->
+  <main id="cand-learn" class="view-panel" tabindex="-1">
+    <div class="content-container">
+      <div class="section-header">
+        <h1 class="section-title"><i class="material-icons" style="color:var(--sec);">menu_book</i> Course Curriculum</h1>
+      </div>
+      
+      <!-- AI Search Box -->
+      <div class="ai-search-box">
+        <i class="material-icons ai-search-icon" aria-hidden="true">auto_awesome</i>
+        <input type="text" class="ai-search-input" id="ai-search-input" placeholder="Ask AI a question (e.g. 'What is the danger zone?')" aria-label="AI Semantic Search">
+        <span class="ai-search-badge" data-tooltip="Retrieval-Augmented Generation">RAG (No External Content Surfaced)</span>
+        <div class="ai-result-panel" id="ai-result">
+          <div style="font-weight: 700; color: var(--sec); margin-bottom: 8px; font-size:12px; text-transform:uppercase; letter-spacing:0.05em;">Verified AI Answer</div>
+          <p id="ai-answer-text" style="font-size:14px; line-height:1.6;">Loading...</p>
+        </div>
+      </div>
+
+      <div class="learning-tabs" role="tablist">
+        <button class="l-tab active" role="tab" aria-selected="true" tabindex="0">eBooks & Manuals</button>
+        <button class="l-tab" role="tab" aria-selected="false" tabindex="-1">Podcast Series</button>
+        <button class="l-tab" role="tab" aria-selected="false" tabindex="-1">Video Lectures</button>
+      </div>
+
+      <div class="curriculum-list" id="curr-list">
+        <!-- EBOOKS -->
+        <div class="c-item" tabindex="0" role="button" onclick="openReader('pdf')">
+          <div class="book-cover">
+            <div class="book-title">The Food Protection Manager's Handbook</div>
+            <div class="book-subtitle">A detailed study guide to help increase exam-day confidence</div>
+            <div class="book-author">Daniel John Stine<br>Chef Dominic Hawkes MCGB</div>
+          </div>
+          <div class="c-body">
+            <div class="c-title">The Food Protection Manager's Handbook (Study Guide)</div>
+            <div class="c-desc">New Detailed Guide. Based on the 2022 FDA Food Code.</div>
+          </div>
+          <div class="c-meta">
+            <div>350 Pages</div>
+            <div style="color:var(--suc); display:flex; align-items:center; gap:4px; justify-content:flex-end; margin-top:4px;"><i class="material-icons" style="font-size:14px;">check_circle</i> Accessed</div>
+          </div>
+        </div>
+
+        <div class="c-item" tabindex="0" role="button" onclick="openReader('pdf')">
+          <div class="book-cover concise">
+            <div class="book-title">The Food Protection Manager's Handbook</div>
+            <div class="book-subtitle">Concise Edition</div>
+            <div class="book-author">Daniel John Stine<br>Chef Dominic Hawkes</div>
+          </div>
+          <div class="c-body">
+            <div class="c-title">The Food Protection Manager's Handbook - Concise Edition</div>
+            <div class="c-desc">Your Fast-Track Guide to Certification. Optimized for Busy Professionals.</div>
+          </div>
+          <div class="c-meta">
+            <div>120 Pages</div>
+            <div style="color:var(--out); display:flex; align-items:center; gap:4px; justify-content:flex-end; margin-top:4px;"><i class="material-icons" style="font-size:14px;">circle</i> Not Started</div>
+          </div>
+        </div>
+
+        <!-- PODCASTS HEADER -->
+        <h3 class="mt-4" style="font-size:14px; padding-bottom:8px; border-bottom:1px solid var(--glass-border);">The Food Protection Manager's Handbook A Podcast Series</h3>
+        <p style="font-size:12px; color:var(--on-sur-var); margin-bottom:16px;">Your essential guide to certification. Hosted by Chef Dominic Hawkes MCGB.</p>
+        
+        <div class="card" style="padding:0; overflow:hidden;">
+          <div class="track-list">
+            <div class="track-item" onclick="showToast('Playing Audio...')">
+              <div class="track-info">
+                <i class="material-icons">play_circle_outline</i>
+                <div>
+                  <div class="track-name">00 Trailer.mp3</div>
+                  <div class="track-type">Audio Track • 02:15</div>
+                </div>
+              </div>
+              <i class="material-icons" style="color:var(--out); font-size:16px;">more_vert</i>
+            </div>
+            <div class="track-item" onclick="showToast('Playing Audio...')">
+              <div class="track-info">
+                <i class="material-icons">play_circle_outline</i>
+                <div>
+                  <div class="track-name">01 Handling Food Safely.mp3</div>
+                  <div class="track-type">Audio Track • 18:40</div>
+                </div>
+              </div>
+              <i class="material-icons" style="color:var(--out); font-size:16px;">more_vert</i>
+            </div>
+            <div class="track-item" onclick="showToast('Playing Audio...')">
+              <div class="track-info">
+                <i class="material-icons">play_circle_outline</i>
+                <div>
+                  <div class="track-name">02 Bad Bugs and Foodborne Illness Prevention.mp3</div>
+                  <div class="track-type">Audio Track • 22:15</div>
+                </div>
+              </div>
+              <i class="material-icons" style="color:var(--out); font-size:16px;">more_vert</i>
+            </div>
+            <div class="track-item" onclick="showToast('Playing Audio...')">
+              <div class="track-info">
+                <i class="material-icons">play_circle_outline</i>
+                <div>
+                  <div class="track-name">03 Food Hazards Allergens and Contamination Prevention.mp3</div>
+                  <div class="track-type">Audio Track • 20:30</div>
+                </div>
+              </div>
+              <i class="material-icons" style="color:var(--out); font-size:16px;">more_vert</i>
+            </div>
+            <div class="track-item" onclick="showToast('Playing Audio...')">
+              <div class="track-info">
+                <i class="material-icons">play_circle_outline</i>
+                <div>
+                  <div class="track-name">04 TCS Foods Time and Temperature Control for Safety.mp3</div>
+                  <div class="track-type">Audio Track • 25:00</div>
+                </div>
+              </div>
+              <i class="material-icons" style="color:var(--out); font-size:16px;">more_vert</i>
+            </div>
+            <div class="track-item" onclick="showToast('Playing Audio...')">
+              <div class="track-info">
+                <i class="material-icons">play_circle_outline</i>
+                <div>
+                  <div class="track-name">05 Food Source and Receiving Essentials.mp3</div>
+                  <div class="track-type">Audio Track • 15:45</div>
+                </div>
+              </div>
+              <i class="material-icons" style="color:var(--out); font-size:16px;">more_vert</i>
+            </div>
+            <div class="track-item" onclick="showToast('Playing Audio...')">
+              <div class="track-info">
+                <i class="material-icons">play_circle_outline</i>
+                <div>
+                  <div class="track-name">06 Storage.mp3</div>
+                  <div class="track-type">Audio Track • 17:20</div>
+                </div>
+              </div>
+              <i class="material-icons" style="color:var(--out); font-size:16px;">more_vert</i>
+            </div>
+            <div class="track-item" onclick="showToast('Playing Audio...')">
+              <div class="track-info">
+                <i class="material-icons">play_circle_outline</i>
+                <div>
+                  <div class="track-name">07 Food Preparation.mp3</div>
+                  <div class="track-type">Audio Track • 19:10</div>
+                </div>
+              </div>
+              <i class="material-icons" style="color:var(--out); font-size:16px;">more_vert</i>
+            </div>
+            <div class="track-item" onclick="showToast('Playing Audio...')">
+              <div class="track-info">
+                <i class="material-icons">play_circle_outline</i>
+                <div>
+                  <div class="track-name">08 Food Service.mp3</div>
+                  <div class="track-type">Audio Track • 14:50</div>
+                </div>
+              </div>
+              <i class="material-icons" style="color:var(--out); font-size:16px;">more_vert</i>
+            </div>
+            <div class="track-item" onclick="showToast('Playing Audio...')">
+              <div class="track-info">
+                <i class="material-icons">play_circle_outline</i>
+                <div>
+                  <div class="track-name">09 Cleaning and Sanitizing.mp3</div>
+                  <div class="track-type">Audio Track • 21:05</div>
+                </div>
+              </div>
+              <i class="material-icons" style="color:var(--out); font-size:16px;">more_vert</i>
+            </div>
+            <div class="track-item" onclick="showToast('Playing Audio...')">
+              <div class="track-info">
+                <i class="material-icons">play_circle_outline</i>
+                <div>
+                  <div class="track-name">10 Food Establishment.mp3</div>
+                  <div class="track-type">Audio Track • 16:30</div>
+                </div>
+              </div>
+              <i class="material-icons" style="color:var(--out); font-size:16px;">more_vert</i>
+            </div>
+            <div class="track-item" onclick="showToast('Playing Audio...')">
+              <div class="track-info">
+                <i class="material-icons">play_circle_outline</i>
+                <div>
+                  <div class="track-name">11 Pest Control.mp3</div>
+                  <div class="track-type">Audio Track • 13:40</div>
+                </div>
+              </div>
+              <i class="material-icons" style="color:var(--out); font-size:16px;">more_vert</i>
+            </div>
+            <div class="track-item" onclick="showToast('Playing Audio...')">
+              <div class="track-info">
+                <i class="material-icons">play_circle_outline</i>
+                <div>
+                  <div class="track-name">12 Management Crisis Planning.mp3</div>
+                  <div class="track-type">Audio Track • 18:25</div>
+                </div>
+              </div>
+              <i class="material-icons" style="color:var(--out); font-size:16px;">more_vert</i>
+            </div>
+            <div class="track-item" onclick="showToast('Playing Audio...')">
+              <div class="track-info">
+                <i class="material-icons">play_circle_outline</i>
+                <div>
+                  <div class="track-name">13 Regulations Inspections and Staff Training.mp3</div>
+                  <div class="track-type">Audio Track • 24:10</div>
+                </div>
+              </div>
+              <i class="material-icons" style="color:var(--out); font-size:16px;">more_vert</i>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- 4. PRACTICE & FLASHCARDS -->
+  <main id="cand-practice" class="view-panel" tabindex="-1">
+    <div class="content-container">
+      <div class="section-header">
+        <h1 class="section-title"><i class="material-icons" style="color:var(--pri);">quiz</i> Practice & Readiness</h1>
+      </div>
+      
+      <div class="grid-2">
+        <!-- Mock Exam -->
+        <div class="card card-interactive" onclick="openMockExam()" tabindex="0" role="button" aria-label="Start Mock Exam 1">
+          <div class="flex-between mb-4">
+            <div class="c-icon" style="background:rgba(249, 173, 0, 0.1); color:var(--pri);"><i class="material-icons">assignment</i></div>
+            <span class="status-badge status-neutral">Adaptive</span>
+          </div>
+          <h2 style="font-size: 18px; margin-bottom: 8px;">Full Mock Exam (90 Questions)</h2>
+          <p style="font-size: 13px; color: var(--on-sur-var); margin-bottom: 24px;">No hints. Locked down simulation matching the actual ACF Manager Exam.</p>
+          <div class="flex-between" style="font-size: 13px; font-weight: 600;">
+            <span><i class="material-icons" style="font-size:16px; vertical-align:bottom; color:var(--out);">timer</i> 90 Mins</span>
+            <span style="color: var(--sec);">Start Simulation &rarr;</span>
+          </div>
+        </div>
+
+        <!-- Flashcards -->
+        <div>
+          <h3 class="mb-4" style="font-size:14px; display:flex; align-items:center; gap:8px;">AI-Generated Digital Flashcards <i class="material-icons" style="color:var(--sec); font-size:16px;">auto_awesome</i></h3>
+          <div class="flashcard-container">
+            <div class="flashcard" id="active-flashcard" tabindex="0" role="button" aria-label="Flip Flashcard" onclick="flipCard()">
+              <div class="flashcard-face flashcard-front">
+                <span class="fc-label">Question</span>
+                <div class="fc-text" id="fc-q">What is the minimum cooking temp for poultry?</div>
+                <div class="mt-4" style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--sec);"><i class="material-icons" style="font-size:14px; vertical-align:middle;">touch_app</i> Tap to flip</div>
+              </div>
+              <div class="flashcard-face flashcard-back">
+                <span class="fc-label">Answer</span>
+                <div class="fc-text" id="fc-a">165°F (74°C)</div>
+              </div>
+            </div>
+            <div class="fc-controls text-center">
+              <button class="mdbtn btn-outlined" onclick="rateCard('hard')" style="color:var(--err); border-color:var(--err);">Hard</button>
+              <button class="mdbtn btn-outlined" onclick="rateCard('good')" style="color:var(--wrn); border-color:var(--wrn);">Good</button>
+              <button class="mdbtn btn-outlined" onclick="rateCard('easy')" style="color:var(--suc); border-color:var(--suc);">Easy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 5. NOTES CRUD -->
+  <main id="cand-notes" class="view-panel" tabindex="-1">
+    <div class="content-container">
+      <div class="section-header" style="justify-content: space-between; align-items: center;">
+        <h1 class="section-title"><i class="material-icons" style="color:var(--ter);">edit_note</i> My Notes</h1>
+        <button class="mdbtn btn-filled" onclick="openNoteModal()" tabindex="0" style="background:var(--ter);">
+          <i class="material-icons">add</i> <span>Create Note</span>
+        </button>
+      </div>
+      <div id="notes-list-container" class="grid-2">
+        <!-- Notes rendered via JS -->
+      </div>
+    </div>
+  </main>
+
+  <!-- 6. PROFILE & CERTIFICATES -->
+  <main id="cand-profile" class="view-panel" tabindex="-1">
+    <div class="content-container">
+      <div class="card mb-4" style="display:flex; align-items:center; gap:24px;">
+        <div style="width: 64px; height: 64px; border-radius: 8px; background: var(--sec); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700;">AR</div>
+        <div>
+          <h1 style="font-size: 20px; margin-bottom: 4px;">Alex Rivera</h1>
+          <p style="color: var(--out); font-family: var(--font-mono); font-size: 12px;">ID: CAN-092 • alex@student.edu</p>
+        </div>
+      </div>
+
+      <h3 class="mb-4" style="font-size:14px;">My Certifications</h3>
+      <div class="card" id="cert-placeholder" style="text-align:center; padding: 40px; background: var(--sur-var);">
+        <i class="material-icons" style="font-size:48px; color:var(--out-var); margin-bottom:16px;">verified</i>
+        <div style="font-size: 18px; font-weight: 600; color: var(--out);">Food Protection Manager Certification</div>
+        <p style="font-size: 13px; color: var(--on-sur-var); margin-top:8px;">Not yet earned. Pass your mock exams to simulate earning.</p>
+      </div>
+      
+      <div class="card hidden" id="cert-earned" style="background: #111; color: #fff; text-align: center; padding: 40px;">
+        <div style="width: 100px; height: 100px; margin: 0 auto 24px; background: #fff; padding: 8px; border-radius: 8px;"><img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=SDC-VERIFY-123" alt="Verification QR Code" style="width:100%; height:100%;"></div>
+        <div style="font-family: 'Georgia', serif; font-size: 28px; color: var(--pri); margin-bottom: 8px;">Food Protection Manager</div>
+        <p style="opacity: 0.8; font-size: 12px; margin-bottom: 24px; font-family: var(--font-mono);">Issued: Today • Valid for 5 years</p>
+        <div style="display: flex; justify-content: center; gap: 16px;">
+          <button class="mdbtn btn-filled" style="background: #fff; color: #000;" onclick="showToast('PDF Downloading...')" tabindex="0">Download PDF</button>
+          <button class="mdbtn btn-outlined" style="border-color: #fff; color: #fff; background: transparent;" onclick="showToast('Link copied for LinkedIn!')" tabindex="0">Share to LinkedIn</button>
+        </div>
+      </div>
+      
+      <div class="mt-4 text-center">
+        <button class="mdbtn btn-outlined" onclick="handleLogout()" style="color: var(--err); border-color:var(--err);" tabindex="0">Sign Out</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- BOTTOM NAVIGATION -->
+  <nav class="bottom-nav hidden" id="main-nav" role="navigation" aria-label="Main Navigation">
+    <button class="nav-item active" data-target="cand-home" tabindex="0" aria-current="page"><i class="material-icons">dashboard</i><span>Home</span></button>
+    <button class="nav-item" data-target="cand-learn" tabindex="0"><i class="material-icons">menu_book</i><span>Learn</span></button>
+    <button class="nav-item" data-target="cand-practice" tabindex="0"><i class="material-icons">quiz</i><span>Practice</span></button>
+    <button class="nav-item" data-target="cand-notes" tabindex="0"><i class="material-icons">edit_note</i><span>Notes</span></button>
+    <button class="nav-item" data-target="cand-profile" tabindex="0"><i class="material-icons">person</i><span>Profile</span></button>
+  </nav>
+
+  <!-- ==================== OVERLAYS & MODALS ==================== -->
+  
+  <!-- NOTE CRUD MODAL -->
+  <div class="modal-overlay" id="note-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-content">
+      <h2 id="modal-title" class="mb-4" style="font-size:18px;">Add Note</h2>
+      <div class="inp-group">
+        <label class="inp-label" for="note-topic">Topic / Context</label>
+        <input type="text" id="note-topic" class="inp" placeholder="e.g. Domain 2" tabindex="0">
+      </div>
+      <div class="inp-group">
+        <label class="inp-label" for="note-body">Note Details</label>
+        <textarea id="note-body" class="inp" rows="4" placeholder="Write your note here..." tabindex="0"></textarea>
+      </div>
+      <div class="flex-between mt-4">
+        <button class="mdbtn btn-outlined" onclick="closeNoteModal()" tabindex="0">Cancel</button>
+        <button class="mdbtn btn-filled" onclick="saveNote()" tabindex="0">Save Note</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- READER OVERLAY -->
+  <div id="reader-overlay" class="reader-view" role="dialog" aria-modal="true" aria-label="Document Reader">
+    <div class="reader-header">
+      <div class="flex-start">
+        <button class="icon-btn" onclick="closeReader()" tabindex="0" aria-label="Close Reader"><i class="material-icons">close</i></button>
+        <span style="font-weight: 600; font-size:16px;" id="reader-title">Loading...</span>
+      </div>
+    </div>
+    
+    <div class="reader-content" id="reader-pdf" style="display:none;" tabindex="0">
+      <h2 style="margin-bottom: 24px; font-family: 'Georgia', serif;">Chapter 1: The Danger Zone</h2>
+      <p style="font-size:16px; line-height:1.8;">The temperature danger zone is the temperature range in which foodborne bacteria can grow. Food safety agencies define the danger zone as roughly <span style="background: rgba(249, 173, 0, 0.2); padding: 2px 4px; border-radius: 4px; cursor: pointer; border-bottom: 2px solid var(--pri);" tabindex="0" aria-label="Highlight: 41 to 135 degrees Fahrenheit" onclick="showAnnoToolbar(event)" onkeydown="if(event.key==='Enter') showAnnoToolbar(event)">41 to 135 degrees Fahrenheit (5 to 57 °C)</span>.</p>
+    </div>
+
+    <!-- ANNOTATION TOOLBAR -->
+    <div class="annotation-toolbar" id="anno-toolbar" role="toolbar" aria-label="Annotation Tools">
+      <button class="anno-btn" style="background: var(--sur-var); color: var(--on-sur);" onclick="handleAnno('note')" tabindex="0" aria-label="Add Note"><i class="material-icons" style="font-size:18px;">edit_note</i></button>
+    </div>
+  </div>
+
+  <!-- MOCK EXAM LOCKDOWN -->
+  <div id="mock-exam-env" class="mock-env" role="dialog" aria-modal="true" aria-label="Exam Simulation">
+    <div class="mock-header">
+      <div style="font-weight: 700; display:flex; align-items:center; gap:8px;"><i class="material-icons">list_alt</i> Question List</div>
+      <div style="font-family: var(--font-mono); font-weight: 800; font-size: 20px; color: var(--err); display:flex; align-items:center; gap:8px;" aria-live="polite"><i class="material-icons">radio_button_checked</i> <span id="mock-timer">89:08</span></div>
+      <button class="mdbtn btn-filled" onclick="submitMock()" tabindex="0" id="mock-top-submit" style="display:none;">Submit</button>
+      <div style="width: 100px;"></div> <!-- Spacer for center alignment -->
+    </div>
+    <div class="mock-body">
+      <div class="mock-content" tabindex="0" id="mock-focus-trap">
+        <div style="font-size: 20px; font-weight: 600; margin-bottom: 40px; line-height: 1.5;" id="mock-q-text" aria-live="polite">Loading...</div>
+        <div id="mock-q-options" role="radiogroup" aria-labelledby="mock-q-text"></div>
+      </div>
+      <div class="mock-footer">
+        <div id="mock-score-live" style="font-weight:600; font-family:var(--font-mono);">Your Score: 0 of 90</div>
+        <div class="mock-copyright">Copyright 2026 SDC Certifications</div>
+        <div style="display:flex; align-items:center; gap:16px;">
+          <div style="color:var(--out); font-family:var(--font-mono);" id="mock-q-meta">Question 1 of 90</div>
+          <button class="mdbtn btn-filled" onclick="navMock(1)" id="mock-next-btn" tabindex="0" style="background:var(--pri); color:var(--on-pri); padding: 12px 32px; font-size:16px;">SUBMIT</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="candidate.js"></script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-t="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Organisation Admin | SecureProctor AI</title>
+  <link rel="stylesheet" href="voucher_ledger.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Sidebar (Always Dark) -->
+  <aside class="sidebar-dark">
+    <div class="logo-area">
+      <div class="logo-icon">SP</div>
+      <h2>SecureProctor <span class="badge-ai">AI</span></h2>
+    </div>
+    <nav class="nav-links">
+      <a href="#"><span class="material-symbols-outlined">dashboard</span> Dashboard</a>
+      <a href="#"><span class="material-symbols-outlined">videocam</span> Exam Monitoring</a>
+      <a href="#"><span class="material-symbols-outlined">event</span> Sessions</a>
+      <a href="#"><span class="material-symbols-outlined">group</span> Candidates</a>
+      <a href="#"><span class="material-symbols-outlined">gavel</span> Incident Hub</a>
+      <a href="#"><span class="material-symbols-outlined">bar_chart</span> Reports & Analytics</a>
+      <a href="#"><span class="material-symbols-outlined">payments</span> Earnings & Payments</a>
+      <a href="#" class="active"><span class="material-symbols-outlined">admin_panel_settings</span> Organisation Admin</a>
+      <a href="#"><span class="material-symbols-outlined">settings</span> Settings</a>
+    </nav>
+    
+    <div class="sidebar-bottom">
+      <div class="user-profile">
+        <img src="https://i.pravatar.cc/150?u=sarah" alt="Dr. Sarah Jenkins" class="avatar">
+        <div class="user-info">
+          <div class="user-name">Dr. Sarah Jenkins</div>
+          <div class="user-role"><span class="status-dot"></span> Senior Proctor</div>
+        </div>
+        <button id="themeToggleBtn" class="icon-btn" title="Toggle Theme">
+          <span class="material-symbols-outlined">dark_mode</span>
+        </button>
+      </div>
+      <button class="btn-signout">
+        <span class="material-symbols-outlined">logout</span> Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main View Area -->
+  <div class="main-view">
+    
+    <!-- Top Bar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 class="page-title">Organisation Admin</h1>
+      </div>
+      <div class="topbar-right">
+        <div class="time-capsule">
+          <span class="material-symbols-outlined">schedule</span>
+          <span id="liveClock">24/05/2026, 09:10:10</span>
+        </div>
+        <div class="live-capsule">
+          <span class="pulse-dot"></span> LIVE
+        </div>
+        <button class="icon-btn">
+          <span class="material-symbols-outlined">notifications</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <div class="content-header">
+        <p>Procure, assign, track, and revoke digital assessment permissions.</p>
+        <button class="btn-primary" id="purchaseBtn"><span class="material-symbols-outlined">shopping_cart</span> Buy Vouchers</button>
+      </div>
+
+      <!-- Controls Bar -->
+      <section class="controls-bar card">
+        <div class="search-box">
+          <span class="material-symbols-outlined">search</span>
+          <input type="text" id="globalSearch" placeholder="Search by Hash Key, Student, or Proctor ID...">
+        </div>
+        <div class="filter-group">
+          <select id="courseFilter">
+            <option value="">All Courses</option>
+            <option value="Food Safety L1">Food Safety L1</option>
+            <option value="HACCP Advanced">HACCP Advanced</option>
+          </select>
+          <select id="statusFilter">
+            <option value="">All Statuses</option>
+            <option value="Available">Available</option>
+            <option value="Bound">Bound</option>
+            <option value="Redeemed">Redeemed</option>
+            <option value="Revoked">Revoked</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Global Action Panel (Hidden by default) -->
+      <section class="global-action-panel hidden" id="actionPanel">
+        <div class="action-info">
+          <span class="material-symbols-outlined">info</span>
+          <span id="selectedCount">0</span> vouchers selected
+        </div>
+        <div class="action-buttons">
+          <button class="btn-error" id="revokeSelectedBtn">Revoke Selected</button>
+          <button class="btn-secondary-dark" id="clearSelectionBtn">Cancel</button>
+        </div>
+      </section>
+
+      <!-- Split View Layout -->
+      <div class="split-view">
+        
+        <!-- Ledger Table -->
+        <div class="ledger-container card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th><input type="checkbox" id="selectAllCheckbox"></th>
+                <th>Voucher Hash Key</th>
+                <th>Course</th>
+                <th>Student</th>
+                <th>Proctor Code</th>
+                <th>Status</th>
+                <th>Expiration</th>
+              </tr>
+            </thead>
+            <tbody id="ledgerTableBody">
+              <!-- Rows injected via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Proctor Supply Inbox -->
+        <aside class="supply-inbox card">
+          <div class="inbox-header">
+            <h3>Proctor Supply Inbox</h3>
+            <span class="badge">3 New</span>
+          </div>
+          <div class="bulk-storage-info">
+            <p>Available Bulk Storage: <strong>4,250</strong></p>
+          </div>
+          <ul class="request-list" id="requestList">
+            <!-- Requests injected via JS -->
+          </ul>
+        </aside>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Revocation Modal -->
+  <div class="modal-overlay hidden" id="revokeModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="material-symbols-outlined warning-icon">warning</span>
+        <h2>Confirm Bulk Revocation</h2>
+      </div>
+      <div class="modal-body">
+        <p id="revokeModalText">You are about to revoke X vouchers. This action will wipe database strings and students will lose access.</p>
+        <div id="defensiveWarning" class="alert-box error hidden">
+          <strong>CRITICAL WARNING:</strong> <span id="activeExamsCount"></span> students are currently testing. Revocation will pause exams gently at the next question save point.
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="cancelRevokeBtn">Cancel</button>
+        <button class="btn-error" id="confirmRevokeBtn">Confirm Revocation</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="voucher_ledger.js"></script>
+</body>
+</html>

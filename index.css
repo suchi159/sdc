@@ -6,7 +6,7 @@
    1. COLOR SCHEMES & CSS VARS (Material Design 3 Tokens + Stripe Aesthetic)
    -------------------------------------------------------------------------- */
 :root {
-  --font: 'Inter', system-ui, -apple-system, sans-serif;
+  --font: "Roboto", system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
   /* MD3 LIGHT TOKEN ALIGNMENT */
@@ -15,8 +15,8 @@
   --pri-ct: #000000;
   --pri-con: #fff8e6; 
   --pri-con-ct: #7a4e00;
-  --sec: #6750a4; 
-  --sec-ct: #ffffff;
+  --sec: var(--pri); 
+  --sec-ct: var(--pri-ct);
   --ter: #625b71; 
   --ter-ct: #ffffff;
   --err: #b3261e; 
@@ -29,12 +29,20 @@
   --inf-ct: #ffffff;
   
   --sur: #ffffff; 
-  --sur-var: #f3edf7;
+  --sur-var: #ffffff;
   --out: #5d5962; /* Improved light mode contrast (from #79747e) */
   --out-var: #8e8a94; /* Improved light mode border/outline contrast (from #cac4d0) */
   --on-sur: #1c1b1f; 
   --on-sur-var: #49454f;
   --on-pri: #000000;
+  
+  /* MD3 Layout Spacing Tokens */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-xxl: 48px;
   
   --md-bg: #f8f9fa;
   --chip-bg: #f4eff4;
@@ -64,8 +72,8 @@ html[data-t="dark"] {
   --pri-ct: #000000;
   --pri-con: #ffedaa; 
   --pri-con-ct: #1c1100;
-  --sec: #cbb9f9; 
-  --sec-ct: #371e73;
+  --sec: var(--pri); 
+  --sec-ct: var(--pri-ct);
   --ter: #cbbfdc; 
   --ter-ct: #322942;
   --err: #f2b8b5; 

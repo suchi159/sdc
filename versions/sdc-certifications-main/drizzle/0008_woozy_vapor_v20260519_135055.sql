@@ -1,0 +1,1 @@
+ALTER TABLE `notifications` MODIFY COLUMN `type` enum('credential_issued','exam_scheduled','exam_result','expiry_reminder','proctoring_incident','system_alert','billing_alert','booking_confirmed','booking_cancelled','booking_new') NOT NULL;

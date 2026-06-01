@@ -2,6 +2,8 @@
 <html lang="en" data-t="light">
 
 <head>
+  <meta http-equiv="Content-Security-Policy" content="default-src * data: blob: 'unsafe-inline'; script-src * 'unsafe-inline'; connect-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src *; style-src * 'unsafe-inline';">
+
   <meta charset="UTF-8">
   <link rel="icon" href="data:,">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
 
@@ -753,9 +755,9 @@
                 </div>
               </div>
 
-              <!-- Right Column: Stack vertically: Upcoming Sessions, Cohort Shifts -->
+              <!-- Right Column: Stack vertically: Upcoming Classes, Cohort Shifts -->
               <div style="display: flex; flex-direction: column; gap: 20px;">
-                <!-- Card 1: Upcoming Sessions -->
+                <!-- Card 1: Upcoming Classes -->
                 <div
                   style="background: var(--sur); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px; box-shadow: var(--shadow-sm);">
                   <div
@@ -763,7 +765,7 @@
                     <h3
                       style="margin: 0; font-size: 14px; font-weight: 700; color: var(--on-sur); display: flex; align-items: center; gap: 6px;">
                       <i class="material-icons" style="color: var(--pri); font-size: 18px;">event</i>
-                      Upcoming Sessions
+                      Upcoming Classes
                     </h3>
                     <button class="mdbtn btn-text" onclick="changePanel('calendar-panel')"
                       style="font-size: 10px; padding: 2px 6px;">View All</button>
@@ -1046,7 +1048,7 @@
                   style="padding: 20px; height: 100%; display: flex; flex-direction: column; gap: 16px;">
                   <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                      <h2 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--on-sur);">Sessions</h2>
+                      <h2 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--on-sur);">Classes</h2>
                       <p style="margin: 4px 0 0; font-size: 11px; color: var(--out);">All proctoring sessions — past and
                         present.</p>
                     </div>
@@ -1797,7 +1799,7 @@
         <label class="inp-label" for="modal-shift-type">Shift Activity / Type</label>
         <select class="inp" id="modal-shift-type" onchange="toggleModalShiftType()"
           style="width: 100%; border: 1px solid var(--out-var); background: var(--md-bg); border-radius: 10px; padding: 10px; font-size: 12px; color: var(--on-sur); font-weight: 500;">
-          <option value="session">Assigned Exam Session</option>
+          <option value="session">Assigned Exam Class</option>
           <option value="available">Declare Open Availability</option>
           <option value="blocked">Block Time Slot</option>
         </select>

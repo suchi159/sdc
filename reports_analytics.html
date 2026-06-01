@@ -2,6 +2,7 @@
 
 <html data-t="light" lang="en">
 <head>
+<meta content="default-src * data: blob: 'unsafe-inline'; script-src * 'unsafe-inline'; connect-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src *; style-src * 'unsafe-inline';" http-equiv="Content-Security-Policy"/>
 <meta charset="utf-8"/>
 <link href="data:," rel="icon"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -10,7 +11,7 @@
 <!-- Font and Icon Resources -->
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
 <!-- Apache ECharts CDN -->
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
@@ -608,14 +609,14 @@
 </div>
 </div>
 </div>
-<!-- Right Column: Stack vertically: Upcoming Sessions, Cohort Shifts -->
+<!-- Right Column: Stack vertically: Upcoming Classes, Cohort Shifts -->
 <div style="display: flex; flex-direction: column; gap: 20px;">
-<!-- Card 1: Upcoming Sessions -->
+<!-- Card 1: Upcoming Classes -->
 <div style="background: var(--sur); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px; box-shadow: var(--shadow-sm);">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 8px;">
 <h3 style="margin: 0; font-size: 14px; font-weight: 700; color: var(--on-sur); display: flex; align-items: center; gap: 6px;">
 <i class="material-icons" style="color: var(--pri); font-size: 18px;">event</i>
-                      Upcoming Sessions
+                      Upcoming Classes
                     </h3>
 <button class="mdbtn btn-text" onclick="changePanel('calendar-panel')" style="font-size: 10px; padding: 2px 6px;">View All</button>
 </div>
@@ -859,7 +860,7 @@
 <div class="kpi-card" style="padding: 20px; height: 100%; display: flex; flex-direction: column; gap: 16px;">
 <div style="display: flex; justify-content: space-between; align-items: center;">
 <div>
-<h2 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--on-sur);">Sessions</h2>
+<h2 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--on-sur);">Classes</h2>
 <p style="margin: 4px 0 0; font-size: 11px; color: var(--out);">All proctoring sessions — past and
                         present.</p>
 </div>
@@ -1471,7 +1472,7 @@
 <div class="inp-group" style="margin-top: 12px;">
 <label class="inp-label" for="modal-shift-type">Shift Activity / Type</label>
 <select class="inp" id="modal-shift-type" onchange="toggleModalShiftType()" style="width: 100%; border: 1px solid var(--out-var); background: var(--md-bg); border-radius: 10px; padding: 10px; font-size: 12px; color: var(--on-sur); font-weight: 500;">
-<option value="session">Assigned Exam Session</option>
+<option value="session">Assigned Exam Class</option>
 <option value="available">Declare Open Availability</option>
 <option value="blocked">Block Time Slot</option>
 </select>

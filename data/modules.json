@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "title": "The Food Protection Manager's Handbook (Study Guide)",
+    "desc": "A detailed study guide to help increase exam-day confidence New Detailed Guide. Authors: Daniel John Stine, Chef Dominic Hawkes MCGB",
+    "icon": "menu_book",
+    "type": "document",
+    "duration": "120 mins",
+    "thumb": "/thumb_food_safety.png",
+    "contentTitle": "Study Guide"
+  },
+  {
+    "id": 2,
+    "title": "The Food Protection Manager's Handbook Concise Edition",
+    "desc": "Your Fast-Track Guide to Certification Optimized for Busy Professionals. Authors: Daniel John Stine, Chef Dominic Hawkes MCGB",
+    "icon": "menu_book",
+    "type": "document",
+    "duration": "60 mins",
+    "thumb": "/thumb_haccp.png",
+    "contentTitle": "Concise Edition"
+  },
+  {
+    "id": 3,
+    "title": "The Food Protection Manager's Handbook A PODCAST SERIES",
+    "desc": "YOUR ESSENTIAL GUIDE TO CERTIFICATION BASED ON THE 2022 FDA FOOD CODE. Author/Content Developer: Daniel John Stine. Host: Chef Dominic Hawkes MCGB",
+    "icon": "mic",
+    "type": "podcast",
+    "duration": "180 mins",
+    "thumb": "/thumb_culinary.png",
+    "contentTitle": "Podcast Series"
+  },
+  {
+    "id": 4,
+    "title": "SDC Certifications Practice Examination",
+    "desc": "Quiz Question: When refilling a cup, never touch - No such restriction, The lip contact area, The middle, The bottom",
+    "icon": "quiz",
+    "type": "practice exam",
+    "duration": "90 mins",
+    "thumb": "/thumb_practice_exam.png",
+    "contentTitle": "Practice Exam"
+  }
+]

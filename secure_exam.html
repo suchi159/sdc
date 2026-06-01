@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" data-t="dark">
+<head>
+  <meta http-equiv="Content-Security-Policy" content="default-src * data: blob: 'unsafe-inline'; script-src * 'unsafe-inline'; connect-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src *; style-src * 'unsafe-inline';">
+
+  <meta charset="UTF-8">
+  <link rel="icon" href="data:,">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SecureProctor AI - Official Final Assessment Center">
+  <title>Final Assessment - SecureProctor AI</title>
+
+  <!-- Font and Icon Resources -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+  <!-- Exam Lockdown Styling -->
+  <link rel="stylesheet" href="secure_exam.css">
+</head>
+<body class="dark-theme">
+
+  <!-- ==================== SYSTEM PREPARATION / HARDWARE CHECK ==================== -->
+  <main id="cand-exam-prep" class="view-panel active">
+    <div class="content-container">
+      <div class="brand-header">
+        <div class="brand">
+          <div class="badge">SP</div>
+          <span class="brand-txt">SecureProctor <span class="lock-pill">Lockdown</span></span>
+        </div>
+      </div>
+
+      <div class="card prep-card">
+        <div class="info-alert">
+          <i class="material-icons">info</i>
+          <p><strong>Security Requirements Alert:</strong> You are entering a secure examination environment. Bypassing validation rules or leaving the browser tab during the exam will log an automatic incident alert to your proctor.</p>
+        </div>
+
+        <div class="exam-title-row">
+          <div>
+            <h1 id="exam-mode-title">Online AI-Proctored Exam</h1>
+            <h2 class="subtitle">Food Protection Manager Certification (Final Assessment)</h2>
+            <div class="details-row">
+              <span><i class="material-icons">timer</i> 60 Minutes</span>
+              <span><i class="material-icons">format_list_numbered</i> 5 Questions</span>
+              <span id="exam-status-meta"><i class="material-icons">visibility</i> AI Surveillance Mode</span>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="section-title">Pre-Exam Hardware Validation</h3>
+        <div class="sys-check-list">
+          <div class="sys-check-item" id="check-cam">
+            <div class="sys-check-info">
+              <div class="sys-check-icon"><i class="material-icons">videocam</i></div>
+              <div class="sys-check-text">
+                <h4>Webcam Access</h4>
+                <p>Required for identity verification and AI proctoring.</p>
+              </div>
+            </div>
+            <div class="sys-check-status"><i class="material-icons">hourglass_empty</i></div>
+          </div>
+
+          <div class="sys-check-item" id="check-mic">
+            <div class="sys-check-info">
+              <div class="sys-check-icon"><i class="material-icons">mic</i></div>
+              <div class="sys-check-text">
+                <h4>Microphone Access</h4>
+                <p>Required for ambient noise detection.</p>
+              </div>
+            </div>
+            <div class="sys-check-status"><i class="material-icons">hourglass_empty</i></div>
+          </div>
+
+          <div class="sys-check-item" id="check-net">
+            <div class="sys-check-info">
+              <div class="sys-check-icon"><i class="material-icons">wifi</i></div>
+              <div class="sys-check-text">
+                <h4>Network Stability</h4>
+                <p>Ensuring you won't disconnect during the test.</p>
+              </div>
+            </div>
+            <div class="sys-check-status"><i class="material-icons">hourglass_empty</i></div>
+          </div>
+
+          <div class="sys-check-item" id="check-win">
+            <div class="sys-check-info">
+              <div class="sys-check-icon"><i class="material-icons">desktop_windows</i></div>
+              <div class="sys-check-text">
+                <h4>Fullscreen & Browser</h4>
+                <p>Validating modern browser support and screen lock.</p>
+              </div>
+            </div>
+            <div class="sys-check-status"><i class="material-icons">hourglass_empty</i></div>
+          </div>
+        </div>
+
+        <div class="prep-footer">
+          <button class="mdbtn btn-outlined" id="run-check-btn" onclick="runSystemCheck()">
+            <i class="material-icons">insights</i>
+            <span>Run System Validation</span>
+          </button>
+          <button class="mdbtn btn-tonal" id="start-exam-btn" disabled onclick="navigateTo('cand-exam-live')">
+            <i class="material-icons">lock</i>
+            <span>Run Checks First</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==================== LIVE PROCTORED EXAM LOCKDOWN UI ==================== -->
+  <main id="cand-exam-live" class="view-panel">
+    <div class="exam-layout">
+      
+      <!-- Top Bar -->
+      <header class="exam-header">
+        <div class="exam-brand">
+          <div class="badge">SP</div>
+          <span id="live-exam-title">Official Final Exam</span>
+        </div>
+        
+        <div class="exam-timer" id="exam-timer-display">60:00</div>
+        
+        <div class="exam-status" id="exam-status-badge">
+          <div class="pulse-dot"></div>
+          <span>AI Monitor Active</span>
+        </div>
+      </header>
+
+      <!-- Warning Toast -->
+      <div class="exam-warning-toast" id="exam-warning">
+        <i class="material-icons warning-icon">warning</i>
+        <div>
+          <strong class="toast-title">PROCTOR WARNING</strong>
+          <span id="exam-warning-text">Face not detected clearly. Look at the camera.</span>
+        </div>
+      </div>
+
+      <!-- Main Body -->
+      <div class="exam-body">
+        
+        <!-- Left Sidebar: Webcam feed & Question Nav -->
+        <aside class="exam-sidebar" id="exam-sidebar-panel">
+          <div class="exam-cam-preview">
+            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80" alt="Candidate Feed">
+            <div class="exam-cam-overlay"></div>
+            <div class="live-rec-badge">LIVE REC • CAN-092</div>
+          </div>
+          
+          <div class="exam-nav">
+            <div class="nav-title">Question Navigation</div>
+            <div class="nav-grid" id="exam-nav-grid">
+              <!-- JS Populated -->
+            </div>
+            
+            <div class="nav-legend">
+              <div class="legend-item"><div class="legend-dot answered"></div> Answered</div>
+              <div class="legend-item"><div class="legend-dot unanswered"></div> Unanswered</div>
+              <div class="legend-item"><div class="legend-dot flagged" style="background:var(--wrn);"></div> Flagged</div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Right Side: Question Content -->
+        <section class="exam-content">
+          <div class="question-container">
+            <div class="question-meta">
+              <span id="q-meta-text">Question 1 of 5</span>
+              <span>1 Mark</span>
+            </div>
+
+            <div class="question-text" id="q-text">
+              Loading question...
+            </div>
+
+            <div class="options-list" id="q-options">
+              <!-- JS Populated -->
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Bottom Bar Controls -->
+      <footer class="exam-footer">
+        <button class="mdbtn btn-outlined" id="btn-prev-q" onclick="navQuestion(-1)">
+          <i class="material-icons">arrow_back</i> <span>Previous</span>
+        </button>
+        
+        <button class="mdbtn btn-tonal" id="btn-flag-q" onclick="toggleFlag()">
+          <i class="material-icons">flag</i> <span>Flag</span>
+        </button>
+        
+        <button class="mdbtn btn-filled" id="btn-next-q" onclick="navQuestion(1)">
+          <span>Next Question</span> <i class="material-icons">arrow_forward</i>
+        </button>
+      </footer>
+      
+    </div>
+  </main>
+
+  <!-- ==================== EXAM RESULTS VIEW ==================== -->
+  <main id="cand-results" class="view-panel">
+    <div class="content-container results-container">
+      
+      <div class="card result-card">
+        <div class="result-hero">
+          <div class="score-circle pass" id="res-score-circle">
+            <span class="score-val">85</span>
+            <span class="score-label">Passed</span>
+          </div>
+          <h1>Official Assessment Complete</h1>
+          <p class="subtitle">Your final proctored exam has been submitted and graded.</p>
+        </div>
+
+        <div class="results-detail">
+          <h3 class="breakdown-title">Topic Performance Breakdown</h3>
+          <div id="res-topics">
+            <!-- JS Populated -->
+          </div>
+        </div>
+        
+        <div id="res-cert-container" style="display:none; text-align:center; padding:24px 0; border-bottom:1px solid var(--out-var);">
+          <h3 class="breakdown-title" style="margin-bottom:16px;">Earned Certifications</h3>
+          
+          <div style="position:relative; display:inline-block; max-width:600px; width:100%; border-radius:8px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.5);">
+            <img src="media__1779431877633.png" alt="Certificate" style="width:100%; display:block;">
+            <div id="cert-name" style="position:absolute; top:47%; left:0; width:100%; text-align:center; font-size:28px; font-weight:800; color:#1c1b1f; font-family:Georgia, serif; letter-spacing:1px;">CANDIDATE NAME</div>
+            <div id="cert-date" style="position:absolute; bottom:18%; left:28%; font-size:14px; font-weight:600; color:#1c1b1f;">Date Here</div>
+            <div id="cert-score" style="position:absolute; bottom:18%; right:30%; font-size:14px; font-weight:600; color:#1c1b1f;">Score Here</div>
+          </div>
+          
+          <div style="margin-top:24px;">
+            <img src="media__1779438626311.png" alt="Badge" style="width:120px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));">
+            <p style="font-size:12px; font-weight:700; color:var(--pri); margin-top:8px;">Official Digital Badge Awarded</p>
+          </div>
+
+          <div class="social-action-row">
+            <a href="mailto:?subject=I earned my Food Safety Manager Certification!&body=I am thrilled to share that I have successfully passed the official American Culinary Federation Food Safety Manager Certification Exam! Check out my official badge." class="mdbtn btn-tonal" style="text-decoration:none;">
+              <i class="material-icons">email</i> Share via Email
+            </a>
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://sdccertifications.com/verify" target="_blank" class="btn-linkedin">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg> Share on LinkedIn
+            </a>
+            <a href="media__1779438626311.png" download="ACF_Food_Safety_Badge.png" class="mdbtn btn-outlined" style="text-decoration:none;">
+              <i class="material-icons">file_download</i> Download Badge
+            </a>
+          </div>
+        </div>
+
+        <div class="results-action-row">
+          <a href="/candidate.html" class="mdbtn btn-tonal">
+            <i class="material-icons">arrow_back</i> <span>Return to Study Center</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Load Secure Exam interactive script -->
+  <script src="secure_exam.js"></script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Verified Proctor Code (VPC)",
+  "description": "Schema for managing proctor credentials and operational constraints in the Enterprise Assessment & Proctoring Management Ecosystem.",
+  "type": "object",
+  "properties": {
+    "vpc_id": {
+      "type": "string",
+      "description": "Unique alpha-numeric Verified Proctor Code (VPC)."
+    },
+    "proctor_profile": {
+      "type": "object",
+      "properties": {
+        "first_name": { "type": "string" },
+        "last_name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string" }
+      },
+      "required": ["first_name", "last_name", "email"]
+    },
+    "clearance_level": {
+      "type": "string",
+      "enum": ["physical_only", "remote_only", "dual_certified"],
+      "description": "Defines the modalities the proctor is certified to supervise."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "suspended", "pending_verification", "revoked"],
+      "description": "Current operational status of the proctor."
+    },
+    "operational_constraints": {
+      "type": "object",
+      "description": "Systematic boundaries defined by the Global Policy Editor.",
+      "properties": {
+        "max_student_ratio": {
+          "type": "integer",
+          "description": "Maximum number of students allowed per active streaming window."
+        },
+        "identity_rigor_settings": {
+          "type": "object",
+          "properties": {
+            "ai_facial_tracking": { "type": "boolean" },
+            "manual_document_matching": { "type": "boolean" },
+            "dual_factor_validation": { "type": "boolean" }
+          }
+        },
+        "intervention_logic": {
+          "type": "object",
+          "properties": {
+            "allowable_bathroom_timeouts": { "type": "integer" },
+            "warning_counters_limit": { "type": "integer" },
+            "automated_session_pause_enabled": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "certification_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "certification_id": { "type": "string" },
+          "date_awarded": { "type": "string", "format": "date-time" },
+          "expiration_date": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  },
+  "required": [
+    "vpc_id",
+    "proctor_profile",
+    "clearance_level",
+    "status",
+    "operational_constraints"
+  ]
+}

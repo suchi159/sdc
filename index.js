@@ -388,11 +388,15 @@ function completeOnboarding() {
 // --------------------------------------------------------------------------
 function changePanel(panelId) {
   // Hide all panels
-  document.querySelectorAll(".view-container .panel-section").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".view-container .panel-section").forEach(p => {
+    p.classList.remove("active");
+    p.style.display = "";
+  });
   // Show target
   const target = document.getElementById(panelId);
   if (target) {
     target.classList.add("active");
+    target.style.display = "";
     ACTIVE_TAB = panelId;
 
     // Sync sidebar button active class if jumped programmatically

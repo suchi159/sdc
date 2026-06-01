@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "title": "Platform Overview",
+    "desc": "Introduction to SafeFood AI and the manager role.",
+    "icon": "restaurant_menu",
+    "type": "video",
+    "duration": "8 min",
+    "contentTitle": "Welcome to SafeFood AI",
+    "contentHtml": "<p>SafeFood AI is an enterprise-grade food safety management platform that combines automated temperature tracking with human oversight to ensure compliance and quality.</p><br><h3 style='font-weight:700; margin-bottom:12px;'>Your Role as a Manager</h3><ul style='list-style-position: inside; display: flex; flex-direction: column; gap: 8px;'><li><b>Monitor:</b> Watch live temperature sensors and respond to AI-generated risk alerts in real-time.</li><li><b>Intervene:</b> Issue warnings to staff, pause production lines, or escalate safety incidents when policy violations occur.</li><li><b>Document:</b> Record incidents with timestamps, photos, and detailed notes for health inspectors.</li><li><b>Support:</b> Assist kitchen staff experiencing technical difficulties with digital checklists.</li></ul><br><div style='background: var(--pri-con); padding: 16px; border-radius: 8px; border: 1px solid var(--pri);'><b>Key Metric:</b> Our AI detects 94.7% of critical control point deviations automatically. Your role is to verify the remaining edge cases that require human judgment.</div>"
+  },
+  {
+    "id": 2,
+    "title": "AI Safety Engine",
+    "desc": "Understanding hygiene detection, inventory tracking, and ambient analysis.",
+    "icon": "eco",
+    "type": "video",
+    "duration": "12 min",
+    "contentTitle": "The AI Safety Engine",
+    "contentHtml": "<p>SafeFood uses advanced IoT sensors and computer vision to automatically detect food safety risks. The AI engine runs inference models both locally on kitchen devices and on our cloud servers.</p><br><div style='display: grid; grid-template-columns: 1fr 1fr; gap: 16px;'><div style='padding: 16px; border: 1px solid var(--out-var); border-radius: 8px;'><h4 style='font-weight: 700; margin-bottom: 8px;'><i class=\"material-icons\" style='font-size: 14px; vertical-align: middle; color: var(--pri);'>clean_hands</i> Hygiene Detection</h4><p style='font-size: 12px;'>Ensures staff wash hands properly. Detects missing gloves, hairnets, and uniform violations.</p></div><div style='padding: 16px; border: 1px solid var(--out-var); border-radius: 8px;'><h4 style='font-weight: 700; margin-bottom: 8px;'><i class=\"material-icons\" style='font-size: 14px; vertical-align: middle; color: var(--pri);'>ac_unit</i> Temp Tracking</h4><p style='font-size: 12px;'>Tracks refrigeration and cooking temperatures. Triggers alerts when items fall into the danger zone for prolonged periods.</p></div><div style='padding: 16px; border: 1px solid var(--out-var); border-radius: 8px;'><h4 style='font-weight: 700; margin-bottom: 8px;'><i class=\"material-icons\" style='font-size: 14px; vertical-align: middle; color: var(--pri);'>warning</i> Cross-Contamination</h4><p style='font-size: 12px;'>Monitors prep areas for improper handling of raw meats and ready-to-eat foods to prevent bacterial spread.</p></div><div style='padding: 16px; border: 1px solid var(--out-var); border-radius: 8px;'><h4 style='font-weight: 700; margin-bottom: 8px;'><i class=\"material-icons\" style='font-size: 14px; vertical-align: middle; color: var(--pri);'>inventory_2</i> Inventory Expiry</h4><p style='font-size: 12px;'>Detects expired ingredients and improper FIFO (First-In, First-Out) rotation using smart label scanning.</p></div></div>"
+  },
+  {
+    "id": 3,
+    "title": "Live Monitoring Dashboard",
+    "desc": "Navigating the kitchen control center interface.",
+    "icon": "dashboard",
+    "type": "video",
+    "duration": "10 min",
+    "contentTitle": "Navigating the Control Center",
+    "contentHtml": "<p>The Live Monitoring Dashboard is your primary workspace. It provides a real-time grid of all active kitchen zones with AI-generated risk indicators.</p><br><h3 style='font-weight:700; margin-bottom:12px;'>Dashboard Layout</h3><div style='display: flex; flex-direction: column; gap: 12px;'><div style='background: var(--sur-var); padding: 16px; border-radius: 8px;'><b>Zone Grid:</b> Shows up to 16 kitchen camera feeds simultaneously. Zones flagged by AI are highlighted with colored borders (yellow = medium risk, red = high risk).</div><div style='background: var(--sur-var); padding: 16px; border-radius: 8px;'><b>Alert Panel:</b> Right sidebar showing real-time AI flags with severity levels, timestamps, and one-click action buttons.</div><div style='background: var(--sur-var); padding: 16px; border-radius: 8px;'><b>KPI Bar:</b> Top metrics showing active staff, incident count, compliance rate, and AI confidence scores.</div></div>"
+  },
+  {
+    "id": 4,
+    "title": "Manager Actions & Controls",
+    "desc": "Sending alerts, halting prep, and escalating issues.",
+    "icon": "notifications_active",
+    "type": "video",
+    "duration": "10 min",
+    "contentTitle": "Intervention Protocols",
+    "contentHtml": "<p>As a manager, your role is to intervene when the AI flags an event that requires human judgment. Always follow the escalation ladder.</p><br><div style='display: grid; grid-template-columns: 1fr 1fr; gap: 16px;'><div style='padding: 16px; border: 1px solid var(--out-var); border-radius: 8px;'><h4 style='font-weight: 700; margin-bottom: 8px;'><i class=\"material-icons\" style='font-size: 14px; vertical-align: middle; color: var(--wrn);'>warning</i> Send Alert</h4><p style='font-size: 12px;'>Sends a notification to the prep station's digital display reminding them of protocols. Use for first-time minor infractions.</p></div><div style='padding: 16px; border: 1px solid var(--out-var); border-radius: 8px;'><h4 style='font-weight: 700; margin-bottom: 8px;'><i class=\"material-icons\" style='font-size: 14px; vertical-align: middle; color: var(--inf);'>pause</i> Halt Prep</h4><p style='font-size: 12px;'>Requires staff to stop their current task and clean the area before proceeding. Use for moderate violations like spilled allergens.</p></div><div style='padding: 16px; border: 1px solid var(--out-var); border-radius: 8px;'><h4 style='font-weight: 700; margin-bottom: 8px;'><i class=\"material-icons\" style='font-size: 14px; vertical-align: middle; color: var(--err);'>block</i> Discard Batch</h4><p style='font-size: 12px;'>Immediately mandates the disposal of potentially contaminated food. Reserved for severe temperature or hygiene violations.</p></div><div style='padding: 16px; border: 1px solid var(--out-var); border-radius: 8px;'><h4 style='font-weight: 700; margin-bottom: 8px;'><i class=\"material-icons\" style='font-size: 14px; vertical-align: middle; color: var(--sec);'>support_agent</i> Escalate to Corporate</h4><p style='font-size: 12px;'>Transfers the incident report to regional management for complex compliance or vendor-related issues.</p></div></div>"
+  },
+  {
+    "id": 5,
+    "title": "Interactive Monitoring Sim",
+    "desc": "Practice monitoring a simulated kitchen and safely intervening.",
+    "icon": "kitchen",
+    "type": "interactive",
+    "duration": "15 min",
+    "contentTitle": "Practice Mode: Kitchen Sandbox",
+    "contentHtml": "<p>This is a safe sandbox environment. The station above is a simulated recording. Practice clicking on the action buttons to issue alerts or log compliance.</p><br><div style='background: var(--sur-var); padding: 16px; border-radius: 8px; border: 1px solid var(--out-var);'><b>Task:</b> The simulated staff member left the cooler door open for too long. Issue a warning alert to demonstrate proper protocol.</div><br><div style='background: var(--pri-con); padding: 16px; border-radius: 8px; border: 1px dashed var(--pri);'><b>Tip:</b> In real shifts, always review at least 15 seconds of video context before issuing a warning. The AI provides confidence scores to help you decide.</div>"
+  },
+  {
+    "id": 6,
+    "title": "Incident Investigation",
+    "desc": "Reviewing AI flags and building HACCP logs.",
+    "icon": "fact_check",
+    "type": "video",
+    "duration": "12 min",
+    "contentTitle": "Flag Review & Log Building",
+    "contentHtml": "<p>When the AI flags an incident, you must investigate before taking action. Follow this structured approach:</p><br><div style='display: flex; flex-direction: column; gap: 12px;'><div style='display: flex; gap: 12px; align-items: start;'><div style='background: var(--pri); color: var(--pri-ct); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; flex-shrink: 0;'>1</div><div><b>Review the Video Clip:</b> Watch the 30-second buffer around the flagged moment. Look for context like recent sanitation.</div></div><div style='display: flex; gap: 12px; align-items: start;'><div style='background: var(--pri); color: var(--pri-ct); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; flex-shrink: 0;'>2</div><div><b>Check AI Confidence:</b> Review the confidence score. Scores above 85% are highly reliable for temp drops.</div></div><div style='display: flex; gap: 12px; align-items: start;'><div style='background: var(--pri); color: var(--pri-ct); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; flex-shrink: 0;'>3</div><div><b>Cross-Reference History:</b> Check if this station has previous flags. Equipment malfunctions show repeat patterns.</div></div><div style='display: flex; gap: 12px; align-items: start;'><div style='background: var(--pri); color: var(--pri-ct); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; flex-shrink: 0;'>4</div><div><b>Document Your Decision:</b> Whether you dismiss or escalate, record your corrective actions in the HACCP log.</div></div></div>"
+  },
+  {
+    "id": 7,
+    "title": "Equipment Issue Handling",
+    "desc": "Handling sensor failures, recalibration, and manual overrides.",
+    "icon": "build",
+    "type": "video",
+    "duration": "8 min",
+    "contentTitle": "Handling Hardware Disruptions",
+    "contentHtml": "<p>Not all flags are safety violations. Internet drops, sensor failures, and software glitches happen. Your role is to distinguish technical issues from real risks.</p><br><div style='display: grid; grid-template-columns: 1fr 1fr; gap: 16px;'><div style='padding: 16px; border: 1px solid var(--suc); border-radius: 8px; background: rgba(20,108,46,0.05);'><h4 style='font-weight: 700; margin-bottom: 8px; color: var(--suc);'>Manual Override</h4><p style='font-size: 12px;'>For verified sensor issues: take temperature with a handheld probe, manually enter the log, and mute the alarm.</p></div><div style='padding: 16px; border: 1px solid var(--wrn); border-radius: 8px; background: rgba(125,87,0,0.05);'><h4 style='font-weight: 700; margin-bottom: 8px; color: var(--wrn);'>Request Maintenance</h4><p style='font-size: 12px;'>If equipment failure causes significant temperature variance, submit a work order through the Hub. Relocate food immediately.</p></div></div>"
+  },
+  {
+    "id": 8,
+    "title": "Compliance & Best Practices",
+    "desc": "FDA guidelines, health codes, and maintaining audit trails.",
+    "icon": "verified",
+    "type": "video",
+    "duration": "10 min",
+    "contentTitle": "Health Codes & Legal Compliance",
+    "contentHtml": "<p>Food safety involves significant responsibility. Public health depends on accurate, unbiased monitoring. Follow these principles:</p><br><div style='display: flex; flex-direction: column; gap: 12px;'><div style='background: var(--sur-var); padding: 16px; border-radius: 8px; border-left: 4px solid var(--pri);'><b>Principle 1: Safety First</b><br><span style='font-size: 12px; color: var(--on-sur-var);'>When in doubt, throw it out. AI flags are indicators, but human judgment ensures absolute safety.</span></div><div style='background: var(--sur-var); padding: 16px; border-radius: 8px; border-left: 4px solid var(--inf);'><b>Principle 2: Consistent Standards</b><br><span style='font-size: 12px; color: var(--on-sur-var);'>Apply the same HACCP standards during every shift, regardless of rush hours or staffing levels.</span></div><div style='background: var(--sur-var); padding: 16px; border-radius: 8px; border-left: 4px solid var(--suc);'><b>Principle 3: Traceability</b><br><span style='font-size: 12px; color: var(--on-sur-var);'>Record every corrective action. Your digital logs will be reviewed during FDA and local health inspections.</span></div><div style='background: var(--sur-var); padding: 16px; border-radius: 8px; border-left: 4px solid var(--err);'><b>Principle 4: Data Integrity</b><br><span style='font-size: 12px; color: var(--on-sur-var);'>Never falsify temperature logs or override alerts without physical verification. Doing so violates health codes.</span></div></div>"
+  }
+]

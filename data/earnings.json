@@ -1,0 +1,21 @@
+{
+  "summary": {
+    "totalEarnedThisMonth": 4250,
+    "sessionsCompleted": 17,
+    "pendingPayout": 850,
+    "lastPayoutDate": "2026-05-15T00:00:00Z"
+  },
+  "sessions": [
+    {"sessionName":"Allergen Awareness — Midterm","date":"2026-05-19","duration":"90 min","rate":50,"amount":750,"payoutStatus":"paid"},
+    {"sessionName":"ServSafe Food Handler — Practice Test","date":"2026-05-17","duration":"60 min","rate":50,"amount":500,"payoutStatus":"paid"},
+    {"sessionName":"Food Protection Manager — Mock Exam","date":"2026-05-16","duration":"90 min","rate":50,"amount":750,"payoutStatus":"paid"},
+    {"sessionName":"Food Safety Auditor — Quiz 2","date":"2026-05-14","duration":"45 min","rate":50,"amount":375,"payoutStatus":"paid"},
+    {"sessionName":"HACCP Certification — Lab Test","date":"2026-05-12","duration":"120 min","rate":50,"amount":1000,"payoutStatus":"paid"},
+    {"sessionName":"Food Protection Manager — Final Assessment","date":"2026-05-21","duration":"90 min","rate":50,"amount":850,"payoutStatus":"pending"}
+  ],
+  "payouts": [
+    {"date":"2026-05-15","amount":2375,"method":"Bank Transfer — Chase ****4829","status":"completed"},
+    {"date":"2026-05-01","amount":3100,"method":"Bank Transfer — Chase ****4829","status":"completed"},
+    {"date":"2026-04-15","amount":1875,"method":"Bank Transfer — Chase ****4829","status":"completed"}
+  ]
+}

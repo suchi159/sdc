@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE `organizations` ADD `onboardingStep` int DEFAULT 1 NOT NULL;\nALTER TABLE `organizations` ADD `onboardingCompleted` boolean DEFAULT false NOT NULL;\nALTER TABLE `organizations` ADD `onboardingData` json;\nALTER TABLE `organizations` ADD `size` varchar(50);\nALTER TABLE `organizations` ADD `website` varchar(255);\nALTER TABLE `organizations` ADD `primaryColor` varchar(20) DEFAULT '#c8972a';\nALTER TABLE `organizations` ADD `subdomain` varchar(100);\nALTER TABLE `organizations` ADD `featuresEnabled` json;\nALTER TABLE `organizations` ADD `examConfig` json;\nALTER TABLE `organizations` ADD `monthlyBudget` int;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user rZaW5Bddeehdxo4.b69753060cd0 --database BqBGzU832tRR27sND2ECBo --execute ALTER TABLE `organizations` ADD `onboardingStep` int DEFAULT 1 NOT NULL;\nALTER TABLE `organizations` ADD `onboardingCompleted` boolean DEFAULT false NOT NULL;\nALTER TABLE `organizations` ADD `onboardingData` json;\nALTER TABLE `organizations` ADD `size` varchar(50);\nALTER TABLE `organizations` ADD `website` varchar(255);\nALTER TABLE `organizations` ADD `primaryColor` varchar(20) DEFAULT '#c8972a';\nALTER TABLE `organizations` ADD `subdomain` varchar(100);\nALTER TABLE `organizations` ADD `featuresEnabled` json;\nALTER TABLE `organizations` ADD `examConfig` json;\nALTER TABLE `organizations` ADD `monthlyBudget` int;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 5770
+}

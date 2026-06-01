@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE `api_keys` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`orgId` int NOT NULL,\n\t`name` varchar(100) NOT NULL,\n\t`keyHash` varchar(256) NOT NULL,\n\t`keyPrefix` varchar(12) NOT NULL,\n\t`permissions` json,\n\t`rateLimit` int DEFAULT 1000,\n\t`lastUsedAt` timestamp,\n\t`expiresAt` timestamp,\n\t`status` enum('active','revoked') NOT NULL DEFAULT 'active',\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\tCONSTRAINT `api_keys_id` PRIMARY KEY(`id`)\n)",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user rZaW5Bddeehdxo4.b69753060cd0 --database BqBGzU832tRR27sND2ECBo --execute CREATE TABLE `api_keys` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`orgId` int NOT NULL,\n\t`name` varchar(100) NOT NULL,\n\t`keyHash` varchar(256) NOT NULL,\n\t`keyPrefix` varchar(12) NOT NULL,\n\t`permissions` json,\n\t`rateLimit` int DEFAULT 1000,\n\t`lastUsedAt` timestamp,\n\t`expiresAt` timestamp,\n\t`status` enum('active','revoked') NOT NULL DEFAULT 'active',\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\tCONSTRAINT `api_keys_id` PRIMARY KEY(`id`)\n)",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 2010
+}

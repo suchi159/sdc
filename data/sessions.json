@@ -1,0 +1,209 @@
+[
+  {
+    "id": "sess_007",
+    "name": "Food Defense Mastery \u2014 Quarter 1",
+    "organization": "SafeFood AI",
+    "examDate": "2026-06-15T09:00:00Z",
+    "startTime": "09:00",
+    "duration": 90,
+    "status": "ongoing",
+    "allowRetake": true,
+    "maxRetakeAttempts": 2,
+    "retakeWindow": 7,
+    "createdAt": "2026-05-25T10:00:00Z",
+    "createdBy": "usr_001",
+    "candidateCount": 24,
+    "vouchersAssigned": 20,
+    "vouchersUsed": 0,
+    "vouchersAvailable": 4,
+    "readiness": 65,
+    "activityLog": [
+      {
+        "ts": "2026-05-25T10:00:00Z",
+        "by": "Dr. Sarah Jenkins",
+        "action": "Created cohort",
+        "detail": "24 candidates enrolled"
+      }
+    ]
+  },
+  {
+    "id": "sess_001",
+    "name": "ServSafe Food Handler \u2014 Mid-Semester Exam",
+    "organization": "SafeFood AI",
+    "examDate": "2026-05-22T09:00:00Z",
+    "startTime": "09:00",
+    "duration": 120,
+    "status": "live",
+    "allowRetake": true,
+    "maxRetakeAttempts": 2,
+    "retakeWindow": 7,
+    "createdAt": "2026-05-18T10:00:00Z",
+    "createdBy": "usr_001",
+    "candidateCount": 18,
+    "vouchersAssigned": 18,
+    "vouchersUsed": 0,
+    "vouchersAvailable": 7,
+    "activityLog": [
+      {
+        "ts": "2026-05-18T10:00:00Z",
+        "by": "Dr. Sarah Jenkins",
+        "action": "Created cohort",
+        "detail": "Initial creation with 18 candidates"
+      },
+      {
+        "ts": "2026-05-18T10:15:00Z",
+        "by": "Dr. Sarah Jenkins",
+        "action": "Assigned vouchers",
+        "detail": "18 vouchers assigned to candidates"
+      }
+    ]
+  },
+  {
+    "id": "sess_002",
+    "name": "Food Protection Manager \u2014 Final Assessment",
+    "organization": "SafeFood AI",
+    "examDate": "2026-05-21T14:00:00Z",
+    "startTime": "14:00",
+    "duration": 90,
+    "status": "completed",
+    "allowRetake": false,
+    "maxRetakeAttempts": 0,
+    "retakeWindow": 0,
+    "createdAt": "2026-05-15T08:00:00Z",
+    "createdBy": "usr_001",
+    "candidateCount": 22,
+    "vouchersAssigned": 22,
+    "vouchersUsed": 22,
+    "vouchersAvailable": 3,
+    "activityLog": [
+      {
+        "ts": "2026-05-15T08:00:00Z",
+        "by": "Dr. Sarah Jenkins",
+        "action": "Created cohort",
+        "detail": "Initial creation"
+      },
+      {
+        "ts": "2026-05-21T14:00:00Z",
+        "by": "System",
+        "action": "Session started",
+        "detail": "Session transitioned to Live"
+      },
+      {
+        "ts": "2026-05-24T03:40:53.834Z",
+        "by": "Dr. Sarah Jenkins",
+        "action": "Updated session",
+        "detail": "Fields updated: status"
+      }
+    ]
+  },
+  {
+    "id": "sess_003",
+    "name": "HACCP Certification \u2014 Module 3 Quiz",
+    "organization": "SafeFood AI",
+    "examDate": "2026-05-25T10:00:00Z",
+    "startTime": "10:00",
+    "duration": 60,
+    "status": "draft",
+    "allowRetake": true,
+    "maxRetakeAttempts": 1,
+    "retakeWindow": 3,
+    "createdAt": "2026-05-20T16:00:00Z",
+    "createdBy": "usr_001",
+    "candidateCount": 8,
+    "vouchersAssigned": 0,
+    "vouchersUsed": 0,
+    "vouchersAvailable": 25,
+    "activityLog": [
+      {
+        "ts": "2026-05-20T16:00:00Z",
+        "by": "Dr. Sarah Jenkins",
+        "action": "Created draft",
+        "detail": "8 candidates added, vouchers pending"
+      }
+    ]
+  },
+  {
+    "id": "sess_004",
+    "name": "Allergen Awareness \u2014 Midterm",
+    "organization": "SafeFood AI",
+    "examDate": "2026-05-19T11:00:00Z",
+    "startTime": "11:00",
+    "duration": 90,
+    "status": "completed",
+    "allowRetake": false,
+    "maxRetakeAttempts": 0,
+    "retakeWindow": 0,
+    "createdAt": "2026-05-12T09:00:00Z",
+    "createdBy": "usr_001",
+    "candidateCount": 15,
+    "vouchersAssigned": 15,
+    "vouchersUsed": 15,
+    "vouchersAvailable": 0,
+    "activityLog": [
+      {
+        "ts": "2026-05-12T09:00:00Z",
+        "by": "Dr. Sarah Jenkins",
+        "action": "Created cohort",
+        "detail": "15 candidates enrolled"
+      },
+      {
+        "ts": "2026-05-19T12:30:00Z",
+        "by": "System",
+        "action": "Session completed",
+        "detail": "All 15 candidates finished"
+      }
+    ]
+  },
+  {
+    "id": "sess_005",
+    "name": "Food Safety Auditor \u2014 Pop Quiz",
+    "organization": "SafeFood AI",
+    "examDate": "2026-05-26T15:00:00Z",
+    "startTime": "15:00",
+    "duration": 45,
+    "status": "upcoming",
+    "allowRetake": true,
+    "maxRetakeAttempts": 1,
+    "retakeWindow": 2,
+    "createdAt": "2026-05-20T12:00:00Z",
+    "createdBy": "usr_001",
+    "candidateCount": 12,
+    "vouchersAssigned": 10,
+    "vouchersUsed": 0,
+    "vouchersAvailable": 15,
+    "activityLog": [
+      {
+        "ts": "2026-05-20T12:00:00Z",
+        "by": "Dr. Sarah Jenkins",
+        "action": "Created cohort",
+        "detail": "12 candidates added"
+      }
+    ]
+  },
+  {
+    "id": "sess_006",
+    "name": "test session",
+    "organization": "SafeFood AI",
+    "examDate": "2026-04-29",
+    "startTime": "16:37",
+    "duration": 120,
+    "status": "draft",
+    "allowRetake": false,
+    "maxRetakeAttempts": 0,
+    "retakeWindow": 0,
+    "createdAt": "2026-05-22T09:03:57.200Z",
+    "createdBy": "usr_001",
+    "candidateCount": 0,
+    "vouchersAssigned": 0,
+    "vouchersUsed": 0,
+    "vouchersAvailable": 30,
+    "activityLog": [
+      {
+        "ts": "2026-05-22T09:03:57.200Z",
+        "by": "Dr. Sarah Jenkins",
+        "action": "Created cohort",
+        "detail": "Draft session created"
+      }
+    ]
+  }
+]

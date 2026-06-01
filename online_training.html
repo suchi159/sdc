@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en" data-t="light">
+<head>
+  <meta http-equiv="Content-Security-Policy" content="default-src * data: blob: 'unsafe-inline'; script-src * 'unsafe-inline'; connect-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src *; style-src * 'unsafe-inline';">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SecureProctor AI — Proctor Training Academy. Complete modules, pass quizzes, and earn your certification.">
+  <title>SecureProctor AI — Proctor Training Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="online_proctor.css">
+  
+  <style>
+    /* ==================== TRAINING SPECIFIC PREMIUM STYLES ==================== */
+    :root {
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 32px;
+    }
+
+    /* Progress bar thin utility */
+    .progress-bar-thin {
+      width: 100%;
+      height: 6px;
+      background: var(--out-var);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .progress-bar-thin-fill {
+      height: 100%;
+      background: var(--pri);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    /* Modules Grid styling */
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--spacing-lg);
+      margin-top: var(--spacing-lg);
+    }
+    .module-card {
+      background: var(--sur);
+      border: 1px solid var(--out-var);
+      border-radius: 12px;
+      padding: var(--spacing-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .module-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      border-color: var(--pri);
+    }
+    .module-card.completed {
+      border-left: 4px solid var(--suc);
+    }
+    .module-card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      background: var(--pri-con);
+      color: var(--pri);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .module-card-icon.done {
+      background: rgba(20, 108, 46, 0.1);
+      color: var(--suc);
+    }
+    .module-card-num {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--on-sur-var);
+    }
+    .module-card-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin: 0;
+    }
+    .module-card-desc {
+      font-size: 13px;
+      color: var(--on-sur-var);
+      line-height: 1.5;
+      margin: 0;
+      flex-grow: 1;
+    }
+    .module-card-meta {
+      display: flex;
+      gap: var(--spacing-sm);
+    }
+    .module-card-btn {
+      width: 100%;
+      justify-content: center;
+      margin-top: auto;
+    }
+
+    /* Player View layout styling */
+    .player-layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: var(--spacing-lg);
+      margin-top: var(--spacing-lg);
+    }
+    @media (max-width: 960px) {
+      .player-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    .player-video-container {
+      position: relative;
+      background: #000;
+      aspect-ratio: 16/9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--out-var);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+    .player-video-container.interactive {
+      background: #121212;
+    }
+    .sim-wrapper {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .sim-inner {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      min-height: 200px;
+    }
+    .sim-controls {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      padding: var(--spacing-md);
+      background: rgba(0,0,0,0.6);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      z-index: 10;
+    }
+    .play-btn {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--pri);
+      color: var(--on-pri);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-bottom: var(--spacing-md);
+      transition: transform 0.2s, background-color 0.2s;
+    }
+    .play-btn:hover {
+      transform: scale(1.1);
+      background: var(--pri-hover, #005cb2);
+    }
+    .play-btn i {
+      font-size: 36px;
+    }
+    .player-content-card {
+      background: var(--sur);
+      border: 1px solid var(--out-var);
+      border-radius: 12px;
+      padding: var(--spacing-lg);
+      margin-top: var(--spacing-lg);
+    }
+    .player-content-card h2 {
+      font-size: 20px;
+      margin-top: 0;
+      margin-bottom: var(--spacing-md);
+    }
+    .player-content-card p {
+      line-height: 1.6;
+      color: var(--on-sur-var);
+    }
+    .player-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-lg);
+    }
+    .player-progress-card {
+      background: var(--sur);
+      border: 1px solid var(--out-var);
+      border-radius: 12px;
+      padding: var(--spacing-lg);
+    }
+    .player-module-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+    .player-module-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      padding: var(--spacing-md);
+      border: 1px solid var(--out-var);
+      border-radius: 8px;
+      cursor: pointer;
+      background: var(--sur);
+      transition: all 0.2s ease;
+    }
+    .player-module-item:hover {
+      background: var(--sur-var);
+      border-color: var(--pri);
+    }
+    .player-module-item.active {
+      border-color: var(--pri);
+      background: var(--pri-con);
+    }
+    .player-module-item.completed {
+      border-left: 3px solid var(--suc);
+    }
+    .player-module-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--out-var);
+      color: var(--on-sur-var);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .player-module-icon.done {
+      background: rgba(20,108,46,0.1);
+      color: var(--suc);
+    }
+    .player-module-info h4 {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 0;
+    }
+    .player-module-info p {
+      font-size: 11px;
+      color: var(--on-sur-var);
+      margin: 2px 0 0 0;
+    }
+
+    /* Quiz styling */
+    .quiz-layout-card {
+      background: var(--sur);
+      border: 1px solid var(--out-var);
+      border-radius: 12px;
+      padding: var(--spacing-xl);
+      max-width: 720px;
+      margin: 24px auto;
+    }
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .quiz-option {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 16px;
+      background: var(--sur);
+      border: 1px solid var(--out-var);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+    }
+    .quiz-option:hover {
+      background: var(--sur-var);
+    }
+    .quiz-option.selected {
+      border-color: var(--pri);
+      background: var(--pri-con);
+    }
+    .quiz-option-letter {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--out-var);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      margin-right: 12px;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+    .quiz-option.selected .quiz-option-letter {
+      background: var(--pri);
+      color: var(--on-pri);
+    }
+    .quiz-option-text {
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .quiz-q-text {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.5;
+      margin-top: 0;
+    }
+
+    /* Quiz results */
+    .quiz-results-card {
+      text-align: center;
+    }
+    .quiz-results-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .quiz-results-icon.pass {
+      background: rgba(20, 108, 46, 0.1);
+      color: var(--suc);
+    }
+    .quiz-results-icon.fail {
+      background: rgba(179, 38, 30, 0.1);
+      color: var(--err);
+    }
+    .quiz-results-icon i {
+      font-size: 40px;
+    }
+    .quiz-results-title {
+      font-size: 24px;
+      font-weight: 800;
+      margin: 0 0 8px 0;
+    }
+    .quiz-results-subtitle {
+      font-size: 14px;
+      color: var(--on-sur-var);
+      margin: 0 0 24px 0;
+    }
+    .quiz-results-stats {
+      display: flex;
+      justify-content: center;
+      gap: var(--spacing-xl);
+      margin-bottom: 32px;
+    }
+    .quiz-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: var(--sur-var);
+      padding: 12px 24px;
+      border-radius: 8px;
+      min-width: 100px;
+    }
+    .quiz-stat-value {
+      font-size: 24px;
+      font-weight: 800;
+    }
+    .quiz-stat-label {
+      font-size: 11px;
+      color: var(--on-sur-var);
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .quiz-results-detail {
+      text-align: left;
+      margin-top: 32px;
+      border-top: 1px solid var(--out-var);
+      padding-top: 24px;
+    }
+    .quiz-results-detail h3 {
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
+    .quiz-review-item {
+      display: flex;
+      gap: 12px;
+      padding: 16px;
+      border: 1px solid var(--out-var);
+      border-radius: 8px;
+      margin-bottom: 12px;
+      background: var(--sur);
+    }
+    .quiz-review-item.correct {
+      border-left: 4px solid var(--suc);
+    }
+    .quiz-review-item.wrong {
+      border-left: 4px solid var(--err);
+    }
+    .quiz-review-marker {
+      display: flex;
+      align-items: start;
+    }
+    .quiz-review-marker i {
+      font-size: 20px;
+    }
+    .quiz-review-item.correct .quiz-review-marker i { color: var(--suc); }
+    .quiz-review-item.wrong .quiz-review-marker i { color: var(--err); }
+    .quiz-review-body p {
+      margin: 0;
+      font-size: 13px;
+    }
+    .quiz-review-q {
+      font-weight: 600;
+      margin-bottom: 6px !important;
+    }
+    .quiz-review-answer {
+      color: var(--on-sur-var);
+      margin-bottom: 4px !important;
+    }
+    .quiz-review-correct {
+      color: var(--suc);
+      font-weight: 600;
+    }
+    .quiz-results-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    /* Leaderboard styling */
+    .lb-podium {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: var(--spacing-xl);
+      margin-bottom: 48px;
+      padding-top: 24px;
+    }
+    .lb-podium-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      width: 120px;
+    }
+    .lb-podium-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--pri);
+      background: var(--sur);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 2;
+    }
+    .lb-podium-medal {
+      position: absolute;
+      top: 48px;
+      background: var(--sur);
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      z-index: 3;
+    }
+    .lb-podium-name {
+      font-size: 14px;
+      font-weight: 700;
+      margin: 8px 0 2px 0;
+      text-align: center;
+    }
+    .lb-podium-xp {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--pri);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .lb-podium-bar {
+      width: 100%;
+      height: var(--podium-height);
+      background: var(--pri-con);
+      border-radius: 8px 8px 0 0;
+      margin-top: 12px;
+      box-shadow: inset 0 2px 8px rgba(255,255,255,0.05);
+      border: 1px solid var(--out-var);
+      border-bottom: none;
+    }
+    .lb-table {
+      background: var(--sur);
+      border: 1px solid var(--out-var);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 24px;
+    }
+    .lb-table-header, .lb-table-row {
+      display: grid;
+      grid-template-columns: 80px 1fr 100px 100px 120px 120px;
+      padding: 16px 24px;
+      align-items: center;
+    }
+    @media (max-width: 720px) {
+      .lb-table-header, .lb-table-row {
+        grid-template-columns: 50px 1fr 80px 100px;
+      }
+      .lb-table-header span:nth-child(4), .lb-table-row span:nth-child(4),
+      .lb-table-header span:nth-child(6), .lb-table-row span:nth-child(6) {
+        display: none;
+      }
+    }
+    .lb-table-header {
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: var(--on-sur-var);
+      border-bottom: 1px solid var(--out-var);
+      background: var(--sur-var);
+    }
+    .lb-table-row {
+      border-bottom: 1px solid var(--out-var);
+      transition: background-color 0.2s;
+    }
+    .lb-table-row:last-child {
+      border-bottom: none;
+    }
+    .lb-table-row:hover {
+      background: var(--sur-var);
+    }
+    .lb-table-row.is-me {
+      background: var(--pri-con);
+      color: var(--on-pri-con, inherit);
+      font-weight: 600;
+    }
+    .lb-rank {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+    }
+    .lb-user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .lb-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    /* Certification view styling */
+    .cert-display, .cert-claim, .cert-locked {
+      background: var(--sur);
+      border: 1px solid var(--out-var);
+      border-radius: 12px;
+      padding: 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      max-width: 680px;
+      margin: 24px auto;
+    }
+    .cert-badge-glow {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: rgba(20, 108, 46, 0.1);
+      color: var(--suc);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      box-shadow: 0 0 32px rgba(20, 108, 46, 0.25);
+    }
+    .cert-badge-glow.locked {
+      background: var(--out-var);
+      color: var(--on-sur-var);
+      box-shadow: none;
+    }
+    .cert-badge-icon {
+      font-size: 56px;
+    }
+    .cert-document {
+      background: #ffffff;
+      color: #1a1a1a;
+      border: 10px double #cfd8dc;
+      padding: 40px;
+      border-radius: 4px;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.12);
+      width: 100%;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+    }
+    [data-t="dark"] .cert-document {
+      /* Keep certificate elegant white look even in dark mode for print realism */
+      background: #fbfbfb;
+      color: #1a1a1a;
+      border-color: #b0bec5;
+    }
+    .cert-doc-header {
+      border-bottom: 2px solid #eceff1;
+      padding-bottom: var(--spacing-md);
+      margin-bottom: var(--spacing-lg);
+    }
+    .cert-doc-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #1e88e5;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 20px;
+      margin: 0 auto 12px auto;
+    }
+    .cert-doc-header h2 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: 0.5px;
+    }
+    .cert-doc-header p {
+      margin: 4px 0 0 0;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #78909c;
+      font-weight: 600;
+    }
+    .cert-doc-label {
+      font-size: 12px;
+      font-style: italic;
+      color: #546e7a;
+      margin: 8px 0;
+    }
+    .cert-doc-name {
+      font-size: 28px;
+      font-weight: 800;
+      margin: 16px 0;
+      color: #1565c0;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .cert-doc-body p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #37474f;
+      margin-bottom: 24px;
+    }
+    .cert-doc-stats {
+      display: flex;
+      justify-content: space-around;
+      border-top: 1px solid #eceff1;
+      border-bottom: 1px solid #eceff1;
+      padding: 16px 0;
+      margin-bottom: 24px;
+    }
+    .cert-doc-stat {
+      display: flex;
+      flex-direction: column;
+      font-size: 11px;
+      color: #78909c;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .cert-doc-stat-val {
+      font-size: 20px;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin-bottom: 2px;
+    }
+    .cert-doc-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      text-align: left;
+      font-size: 11px;
+      color: #78909c;
+      margin-top: 24px;
+      border-top: 1px dashed #cfd8dc;
+      padding-top: 16px;
+    }
+    .cert-doc-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==================== MAIN APP LAYOUT ==================== -->
+<div id="main-view" class="view-panel active">
+  <div class="app-layout">
+
+    <!-- ==================== LEFT SIDEBAR ==================== -->
+    <aside class="sidebar" id="app-sidebar">
+      <div class="brand">
+        <div class="badge" style="background: var(--pri); color: var(--on-pri);">TA</div>
+        <div>
+          <div class="brand-txt">Proctor <span class="ai-pill" style="background: var(--sec); color: var(--on-sec);">Academy</span></div>
+          <div class="brand-sub">Certification Flow</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-view="dashboard" id="nav-dashboard">
+          <i class="material-icons">dashboard</i>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-view="modules" id="nav-modules">
+          <i class="material-icons">school</i>
+          <span>Training Modules</span>
+        </button>
+        <button class="nav-item" data-view="leaderboard" id="nav-leaderboard">
+          <i class="material-icons">leaderboard</i>
+          <span>Academy Leaderboard</span>
+        </button>
+        <button class="nav-item" data-view="certificate" id="nav-certificate">
+          <i class="material-icons">workspace_premium</i>
+          <span>Certification Status</span>
+        </button>
+        <button class="nav-item" data-view="settings" id="nav-settings">
+          <i class="material-icons">settings</i>
+          <span>Reset & Settings</span>
+        </button>
+      </nav>
+
+      <!-- Sidebar Footer -->
+      <div class="sidebar-footer" style="padding: 16px; border-top: 1px solid rgba(255, 255, 255, 0.05);">
+        <div class="profile-card">
+          <img class="profile-avatar" id="sidebar-avatar"
+            src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&auto=format&fit=crop&q=80"
+            alt="Proctor Avatar">
+          <div class="profile-info">
+            <div class="profile-name" id="sidebar-name">Dr. Sarah Jenkins</div>
+            <div class="profile-status">
+              <span class="status-indicator online" style="background: var(--suc);"></span>
+              <span id="sidebar-role">Proctor Trainee</span>
+            </div>
+          </div>
+          <button class="icon-btn theme-toggle-btn" id="theme-switcher-btn" aria-label="Toggle dark mode">
+            <i class="material-icons" id="theme-btn-icon">dark_mode</i>
+          </button>
+        </div>
+        <button class="sidebar-logout-btn" onclick="window.location.href='/online_proctor.html'" style="color: var(--err); border-color: rgba(179,38,30,0.2);">
+          <i class="material-icons">exit_to_app</i>
+          <span>Exit Academy</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ==================== MAIN CONTENT AREA ==================== -->
+    <main class="main-content">
+
+      <!-- ==================== TOP HEADER ==================== -->
+      <header class="hdr">
+        <div class="hdr-left">
+          <button class="icon-btn menu-toggle" id="menu-btn" aria-label="Toggle Navigation Sidebar">
+            <i class="material-icons">menu</i>
+          </button>
+          <div class="breadcrumb" id="breadcrumb">
+            <span class="breadcrumb-item">Academy Dashboard</span>
+          </div>
+        </div>
+        <div class="hdr-right">
+          <div class="server-time-display">
+            <i class="material-icons">schedule</i>
+            <span id="server-time-string">Loading...</span>
+          </div>
+          <div class="sys-badge-container">
+            <button class="bdg" id="sys-mode-status"
+              style="background: rgba(103,80,164,0.1); color: var(--sec); border: 1px solid rgba(103,80,164,0.25); display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 8px; font-weight: 700; cursor: default; font-size: 11px; text-transform: uppercase; font-family: 'JetBrains Mono';">
+              <span style="width: 6px; height: 6px; background: var(--sec); border-radius: 50%; display: inline-block;"></span>
+              <span>Academy Gate</span>
+            </button>
+          </div>
+          
+          <!-- Back button directly visible in top bar to help certified users return -->
+          <div style="margin-left: 12px;">
+            <a href="/online_proctor.html" class="mdbtn btn-tonal" id="top-bar-live-btn" style="display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 16px; font-size: 12px;">
+              <i class="material-icons">sensors</i>
+              <span>Live Monitor</span>
+            </a>
+          </div>
+        </div>
+      </header>
+
+      <!-- ==================== VIEW PANELS CONTAINER ==================== -->
+      <div class="view-container">
+
+        <!-- ==================== DASHBOARD PANEL ==================== -->
+        <div class="panel-section active" id="dashboard-panel">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Academy Dashboard</h1>
+              <p class="view-subtitle">Review your progress, view certificates, and continue training modules.</p>
+            </div>
+          </div>
+
+          <!-- KPI Grid -->
+          <div class="kpi-grid" id="dashboard-kpi-grid">
+            <!-- Populated by JS -->
+          </div>
+
+          <!-- Continuation block and Activity history -->
+          <div class="dash-widgets-row">
+            <!-- Next Module Widget -->
+            <div class="dash-widget" id="dash-next-module" style="flex: 2;">
+              <!-- Populated by JS -->
+            </div>
+
+            <!-- Activity history Widget -->
+            <div class="dash-widget" id="dash-activity" style="flex: 1;">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== TRAINING MODULES PANEL ==================== -->
+        <div class="panel-section" id="modules-panel">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Training Modules</h1>
+              <p class="view-subtitle" id="modules-subtitle">Complete all modules and score ≥80% on all quizzes to earn certification.</p>
+            </div>
+          </div>
+
+          <!-- Modules Grid container -->
+          <div class="modules-grid" id="modules-grid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- ==================== MODULE PLAYER PANEL ==================== -->
+        <div class="panel-section" id="player-panel">
+          <div class="view-header">
+            <div>
+              <button class="mdbtn btn-text" onclick="navigateTo('modules')" style="padding-left:0; margin-bottom: 8px;">
+                <i class="material-icons">arrow_back</i> <span>Back to Modules</span>
+              </button>
+              <h1 class="view-title" id="player-title">Loading Module...</h1>
+              <p class="view-subtitle" id="player-subtitle">Module X of 8</p>
+            </div>
+          </div>
+
+          <div class="player-layout">
+            <!-- Left Column: Video and Material -->
+            <div class="player-main">
+              <!-- Video box wrapper -->
+              <div class="player-video-container" id="player-video-wrapper">
+                <!-- Video placeholder or Simulator gets injected here -->
+              </div>
+
+              <!-- Module content article -->
+              <div class="player-content-card">
+                <h2 id="player-content-title">Module Title</h2>
+                <div id="player-content-body" style="font-size: 14px; line-height: 1.6; color: var(--on-sur-var);">
+                  <!-- Content injected by JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Sidebar Navigation & Quiz CTA -->
+            <aside class="player-sidebar">
+              <!-- Module quiz trigger -->
+              <div class="player-progress-card" id="player-quiz-cta" style="text-align: center;">
+                <!-- Quiz action buttons injected here -->
+              </div>
+
+              <!-- Sidebar List of all modules -->
+              <div class="player-progress-card">
+                <h3 style="margin-top:0; font-size:14px; margin-bottom: 12px;">Modules Academy Progress</h3>
+                <div class="progress-bar-thin" style="margin-bottom: 16px;">
+                  <div class="progress-bar-thin-fill" id="player-progress-fill" style="width: 0%"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 11px; margin-top:-10px; margin-bottom: 16px; color: var(--on-sur-var);">
+                  <span>Completion Progress</span>
+                  <strong id="player-progress-text">0%</strong>
+                </div>
+
+                <div class="player-module-list" id="player-module-list">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+
+              <!-- Bottom sidebar buttons -->
+              <div style="display: flex; gap: 8px; justify-content: space-between;">
+                <button class="mdbtn btn-outlined" onclick="playerPrev()" style="flex:1; justify-content: center;">
+                  <i class="material-icons">arrow_back</i> Previous
+                </button>
+                <button class="mdbtn btn-filled" id="player-next-btn" style="flex:1; justify-content: center;">
+                  Next Module <i class="material-icons">arrow_forward</i>
+                </button>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <!-- ==================== QUIZ PANEL ==================== -->
+        <div class="panel-section" id="quiz-panel">
+          <div id="quiz-container">
+            <div class="view-header">
+              <div>
+                <h1 class="view-title" id="quiz-title">Module Quiz</h1>
+                <p class="view-subtitle">Answer the questions below to test your understanding.</p>
+              </div>
+              <!-- Timer block -->
+              <div class="exam-timer" id="quiz-timer" style="display: inline-flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 18px; background: var(--sur-var); border: 1px solid var(--out-var); padding: 8px 16px; border-radius: 8px;">
+                <i class="material-icons" style="font-size: 18px;">schedule</i>
+                <span id="quiz-timer-text">05:00</span>
+              </div>
+            </div>
+
+            <!-- Quiz Layout Card -->
+            <div class="quiz-layout-card">
+              <!-- Progress indicator -->
+              <div style="margin-bottom: var(--spacing-lg);">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; font-weight: 600;">
+                  <span id="quiz-progress-label">Question 1 of 5</span>
+                </div>
+                <div class="progress-bar-thin">
+                  <div class="progress-bar-thin-fill" id="quiz-progress-fill" style="width: 20%;"></div>
+                </div>
+              </div>
+
+              <!-- Question details card -->
+              <div id="quiz-question-card">
+                <!-- Populated by JS -->
+              </div>
+
+              <!-- Back/Next Navigation -->
+              <div style="display: flex; justify-content: space-between; margin-top: 32px; border-top: 1px solid var(--out-var); padding-top: 24px;">
+                <button class="mdbtn btn-outlined" id="quiz-prev-btn" onclick="quizPrev()">
+                  <i class="material-icons">arrow_back</i> <span>Previous</span>
+                </button>
+                <button class="mdbtn btn-filled" id="quiz-next-btn" onclick="quizNext()">
+                  <span>Next Question</span> <i class="material-icons">arrow_forward</i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quiz Results Container (Hidden initially) -->
+          <div id="quiz-results" class="hidden">
+            <!-- Injected by quiz submit -->
+          </div>
+        </div>
+
+        <!-- ==================== LEADERBOARD PANEL ==================== -->
+        <div class="panel-section" id="leaderboard-panel">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Academy Leaderboard</h1>
+              <p class="view-subtitle">See how you rank against other proctors in training.</p>
+            </div>
+          </div>
+
+          <div id="leaderboard-container">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- ==================== CERTIFICATION STATUS PANEL ==================== -->
+        <div class="panel-section" id="certificate-panel">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Proctor Certification</h1>
+              <p class="view-subtitle">Review your certification status or claim your proctor certificate.</p>
+            </div>
+          </div>
+
+          <div id="cert-container">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- ==================== SETTINGS & RESET PANEL ==================== -->
+        <div class="panel-section" id="settings-panel">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Reset & Appearance Settings</h1>
+              <p class="view-subtitle">Manage theme options and reset training academy progress.</p>
+            </div>
+          </div>
+
+          <div class="settings-container" style="max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--spacing-lg);">
+            <!-- Appearance Card -->
+            <div class="settings-card" style="background: var(--sur); border: 1px solid var(--out-var); padding: var(--spacing-lg); border-radius: 12px;">
+              <h3 style="margin-top:0;">Appearance</h3>
+              <div class="preference-item" style="display:flex; justify-content:space-between; align-items:center;">
+                <div class="pref-desc">
+                  <h4 style="margin:0;">Dark Theme Mode</h4>
+                  <p style="margin:4px 0 0 0; font-size:12px; color:var(--on-sur-var);">Switch between light and dark theme styles.</p>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="settings-theme-toggle" onchange="toggleTheme()">
+                  <span class="switch-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Danger Zone Card -->
+            <div class="settings-card" style="background: var(--sur); border: 1px solid var(--out-var); padding: var(--spacing-lg); border-radius: 12px; border-color: rgba(179,38,30,0.2);">
+              <h3 style="margin-top:0; color:var(--err);">Danger Zone</h3>
+              <div class="preference-item" style="display:flex; justify-content:space-between; align-items:center;">
+                <div class="pref-desc">
+                  <h4 style="margin:0; color:var(--err);">Reset Academy Progress</h4>
+                  <p style="margin:4px 0 0 0; font-size:12px; color:var(--on-sur-var);">Delete all completed modules, quiz history, and claimed certificates.</p>
+                </div>
+                <button class="mdbtn btn-filled" onclick="resetProgress()" style="background: var(--err); border-color: var(--err); color: #fff;">
+                  <i class="material-icons">replay</i>
+                  <span>Reset All</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ==================== TOAST CONTAINER ==================== -->
+<div class="toast-container" id="toast-container"></div>
+
+<script src="online_training.js"></script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+{
+  "aiFlags": [
+    {
+      "id": "af_001",
+      "candidateId": "cand_008",
+      "candidateName": "Amanda Wilson",
+      "sessionId": "sess_001",
+      "sessionName": "ServSafe Food Handler — Mid-Semester Exam",
+      "alertType": "Multiple Faces Detected",
+      "confidence": 92,
+      "timestamp": "2026-05-25T12:05:30Z",
+      "status": "pending",
+      "videoClip": null,
+      "reviewerNotes": "",
+      "relatedEvents": [
+        "af_002"
+      ],
+      "updatedAt": "2026-05-25T12:05:30Z"
+    },
+    {
+      "id": "af_002",
+      "candidateId": "cand_003",
+      "candidateName": "David Brown",
+      "sessionId": "sess_002",
+      "sessionName": "Food Protection Manager — Final Assessment",
+      "alertType": "Suspicious Eye Movement",
+      "confidence": 78,
+      "timestamp": "2026-05-21T14:06:15Z",
+      "status": "dismissed",
+      "videoClip": null,
+      "reviewerNotes": "",
+      "relatedEvents": [
+        "af_001"
+      ],
+      "updatedAt": "2026-05-22T08:50:01.249Z"
+    },
+    {
+      "id": "af_003",
+      "candidateId": "cand_007",
+      "candidateName": "Matthew Miller",
+      "sessionId": "sess_002",
+      "sessionName": "Food Protection Manager — Final Assessment",
+      "alertType": "Background Noise Detected",
+      "confidence": 85,
+      "timestamp": "2026-05-21T14:04:00Z",
+      "status": "dismissed",
+      "videoClip": null,
+      "reviewerNotes": "",
+      "relatedEvents": [
+        "af_004",
+        "af_005"
+      ],
+      "updatedAt": "2026-05-22T08:44:52.199Z"
+    },
+    {
+      "id": "af_004",
+      "candidateId": "cand_007",
+      "candidateName": "Matthew Miller",
+      "sessionId": "sess_002",
+      "sessionName": "Food Protection Manager — Final Assessment",
+      "alertType": "Device Switch Detected",
+      "confidence": 95,
+      "timestamp": "2026-05-21T14:04:45Z",
+      "status": "escalated",
+      "videoClip": null,
+      "reviewerNotes": "",
+      "relatedEvents": [
+        "af_003"
+      ],
+      "updatedAt": "2026-05-22T08:44:53.752Z"
+    },
+    {
+      "id": "af_005",
+      "candidateId": "cand_007",
+      "candidateName": "Matthew Miller",
+      "sessionId": "sess_002",
+      "sessionName": "Food Protection Manager — Final Assessment",
+      "alertType": "Tab Switch",
+      "confidence": 99,
+      "timestamp": "2026-05-21T14:05:00Z",
+      "status": "escalated",
+      "videoClip": null,
+      "reviewerNotes": "Multiple tab switches detected within 60s",
+      "relatedEvents": [
+        "af_003",
+        "af_004"
+      ]
+    },
+    {
+      "id": "af_006",
+      "candidateId": "cand_004",
+      "candidateName": "Sarah Williams",
+      "sessionId": "sess_002",
+      "sessionName": "Food Protection Manager — Final Assessment",
+      "alertType": "Face Not Visible",
+      "confidence": 72,
+      "timestamp": "2026-05-21T14:10:00Z",
+      "status": "dismissed",
+      "videoClip": null,
+      "reviewerNotes": "Camera angle adjusted — resolved",
+      "relatedEvents": []
+    },
+    {
+      "id": "af_007",
+      "candidateId": "cand_012",
+      "candidateName": "Jennifer Thomas",
+      "sessionId": "sess_004",
+      "sessionName": "Allergen Awareness — Midterm",
+      "alertType": "Unusual Activity",
+      "confidence": 68,
+      "timestamp": "2026-05-19T11:45:00Z",
+      "status": "reviewed",
+      "videoClip": null,
+      "reviewerNotes": "Student was looking at notes briefly. Warning issued.",
+      "relatedEvents": []
+    }
+  ],
+  "flaggedCases": [
+    {
+      "id": "fc_001",
+      "candidateId": "cand_003",
+      "candidateName": "David Brown",
+      "sessionId": "sess_002",
+      "sessionName": "Food Protection Manager — Final Assessment",
+      "reason": "Multiple faces detected — potential proxy",
+      "flaggedAt": "2026-05-21T14:06:30Z",
+      "status": "open",
+      "notes": "AI flagged multiple faces. Manual review needed.",
+      "flaggedBy": "Dr. Sarah Jenkins"
+    },
+    {
+      "id": "fc_002",
+      "candidateId": "cand_007",
+      "candidateName": "Matthew Miller",
+      "sessionId": "sess_002",
+      "sessionName": "Food Protection Manager — Final Assessment",
+      "reason": "Device switch and tab switching",
+      "flaggedAt": "2026-05-21T14:05:10Z",
+      "status": "open",
+      "notes": "Student switched tabs 4 times and changed devices.",
+      "flaggedBy": "Dr. Sarah Jenkins"
+    }
+  ],
+  "retakeRequests": [
+    {
+      "id": "rr_001",
+      "candidateId": "cand_012",
+      "candidateName": "Jennifer Thomas",
+      "sessionId": "sess_004",
+      "sessionName": "Allergen Awareness — Midterm",
+      "originalExamDate": "2026-05-19T11:00:00Z",
+      "reason": "Internet disconnection during exam",
+      "requestedAt": "2026-05-19T13:00:00Z",
+      "status": "approved",
+      "retakeDate": null,
+      "questionSet": null,
+      "proctorNote": "",
+      "updatedAt": "2026-05-22T08:50:14.074Z"
+    },
+    {
+      "id": "rr_002",
+      "candidateId": "cand_011",
+      "candidateName": "Andrew Anderson",
+      "sessionId": "sess_004",
+      "sessionName": "Allergen Awareness — Midterm",
+      "originalExamDate": "2026-05-19T11:00:00Z",
+      "reason": "Medical emergency — doctor's note attached",
+      "requestedAt": "2026-05-19T14:00:00Z",
+      "status": "approved",
+      "retakeDate": "2026-05-28T11:00:00Z",
+      "questionSet": "Randomized Set B",
+      "proctorNote": "Medical documentation verified. Approved for retake."
+    }
+  ],
+  "malpracticeCases": [
+    {
+      "id": "mp_001",
+      "candidateId": "cand_007",
+      "candidateName": "Matthew Miller",
+      "sessionId": "sess_002",
+      "sessionName": "Food Protection Manager — Final Assessment",
+      "status": "under_review",
+      "escalatedAt": "2026-05-21T14:05:15Z",
+      "evidence": [
+        "af_003",
+        "af_004",
+        "af_005"
+      ],
+      "notes": "Multiple AI flags — device switch, tab switching, background noise. Under review.",
+      "updatedAt": "2026-05-21T14:05:15Z"
+    }
+  ]
+}

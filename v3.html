@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SecureProctor AI - Unified OS</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+  <link rel="stylesheet" href="v3.css">
+
+    <style>
+      ::selection { background-color: var(--brand-primary); color: #000000 !important; }
+      ::-moz-selection { background-color: var(--brand-primary); color: #000000 !important; }
+      
+      /* Make all active tabs text black */
+      .nav-item.active, .asset-toggle-btn.active, .tab-btn.active { 
+        font-weight: 700 !important;
+      }
+      .asset-toggle-btn.active {
+        background: var(--brand-primary) !important;
+      }
+    </style>
+
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <img src="sdc_hat_logo.png" alt="SDC Logo" style="height:32px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.2));">
+        SecureProctor AI
+      </div>
+      
+      <nav class="sidebar-nav" id="sidebar-nav">
+        <button class="nav-item active" data-view="dashboard" id="nav-dashboard">
+          <i class="material-icons-outlined">dashboard</i>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-view="monitoring" id="nav-monitoring">
+          <i class="material-icons-outlined">videocam</i>
+          <span>Exam Monitoring</span>
+        </button>
+        <button class="nav-item" data-view="candidates" id="nav-candidates">
+          <i class="material-icons-outlined">people</i>
+          <span>Candidates</span>
+        </button>
+        <button class="nav-item" data-view="sessions" id="nav-sessions">
+          <i class="material-icons-outlined">event</i>
+          <span>Classes</span>
+        </button>
+        <button class="nav-item" data-view="materials" id="nav-materials">
+          <i class="material-icons-outlined">menu_book</i>
+          <span>Learning Materials</span>
+        </button>
+        <button class="nav-item" data-view="earnings" id="nav-earnings">
+          <i class="material-icons-outlined">payments</i>
+          <span>Earnings</span>
+        </button>
+        <button class="nav-item" data-view="reports" id="nav-reports">
+          <i class="material-icons-outlined">analytics</i>
+          <span>Reports</span>
+        </button>
+        <button class="nav-item" data-view="settings" id="nav-settings">
+          <i class="material-icons-outlined">settings</i>
+          <span>Settings</span>
+        </button>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <div class="user-profile mb-4">
+          <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&q=80" alt="Avatar" class="user-avatar">
+          <div>
+            <div style="font-weight:600; font-size:14px; color:#fff;">Dr. Sarah Jenkins</div>
+            <div style="font-size:12px; color:#fff;">Administrator</div>
+          </div>
+        </div>
+        <button class="btn" style="width:100%; justify-content:flex-start; background:transparent; border:none; color:#f2b8b5; padding-left:0; transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'" onclick="v3App.signOut()">
+          <i class="material-icons-outlined">logout</i> Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN AREA -->
+    <main class="main-area">
+      
+      <!-- TOP NAVIGATION -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1 id="view-title">Dashboard</h1>
+        </div>
+        <div class="topbar-right">
+          <div class="search-box">
+            <i class="material-icons-outlined">search</i>
+            <input type="text" id="global-search" placeholder="Search candidates, classes, or ID...">
+          </div>
+          <div id="tab-timer" style="display:flex; align-items:center; gap:6px; background:var(--brand-primary); color:#000; padding:6px 12px; border-radius:16px; font-weight:700; font-size:14px; margin-right:12px; border:1px solid rgba(0,0,0,0.1);">
+            <i class="material-icons-outlined" style="font-size:16px;">timer</i>
+            <span id="tab-timer-text">0h 0m 0s</span>
+          </div>
+          <button class="icon-button" id="theme-toggle" title="Toggle Theme">
+            <i class="material-icons-outlined">dark_mode</i>
+          </button>
+          <div style="position:relative;">
+            <button class="icon-button" id="notification-btn" title="Notifications">
+              <i class="material-icons-outlined">notifications</i>
+              <span id="notif-badge" style="position:absolute; top:6px; right:6px; width:8px; height:8px; background:var(--status-error); border-radius:50%; border:2px solid var(--surface-color); display:none;"></span>
+            </button>
+            <div id="notification-dropdown" style="display:none; position:absolute; top:48px; right:0; width:320px; background:var(--surface-color); border:1px solid var(--border-color); border-radius:8px; box-shadow:var(--shadow-lg); z-index:100; max-height:400px; overflow-y:auto;">
+              <div style="padding:16px; border-bottom:1px solid var(--border-light); font-weight:600;">Notifications</div>
+              <div id="notification-list" style="padding:8px;"></div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- WORKSPACES -->
+      
+      <!-- 1. DASHBOARD -->
+      <section id="view-dashboard" class="workspace active">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:24px;">
+          <div>
+            <h2 style="font-size:24px; font-weight:600; color:var(--text-primary);">Good morning, Sarah</h2>
+            <p style="color:var(--text-secondary); margin-top:4px;">Here is what's happening at SecureProctor University today.</p>
+          </div>
+          <button class="btn btn-primary" onclick="v3App.openFormDrawer('session')"><i class="material-icons">add</i> Add Class</button>
+        </div>
+
+        <!-- KPI Grid -->
+        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:24px; margin-bottom:32px;" id="dashboard-kpis">
+          <!-- Populated by JS -->
+        </div>
+
+        <div style="display:grid; grid-template-columns:2fr 1fr; gap:24px;">
+          <!-- Left Col -->
+          <div style="display:flex; flex-direction:column; gap:24px;">
+            <div class="card">
+              <h3 style="font-size:16px; margin-bottom:16px; display:flex; align-items:center; gap:8px;"><i class="material-icons-outlined" style="color:var(--brand-primary);">event_available</i> Upcoming Classes</h3>
+              <div id="dash-upcoming-feed">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+          
+          <!-- Right Col -->
+          <div style="display:flex; flex-direction:column; gap:24px;">
+            <div class="card">
+              <h3 style="font-size:16px; margin-bottom:16px; display:flex; align-items:center; gap:8px;"><i class="material-icons-outlined" style="color:var(--status-warning);">warning</i> Action Required</h3>
+              <div id="dash-action-feed">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. CANDIDATES ROSTER -->
+      <section id="view-candidates" class="workspace">
+        <div class="flex-between mb-4">
+          <div>
+            <h2 style="font-size:20px; font-weight:600;">Master Candidate Roster</h2>
+            <p class="text-secondary mt-4">Manage enrollments, vouchers, and session assignments.</p>
+          </div>
+          <div style="display:flex; gap:12px;">
+            <button class="btn btn-secondary" onclick="v3App.simulateCsvUpload()"><i class="material-icons-outlined">upload_file</i> Import CSV</button>
+            <button class="btn btn-primary" onclick="v3App.openFormDrawer('candidate')"><i class="material-icons">person_add</i> Add Candidate</button>
+          </div>
+        </div>
+
+        <div class="card" style="padding:0;">
+          <div style="padding:16px; border-bottom:1px solid var(--border-color); display:flex; gap:8px;" id="candidate-filters">
+            <button class="badge badge-info" style="cursor:pointer;" onclick="v3App.filterCandidates('all')">All</button>
+            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterCandidates('enrolled')">Enrolled</button>
+            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterCandidates('in_progress')">Active</button>
+            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterCandidates('completed')">Completed</button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width:40px;"><input type="checkbox" id="bulk-select-all" onclick="v3App.toggleAllCandidates(event)"></th>
+                <th>Candidate</th>
+                <th>ID / Roll No</th>
+                <th>Voucher Status</th>
+                <th>Class Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="candidates-tbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 3. SESSIONS WORKSPACE -->
+      <section id="view-sessions" class="workspace">
+         <div class="flex-between mb-4">
+          <div>
+            <h2 style="font-size:20px; font-weight:600;">Class Lifecycle Management</h2>
+            <p class="text-secondary mt-4">Create, monitor, and review classes.</p>
+          </div>
+          <button class="btn btn-primary" onclick="v3App.openFormDrawer('session')"><i class="material-icons">add</i> Add Class</button>
+        </div>
+
+        <div class="flex-between mb-4">
+          <div style="display:flex; gap:8px;" id="session-filters">
+            <button class="badge badge-info" style="cursor:pointer;" onclick="v3App.filterSessions('all')">All</button>
+            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterSessions('draft')">Draft</button>
+            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterSessions('upcoming')">Upcoming</button>
+            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterSessions('ongoing')">Ongoing</button>
+            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterSessions('live')">Live</button>
+            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterSessions('completed')">Completed</button>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button id="btn-grid-view" class="icon-button" style="background:var(--border-light); color:var(--text-primary);" onclick="v3App.setSessionViewMode('grid')"><i class="material-icons-outlined">grid_view</i></button>
+            <button id="btn-table-view" class="icon-button" style="background:transparent; color:var(--text-secondary);" onclick="v3App.setSessionViewMode('table')"><i class="material-icons-outlined">table_rows</i></button>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:24px;" id="sessions-grid">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="card" style="padding:0; display:none;" id="sessions-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Class Name</th>
+                <th>Status</th>
+                <th>Created At</th>
+                <th>Exam Date</th>
+                <th>Candidates</th>
+                <th>Readiness</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="sessions-tbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 3.1 SESSION DETAIL VIEW -->
+      <section id="view-session-detail" class="workspace">
+        <div class="flex-between mb-4">
+          <div style="display:flex; align-items:center; gap:16px;">
+            <button class="icon-button" onclick="v3App.switchView('sessions')"><i class="material-icons-outlined">arrow_back</i></button>
+            <div>
+              <h2 id="sd-title" style="font-size:20px; font-weight:600;">Class Details</h2>
+              <p id="sd-subtitle" class="text-secondary mt-4">Review enrolled candidates and learning materials.</p>
+            </div>
+          </div>
+          <div id="sd-top-actions" style="display:flex; gap:12px;">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <div id="sd-voucher-warning" style="display:none; margin-bottom:24px; padding:16px; background:var(--status-error-bg); border:1px solid var(--status-error); border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; align-items:center; gap:12px; color:var(--status-error);">
+            <i class="material-icons-outlined">warning</i>
+            <span style="font-size:14px; font-weight:500;">Insufficient vouchers for enrolled candidates. Candidates will not be able to access materials.</span>
+          </div>
+          <button class="btn btn-secondary" style="border-color:var(--status-error); color:var(--status-error);" onclick="v3App.showToast('Voucher Request Sent', 'success')">Request Vouchers for Materials</button>
+        </div>
+
+        <div id="sd-tabs-container" style="display:flex; border-bottom:1px solid var(--border-color); margin-bottom:24px;">
+          <button class="badge" id="sd-tab-candidates" style="background:var(--brand-active); color:var(--brand-primary); padding:12px 24px; border-radius:0; border-bottom:2px solid var(--brand-primary); cursor:pointer; font-size:14px;" onclick="v3App.switchSessionDetailTab('candidates')">Candidates</button>
+          <button class="badge" id="sd-tab-materials" style="background:transparent; color:var(--text-secondary); padding:12px 24px; border-radius:0; border-bottom:2px solid transparent; cursor:pointer; font-size:14px;" onclick="v3App.switchSessionDetailTab('materials')">Learning Materials</button>
+        </div>
+
+        <div id="sd-content-candidates" class="card" style="padding:0;">
+          <table class="data-table">
+            <thead id="sd-candidates-thead">
+              <!-- Populated by JS -->
+            </thead>
+            <tbody id="sd-candidates-tbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <div id="sd-content-materials" class="card" style="padding:0; display:none; background:transparent; border:none; box-shadow:none;">
+          <div id="sd-materials-grid" style="display:flex; flex-direction:column; gap:24px;">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. LEARNING MATERIALS -->
+      <section id="view-materials" class="workspace">
+         <div class="flex-between mb-4">
+          <div>
+            <h2 style="font-size:20px; font-weight:600;">Learning Materials Hub</h2>
+            <p class="text-secondary mt-4">Manage, review, and assign curriculum modules.</p>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button id="btn-mat-grid-view" class="icon-button" style="background:var(--border-light); color:var(--text-primary);" onclick="v3App.setMaterialViewMode('grid')"><i class="material-icons-outlined">grid_view</i></button>
+            <button id="btn-mat-table-view" class="icon-button" style="background:transparent; color:var(--text-secondary);" onclick="v3App.setMaterialViewMode('table')"><i class="material-icons-outlined">table_rows</i></button>
+          </div>
+        </div>
+
+        <div id="materials-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:24px;"></div>
+        
+        <div class="card" style="padding:0; display:none;" id="materials-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Type</th>
+                <th>Duration</th>
+                <th>Assigned</th>
+                <th>Avg. Complete</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="materials-tbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+        <style>
+          /* Scoped Material Card Styles */
+          .asset-card-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(360px, 1fr)); gap:24px; }
+          .asset-card { background:var(--surface-color); border:1px solid var(--border-color); border-radius:12px; overflow:visible; display:flex; flex-direction:column; box-shadow:var(--shadow-sm); position:relative; }
+          .asset-cover { width:100%; height:140px; background:var(--border-light); object-fit:cover; border-radius:12px 12px 0 0; }
+          .asset-header { padding:20px; border-bottom:1px solid var(--border-light); }
+          .asset-title { font-size:18px; font-weight:700; color:var(--text-primary); margin-bottom:6px; line-height:1.3; }
+          .asset-meta { font-size:13px; color:var(--text-secondary); display:flex; align-items:center; gap:6px; }
+          
+          .asset-toggles { display:flex; background:var(--bg-color); border-bottom:1px solid var(--border-light); }
+          .asset-toggle-btn { flex:1; padding:12px 0; font-size:13px; font-weight:600; text-align:center; color:var(--text-secondary); cursor:pointer; background:transparent; border:none; border-bottom:2px solid transparent; transition:all 0.2s; }
+          .asset-toggle-btn.active { color:var(--brand-primary); border-bottom:2px solid var(--brand-primary); background:var(--brand-active); }
+          
+          .asset-body { padding:20px; flex:1; display:flex; flex-direction:column; }
+          
+          /* Flow 2: Accordion & Progress */
+          .batch-accordion { border:1px solid var(--border-color); border-radius:8px; margin-bottom:12px; overflow:hidden; }
+          .batch-header { background:var(--bg-color); padding:12px 16px; font-size:13px; font-weight:600; cursor:pointer; display:flex; justify-content:space-between; align-items:center; user-select:none; }
+          .batch-header:hover { background:var(--hover-bg); }
+          .batch-content { padding:16px; display:none; background:var(--surface-color); border-top:1px solid var(--border-light); }
+          .batch-content.open { display:block; }
+          
+          /* 4-Col Grid */
+          .prog-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; }
+          .prog-col { position:relative; cursor:help; text-align:center; }
+          .prog-val { font-size:24px; font-weight:700; color:var(--text-primary); margin-bottom:4px; }
+          .prog-lbl { font-size:11px; font-weight:600; line-height:1.2; }
+          
+          .lbl-green { color:var(--status-success); }
+          .lbl-cyan { color:var(--status-info); }
+          .lbl-grey { color:var(--text-secondary); }
+          .lbl-muted { color:var(--text-tertiary); text-decoration:line-through; }
+          
+          /* Zero-Click Tooltip */
+          .prog-col .tt-list { visibility:hidden; opacity:0; position:absolute; bottom:100%; left:50%; transform:translateX(-50%) translateY(8px); background:#111; color:#fff; padding:12px; border-radius:8px; width:220px; max-height:180px; overflow-y:auto; box-shadow:0 10px 25px rgba(0,0,0,0.3); z-index:100; transition:all 0.2s; border:1px solid #333; pointer-events:none; font-size:12px; text-align:left; }
+          .prog-col:hover .tt-list { visibility:visible; opacity:1; transform:translateX(-50%) translateY(-8px); }
+          .tt-list::-webkit-scrollbar { width:4px; }
+          .tt-list::-webkit-scrollbar-thumb { background:#444; border-radius:2px; }
+          .tt-item { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #222; }
+          .tt-item:last-child { border-bottom:none; }
+          
+          /* Primary CTA */
+          .asset-cta { background:var(--brand-primary); color:#111; font-weight:700; border:none; border-radius:6px; padding:12px; width:100%; cursor:pointer; font-size:14px; margin-top:auto; transition:all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+          .asset-cta:hover { opacity:0.9; transform:translateY(-1px); box-shadow:0 4px 12px rgba(249, 173, 0, 0.3); }
+          
+          /* Card hover lift */
+          .asset-card { transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease; }
+          .asset-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+          
+          /* Staggered entry animation */
+          @keyframes assetCardIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+          .asset-card { animation: assetCardIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+          .asset-card:nth-child(1) { animation-delay: 0s; }
+          .asset-card:nth-child(2) { animation-delay: 0.08s; }
+          .asset-card:nth-child(3) { animation-delay: 0.16s; }
+          .asset-card:nth-child(4) { animation-delay: 0.24s; }
+          .asset-card:nth-child(5) { animation-delay: 0.32s; }
+          
+          /* Progress bar animation */
+          @keyframes barGrow { from { width: 0; } }
+          .asset-prog-fill { animation: barGrow 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both; }
+          
+          /* KPI row styling */
+          .asset-kpi-row { display:flex; gap:16px; margin-bottom:16px; }
+          .asset-kpi { flex:1; background:var(--bg-color); border:1px solid var(--border-light); border-radius:8px; padding:10px 12px; text-align:center; }
+          .asset-kpi-val { font-size:18px; font-weight:700; color:var(--text-primary); }
+          .asset-kpi-lbl { font-size:10px; color:var(--text-secondary); text-transform:uppercase; font-weight:600; letter-spacing:0.3px; }
+          
+          /* Tab transition */
+          .asset-body { transition: opacity 0.2s ease; }
+          /* Centered Batch Progress Modal */
+          .batch-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+          }
+          .batch-modal-overlay.open { opacity: 1; pointer-events: auto; }
+          .batch-modal-content {
+            background: var(--surface-color); border: 1px solid var(--brand-primary); border-radius: 16px;
+            width: 90%; max-width: 600px; padding: 32px;
+            transform: scale(0.95) translateY(20px); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 32px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(249, 173, 0, 0.1);
+            position: relative; overflow: hidden;
+          }
+          .batch-modal-content::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--brand-primary), var(--status-success));
+          }
+          .batch-modal-overlay.open .batch-modal-content { transform: scale(1) translateY(0); }
+          .batch-list-item {
+            background: var(--surface-color); border: 1px solid var(--border-color);
+            border-radius: 10px; padding: 16px 20px; margin-bottom: 12px;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative; overflow: hidden;
+          }
+          .batch-list-item::after {
+            content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 4px;
+            background: transparent; transition: all 0.3s;
+          }
+          .batch-list-item:hover { 
+            border-color: rgba(249, 173, 0, 0.5); 
+            transform: translateY(-2px); 
+            background: #1a1a1a;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+          }
+          .batch-list-item:hover::after { background: var(--brand-primary); }
+        </style>
+      </section>
+
+      <!-- 5. EARNINGS WORKSPACE -->
+      <section id="view-earnings" class="workspace">
+        <div class="flex-between mb-4">
+          <div>
+            <h2 style="font-size:20px; font-weight:600;">Earnings & Payments</h2>
+            <p class="text-secondary mt-4">Track your proctoring revenue and payout history.</p>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; margin-bottom:32px;" id="earnings-kpis">
+          <!-- Populated by JS -->
+        </div>
+        <div class="card" style="padding:0; margin-bottom:24px;">
+          <h3 style="padding:16px; border-bottom:1px solid var(--border-color); font-size:16px;">Recent Classes</h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Session</th>
+                <th>Date</th>
+                <th>Duration</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="earnings-sessions-tbody">
+            </tbody>
+          </table>
+        </div>
+        <div class="card" style="padding:0;">
+          <h3 style="padding:16px; border-bottom:1px solid var(--border-color); font-size:16px;">Payout History</h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Method</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="earnings-payouts-tbody">
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 6. REPORTS WORKSPACE -->
+      <section id="view-reports" class="workspace">
+        <div class="flex-between mb-4">
+          <div>
+            <h2 style="font-size:20px; font-weight:600;">Reports & Analytics</h2>
+            <p class="text-secondary mt-4">Platform-wide insights and integrity metrics.</p>
+          </div>
+          <button class="btn btn-secondary"><i class="material-icons-outlined">download</i> Export PDF</button>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:24px; margin-bottom:32px;" id="reports-kpis">
+        </div>
+        <div style="display:grid; grid-template-columns:2fr 1fr; gap:24px;">
+          <div class="card" style="padding:0;">
+            <h3 style="padding:16px; border-bottom:1px solid var(--border-color); font-size:16px;">Class Breakdown</h3>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Session</th>
+                  <th>Date</th>
+                  <th>Candidates</th>
+                  <th>Incidents</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="reports-sessions-tbody">
+              </tbody>
+            </table>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:24px;">
+            <div class="card">
+              <h3 style="font-size:16px; margin-bottom:16px;">AI Flags Breakdown</h3>
+              <div id="reports-ai-stats">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. SETTINGS WORKSPACE -->
+      <section id="view-settings" class="workspace">
+        <div class="flex-between mb-4">
+          <div>
+            <h2 style="font-size:20px; font-weight:600;">Platform Settings</h2>
+            <p class="text-secondary mt-4">Manage your profile and platform preferences.</p>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+          <div class="card">
+            <h3 style="font-size:16px; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:12px;">Personal Information</h3>
+            <div id="settings-profile-form">
+            </div>
+          </div>
+          <div class="card">
+            <h3 style="font-size:16px; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:12px;">Security & Preferences</h3>
+            <div id="settings-security-form">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. LIVE MONITORING WORKSPACE -->
+      <section id="view-monitoring" class="workspace">
+        <div class="flex-between mb-4">
+          <div>
+            <h2 style="font-size:20px; font-weight:600; display:flex; align-items:center; gap:8px;">
+              <span style="width:8px; height:8px; background:var(--status-success); border-radius:50%; animation:pulseGlow 1.5s infinite;"></span> Exam Monitoring
+            </h2>
+            <p class="text-secondary mt-4">Real-time view of active test-takers and AI integrity flags.</p>
+          </div>
+          <div style="display:flex; gap:12px; align-items:center;">
+            <select id="monitor-session-select" class="btn btn-secondary" style="background:var(--bg-color);" onchange="v3App.renderMonitoring()">
+              <!-- Options populated by JS -->
+            </select>
+            <button class="btn btn-secondary" onclick="v3App.showToast('Message broadcasted to all active students.', 'info')"><i class="material-icons-outlined">campaign</i> Broadcast</button>
+            <button class="btn btn-danger" onclick="if(confirm('Are you sure you want to end this live exam session? This action cannot be undone.')) v3App.showToast('Session ended.', 'success')"><i class="material-icons-outlined">stop_circle</i> End Session</button>
+          </div>
+        </div>
+        
+        <div style="display:grid; grid-template-columns:3fr 1fr; gap:24px;">
+          <!-- Monitoring Table -->
+          <div class="card" style="padding:0;">
+            <div style="padding:16px; border-bottom:1px solid var(--border-color); display:flex; gap:8px;" id="monitor-filters">
+              <button class="badge badge-info" onclick="v3App.filterMonitoring('all')">All</button>
+              <button class="badge" style="background:var(--status-error-bg); color:var(--status-error);" onclick="v3App.filterMonitoring('red')"><i class="material-icons" style="font-size:12px;">warning</i> High Risk</button>
+              <button class="badge" style="background:var(--status-warning-bg); color:var(--status-warning);" onclick="v3App.filterMonitoring('amber')">Medium Risk</button>
+              <button class="badge" style="background:var(--status-success-bg); color:var(--status-success);" onclick="v3App.filterMonitoring('green')">Clear</button>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Candidate</th>
+                  <th>Camera / Screen</th>
+                  <th>Time Left</th>
+                  <th>AI Risk</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="monitor-tbody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- AI Alert Feed -->
+          <div class="card" style="padding:0; display:flex; flex-direction:column; max-height:600px;">
+            <div style="padding:16px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+              <h3 style="font-size:14px; font-weight:600; display:flex; align-items:center; gap:8px;"><i class="material-icons-outlined" style="color:var(--brand-primary); font-size:18px;">smart_toy</i> AI Alerts</h3>
+              <span class="badge" style="background:var(--status-error-bg); color:var(--status-error);" id="monitor-alert-count">0</span>
+            </div>
+            <div id="monitor-alert-feed" style="overflow-y:auto; flex:1; padding:16px; display:flex; flex-direction:column; gap:12px;">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <style>
+        @keyframes pulseGlow {
+          0% { box-shadow: 0 0 0 0 rgba(20,108,46,0.4); }
+          70% { box-shadow: 0 0 0 6px rgba(20,108,46,0); }
+          100% { box-shadow: 0 0 0 0 rgba(20,108,46,0); }
+        }
+      </style>
+    
+      
+
+
+    
+      <!-- ONGOING LEARNING MATERIAL DEEP DIVE -->
+      <section id="view-learning-deepdive" class="workspace" style="display:none; padding:24px;">
+        <style>
+          /* Luxury Minimal Brutalist Sync for Deep Dive */
+          #view-learning-deepdive {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            border-radius: 12px;
+            font-family: var(--font-sans);
+          }
+          @keyframes ddFadeIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes ddSlideTab {
+            from { opacity: 0; transform: translateX(-12px); }
+            to { opacity: 1; transform: translateX(0); }
+          }
+          @keyframes ddBarFill {
+            from { width: 0; }
+          }
+          .dd-animate-in { animation: ddFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+          .dd-animate-tab { animation: ddSlideTab 0.3s ease both; }
+          .dd-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 24px;
+            margin-bottom: 24px;
+          }
+          .dd-back {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            margin-bottom: 16px;
+          }
+          .dd-back:hover { color: var(--text-primary); border-color: var(--text-tertiary); }
+          .dd-cand-name { font-size: 28px; font-weight: 700; margin: 0 0 4px 0; letter-spacing: -0.5px; }
+          .dd-cand-meta { font-size: 14px; color: var(--text-secondary); display: flex; gap: 12px; align-items: center; }
+          .dd-global-prog { text-align: right; }
+          .dd-global-prog span { font-size: 32px; font-weight: 800; color: var(--status-info); letter-spacing: -1px; }
+          .dd-global-prog label { font-size: 12px; color: var(--text-tertiary); text-transform: uppercase; font-weight: 600; display: block; }
+          
+          .dd-search-wrap {
+            position: relative;
+            margin-bottom: 24px;
+          }
+          .dd-search-input {
+            width: 100%;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 16px 120px 16px 16px;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+          }
+          .dd-search-input:focus { border-color: var(--status-info); }
+          .dd-search-btn {
+            position: absolute;
+            right: 8px;
+            top: 8px;
+            bottom: 8px;
+            background: var(--bg-color);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 0 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+          }
+          .dd-search-btn:hover { background: var(--border-light); }
+          .dd-search-hint { font-size: 11px; color: var(--text-tertiary); margin-top: 8px; font-style: italic; }
+          
+          .dd-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+          }
+          .dd-tab {
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 16px;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+          }
+          .dd-tab:hover { color: #CCC; }
+          .dd-tab.active { color: var(--status-info); }
+          .dd-tab.active::after {
+            content: ''; position: absolute; bottom: -13px; left: 0; right: 0;
+            height: 2px; background: var(--status-info);
+          }
+          
+          .dd-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+          }
+          
+          .dd-card {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, border-color 0.2s;
+          }
+          .dd-card:hover { border-color: var(--border-color); transform: translateY(-2px); }
+          .dd-card.disabled { opacity: 0.6; pointer-events: none; }
+          .dd-card.disabled .dd-card-prog-fill { display: none; }
+          .dd-card-img { width: 100%; height: 160px; object-fit: cover; border-bottom: 1px solid var(--border-color); background: var(--bg-color); }
+          .dd-card-body { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+          .dd-card-title { font-size: 16px; font-weight: 600; line-height: 1.4; margin-bottom: 12px; color: var(--text-primary); }
+          .dd-card-time { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; }
+          .dd-card-prog-track { width: 100%; height: 6px; background: var(--bg-color); border-radius: 3px; overflow: hidden; margin-bottom: 24px; }
+          .dd-card-prog-fill { height: 100%; background: var(--status-info); }
+          .dd-card-cta {
+            margin-top: auto;
+            background: var(--brand-primary);
+            color: var(--on-pri);
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+          }
+          .dd-card-cta:hover { opacity: 0.9; }
+          /* Centered Batch Progress Modal */
+          .batch-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+          }
+          .batch-modal-overlay.open { opacity: 1; pointer-events: auto; }
+          .batch-modal-content {
+            background: var(--surface-color); border: 1px solid var(--brand-primary); border-radius: 16px;
+            width: 90%; max-width: 600px; padding: 32px;
+            transform: scale(0.95) translateY(20px); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 32px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(249, 173, 0, 0.1);
+            position: relative; overflow: hidden;
+          }
+          .batch-modal-content::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--brand-primary), var(--status-success));
+          }
+          .batch-modal-overlay.open .batch-modal-content { transform: scale(1) translateY(0); }
+          .batch-list-item {
+            background: var(--surface-color); border: 1px solid var(--border-color);
+            border-radius: 10px; padding: 16px 20px; margin-bottom: 12px;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative; overflow: hidden;
+          }
+          .batch-list-item::after {
+            content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 4px;
+            background: transparent; transition: all 0.3s;
+          }
+          .batch-list-item:hover { 
+            border-color: rgba(249, 173, 0, 0.5); 
+            transform: translateY(-2px); 
+            background: #1a1a1a;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+          }
+          .batch-list-item:hover::after { background: var(--brand-primary); }
+        </style>
+
+        <button class="dd-back" onclick="v3App.switchView('session-detail')" style="margin-bottom:20px;">
+          <i class="material-icons-outlined" style="font-size:16px;">arrow_back</i> Back to Class
+        </button>
+        
+        <!-- Enhanced Header with KPI Strip -->
+        <div style="background:#151515; border:1px solid #222; border-radius:12px; padding:32px; margin-bottom:24px;" class="dd-animate-in">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+            <div>
+              <h2 class="dd-cand-name" id="dd-cand-name" style="font-size:28px; font-weight:700; margin:0 0 6px 0; letter-spacing:-0.5px;">Candidate Name</h2>
+              <div class="dd-cand-meta" style="font-size:14px; color:#888; display:flex; gap:12px; align-items:center;">
+                <span id="dd-cand-email">candidate@email.com</span> • 
+                <span id="dd-cand-class" style="color:var(--brand-primary);">Class Name</span>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:24px;">
+              <div style="text-align:right;">
+                <div style="font-size:20px; font-weight:700; color:var(--brand-primary);" id="dd-total-hours">12h 45m</div>
+                <div style="font-size:11px; color:#666; text-transform:uppercase; font-weight:600;">Total Hours Read</div>
+              </div>
+              <div style="width:64px; height:64px; border-radius:50%; background:conic-gradient(var(--brand-primary) var(--dd-prog-deg, 252deg), #222 0); display:flex; align-items:center; justify-content:center;">
+                <div style="width:52px; height:52px; border-radius:50%; background:#151515; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px;" id="dd-cand-progval">70%</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Search Bar -->
+          <div style="position:relative; background:#1A1A1A; border:1px solid var(--brand-primary); border-radius:8px; display:flex; align-items:center; overflow:hidden;">
+            <span style="padding-left:16px; color:var(--brand-primary); font-size:18px;"><i class="material-icons-outlined" style="font-size:20px; vertical-align:middle;">auto_awesome</i></span>
+            <input type="text" style="width:100%; background:transparent; border:none; color:#FFF; padding:16px 20px; font-size:14px; outline:none;" placeholder="Search this learning material (e.g. 'What is the danger zone?')">
+            <button style="background:#2A2A2A; color:#FFF; border:none; padding:10px 24px; margin-right:6px; border-radius:6px; font-weight:600; font-size:12px; cursor:pointer; letter-spacing:0.5px; transition:0.2s;" onmouseover="this.style.background='#333'" onmouseout="this.style.background='#2A2A2A'">SEARCH</button>
+          </div>
+          <p style="color:#555; font-size:11px; margin-top:10px; font-style:italic;">Note: This helps in finding only content from this material.</p>
+        </div>
+
+        <!-- Tabs with animated underline -->
+        <div class="dd-tabs" id="dd-tabs-container" style="display:flex; gap:32px; border-bottom:1px solid #222; margin-bottom:32px; padding-bottom:0;">
+          <div class="dd-tab active" onclick="v3App.switchDeepDiveTab(this, 'ebook')">Ebook</div>
+          <div class="dd-tab" onclick="v3App.switchDeepDiveTab(this, 'video')">Video</div>
+          <div class="dd-tab" onclick="v3App.switchDeepDiveTab(this, 'podcast')">Podcast</div>
+          <div class="dd-tab" onclick="v3App.switchDeepDiveTab(this, 'flashcards')">Flashcards</div>
+          <div class="dd-tab" onclick="v3App.switchDeepDiveTab(this, 'practice')">Practice Test</div>
+        </div>
+
+        <div class="dd-cards-grid" id="dd-cards-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:24px;">
+          <!-- Populated by JS -->
+        </div>
+
+      </section>
+
+      </main>
+  </div>
+
+  <!-- UNIVERSAL SLIDING DRAWER -->
+  <!-- Batch Progress Modal -->
+  <div class="batch-modal-overlay" id="batch-progress-modal" onclick="if(event.target === this) this.classList.remove('open')">
+    <div class="batch-modal-content">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; border-bottom:1px solid #333; padding-bottom:16px;">
+        <h2 style="font-size:20px; font-weight:600; margin:0;" id="batch-modal-title">Batch Progress</h2>
+        <button style="background:none; border:none; color:#888; cursor:pointer;" onclick="document.getElementById('batch-progress-modal').classList.remove('open')">
+          <i class="material-icons-outlined">close</i>
+        </button>
+      </div>
+      <div id="batch-modal-body">
+        <!-- Grid injected here -->
+      </div>
+    </div>
+  </div>
+
+  <div class="drawer-overlay" id="drawer-overlay" onclick="v3App.closeDrawer()"></div> onclick="v3App.closeDrawer()"></div>
+  <div class="drawer" id="universal-drawer">
+    <div class="drawer-header">
+      <div>
+        <h3 id="drawer-title" style="font-size:18px; font-weight:600;">Drawer Title</h3>
+        <span id="drawer-subtitle" style="font-size:13px; color:var(--text-secondary); font-family:var(--font-mono);">Subtitle</span>
+      </div>
+      <button class="icon-button" onclick="v3App.closeDrawer()"><i class="material-icons">close</i></button>
+    </div>
+    <div class="drawer-content" id="drawer-content">
+      <!-- Injected Content -->
+    </div>
+    <div class="drawer-footer" id="drawer-footer">
+      <button class="btn btn-secondary" onclick="v3App.closeDrawer()">Cancel</button>
+      <button class="btn btn-primary" id="drawer-action-btn">Save Changes</button>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div id="toast-container"></div>
+
+  <script src="v3.js?v=10517"></script>
+  <script>v3App.init();</script>
+  <script>
+    (function(){
+      let todayKey = 'v3_tab_time_' + new Date().toDateString();
+      let seconds = parseInt(localStorage.getItem(todayKey) || '0');
+      let lastCheck = Date.now();
+      
+      function updateDisplay() {
+        let h = Math.floor(seconds / 3600);
+        let m = Math.floor((seconds % 3600) / 60);
+        let s = seconds % 60;
+        let el = document.getElementById('tab-timer-text');
+        if(el) el.innerText = `${h}h ${m}m ${s}s`;
+      }
+      
+      setInterval(() => {
+        let now = Date.now();
+        if (document.visibilityState === 'visible') {
+          let delta = Math.floor((now - lastCheck) / 1000);
+          if (delta > 0 && delta < 10) { // ignore large jumps from sleep
+            seconds += delta;
+            localStorage.setItem(todayKey, seconds);
+            updateDisplay();
+          }
+        }
+        lastCheck = now;
+      }, 1000);
+      
+      updateDisplay();
+    })();
+  </script>
+</body>
+</html>
