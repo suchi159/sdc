@@ -5,12 +5,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap');
 
 :root {
-  /* Core Brand Colors */
-  --pri: #f9ad00;          
-  --pri-dk: #7a4e00;       
-  --pri-ct: #000000;       
-  --pri-con: #fff8e6;      
-  --pri-con-ct: #7a4e00;   
+  /* Core Brand Colors — Proctor Blue (tone 30), white text 8.7:1 AAA */
+  --pri: #1e40af;
+  --pri-dk: #16308a;
+  --pri-ct: #ffffff;
+  --pri-con: #e7edff;
+  --pri-con-ct: #0a1f5c;
 
   /* Secondary & Tertiary */
   --sec: var(--pri);          
@@ -40,6 +40,10 @@
 
   /* Legacy Mapping for Smooth Transition */
   --surface-color: var(--sur);
+  /* App/page background. Many components (inputs, the full-screen auth overlay,
+     panels) use var(--bg-color); without this they fell back to transparent —
+     which is why the login screen showed the dashboard bleeding through. */
+  --bg-color: #f7f8fb;
   --text-primary: var(--on-sur);
   --text-secondary: var(--on-sur-var);
   --text-tertiary: var(--out-var);
@@ -69,11 +73,11 @@
 }
 
 [data-theme="dark"] {
-  --pri: #ffb951;          
-  --pri-dk: #ffedaa;       
-  --pri-ct: #000000;       
-  --pri-con: #ffedaa;      
-  --pri-con-ct: #1c1100;   
+  --pri: #afc6fa;
+  --pri-dk: #c9d8ff;
+  --pri-ct: #082c84;
+  --pri-con: #16233f;
+  --pri-con-ct: #afc6fa;
 
   --sec: var(--pri);          
   --sec-ct: var(--pri-ct);
@@ -89,9 +93,10 @@
   --inf: #7fcfff;          
   --inf-ct: #003350;
   
-  --sur: #1c1b1f;          
-  --sur-var: #2b2930;      
-  --out: #a7a3b0;          
+  --sur: #1c1b1f;
+  --sur-var: #2b2930;
+  --bg-color: #0d0f13;
+  --out: #a7a3b0;
   --out-var: #615e6b;      
   
   --on-sur: #e6e1e5;       
@@ -125,19 +130,22 @@ input, select { font-family: inherit; }
    ========================================================================== */
 .app-container {
   display: grid;
-  grid-template-columns: 240px 1fr;
+  grid-template-columns: 250px 1fr;
   height: 100vh;
   width: 100vw;
 }
 
-.sidebar {
-  background-color: #1c1b1f;
-  color: #cac4d0;
-  border-right: 1px solid var(--border-color);
-  display: flex;
-  flex-direction: column;
-  z-index: 10;
-}
+/* Layout: #main-view is the active full-screen .view-panel and contains both
+   .app-layout (which holds the 250px sidebar) and .main-content. Lay them out
+   as a flex row so the sidebar and content sit side by side and the content
+   fills the remaining width. The panel's other children (<style>/<script>,
+   modal overlays, toasts) are display:none or position:fixed/absolute, so they
+   take no space in this flex row. */
+#main-view { display: flex; }
+.app-layout { display: flex; flex-shrink: 0; }
+.main-content { flex: 1; min-width: 0; }
+
+.sidebar { width: 250px; background: var(--sidebar-bg); display: flex; flex-direction: column; border-right: 1px solid var(--border); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 100; flex-shrink: 0; }
 
 .sidebar-header {
   height: 64px;
@@ -160,7 +168,7 @@ input, select { font-family: inherit; }
 .nav-item {
   display: flex;
   align-items: center;
-  padding: 10px 16px;
+  padding: 12px 16px;
   margin-bottom: 4px;
   border-radius: 8px;
   color: #cac4d0;
@@ -175,11 +183,7 @@ input, select { font-family: inherit; }
   color: #e6e1e5;
 }
 
-.nav-item.active {
-  background-color: rgba(249, 173, 0, 0.15);
-  color: #f9ad00;
-  position: relative;
-}
+.nav-item.active { background: var(--pri-con); color: var(--pri); font-weight: 600; border-radius: var(--radius-sm); }
 
 .nav-item.active::before {
   content: '';
@@ -257,10 +261,10 @@ input, select { font-family: inherit; }
 .search-box input {
   width: 100%;
   padding: 8px 12px 8px 36px;
-  border-radius: 20px;
+  border-radius: 16px;
   border: 1px solid var(--border-color);
   background-color: var(--bg-color);
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-primary);
   transition: all 0.2s;
 }
@@ -339,7 +343,7 @@ input, select { font-family: inherit; }
 
 .btn-primary:hover {
   background-color: var(--brand-hover);
-  box-shadow: 0 4px 12px rgba(249, 173, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.2);
 }
 
 .btn-secondary {
@@ -382,7 +386,8 @@ input, select { font-family: inherit; }
   background: var(--surface-color);
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  overflow: hidden;
+  overflow: auto;
+  max-height: calc(100vh - 220px);
 }
 
 .data-table {
@@ -391,7 +396,7 @@ input, select { font-family: inherit; }
 }
 
 .data-table th {
-  background: var(--bg-color);
+  background: var(--surface-color);
   padding: 12px 16px;
   text-align: left;
   font-size: 12px;
@@ -399,6 +404,10 @@ input, select { font-family: inherit; }
   color: var(--text-secondary);
   text-transform: uppercase;
   border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  box-shadow: 0 4px 6px -4px rgba(0,0,0,0.1);
 }
 
 .data-table td {
@@ -466,6 +475,71 @@ input, select { font-family: inherit; }
   gap: 12px;
 }
 
+/* ── Proctor Resources panel ── */
+.pr-settings-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--bg-color);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  text-align: left;
+}
+.pr-settings-link:hover { border-color: var(--brand-primary); }
+.pr-ico {
+  width: 36px; height: 36px; flex-shrink: 0;
+  border-radius: 8px;
+  background: var(--brand-active, rgba(30, 64, 175,0.12));
+  color: var(--brand-primary);
+  display: flex; align-items: center; justify-content: center;
+}
+.pr-ico .material-icons-outlined { font-size: 20px; }
+
+.pr-section { margin-bottom: 16px; }
+.pr-signed-banner {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 14px; margin-bottom: 20px;
+  border-radius: 10px;
+  background: rgba(20,108,46,0.08);
+  border: 1px solid rgba(20,108,46,0.25);
+  font-size: 13px; color: var(--text-secondary);
+}
+.pr-acc {
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.pr-acc > summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  font-size: 14px; font-weight: 600;
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg-color);
+}
+.pr-acc > summary::-webkit-details-marker { display: none; }
+.pr-acc > summary .pr-chevron { margin-left: auto; transition: transform 0.2s; color: var(--text-tertiary); }
+.pr-acc[open] > summary .pr-chevron { transform: rotate(180deg); }
+.pr-acc-body {
+  padding: 16px;
+  font-size: 13px; line-height: 1.6;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border-light);
+}
+.pr-acc-body h5 { color: var(--text-primary); font-size: 13px; margin: 12px 0 4px; }
+.pr-acc-body h5:first-child { margin-top: 0; }
+.pr-contact-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border-light); font-size: 13px; }
+.pr-contact-row:last-child { border-bottom: none; }
+.pr-contact-row .material-icons-outlined { color: var(--brand-primary); font-size: 20px; }
+
 #toast-container {
   position: fixed;
   bottom: 24px;
@@ -478,6 +552,8 @@ input, select { font-family: inherit; }
 
 .toast {
   background: var(--surface-color);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
   border-left: 4px solid var(--brand-primary);
   box-shadow: var(--shadow-md);
   padding: 16px 24px;
@@ -490,9 +566,27 @@ input, select { font-family: inherit; }
   animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.toast.success { border-color: var(--status-success); }
-.toast.error { border-color: var(--status-error); }
-.toast.warning { border-color: var(--status-warning); }
+/* Ensure the toast message is always legible against the surface, regardless
+   of whatever color was ambient where showToast was triggered. */
+.toast,
+.toast * { color: var(--text-primary); }
+
+.toast .material-icons-outlined,
+.toast .material-icons { color: var(--brand-primary); flex-shrink: 0; }
+
+.toast.success { border-left-color: var(--status-success); }
+.toast.success .material-icons-outlined,
+.toast.success .material-icons { color: var(--status-success); }
+
+.toast.error { border-left-color: var(--status-error); }
+.toast.error .material-icons-outlined,
+.toast.error .material-icons { color: var(--status-error); }
+
+.toast.warning { border-left-color: var(--status-warning); }
+.toast.warning .material-icons-outlined,
+.toast.warning .material-icons { color: var(--status-warning); }
+
+.toast.info { border-left-color: var(--brand-primary); }
 
 @keyframes slideInRight {
   from { transform: translateX(100%); opacity: 0; }
@@ -534,7 +628,7 @@ input, select { font-family: inherit; }
   bottom: 0;
   background-color: var(--border-color);
   transition: .4s;
-  border-radius: 34px;
+  border-radius: 28px;
 }
 .switch-slider:before {
   position: absolute;
@@ -552,4 +646,44 @@ input:checked + .switch-slider {
 }
 input:checked + .switch-slider:before {
   transform: translateX(20px);
+}
+
+/* ==========================================================================
+   Mobile navigation + responsive layout
+   ========================================================================== */
+.menu-toggle { display: none; }           /* hidden on desktop */
+.sidebar-backdrop { display: none; }
+
+@media (max-width: 768px) {
+  .menu-toggle { display: inline-flex; }
+
+  /* Off-canvas drawer: pulled in/out via the .open class set by the hamburger. */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    height: 100%;
+    transform: translateX(-100%);
+    z-index: 1500;
+    box-shadow: 0 0 32px rgba(0,0,0,0.35);
+  }
+  .sidebar.open { transform: translateX(0); }
+
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 1400;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  .sidebar-backdrop.show { opacity: 1; visibility: visible; }
+
+  /* Stack the dashboard grids so cards stop overflowing their row. */
+  #dashboard-kpis { grid-template-columns: repeat(2, 1fr) !important; }
+  .workspace [style*="2fr 1fr"] { grid-template-columns: 1fr !important; }
+
+  /* Hide the desktop-only search box / tab-timer to keep the header uncluttered. */
+  .hdr .search-box { display: none; }
 }

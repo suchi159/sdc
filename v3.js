@@ -50,15 +50,39 @@ const v3App = {
       });
     });
 
-    // Theme Toggle
-    document.getElementById('theme-toggle').addEventListener('click', () => {
-      const html = document.documentElement;
-      const isDark = html.getAttribute('data-theme') === 'dark';
-      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-      document.getElementById('theme-toggle').innerHTML = isDark ? 
-        '<i class="material-icons-outlined">dark_mode</i>' : 
-        '<i class="material-icons-outlined">light_mode</i>';
-    });
+    // Theme Toggle — drive `data-t` (the attribute the design-system CSS tokens
+    // actually respond to) and persist, matching global_nav.js.
+    const themeToggle = document.getElementById('theme-toggle');
+    const applyThemeIcon = (t) => {
+      if (themeToggle) themeToggle.innerHTML = t === 'dark'
+        ? '<i class="material-icons-outlined">light_mode</i>'
+        : '<i class="material-icons-outlined">dark_mode</i>';
+    };
+    if (themeToggle) {
+      applyThemeIcon(document.documentElement.getAttribute('data-t') || 'light');
+      themeToggle.addEventListener('click', () => {
+        const html = document.documentElement;
+        const next = html.getAttribute('data-t') === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-t', next);
+        try { localStorage.setItem('sdc_theme', next); } catch (e) {}
+        applyThemeIcon(next);
+      });
+    }
+
+    // Mobile navigation: hamburger toggles the off-canvas sidebar + backdrop.
+    const menuToggle = document.getElementById('menu-toggle');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    const sidebar = document.querySelector('.sidebar');
+    const closeNav = () => { sidebar && sidebar.classList.remove('open'); backdrop && backdrop.classList.remove('show'); };
+    if (menuToggle && sidebar) {
+      menuToggle.addEventListener('click', () => {
+        const open = sidebar.classList.toggle('open');
+        if (backdrop) backdrop.classList.toggle('show', open);
+      });
+    }
+    if (backdrop) backdrop.addEventListener('click', closeNav);
+    // Close the drawer after picking a destination on mobile.
+    document.querySelectorAll('.nav-item').forEach(btn => btn.addEventListener('click', closeNav));
 
     // Global Search
     const searchInput = document.getElementById('global-search');
@@ -103,7 +127,110 @@ const v3App = {
            </div>
         </div>
       `;
-    }, 1000);
+    }, 800);
+  },
+
+  // ==========================================================================
+  // AUTHENTICATION
+  // ==========================================================================
+  authStartRegistration() {
+    document.getElementById('view-login').classList.remove('active');
+    document.getElementById('view-reg-0').classList.add('active');
+    document.getElementById('flow-title').textContent = 'Proctor Certification';
+    document.getElementById('flow-subtitle').textContent = 'Complete onboarding to get approved';
+  },
+
+  authForgotPassword(e) {
+    if (e) e.preventDefault();
+    const el = document.getElementById('login-email');
+    const email = el ? el.value.trim() : '';
+    if (!email) { if (el) el.focus(); this.showToast('Enter your email above, then tap Forgot password.', 'info'); return; }
+    this.showToast('Password reset link sent to ' + email, 'success');
+  },
+
+  authPlayVideo(element) {
+    // Self-contained training placeholder — no external (YouTube) dependency, so
+    // the user is never stuck behind a video that fails to load. Watching it
+    // unlocks the next step.
+    element.innerHTML = '<div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; color:#fff; background:#111; border-radius:8px;">' +
+      '<i class="material-icons-outlined" style="font-size:40px;">play_circle</i>' +
+      '<div style="font-size:13px; font-weight:600;">Training video played</div>' +
+      '<div style="font-size:11px; opacity:.7;">Platform integrity & incident management</div></div>';
+    const btn = document.getElementById('btn-reg-1');
+    if (btn) btn.disabled = false;
+  },
+
+  checkRegStep0() {
+    const name = document.getElementById('input-reg-name')?.value.trim();
+    const email = document.getElementById('input-reg-email')?.value.trim();
+    const btn = document.getElementById('btn-reg-0');
+    if (btn) btn.disabled = !(name && email);
+  },
+
+  // Generate a 10-character alphanumeric Proctor SDC ID (uppercase letters + digits)
+  generateProctorId() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let id = '';
+    for (let i = 0; i < 10; i++) {
+      // Avoid Math.random in a way that's fine for a mock prototype
+      id += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return id;
+  },
+
+  authNextStep(step) {
+    document.querySelectorAll('.view-step').forEach(el => el.classList.remove('active'));
+    document.getElementById('view-reg-' + step).classList.add('active');
+    if (step === 'success') {
+      // Generate and persist the Proctor SDC ID + a 3-year validity date
+      const proctorId = this.generateProctorId();
+      const issued = new Date();
+      const expiry = new Date(issued.getFullYear() + 3, issued.getMonth(), issued.getDate());
+      this.state.proctorId = proctorId;
+      this.state.proctorIdIssued = issued.toISOString();
+      this.state.proctorIdExpiry = expiry.toISOString();
+      try {
+        localStorage.setItem('proctorId', proctorId);
+        localStorage.setItem('proctorIdExpiry', expiry.toISOString());
+      } catch (e) {}
+      const el = document.getElementById('reg-success-sdc-id');
+      if (el) el.textContent = proctorId;
+    }
+  },
+
+  authCheckQuiz() {
+    const q1 = document.querySelector('input[name="q1"]:checked');
+    const q2 = document.querySelector('input[name="q2"]:checked');
+    if (q1 && q2 && q1.value === 'correct' && q2.value === 'correct') {
+      this.showToast('All answers correct!', 'success');
+      this.authNextStep(3);
+    } else {
+      this.showToast('Some answers are incorrect. Please try again.', 'error');
+    }
+  },
+
+  authSubmitApproval() {
+    this.showToast('Application Submitted. Generating Verified Badge...', 'success');
+    setTimeout(() => {
+      this.authNextStep('success');
+    }, 1500);
+  },
+
+  authLogin() {
+    const email = document.getElementById('login-email')?.value;
+    const pass = document.getElementById('login-password')?.value;
+    if (!email || !pass) {
+      this.showToast('Please enter both email and password.', 'error');
+      return;
+    }
+    this.completeAuth();
+  },
+
+  completeAuth() {
+    this.showToast('Welcome to SecureProctor AI', 'success');
+    document.getElementById('auth-overlay').classList.add('fade-out');
+    // Ensure dashboard is visible
+    this.switchView('dashboard');
   },
 
   async fetchData() {
@@ -121,14 +248,18 @@ const v3App = {
       if (dashRes.ok) this.state.dashboard = await dashRes.json();
       if (candRes.ok) {
         this.state.candidates = await candRes.json();
-        this.state.candidates.forEach(cand => {
+        this.state.candidates.forEach((cand, i) => {
           let vStatus = (cand.voucherStatus || '').toLowerCase();
           let isUnassigned = vStatus === 'not_assigned' || vStatus === 'unassigned' || vStatus === '';
-          if (!cand.voucherCode && !isUnassigned) cand.voucherCode = 'VOUCH-' + Math.floor(Math.random()*9000+1000);
+          // Derive stand-in values deterministically (from id/index) so the UI is
+          // stable across reloads — random fills made voucher codes, study hours,
+          // and exam history flicker/change on every refresh.
+          const seed = parseInt(String(cand.id).replace(/\D/g, ''), 10) || (i + 1);
+          if (!cand.voucherCode && !isUnassigned) cand.voucherCode = 'VOUCH-' + (1000 + (seed % 9000));
           if (!cand.sessionName) cand.sessionName = 'Data Science 101 Bootcamp';
-          if (cand.readHours === undefined) cand.readHours = Math.floor(Math.random() * 20);
+          if (cand.readHours === undefined) cand.readHours = seed % 21;
           if (cand.totalHours === undefined) cand.totalHours = 20;
-          if (!cand.pastSessions && Math.random() > 0.5) cand.pastSessions = [{ name: 'Midterm Evaluation', score: '88%', certLink: '#' }];
+          if (!cand.pastSessions && seed % 2 === 0) cand.pastSessions = [{ name: 'Midterm Evaluation', score: '88%', certLink: '#' }];
         });
       }
       if (sessRes.ok) this.state.sessions = await sessRes.json();
@@ -197,7 +328,7 @@ const v3App = {
     const titles = {
       'dashboard': 'Dashboard',
       'monitoring': 'Live Class Monitoring',
-      'candidates': 'Master Candidate Roster',
+      'candidates': 'Candidate Directory',
       'sessions': 'Class Lifecycle Management',
       'materials': 'Learning Materials',
       'earnings': 'Earnings & Payments',
@@ -205,6 +336,16 @@ const v3App = {
       'settings': 'Platform Settings'
     };
     document.getElementById('view-title').textContent = titles[viewId] || 'SecureProctor AI';
+    
+    // Toggle Proctor Resources side panel
+    const pPanel = document.getElementById('proctor-resources-panel');
+    if (pPanel) {
+      if (viewId === 'dashboard') {
+        pPanel.style.transform = 'translateX(0)';
+      } else {
+        pPanel.style.transform = 'translateX(100%)';
+      }
+    }
 
     this.renderCurrentView();
   },
@@ -237,14 +378,14 @@ const v3App = {
         </div>
         <div class="card" style="padding:16px;">
           <div style="color:var(--text-secondary); font-size:13px; font-weight:600; text-transform:uppercase;">Upcoming Classes (7D)</div>
-          <div style="font-size:28px; font-weight:700; margin-top:8px;">${dash.upcomingSessions7Days || 0}</div>
+          <div style="font-size:28px; font-weight:700; margin-top:8px;">${dash.upcomingExams7Days || 0}</div>
         </div>
         <div class="card" style="padding:16px;">
           <div style="color:var(--text-secondary); font-size:13px; font-weight:600; text-transform:uppercase;">Pending Incidents</div>
           <div style="font-size:28px; font-weight:700; margin-top:8px; color:${dash.pendingIncidentCount > 0 ? 'var(--status-error)' : 'inherit'};">${dash.pendingIncidentCount || 0}</div>
         </div>
         <div class="card" style="padding:16px;">
-          <div style="color:var(--text-secondary); font-size:13px; font-weight:600; text-transform:uppercase;">Available Vouchers</div>
+          <div style="color:var(--text-secondary); font-size:13px; font-weight:600; text-transform:uppercase;">Available Voucher Codes</div>
           <div style="font-size:28px; font-weight:700; margin-top:8px; color:var(--status-success);">${dash.voucherBalance?.available || 0}</div>
         </div>
       `;
@@ -253,10 +394,15 @@ const v3App = {
     // 2. Upcoming Feed
     const upcoming = document.getElementById('dash-upcoming-feed');
     if (upcoming && dash.upcomingSessions) {
-      if (dash.upcomingSessions.length === 0) {
+      // Only show classes whose exam date is still in the future — a past-dated
+      // session shouldn't appear under "Upcoming" (keeps this in sync with the
+      // 7-day KPI, which is already date-bounded server-side).
+      const now = new Date();
+      const upcomingList = dash.upcomingSessions.filter(s => new Date(s.examDate) >= now);
+      if (upcomingList.length === 0) {
         upcoming.innerHTML = `<div style="color:var(--text-secondary); font-size:14px; text-align:center; padding:20px;">No upcoming classes scheduled.</div>`;
       } else {
-        upcoming.innerHTML = dash.upcomingSessions.map(s => `
+        upcoming.innerHTML = upcomingList.map(s => `
           <div style="padding:12px 0; border-bottom:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center;">
             <div>
               <div style="font-weight:600; font-size:14px;">${s.name}</div>
@@ -287,25 +433,174 @@ const v3App = {
         `).join('');
       }
     }
+
+    // 4. Proctor Credential (SDC ID + 3-year validity)
+    this.renderProctorCredential();
+  },
+
+  renderProctorCredential() {
+    const idEl = document.getElementById('dash-sdc-id');
+    const expEl = document.getElementById('dash-sdc-expiry');
+    if (!idEl || !expEl) return;
+
+    // Use the ID minted during registration; otherwise restore from storage or
+    // mint one for returning (logged-in) proctors so the card is never empty.
+    let pid = this.state.proctorId;
+    let expiryIso = this.state.proctorIdExpiry;
+    if (!pid) {
+      try { pid = localStorage.getItem('proctorId'); expiryIso = localStorage.getItem('proctorIdExpiry'); } catch (e) {}
+    }
+    if (!pid) {
+      pid = this.generateProctorId();
+      const issued = new Date();
+      const expiry = new Date(issued.getFullYear() + 3, issued.getMonth(), issued.getDate());
+      expiryIso = expiry.toISOString();
+      this.state.proctorId = pid;
+      this.state.proctorIdExpiry = expiryIso;
+      try { localStorage.setItem('proctorId', pid); localStorage.setItem('proctorIdExpiry', expiryIso); } catch (e) {}
+    }
+    this.state.proctorId = pid;
+    this.state.proctorIdExpiry = expiryIso;
+    idEl.textContent = pid;
+    expEl.textContent = expiryIso
+      ? new Date(expiryIso).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
+      : '—';
   },
 
   // ==========================================================================
   // CANDIDATES RENDERING
   // ==========================================================================
   filterCandidates(status) {
-    // Update UI chips
-    document.querySelectorAll('#candidate-filters .badge').forEach(b => {
-      b.className = 'badge';
-      b.style.background = 'var(--border-light)';
-      b.style.color = 'var(--text-secondary)';
-      if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(`'${status}'`)) {
-        b.className = 'badge badge-info';
-        b.style.background = '';
-        b.style.color = '';
-      }
+    // Toggle the active state on the filter chips.
+    document.querySelectorAll('#candidate-filters .filter-chip').forEach(b => {
+      const oc = b.getAttribute('onclick') || '';
+      b.classList.toggle('active', oc.includes(`'${status}'`));
     });
 
     this.renderCandidates(status);
+  },
+
+  // Exam assessments and the pool of voucher codes the org holds for each.
+  examAssessments: [
+    { id: 'food_handler', name: 'Food Handler Certification', vouchers: 500 },
+    { id: 'fpm', name: 'Food Protection Manager (FPM)', vouchers: 320 },
+    { id: 'haccp', name: 'HACCP Certification', vouchers: 180 },
+    { id: 'allergen', name: 'Allergen Awareness', vouchers: 75 },
+    { id: 'culinary', name: 'Professional Culinary Exam', vouchers: 40 }
+  ],
+
+  // When an Exam Assessment is picked, surface how many voucher codes are
+  // available for it (Task 5).
+  onExamAssessmentChange() {
+    const sel = document.getElementById('form-s-assessment');
+    const info = document.getElementById('form-s-voucher-info');
+    const count = document.getElementById('form-s-voucher-count');
+    if (!sel || !info || !count) return;
+    const a = this.examAssessments.find(x => x.id === sel.value);
+    if (a) {
+      count.textContent = a.vouchers;
+      info.style.display = 'block';
+    } else {
+      info.style.display = 'none';
+    }
+  },
+
+  // Show/enable retake options only when "Allow Retake" is on; otherwise hide
+  // and disable them so no retake config can be set (Task 7).
+  toggleSessionRetake(isChecked) {
+    const opts = document.getElementById('form-s-retake-options');
+    if (!opts) return;
+    opts.style.display = isChecked ? 'block' : 'none';
+    opts.querySelectorAll('input, select').forEach(el => {
+      el.disabled = !isChecked;
+      if (!isChecked && el.type === 'checkbox') el.checked = false;
+    });
+  },
+
+  // ─── Add Candidate drawer: existing-vs-new modes ───────────────
+  setAddCandidateMode(mode) {
+    this._acMode = mode;
+    const existing = document.getElementById('ac-existing-block');
+    const neu = document.getElementById('ac-new-block');
+    if (existing) existing.style.display = mode === 'existing' ? 'block' : 'none';
+    if (neu) neu.style.display = mode === 'new' ? 'block' : 'none';
+    const ce = document.getElementById('acm-existing');
+    const cn = document.getElementById('acm-new');
+    if (ce) ce.classList.toggle('active', mode === 'existing');
+    if (cn) cn.classList.toggle('active', mode === 'new');
+    const btn = document.getElementById('drawer-action-btn');
+    if (btn) btn.textContent = mode === 'new' ? 'Add & Save to Directory' : 'Add to Class';
+  },
+
+  // Render directory matches into the existing-mode results list.
+  searchDirectory(query) {
+    const box = document.getElementById('ac-results');
+    if (!box) return;
+    const q = (query || '').trim().toLowerCase();
+    const matches = (this.state.candidates || []).filter(c =>
+      !q || (c.name || '').toLowerCase().includes(q)
+         || (c.email || '').toLowerCase().includes(q)
+         || (c.rollNo || '').toLowerCase().includes(q));
+    if (matches.length === 0) {
+      box.innerHTML = `<div style="padding:20px; text-align:center; color:var(--text-secondary); font-size:13px;">No students found. Switch to <strong>New student</strong> to add them.</div>`;
+      return;
+    }
+    box.innerHTML = matches.map(c => {
+      const sel = c.id === this._acSelectedId;
+      return `<div onclick="v3App.selectDirectoryCandidate('${c.id}')" style="display:flex; align-items:center; gap:10px; padding:10px 12px; cursor:pointer; border-bottom:1px solid var(--border-light); ${sel ? 'background:var(--pri-con, rgba(249,173,0,0.12));' : ''}">
+        <div style="width:30px; height:30px; border-radius:50%; background:var(--border-light); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--text-secondary);">${(c.name || '?').charAt(0).toUpperCase()}</div>
+        <div style="flex:1; min-width:0;">
+          <div style="font-size:13px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${c.name || 'Unnamed'}</div>
+          <div style="font-size:11px; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${c.email || ''}${c.rollNo && c.rollNo !== 'N/A' ? ' · ' + c.rollNo : ''}</div>
+        </div>
+        ${sel ? '<i class="material-icons-outlined" style="color:var(--pri); font-size:20px;">check_circle</i>' : ''}
+      </div>`;
+    }).join('');
+  },
+
+  selectDirectoryCandidate(id) {
+    this._acSelectedId = (this._acSelectedId === id) ? null : id;
+    this.searchDirectory(document.getElementById('ac-search') ? document.getElementById('ac-search').value : '');
+  },
+
+  submitAddCandidate() {
+    const classSel = document.getElementById('ac-class');
+    const classId = classSel ? classSel.value : '';
+    const session = (this.state.sessions || []).find(s => s.id === classId);
+    const className = session ? session.name : '';
+
+    if (this._acMode === 'new') {
+      const name = (document.getElementById('form-name') || {}).value || '';
+      const email = (document.getElementById('form-email') || {}).value || '';
+      if (!name.trim() || !email.trim()) { this.showToast('Name and Email are required.', 'error'); return; }
+      const cand = {
+        id: 'cand_' + Math.random().toString(36).substr(2, 9),
+        name: name.trim(),
+        email: email.trim(),
+        rollNo: ((document.getElementById('form-roll') || {}).value || 'N/A').trim() || 'N/A',
+        examStatus: 'enrolled',
+        voucherStatus: 'unassigned',
+        sessionId: classId || null,
+        photo: 'https://via.placeholder.com/150'
+      };
+      this.state.candidates.unshift(cand); // saved to the Candidate Directory
+      if (session) session.candidateCount = (session.candidateCount || 0) + 1;
+      this.renderCandidates('all');
+      this.closeDrawer();
+      this.showToast(`${cand.name} saved to Candidate Directory${className ? ' & added to ' + className : ''}.`, 'success');
+      return;
+    }
+
+    // Existing student
+    if (!this._acSelectedId) { this.showToast('Select a student from the directory first.', 'error'); return; }
+    const cand = (this.state.candidates || []).find(c => c.id === this._acSelectedId);
+    if (!cand) { this.showToast('Selected student not found.', 'error'); return; }
+    if (!classId) { this.showToast('Choose a class to add this student to.', 'error'); return; }
+    cand.sessionId = classId;
+    if (session) session.candidateCount = (session.candidateCount || 0) + 1;
+    this.renderCandidates('all');
+    this.closeDrawer();
+    this.showToast(`${cand.name} added to ${className}.`, 'success');
   },
 
   renderCandidates(filter) {
@@ -334,23 +629,37 @@ const v3App = {
       let statusBadge = '';
       if (c.examStatus === 'completed') statusBadge = `<span class="badge badge-success">Completed</span>`;
       else if (c.examStatus === 'in_progress') statusBadge = `<span class="badge badge-warning">Active</span>`;
-      else statusBadge = `<span class="badge" style="background:var(--border-color); color:var(--text-secondary);">Enrolled</span>`;
+      else statusBadge = `<span class="badge" style="background:rgba(0, 99, 155, 0.1); color:var(--inf); border:1px solid rgba(0, 99, 155, 0.2);">Enrolled</span>`;
 
-      // Voucher Status
+      // Voucher Code Status
       let vStatus = (c.voucherStatus || '').toLowerCase();
       let isUnassigned = vStatus === 'not_assigned' || vStatus === 'unassigned' || vStatus === '';
       let isPending = vStatus === 'pending' || vStatus === 'assigned';
       let isActivated = vStatus === 'activated' || vStatus === 'redeemed';
 
+      // Read-only redeem button shown next to unassigned/pending voucher status.
+      const redeemBtn = `<button class="btn btn-secondary" style="padding:3px 10px; font-size:11px; white-space:nowrap;" onclick="event.stopPropagation(); v3App.openRedeemVoucherModal('${c.id}')"><i class="material-icons-outlined" style="font-size:14px; vertical-align:middle;">redeem</i> Redeem Voucher Code</button>`;
+
       let voucherHtml = '';
       if (isUnassigned) {
-        voucherHtml = `<span style="color:var(--status-warning); font-size:12px; font-weight:600;"><i class="material-icons-outlined" style="font-size:14px; vertical-align:middle;">warning</i> not assigned</span>`;
+        // Status is read-only (a plain label, not an editable control); redemption
+        // happens through the dedicated button only (Task 8).
+        voucherHtml = `<div style="display:flex; align-items:center; gap:8px;"><span style="color:var(--status-warning); font-size:12px; font-weight:600;" title="Read-only status"><i class="material-icons-outlined" style="font-size:14px; vertical-align:middle;">warning</i> not assigned</span>${redeemBtn}</div>`;
       } else if (isPending) {
-        voucherHtml = `<div style="display:flex; align-items:center; gap:8px;"><span class="font-mono" style="background:var(--border-light); padding:4px 8px; border-radius:4px; font-size:12px;">${c.voucherCode || 'PENDING'}</span><span class="badge badge-warning">Pending</span></div>`;
+        voucherHtml = `<div style="display:flex; align-items:center; gap:8px;"><span class="font-mono" style="background:var(--border-light); padding:4px 8px; border-radius:4px; font-size:12px;">${c.voucherCode || 'PENDING'}</span><span class="badge badge-warning" title="Read-only status">Pending</span>${redeemBtn}</div>`;
       } else if (isActivated) {
         voucherHtml = `<div style="display:flex; align-items:center; gap:8px;"><span class="font-mono" style="background:var(--border-light); padding:4px 8px; border-radius:4px; font-size:12px;">${c.voucherCode || 'REDEEMED'}</span><span class="badge badge-success">Activated</span></div>`;
       } else {
         voucherHtml = `<div style="display:flex; align-items:center; gap:8px;"><span class="font-mono" style="background:var(--border-light); padding:4px 8px; border-radius:4px; font-size:12px;">${c.voucherCode || 'VOUCH'}</span><span class="badge">${c.voucherStatus}</span></div>`;
+      }
+
+      let examResult = '<span style="color:var(--text-tertiary);">-</span>';
+      if (c.examStatus === 'completed') {
+        if (c.examScore === undefined) {
+           c.examScore = Math.floor(Math.random() * 80) + 20;
+        }
+        const passed = c.examScore > 50;
+        examResult = passed ? '<span style="color:var(--status-success); font-weight:600;">Pass</span>' : '<span style="color:var(--status-error); font-weight:600;">Fail</span>';
       }
 
       return `
@@ -368,6 +677,7 @@ const v3App = {
           <td class="font-mono" style="font-size:13px; color:var(--text-secondary);">${c.rollNo || c.id}</td>
           <td>${voucherHtml}</td>
           <td>${statusBadge}</td>
+          <td>${examResult}</td>
           <td><button class="btn btn-secondary" style="padding:4px 12px; font-size:12px;" onclick="v3App.openCandidateDrawer('${c.id}')">Manage</button></td>
         </tr>
       `;
@@ -395,8 +705,8 @@ const v3App = {
       actionBar.innerHTML = `
         <div style="font-weight:600;">${checked} candidates selected</div>
         <div style="display:flex; gap:12px;">
-          <button class="btn" style="background:var(--surface-color); color:var(--text-primary);" onclick="v3App.showToast('Vouchers assigned to ${checked} candidates.', 'success'); v3App.clearBulkActions();"><i class="material-icons">confirmation_number</i> Bulk Assign Vouchers</button>
-          <button class="btn btn-danger" onclick="v3App.showToast('${checked} candidates suspended.', 'error'); v3App.clearBulkActions();"><i class="material-icons">block</i> Suspend Selected</button>
+          <button class="btn" style="background:var(--surface-color); color:var(--text-primary);" onclick="v3App.showToast('Voucher Codes assigned to ${checked} candidates.', 'success'); v3App.clearBulkActions();"><i class="material-icons">confirmation_number</i> Bulk Assign Voucher Codes</button>
+          <button class="btn btn-danger" onclick="v3App.showToast('${checked} candidates deactivated.', 'error'); v3App.clearBulkActions();"><i class="material-icons">block</i> Deactivate Selected</button>
         </div>
       `;
     } else if (actionBar) {
@@ -491,6 +801,7 @@ const v3App = {
         if (s.status === 'live' || s.status === 'ongoing') badgeClass += ' badge-success';
         else if (s.status === 'upcoming' || s.status === 'review') badgeClass += ' badge-info';
         else if (s.status === 'completed') badgeClass += ' badge-warning';
+        else if (s.status === 'draft') badgeClass += ' badge-warning';
         else { badgeClass += ''; }
 
         const dateStr = s.createdAt ? new Date(s.createdAt).toLocaleDateString() : new Date().toLocaleDateString();
@@ -550,6 +861,7 @@ const v3App = {
         if (s.status === 'live' || s.status === 'ongoing') badgeClass += ' badge-success';
         else if (s.status === 'upcoming' || s.status === 'review') badgeClass += ' badge-info';
         else if (s.status === 'completed') badgeClass += ' badge-warning';
+        else if (s.status === 'draft') badgeClass += ' badge-warning';
         else { badgeClass += ''; }
 
         const dateStr = s.createdAt ? new Date(s.createdAt).toLocaleDateString() : new Date().toLocaleDateString();
@@ -647,10 +959,10 @@ const v3App = {
         const thumb = m.thumb || thumbMap[type] || thumbFallbacks[i % thumbFallbacks.length];
 
         return `
-          <div class="card" style="padding:0; overflow:hidden; display:flex; flex-direction:column; position:relative;">
-            <img src="${thumb}" style="width:100%; height:140px; object-fit:cover; border-bottom:1px solid var(--border-light);" alt="Thumbnail">
+          <div class="card" style="padding:0; overflow:hidden; display:flex; flex-direction:column; position:relative; border:1px solid var(--border-light); transition:transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='var(--shadow-lg)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow=''">
+            <img src="${thumb}" style="width:100%; height:140px; object-fit:cover; border-bottom:1px solid var(--border-light); cursor:pointer;" alt="Thumbnail" onclick="v3App.openHubMaterialDetail('${encodeURIComponent(m.title).replace(/'/g, '%27')}')">
             <div style="padding:20px; display:flex; flex-direction:column; flex:1;">
-              <div style="font-size:18px; font-weight:700; color:var(--text-primary); margin-bottom:6px; line-height:1.3;">${m.title}</div>
+              <div style="font-size:18px; font-weight:700; color:var(--text-primary); margin-bottom:6px; line-height:1.3; cursor:pointer;" onclick="v3App.openHubMaterialDetail('${encodeURIComponent(m.title).replace(/'/g, '%27')}')">${m.title}</div>
               <div style="font-size:13px; color:var(--text-secondary); display:flex; align-items:center; gap:6px; margin-bottom:16px;">
                 <i class="material-icons-outlined" style="font-size:16px;">${icon}</i> 
                 ${m.type || 'Ebook'} • ${m.duration || '120 mins'}
@@ -666,8 +978,7 @@ const v3App = {
                   <span style="font-weight:600; color:var(--brand-primary);">${Math.floor(Math.random()*40+50)}%</span>
                 </div>
               </div>
-
-              <button class="btn btn-secondary" style="width:100%; margin-top:auto;" onclick="v3App.showToast('Launching Material...', 'success')">${ctaText}</button>
+              <button class="btn btn-secondary" style="width:100%; margin-top:auto;" onclick="v3App.openGlobalMaterialManageDrawer('${encodeURIComponent(m.title).replace(/'/g, '%27')}', '${m.type || 'Ebook'}', '${m.duration || '60 mins'}', '${thumb}')">${ctaText}</button>
             </div>
           </div>
         `;
@@ -709,7 +1020,7 @@ const v3App = {
             <td>${Math.floor(Math.random()*20+5)}</td>
             <td style="font-weight:600; color:var(--brand-primary);">${Math.floor(Math.random()*40+50)}%</td>
             <td>
-               <button class="btn btn-secondary" style="padding:4px 12px; font-size:12px;" onclick="v3App.showToast('Launching Material...', 'success')">
+               <button class="btn btn-secondary" style="padding:4px 12px; font-size:12px;" onclick="v3App.openGlobalMaterialManageDrawer('${encodeURIComponent(m.title).replace(/'/g, '%27')}', '${m.type || 'Ebook'}', '${m.duration || '60 mins'}', '${thumb}')">
                  ${ctaText}
                </button>
             </td>
@@ -735,11 +1046,21 @@ const v3App = {
     this.state.monitorState.session = { id: 'class_live_01', name: 'Active Live Class (Default)' };
     
     // Add mock monitoring properties to candidates if they don't have them
-    this.state.monitorState.candidates = this.state.candidates.map(c => ({
-      ...c,
-      timeRemaining: c.timeRemaining || (Math.floor(Math.random() * 90) + 30) * 60,
-      aiRisk: c.aiRisk || (Math.random() > 0.8 ? 'red' : Math.random() > 0.5 ? 'amber' : 'clear')
-    }));
+    this.state.monitorState.candidates = this.state.candidates.map(c => {
+      let totalQ = 50;
+      let attemptedQ = c.attemptedQ !== undefined ? c.attemptedQ : Math.floor(Math.random() * totalQ);
+      let currentQ = attemptedQ + 1 > totalQ ? totalQ : attemptedQ + 1;
+      let progressPercent = Math.round((attemptedQ / totalQ) * 100);
+      return {
+        ...c,
+        timeRemaining: c.timeRemaining || (Math.floor(Math.random() * 90) + 30) * 60,
+        aiRisk: c.aiRisk || (Math.random() > 0.8 ? 'red' : Math.random() > 0.5 ? 'amber' : 'clear'),
+        totalQ,
+        attemptedQ,
+        currentQ,
+        progressPercent
+      };
+    });
 
     // Mock some alerts based on high risk candidates
     const highRisk = this.state.monitorState.candidates.filter(c => c.aiRisk === 'red');
@@ -792,14 +1113,25 @@ const v3App = {
                 </div>
               </div>
             </td>
+            <td style="font-weight:600; font-variant-numeric: tabular-nums;">${timeMins}:00</td>
             <td>
-              <div style="display:flex; gap:8px;">
-                <div style="width:40px; height:30px; background:var(--bg-color); border-radius:4px; display:flex; align-items:center; justify-content:center; color:var(--brand-primary);"><i class="material-icons-outlined" style="font-size:16px;">videocam</i></div>
-                <div style="width:40px; height:30px; background:var(--bg-color); border-radius:4px; display:flex; align-items:center; justify-content:center; color:var(--brand-primary);"><i class="material-icons-outlined" style="font-size:16px;">desktop_windows</i></div>
+              <div style="display:flex; flex-direction:column; gap:4px; width:100px;">
+                <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:600; color:var(--text-secondary);">
+                  <span>Q${c.currentQ}</span>
+                  <span>${c.attemptedQ}/${c.totalQ}</span>
+                </div>
+                <div style="width:100%; height:4px; background:var(--border-light); border-radius:2px; overflow:hidden;">
+                  <div style="width:${c.progressPercent}%; height:100%; background:var(--brand-primary); border-radius:2px;"></div>
+                </div>
               </div>
             </td>
-            <td style="font-weight:600; font-variant-numeric: tabular-nums;">${timeMins}:00</td>
             <td>${riskChip}</td>
+            <td>
+              <div style="display:flex; gap:8px;">
+                <div style="width:40px; height:30px; background:var(--bg-color); border-radius:4px; display:flex; align-items:center; justify-content:center; color:${c.aiRisk === 'red' ? 'var(--status-error)' : (c.aiRisk === 'amber' ? 'var(--status-warning)' : 'var(--status-success)')};"><i class="material-icons-outlined" style="font-size:16px;">videocam</i></div>
+                <div style="width:40px; height:30px; background:var(--bg-color); border-radius:4px; display:flex; align-items:center; justify-content:center; color:${c.aiRisk === 'red' ? 'var(--status-error)' : (c.aiRisk === 'amber' ? 'var(--status-warning)' : 'var(--status-success)')};"><i class="material-icons-outlined" style="font-size:16px;">desktop_windows</i></div>
+              </div>
+            </td>
             <td>
               <div style="display:flex; gap:8px;">
                 <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px; color:var(--text-primary); border:1px solid var(--border-color); background:var(--surface-color); box-shadow:0 1px 2px rgba(0,0,0,0.05);" onclick="v3App.openSessionSupervisor('${c.id}')"><i class="material-icons-outlined" style="font-size:14px; vertical-align:middle;">settings</i> Take Action</button>
@@ -1030,67 +1362,220 @@ const v3App = {
   },
 
   // ==========================================================================
+  // PROCTOR RESOURCES PANEL (policies, signed agreements, support)
+  // ==========================================================================
+  openProctorResources(section) {
+    const panel = document.getElementById('proctor-resources-panel');
+    const overlay = document.getElementById('pr-overlay');
+    if (!panel || !overlay) return;
+    this.renderProctorResources();
+    overlay.classList.add('open');
+    panel.classList.add('open');
+    if (section) {
+      setTimeout(() => {
+        const el = document.getElementById('pr-' + section);
+        if (el) { el.setAttribute('open', ''); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      }, 320);
+    }
+  },
+
+  closeProctorResources() {
+    const panel = document.getElementById('proctor-resources-panel');
+    const overlay = document.getElementById('pr-overlay');
+    if (panel) panel.classList.remove('open');
+    if (overlay) overlay.classList.remove('open');
+  },
+
+  renderProctorResources() {
+    const box = document.getElementById('pr-content');
+    if (!box) return;
+    const signer = (this.state.settings && this.state.settings.name) || 'You';
+    const signedDate = 'May 18, 2026'; // demo signature stamp
+    box.innerHTML = `
+      <!-- Policy Manual -->
+      <details class="pr-acc" id="pr-manual" open>
+        <summary><i class="material-icons-outlined" style="color:var(--brand-primary);">menu_book</i> Proctor Policy Manual <i class="material-icons-outlined pr-chevron">expand_more</i></summary>
+        <div class="pr-acc-body">
+          <h5>1. Impartiality &amp; Integrity</h5>
+          Remain neutral at all times. You may not proctor an exam where you have guaranteed a result or have a personal stake in any candidate's outcome.
+          <h5>2. Identity Verification</h5>
+          Verify every candidate with a physical, current, government-issued photo ID before admission. Photocopies and digital photos are never acceptable.
+          <h5>3. During the Exam</h5>
+          The standard allowance is two hours. Only one candidate may step away at a time; the examination clock does not stop for breaks.
+          <h5>4. Misconduct</h5>
+          On suspected misconduct, calmly and quietly direct the candidate to stop testing, secure the exam, collect prohibited materials, and document everything.
+          <h5>5. Emergencies</h5>
+          In a fire alarm or severe weather, the safety of all candidates comes first. Secure exam content once everyone is safe and log it as an irregularity.
+          <div style="margin-top:14px;"><button class="btn btn-secondary" style="font-size:13px; padding:8px 14px;" onclick="v3App.showToast('Opening full policy manual (PDF)…','info')"><i class="material-icons-outlined" style="font-size:16px;">download</i> Download full manual (PDF)</button></div>
+        </div>
+      </details>
+
+      <!-- Signed NDA & Service Agreement -->
+      <details class="pr-acc" id="pr-agreements">
+        <summary><i class="material-icons-outlined" style="color:var(--brand-primary);">draw</i> Signed NDA &amp; Service Agreement <i class="material-icons-outlined pr-chevron">expand_more</i></summary>
+        <div class="pr-acc-body">
+          <div class="pr-signed-banner">
+            <i class="material-icons-outlined" style="color:var(--status-success); font-size:18px;">verified</i>
+            <span>Signed on <strong>${signedDate}</strong> by <strong>${signer}</strong> during onboarding. The agreements below are the versions you accepted.</span>
+          </div>
+          <h5>Non-Disclosure Agreement</h5>
+          You have access to candidate PII, exam content, and screen recordings. You agree to keep all such information strictly confidential and to use it solely for proctoring duties on the SecureProctor platform. You will not copy, distribute, publish, or disclose any exam materials, candidate data, or recordings to any third party. This obligation survives termination of your certification.
+          <h5>Service Agreement</h5>
+          As a certified SDC proctor you agree to conduct assigned examinations in accordance with SDC policies, maintain examination integrity, complete required training, and renew your authorization every three years. Compensation, scheduling, and conduct standards are governed by this agreement; violations may result in suspension or revocation of your proctor authorization.
+          <div style="margin-top:14px;"><button class="btn btn-secondary" style="font-size:13px; padding:8px 14px;" onclick="v3App.showToast('Downloading your signed copies…','info')"><i class="material-icons-outlined" style="font-size:16px;">download</i> Download signed copies</button></div>
+        </div>
+      </details>
+
+      <!-- Contact SDC -->
+      <details class="pr-acc" id="pr-contact">
+        <summary><i class="material-icons-outlined" style="color:var(--brand-primary);">contact_support</i> Contact SDC <i class="material-icons-outlined pr-chevron">expand_more</i></summary>
+        <div class="pr-acc-body">
+          <div class="pr-contact-row"><i class="material-icons-outlined">email</i> <a href="mailto:proctors@sdccertifications.com" style="color:var(--brand-primary); text-decoration:none;">proctors@sdccertifications.com</a></div>
+          <div class="pr-contact-row"><i class="material-icons-outlined">call</i> +1 (800) 555-7732</div>
+          <div class="pr-contact-row"><i class="material-icons-outlined">schedule</i> Mon–Fri, 8:00 AM – 6:00 PM ET</div>
+          <div class="pr-contact-row"><i class="material-icons-outlined">place</i> SDC Certifications, 200 Culinary Ave, Suite 400, Chicago, IL</div>
+        </div>
+      </details>
+
+      <!-- Report a policy issue -->
+      <details class="pr-acc" id="pr-report">
+        <summary><i class="material-icons-outlined" style="color:var(--status-error);">flag</i> Report a Policy Issue / Violation <i class="material-icons-outlined pr-chevron">expand_more</i></summary>
+        <div class="pr-acc-body">
+          <p style="margin-bottom:12px;">Report a policy concern or suspected violation directly to SDC. Reports are confidential.</p>
+          <div class="form-group mb-4">
+            <label style="display:block; margin-bottom:6px; font-size:13px; font-weight:600; color:var(--text-primary);">Category</label>
+            <select id="pr-report-cat" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color);">
+              <option>Exam integrity concern</option>
+              <option>Candidate misconduct</option>
+              <option>Conflict of interest</option>
+              <option>Platform / technical policy issue</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group mb-4">
+            <label style="display:block; margin-bottom:6px; font-size:13px; font-weight:600; color:var(--text-primary);">Description</label>
+            <textarea id="pr-report-desc" rows="4" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color); resize:vertical;" placeholder="Describe the issue, including class/candidate if relevant…"></textarea>
+          </div>
+          <button class="btn btn-primary" style="width:100%; justify-content:center; background:var(--status-error); border-color:var(--status-error);" onclick="v3App.submitPolicyReport()"><i class="material-icons-outlined" style="font-size:18px;">send</i> Submit Report to SDC</button>
+        </div>
+      </details>
+    `;
+  },
+
+  submitPolicyReport() {
+    const cat = (document.getElementById('pr-report-cat') || {}).value || '';
+    const desc = ((document.getElementById('pr-report-desc') || {}).value || '').trim();
+    if (!desc) { this.showToast('Please describe the issue before submitting.', 'error'); return; }
+    const descEl = document.getElementById('pr-report-desc'); if (descEl) descEl.value = '';
+    this.showToast(`Report submitted to SDC (${cat}). Reference #SDC-${Math.floor(Math.random()*90000+10000)}.`, 'success');
+    this.closeProctorResources();
+  },
+
+  // ==========================================================================
   // DRAWER & ACTIONS
   // ==========================================================================
-  openFormDrawer(type) {
+  openFormDrawer(type, contextId = null) {
     document.getElementById('drawer-subtitle').textContent = 'Create New Record';
     document.getElementById('drawer-action-btn').style.display = 'block';
     const content = document.getElementById('drawer-content');
     
     if (type === 'candidate') {
       document.getElementById('drawer-title').textContent = 'Add Candidate';
+      document.getElementById('drawer-subtitle').textContent = 'Find an existing student or add a new one';
+      this._acMode = 'existing';
+      this._acSelectedId = null;
+      const inputStyle = 'width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color);';
+      const classOpts = (this.state.sessions || [])
+        .map(s => `<option value="${s.id}">${s.name}</option>`).join('');
       content.innerHTML = `
-        <div class="form-group mb-4">
-          <label style="display:block; margin-bottom:8px; font-size:13px; font-weight:600;">Full Name</label>
-          <input type="text" id="form-name" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color);" placeholder="e.g. John Doe">
+        <!-- Mode toggle -->
+        <div style="display:flex; gap:8px; margin-bottom:20px;">
+          <button type="button" class="filter-chip active" id="acm-existing" onclick="v3App.setAddCandidateMode('existing')">
+            <i class="material-icons-outlined" style="font-size:16px;">person_search</i> Existing student
+          </button>
+          <button type="button" class="filter-chip" id="acm-new" onclick="v3App.setAddCandidateMode('new')">
+            <i class="material-icons-outlined" style="font-size:16px;">person_add</i> New student
+          </button>
         </div>
-        <div class="form-group mb-4">
-          <label style="display:block; margin-bottom:8px; font-size:13px; font-weight:600;">Email Address</label>
-          <input type="email" id="form-email" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color);" placeholder="e.g. john@example.com">
+
+        <!-- EXISTING: find in directory -->
+        <div id="ac-existing-block">
+          <div class="form-group mb-4">
+            <label style="display:block; margin-bottom:8px; font-size:13px; font-weight:600;">Find student in directory</label>
+            <input type="text" id="ac-search" style="${inputStyle}" placeholder="Search by name, email or ID…" oninput="v3App.searchDirectory(this.value)" autocomplete="off">
+          </div>
+          <div id="ac-results" style="max-height:240px; overflow-y:auto; border:1px solid var(--border-color); border-radius:8px; margin-bottom:16px;"></div>
         </div>
-        <div class="form-group mb-4">
-          <label style="display:block; margin-bottom:8px; font-size:13px; font-weight:600;">Roll Number</label>
-          <input type="text" id="form-roll" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color);" placeholder="e.g. CS-2026-001">
+
+        <!-- NEW: create + save to directory -->
+        <div id="ac-new-block" style="display:none;">
+          <div class="form-group mb-4">
+            <label style="display:block; margin-bottom:8px; font-size:13px; font-weight:600;">Full Name</label>
+            <input type="text" id="form-name" style="${inputStyle}" placeholder="e.g. John Doe">
+          </div>
+          <div class="form-group mb-4">
+            <label style="display:block; margin-bottom:8px; font-size:13px; font-weight:600;">Email Address</label>
+            <input type="email" id="form-email" style="${inputStyle}" placeholder="e.g. john@example.com">
+          </div>
+          <div class="form-group mb-4">
+            <label style="display:block; margin-bottom:8px; font-size:13px; font-weight:600;">Candidate ID</label>
+            <input type="text" id="form-roll" style="${inputStyle}" placeholder="e.g. CS-2026-001">
+          </div>
+          <div style="display:flex; gap:10px; align-items:flex-start; padding:12px; border-radius:8px; background:rgba(0,99,155,0.08); border:1px solid rgba(0,99,155,0.2); margin-bottom:16px;">
+            <i class="material-icons-outlined" style="font-size:18px; color:var(--inf);">info</i>
+            <span style="font-size:12px; color:var(--text-secondary);">This is a new student — they'll also be saved to the <strong>Candidate Directory</strong> for future classes.</span>
+          </div>
+        </div>
+
+        <!-- Shared: assign to class (hidden when opened from inside a class) -->
+        <div class="form-group mb-4" id="ac-class-group">
+          <label style="display:block; margin-bottom:8px; font-size:13px; font-weight:600;">Add to Class</label>
+          <select id="ac-class" style="${inputStyle}">
+            <option value="">— No class yet —</option>
+            ${classOpts}
+          </select>
         </div>
       `;
-      document.getElementById('drawer-action-btn').textContent = 'Add Candidate';
-      document.getElementById('drawer-action-btn').onclick = () => {
-        const name = document.getElementById('form-name').value;
-        const email = document.getElementById('form-email').value;
-        if (!name || !email) { this.showToast('Name and Email are required.', 'error'); return; }
-        this.state.candidates.unshift({
-          id: 'cand_' + Math.random().toString(36).substr(2, 9),
-          name: name,
-          email: email,
-          rollNo: document.getElementById('form-roll').value || 'N/A',
-          examStatus: 'enrolled',
-          photo: 'https://via.placeholder.com/150'
-        });
-        this.renderCandidates('all');
-        this.closeDrawer();
-        this.showToast('Candidate successfully added.', 'success');
-      };
+      this.searchDirectory('');
+      // When launched from a specific class (Session Detail), the class is already
+      // known — preselect it and hide the dropdown (Task 6).
+      if (contextId) {
+        const sel = document.getElementById('ac-class');
+        if (sel) sel.value = contextId;
+        const grp = document.getElementById('ac-class-group');
+        if (grp) grp.style.display = 'none';
+        const sess = (this.state.sessions || []).find(s => s.id === contextId);
+        if (sess) document.getElementById('drawer-subtitle').textContent = `Adding to ${sess.name}`;
+      }
+      document.getElementById('drawer-action-btn').textContent = 'Add to Class';
+      document.getElementById('drawer-action-btn').onclick = () => this.submitAddCandidate();
 
     } else if (type === 'session') {
       document.getElementById('drawer-title').textContent = 'Add Class';
+      const assessmentOpts = this.examAssessments
+        .map(a => `<option value="${a.id}">${a.name}</option>`).join('');
       content.innerHTML = `
         <div class="form-group mb-4">
           <label style="display:block; margin-bottom:8px; font-size:13px; font-weight:600;">Class Name</label>
           <input type="text" id="form-s-name" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color);" placeholder="e.g. Final Exams - Batch A">
         </div>
-        <div style="display:flex; gap:16px; margin-bottom:16px;">
-          <div class="form-group" style="flex:1">
-            <label style="display:block; margin-bottom:8px; font-size:13px; font-weight:600;">Add Vouchers code</label>
-            <input type="number" id="form-s-vouchers" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color);" placeholder="e.g. 50">
-            <span style="font-size:12px; color:var(--status-success); margin-top:4px; display:block;">Total Available Vouchers: 500</span>
-          </div>
-          <div class="form-group" style="flex:1">
-            <label style="display:block; margin-bottom:8px; font-size:13px; font-weight:600;">Subject Duration (mins)</label>
-            <input type="number" id="form-s-dur" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color);" placeholder="e.g. 120" value="120">
+        <div class="form-group mb-4">
+          <label style="display:block; margin-bottom:8px; font-size:13px; font-weight:600;">Exam Assessment</label>
+          <select id="form-s-assessment" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color);" onchange="v3App.onExamAssessmentChange()">
+            <option value="">— Select an assessment —</option>
+            ${assessmentOpts}
+          </select>
+          <div id="form-s-voucher-info" style="display:none; margin-top:8px; padding:10px 12px; border-radius:6px; background:var(--status-success-bg); font-size:12px; color:var(--status-success); font-weight:600;">
+            <i class="material-icons-outlined" style="font-size:14px; vertical-align:middle;">confirmation_number</i>
+            <span id="form-s-voucher-count">0</span> Voucher Codes available for this assessment
           </div>
         </div>
         <div class="form-group mb-4">
-          <label style="display:block; margin-bottom:12px; font-size:13px; font-weight:600; border-bottom:1px solid var(--border-light); padding-bottom:8px;">Exam Setup</label>
+          <label style="display:block; margin-bottom:8px; font-size:13px; font-weight:600;">Subject Duration (mins)</label>
+          <input type="number" id="form-s-dur" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color);" placeholder="e.g. 120" value="120">
+        </div>
+        <div class="form-group mb-4">
+          <label style="display:block; margin-bottom:12px; font-size:13px; font-weight:600; border-bottom:1px solid var(--border-light); padding-bottom:8px;">Exam Settings</label>
           <div style="display:flex; gap:16px; margin-bottom:16px;">
             <div style="flex:1">
               <label style="display:block; margin-bottom:4px; font-size:12px;">Date</label>
@@ -1105,31 +1590,80 @@ const v3App = {
             <label style="display:block; margin-bottom:4px; font-size:12px;">Location</label>
             <input type="text" id="form-s-loc" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color);" placeholder="e.g. Room 101 or Online">
           </div>
-          <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
             <label style="font-size:12px; font-weight:600;">Allow Retake</label>
             <label class="switch">
-              <input type="checkbox" id="form-s-retake">
+              <input type="checkbox" id="form-s-retake" onchange="v3App.toggleSessionRetake(this.checked)">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+          <div id="form-s-retake-options" style="display:none; margin:0 0 12px 0; padding:12px; border-radius:6px; background:var(--bg-color); border:1px solid var(--border-light); animation: fadeSlideUp 0.2s ease;">
+            <label style="display:block; margin-bottom:4px; font-size:12px;">Maximum Attempts</label>
+            <select id="form-s-retake-max" style="width:100%; padding:8px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color); font-size:12px; margin-bottom:12px;">
+              <option value="2">2 attempts</option>
+              <option value="3">3 attempts</option>
+              <option value="unlimited">Unlimited</option>
+            </select>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <label style="font-size:12px;">Charge a retake fee</label>
+              <label class="switch">
+                <input type="checkbox" id="form-s-retake-fee">
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <label style="font-size:12px; font-weight:600;">Allow Online Exam</label>
+            <label class="switch">
+              <input type="checkbox" id="form-s-online" onchange="document.getElementById('form-s-online-fees').style.display = this.checked ? 'block' : 'none'">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+          <div id="form-s-online-fees" style="display:none; margin-bottom:12px; animation: fadeSlideUp 0.2s ease;">
+            <label style="display:block; margin-bottom:4px; font-size:12px;">Online fees to be paid by</label>
+            <select style="width:100%; padding:8px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color); font-size:12px;">
+              <option>Organization</option>
+              <option>Candidate</option>
+            </select>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <label style="font-size:12px; font-weight:600;">Sponsored by Organization</label>
+            <label class="switch">
+              <input type="checkbox" id="form-s-sponsored">
               <span class="switch-slider"></span>
             </label>
           </div>
         </div>
       `;
-      document.getElementById('drawer-action-btn').textContent = 'Add Class';
+      // Ensure retake options start hidden/disabled until "Allow Retake" is on (Task 7).
+      this.toggleSessionRetake(false);
+      document.getElementById('drawer-action-btn').textContent = 'Save as Draft';
       document.getElementById('drawer-action-btn').onclick = () => {
         const name = document.getElementById('form-s-name').value;
         if (!name) { this.showToast('Class name is required.', 'error'); return; }
+        const assessmentId = document.getElementById('form-s-assessment').value;
+        const assessment = this.examAssessments.find(a => a.id === assessmentId);
+        const retakeOn = document.getElementById('form-s-retake').checked;
         this.state.sessions.unshift({
           id: 'sess_' + Math.random().toString(36).substr(2, 9),
           name: name,
+          assessment: assessment ? assessment.name : null,
           examDate: document.getElementById('form-s-date').value || new Date().toISOString(),
+          examTime: document.getElementById('form-s-time').value || '',
+          location: document.getElementById('form-s-loc').value || '',
           duration: document.getElementById('form-s-dur').value || 60,
-          status: 'upcoming',
+          allowRetake: retakeOn,
+          retakeMax: retakeOn ? document.getElementById('form-s-retake-max').value : null,
+          retakeFee: retakeOn ? document.getElementById('form-s-retake-fee').checked : false,
+          allowOnline: document.getElementById('form-s-online').checked,
+          sponsored: document.getElementById('form-s-sponsored').checked,
+          status: 'draft',
           candidates: 0,
           readiness: 0
         });
         this.renderSessions('all');
         this.closeDrawer();
-        this.showToast('New class created and marked as upcoming.', 'success');
+        this.showToast('Class saved as Draft.', 'success');
       };
 
     } else if (type === 'material') {
@@ -1195,7 +1729,7 @@ const v3App = {
         <div>
           <h3 style="margin:0 0 4px 0; font-size:16px; color:var(--text-primary);">${cand.name}</h3>
           <div style="font-size:12px; color:var(--text-secondary); margin-bottom:4px;"><i class="material-icons-outlined" style="font-size:14px; vertical-align:middle;">email</i> ${cand.email}</div>
-          <div style="font-size:12px; color:var(--text-secondary);"><i class="material-icons-outlined" style="font-size:14px; vertical-align:middle;">badge</i> Roll No: ${cand.rollNo || 'N/A'}</div>
+          <div style="font-size:12px; color:var(--text-secondary);"><i class="material-icons-outlined" style="font-size:14px; vertical-align:middle;">badge</i> Candidate ID: ${cand.rollNo || 'N/A'}</div>
         </div>
       </div>
       
@@ -1209,6 +1743,23 @@ const v3App = {
           <label style="display:block; margin-bottom:8px; font-size:12px; font-weight:600; color:var(--text-secondary);">Conditions & Reasons</label>
           <textarea id="acc-notes" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color); color:var(--text-primary); resize:vertical; min-height:60px;" disabled placeholder="Enter specific accommodation details..."></textarea>
         </div>
+      </div>
+      
+      <div style="border:1px solid var(--border-color); padding:16px; border-radius:8px; margin-bottom:20px;">
+        <h4 style="margin:0 0 12px 0; font-size:13px; color:var(--text-primary);">Textbook Voucher Code</h4>
+        <div class="form-group mb-0" style="display:flex; gap:8px;">
+          <input type="text" id="textbook-voucher-code" placeholder="Enter textbook voucher code" style="flex:1; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color); color:var(--text-primary);">
+          <button class="btn btn-secondary" onclick="
+            const code = document.getElementById('textbook-voucher-code').value;
+            if(code) {
+              v3App.showToast('Textbook Voucher Code Applied. Pending voucher removed.', 'success');
+              v3App.closeDrawer();
+            } else {
+              v3App.showToast('Please enter a code', 'error');
+            }
+          ">Apply</button>
+        </div>
+        <div style="font-size:11px; color:var(--text-secondary); margin-top:8px;">If the student presents a textbook voucher code, entering it here will remove their assigned/pending voucher.</div>
       </div>
     `;
 
@@ -1259,12 +1810,13 @@ const v3App = {
             <div style="font-weight:600; color:var(--text-primary);">${cand.examScore}%</div>
           </div>
         </div>
+        ${passed ? `<div style="margin-top:12px;"><button class="btn btn-secondary" style="width:100%;" onclick="v3App.showToast('Certificate Downloaded', 'success')"><i class="material-icons-outlined">workspace_premium</i> Download Certificate</button></div>` : ''}
         ${retakeHtml}
         
         <div style="margin-top:24px; display:flex; gap:12px;">
           <button class="btn btn-primary" style="flex:2; background:var(--brand-primary); border-color:var(--brand-primary);" onclick="v3App.openSessionSupervisor('${cand.id}')"><i class="material-icons-outlined" style="font-size:16px; vertical-align:middle; margin-right:4px;">settings</i> Take Action</button>
-          <button class="btn btn-secondary" style="flex:1; color:var(--status-error); border-color:var(--status-error);" onclick="v3App.showToast('Account Suspended', 'error'); v3App.closeDrawer();">Suspend</button>
-          <button class="btn btn-secondary" style="flex:1; color:var(--status-error); border-color:var(--status-error);" onclick="v3App.showToast('Candidate Removed', 'error'); v3App.closeDrawer();">Remove</button>
+          <button class="btn btn-secondary" style="flex:1; color:var(--status-error); border-color:var(--status-error);" onclick="v3App.showToast('Account Deactivated', 'error'); v3App.closeDrawer();">Deactivate</button>
+          <button class="btn btn-secondary" style="flex:1; color:var(--status-error); border-color:var(--status-error);" onclick="v3App.openDeleteCandidateModal('${cand.id}')">Remove</button>
         </div>
       `;
       document.getElementById('drawer-action-btn').style.display = 'none';
@@ -1287,8 +1839,8 @@ const v3App = {
 
         <div style="margin-top:24px; display:flex; gap:12px;">
           <button class="btn btn-primary" style="flex:2; background:var(--brand-primary); border-color:var(--brand-primary);" onclick="v3App.openSessionSupervisor('${cand.id}')"><i class="material-icons-outlined" style="font-size:16px; vertical-align:middle; margin-right:4px;">settings</i> Take Action</button>
-          <button class="btn btn-secondary" style="flex:1; color:var(--status-error); border-color:var(--status-error);" onclick="v3App.showToast('Account Suspended', 'error'); v3App.closeDrawer();">Suspend</button>
-          <button class="btn btn-secondary" style="flex:1; color:var(--status-error); border-color:var(--status-error);" onclick="v3App.showToast('Candidate Removed', 'error'); v3App.closeDrawer();">Remove</button>
+          <button class="btn btn-secondary" style="flex:1; color:var(--status-error); border-color:var(--status-error);" onclick="v3App.showToast('Account Deactivated', 'error'); v3App.closeDrawer();">Deactivate</button>
+          <button class="btn btn-secondary" style="flex:1; color:var(--status-error); border-color:var(--status-error);" onclick="v3App.openDeleteCandidateModal('${cand.id}')">Remove</button>
         </div>
       `;
       document.getElementById('drawer-action-btn').style.display = 'none';
@@ -1296,13 +1848,13 @@ const v3App = {
     else if (scenario === 3) {
       scenarioContent = `
         <div style="background:var(--status-warning-bg); border:1px solid var(--status-warning); padding:12px; border-radius:8px; margin-bottom:24px;">
-          <div style="font-size:13px; font-weight:600; color:var(--status-warning); margin-bottom:4px;">Voucher State: Pending Redemption</div>
+          <div style="font-size:13px; font-weight:600; color:var(--status-warning); margin-bottom:4px;">Voucher Code State: Pending Redemption</div>
           <div style="font-size:12px; color:var(--status-warning);">Target Class: ${cand.subject || 'N/A'}</div>
         </div>
         
         <div style="margin-top:24px; display:flex; gap:12px;">
-          <button class="btn btn-secondary" style="flex:1; color:var(--status-error); border-color:var(--status-error);" onclick="v3App.showToast('Candidate Removed', 'error'); v3App.closeDrawer();">Remove Candidate</button>
-          <button class="btn btn-primary" style="flex:1;" onclick="v3App.showToast('Voucher Redeemed', 'success'); v3App.closeDrawer();">Redeem Voucher</button>
+          <button class="btn btn-secondary" style="flex:1; color:var(--status-error); border-color:var(--status-error);" onclick="v3App.openDeleteCandidateModal('${cand.id}')">Remove Candidate</button>
+          <button class="btn btn-primary" style="flex:1;" onclick="v3App.openRedeemVoucherModal('${cand.id}')">Redeem Voucher Code</button>
         </div>
       `;
       document.getElementById('drawer-action-btn').style.display = 'none';
@@ -1310,14 +1862,14 @@ const v3App = {
     else {
       scenarioContent = `
         <div style="background:var(--bg-color); border:1px solid var(--border-color); padding:12px; border-radius:8px;">
-          <div style="font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:4px;">Voucher State: No Voucher Linked</div>
+          <div style="font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:4px;">Voucher Code State: No Voucher Code Linked</div>
           <div style="font-size:12px; color:var(--text-secondary);">Current Class: ${cand.subject || 'N/A'}</div>
         </div>
         ${retakeHtml}
 
         <div style="margin-top:24px; display:flex; gap:12px;">
-          <button class="btn btn-secondary" style="flex:1; color:var(--status-error); border-color:var(--status-error);" onclick="v3App.showToast('Candidate Removed', 'error'); v3App.closeDrawer();">Remove Candidate</button>
-          <button class="btn btn-primary" style="flex:1;" onclick="v3App.showToast('Voucher Assigned', 'success'); v3App.closeDrawer();">Assign Voucher</button>
+          <button class="btn btn-secondary" style="flex:1; color:var(--status-error); border-color:var(--status-error);" onclick="v3App.openDeleteCandidateModal('${cand.id}')">Remove Candidate</button>
+          <button class="btn btn-primary" style="flex:1;" onclick="v3App.showToast('Voucher Code Assigned', 'success'); v3App.closeDrawer();">Assign Voucher Code</button>
         </div>
       `;
       document.getElementById('drawer-action-btn').style.display = 'none';
@@ -1356,7 +1908,7 @@ const v3App = {
     if (cand) cand.examStatus = 'suspended';
     this.closeDrawer();
     this.renderCandidates('all');
-    this.showToast('Candidate account has been permanently suspended.', 'success');
+    this.showToast('Candidate account has been permanently deactivated.', 'success');
   },
 
   startSession(id) {
@@ -1424,11 +1976,70 @@ const v3App = {
               <div style="width:100%; height:4px; background:var(--bg-color); border-radius:2px; margin-bottom:24px; overflow:hidden;">
                 <div style="height:100%; background:var(--brand-primary); width:${c.prog}%; ${!isDisabled ? 'animation: ddBarFill 0.8s cubic-bezier(0.16, 1, 0.3, 1) ' + (delay + 0.3) + 's both;' : ''}"></div>
               </div>
-              <button style="margin-top:auto; background:${isDisabled ? '#333' : '#FFDF85'}; color:${isDisabled ? '#666' : '#111'}; font-weight:700; border:none; border-radius:6px; padding:12px; width:100%; cursor:${isDisabled ? 'not-allowed' : 'pointer'}; font-size:14px; transition:all 0.2s;" ${isDisabled ? 'disabled' : `onclick="v3App.showToast('Opening ${c.title}...', 'info')"`} ${!isDisabled ? 'onmouseover="this.style.opacity=0.9" onmouseout="this.style.opacity=1"' : ''}>${c.cta}</button>
+              <button style="margin-top:auto; background:${isDisabled ? '#333' : '#FFDF85'}; color:${isDisabled ? '#666' : '#111'}; font-weight:700; border:none; border-radius:6px; padding:12px; width:100%; cursor:${isDisabled ? 'not-allowed' : 'pointer'}; font-size:14px; transition:all 0.2s;" ${isDisabled ? 'disabled' : `onclick="v3App.showToast('Opening ${c.title.replace(/'/g, '')}...', 'info')"`} ${!isDisabled ? 'onmouseover="this.style.opacity=0.9" onmouseout="this.style.opacity=1"' : ''}>${c.cta}</button>
             </div>
           </div>
         `;
       }).join('');
+    }
+  },
+
+  handleAccommodationChange(selectElement, candId) {
+    if (selectElement.value === 'YES') {
+      this.openAccommodationReasonModal(candId, selectElement);
+    } else {
+        this.showToast('Accommodation removed.', 'info');
+    }
+  },
+
+  handleExamModeChange(selectElement) {
+    if (selectElement.value === 'Online') {
+      // Create overlay
+      const overlay = document.createElement('div');
+      overlay.id = 'exam-mode-modal-overlay';
+      overlay.style.cssText = 'position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:10000; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px);';
+      
+      const modal = document.createElement('div');
+      modal.className = 'card';
+      modal.style.cssText = 'width:90%; max-width:400px; padding:24px; animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);';
+      
+      modal.innerHTML = `
+        <h3 style="margin-top:0; border-bottom:1px solid var(--border-color); padding-bottom:12px; margin-bottom:16px;">Configure Online Exam</h3>
+        <div style="margin-bottom:16px;">
+          <label style="display:block; margin-bottom:6px; font-size:13px; font-weight:600;">Fee chargeable to:</label>
+          <select id="exam-mode-fee-select" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color);">
+            <option>Organization</option>
+            <option>Candidate</option>
+          </select>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; padding:12px; background:var(--brand-active); border-radius:8px; border-left:3px solid var(--brand-primary);">
+          <label style="font-size:13px; font-weight:600; color:var(--text-primary); cursor:pointer;" for="exam-mode-apply-all">Apply to all online tests for this class</label>
+          <label class="switch">
+            <input type="checkbox" id="exam-mode-apply-all">
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+        <div style="display:flex; gap:12px; justify-content:flex-end;">
+          <button class="btn btn-secondary" id="exam-mode-cancel" style="padding:10px 20px;">Cancel</button>
+          <button class="btn btn-primary" id="exam-mode-save" style="padding:10px 20px;">Save</button>
+        </div>
+      `;
+      
+      overlay.appendChild(modal);
+      document.body.appendChild(overlay);
+      
+      // Handlers
+      document.getElementById('exam-mode-cancel').onclick = () => {
+        selectElement.value = 'In-Class';
+        overlay.remove();
+      };
+      
+      document.getElementById('exam-mode-save').onclick = () => {
+        const payer = document.getElementById('exam-mode-fee-select').value;
+        const applyAll = document.getElementById('exam-mode-apply-all').checked;
+        v3App.showToast(`Fee charged to: ${payer} ${applyAll ? '(Applied to all)' : ''}`, 'success');
+        overlay.remove();
+      };
     }
   },
 
@@ -1450,7 +2061,7 @@ const v3App = {
       const actionFn = session.status === 'draft' ? `v3App.showToast('Class Saved Successfully', 'success'); v3App.switchView('sessions');` : `v3App.startSession('${id}')`;
       
       topActions.innerHTML = `
-        <button class="btn btn-secondary" onclick="v3App.openFormDrawer('candidate')"><i class="material-icons-outlined">person_add</i> Add Candidate</button>
+        <button class="btn btn-secondary" onclick="v3App.openFormDrawer('candidate', '${id}')"><i class="material-icons-outlined">person_add</i> Add Candidate</button>
         <button class="btn btn-primary" onclick="${actionFn}">${btnText}</button>
       `;
       // Mock logic: randomly decide if candidates > vouchers
@@ -1460,6 +2071,13 @@ const v3App = {
       } else {
         voucherWarning.style.display = 'none';
       }
+    } else if (session.status === 'ongoing') {
+      topActions.innerHTML = `
+        <button class="btn btn-primary" style="display:flex; align-items:center; gap:8px;" onclick="v3App.confirmStartExam('${id}')">
+          <i class="material-icons">play_circle_filled</i> Start Exam
+        </button>
+      `;
+      voucherWarning.style.display = 'none';
     } else {
       topActions.innerHTML = ``;
       voucherWarning.style.display = 'none';
@@ -1499,155 +2117,116 @@ const v3App = {
     const thead = document.getElementById('sd-candidates-thead');
     const tbody = document.getElementById('sd-candidates-tbody');
     
-    if (session.status === 'draft' || session.status === 'upcoming') {
+    if (session.status === 'draft' || session.status === 'upcoming' || session.status === 'ongoing') {
       thead.innerHTML = `
         <tr>
-          <th>Candidate Name</th>
-          <th>ID / Roll No</th>
+          <th>Candidate</th>
+          <th>Candidate ID</th>
+          <th>ID Verified</th>
+          <th>Voucher Code</th>
+          <th>Progress</th>
+          <th>Accomm.</th>
           <th>Exam Mode</th>
+          <th>Retake</th>
           <th>Retake Mode</th>
-          <th style="min-width:200px;">Accommodations</th>
-          <th>Voucher Code / Status</th>
-          <th>Actions</th>
-        </tr>
-      `;
-      if (cands.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:32px; color:var(--text-secondary);">No candidates enrolled yet.</td></tr>`;
-        return;
-      }
-      
-      // We will expose a global function for accommodation toggle to avoid inline complexity
-      if (!window.toggleAccom) {
-        window.toggleAccom = function(checkbox, candId) {
-           const container = document.getElementById('accom-container-' + candId);
-           if (checkbox.checked) {
-             container.style.display = 'block';
-           } else {
-             container.style.display = 'none';
-           }
-        }
-      }
-
-      tbody.innerHTML = cands.map(c => `
-        <tr>
-          <td><div style="font-weight:600; font-size:14px;">${c.name}</div></td>
-          <td class="font-mono" style="font-size:13px; color:var(--text-secondary);">${c.rollNo || c.id}</td>
-          
-          <!-- Exam Mode -->
-          <td>
-            <select style="padding:6px; border-radius:4px; border:1px solid var(--border-color); font-size:12px; background:var(--bg-color);">
-              <option>In Class</option>
-              <option>Online</option>
-            </select>
-          </td>
-          
-          <!-- Retake Mode -->
-          <td>
-            <select style="padding:6px; border-radius:4px; border:1px solid var(--border-color); font-size:12px; background:var(--bg-color);">
-              <option>Not Eligible</option>
-              <option>In Class</option>
-              <option>Online</option>
-            </select>
-          </td>
-          
-          <!-- Accommodations -->
-          <td>
-            <div style="display:flex; flex-direction:column; gap:8px;">
-              <label style="display:flex; align-items:center; gap:8px; font-size:12px; cursor:pointer;">
-                <input type="checkbox" onchange="window.toggleAccom(this, '${c.id}')"> Enable
-              </label>
-              <div id="accom-container-${c.id}" style="display:none; animation: fadeSlideUp 0.2s ease;">
-                <input type="text" placeholder="Reason..." style="width:100%; padding:4px 8px; font-size:11px; border:1px solid var(--border-color); border-radius:4px; margin-bottom:4px; background:var(--bg-color);">
-                <button class="btn btn-primary" style="padding:2px 8px; font-size:11px; width:100%;" onclick="v3App.showToast('Accommodation Saved', 'success')">Save</button>
-              </div>
-            </div>
-          </td>
-          
-          <td>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span class="badge" style="background:var(--border-light); color:var(--text-secondary); font-family:monospace;">${c.voucherCode || 'UNASSIGNED'}</span>
-              ${!c.voucherCode ? '<span class="badge badge-warning">Unassigned</span>' : ''}
-            </div>
-          </td>
-          <td>
-            <div style="display:flex; gap:8px;">
-              <button class="btn btn-secondary" style="padding:4px 12px; font-size:12px;" onclick="v3App.showToast('Voucher Redeemed', 'success')">Redeem</button>
-              <button class="icon-button" style="color:var(--status-error); padding:4px;" onclick="v3App.showToast('Candidate removed from draft', 'info')"><i class="material-icons-outlined" style="font-size:18px;">delete</i></button>
-            </div>
-          </td>
-        </tr>
-      `).join('');
-        } else if (session.status === 'ongoing') {
-      thead.innerHTML = `
-        <tr>
-          <th>Candidate Name & Email</th>
-          <th>ID / Roll No</th>
-          <th>Voucher Status</th>
-          <th style="min-width:140px;">Learning Progress</th>
-          <th>Accommodations</th>
-          <th>Exam Mode</th>
-          <th>Retake Eligible</th>
           <th>Action</th>
         </tr>
       `;
       if (cands.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:32px; color:var(--text-secondary);">No candidates enrolled yet.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:32px; color:var(--text-secondary);">No candidates enrolled yet.</td></tr>`;
         return;
       }
       
       tbody.innerHTML = cands.map((c, idx) => {
-        // Mock specific states for the prompt
-        let vStatus = 'Active';
         let vBadge = '<span class="badge badge-success">Active</span>';
-        let progBar = `<div style="width:100%; height:6px; background:var(--border-light); border-radius:3px; overflow:hidden;"><div style="width:${c.learningProgress||45}%; height:100%; background:var(--brand-primary);"></div></div>`;
+        let progVal = c.learningProgress || 45;
+        let progBar = `<div style="display:flex; align-items:center; gap:8px;"><span style="font-size:12px; font-weight:600;">${progVal}%</span><div style="flex:1; height:6px; background:var(--border-light); border-radius:3px; overflow:hidden;"><div style="width:${progVal}%; height:100%; background:var(--brand-primary);"></div></div></div>`;
         
-        if (idx === 1) {
-          vStatus = 'Unused';
-          vBadge = '<span class="badge" style="background:var(--bg-color); border:1px solid var(--border-color);">Unused</span>';
-          progBar = `<div style="width:100%; height:6px; background:var(--border-light); border-radius:3px; overflow:hidden;"><div style="width:0%; height:100%; background:var(--brand-primary);"></div></div>`;
-        } else if (idx === 2) {
-          vStatus = 'Not Assigned';
-          vBadge = '<button class="btn btn-primary" style="padding:4px 8px; font-size:11px;">Assign Voucher</button>';
-          progBar = `<span style="color:var(--text-tertiary);">--</span>`;
+        if (session.status === 'draft' || session.status === 'upcoming') {
+          progVal = 0;
+          progBar = `<span style="color:var(--text-tertiary);">0%</span>`;
+          if (c.voucherCode) {
+            vBadge = `<div style="display:flex; align-items:center; gap:8px;">
+                <span class="badge" style="background:var(--border-light); color:var(--text-secondary); font-family:monospace;">${c.voucherCode}</span>
+              </div>`;
+          } else {
+            vBadge = '<button class="btn btn-primary" style="padding:4px 8px; font-size:11px;">Assign Voucher Code</button>';
+          }
+        } else {
+          // Mock variations for ongoing
+          if (idx === 1) {
+            vBadge = '<span class="badge" style="background:var(--bg-color); border:1px solid var(--border-color);">Unused</span>';
+            progBar = `<div style="display:flex; align-items:center; gap:8px;"><span style="font-size:12px; font-weight:600;">0%</span><div style="flex:1; height:6px; background:var(--border-light); border-radius:3px; overflow:hidden;"><div style="width:0%; height:100%; background:var(--brand-primary);"></div></div></div>`;
+          } else if (idx === 2) {
+            vBadge = '<button class="btn btn-primary" style="padding:4px 8px; font-size:11px;">Assign Voucher Code</button>';
+            progBar = `<span style="color:var(--text-tertiary);">--</span>`;
+          }
         }
         
-        let accomHtml = `<span class="badge" style="background:var(--bg-color); border:1px solid var(--border-color);">NO</span>`;
-        if (idx === 0) {
-          accomHtml = `<span class="badge badge-warning" title="Extended time (1.5x) required due to documented IEP.">YES</span>`;
-        }
+        let accomValue = (idx === 0) ? 'YES' : 'NO';
+        let accomHtml = `
+          <select style="padding:6px; border-radius:4px; border:1px solid var(--border-color); font-size:12px; background:var(--bg-color);" onclick="event.stopPropagation();" onchange="v3App.handleAccommodationChange(this, '${c.id}')">
+            <option value="NO" ${accomValue === 'NO' ? 'selected' : ''}>NO</option>
+            <option value="YES" ${accomValue === 'YES' ? 'selected' : ''}>YES</option>
+          </select>
+        `;
         
         return `
-        <tr style="cursor:pointer;" onclick="if(event.target.tagName !== 'SELECT' && event.target.tagName !== 'BUTTON') v3App.openLearningDeepDive('${c.id}', '${c.name}', '${session.name}', ${c.learningProgress||45})">
+        <tr style="cursor:pointer; vertical-align:middle;" onclick="if(event.target.tagName !== 'SELECT' && event.target.tagName !== 'BUTTON' && event.target.tagName !== 'INPUT' && event.target.tagName !== 'LABEL') v3App.openLearningDeepDive('${c.id}', '${c.name.replace(/'/g,'')}', '${session.name.replace(/'/g,'')}', ${c.learningProgress||45})">
+          <!-- Candidate -->
           <td>
-            <div style="font-weight:600; font-size:14px; color:var(--text-primary);">${c.name}</div>
-            <div style="font-size:12px; color:var(--text-secondary);">${c.email || 'student@domain.com'}</div>
+            <div style="font-weight:600; font-size:13px; color:var(--text-primary); white-space:nowrap;">${c.name}</div>
+            <div style="font-size:11px; color:var(--text-secondary); white-space:nowrap;">${c.email || 'student@domain.com'}</div>
           </td>
-          <td class="font-mono" style="font-size:13px; color:var(--text-secondary);">${c.rollNo || c.id}</td>
           
-          <!-- Voucher Status -->
+          <!-- Student ID -->
+          <td class="font-mono" style="font-size:12px; color:var(--text-secondary);">${c.rollNo || c.id}</td>
+          
+          <!-- Verified ID -->
+          <td>
+            <label class="switch" style="transform:scale(0.85); transform-origin:left center; margin:0;" onclick="event.stopPropagation()">
+              <input type="checkbox" class="physical-id-check" data-cand-id="${c.id}" onchange="if(this.checked) { v3App.showToast('ID Verified', 'success'); }">
+              <span class="switch-slider"></span>
+            </label>
+          </td>
+          
+          <!-- Voucher Code -->
           <td>${vBadge}</td>
           
-          <!-- Learning Material Progress -->
-          <td>${progBar}</td>
+          <!-- Progress -->
+          <td style="min-width:100px;">${progBar}</td>
           
           <!-- Accommodations -->
           <td>${accomHtml}</td>
           
           <!-- Exam Mode -->
-          <td><span style="font-size:13px; font-weight:600;">${idx%2===0?'In-Class':'Online'}</span></td>
-          
-          <!-- Retake Config -->
           <td>
-            <select style="padding:6px; border-radius:4px; border:1px solid var(--border-color); font-size:12px; background:var(--bg-color);" onclick="event.stopPropagation();">
-              <option>YES</option>
-              <option>NO</option>
+            <select style="padding:4px; border-radius:4px; border:1px solid var(--border-color); font-size:11px; background:var(--bg-color);" onclick="event.stopPropagation();" onchange="v3App.handleExamModeChange(this)">
+              <option value="In-Class" selected>In-Class</option>
+              <option value="Online">Online</option>
             </select>
           </td>
           
-          <!-- Row Action -->
+          <!-- Retake -->
           <td>
-            <button class="icon-button" style="color:var(--status-error); padding:4px;" onclick="event.stopPropagation(); v3App.showToast('Candidate removed from active roster', 'info')">
-              <i class="material-icons-outlined" style="font-size:18px;">delete</i>
+            <label class="switch" style="transform:scale(0.85); transform-origin:left center; margin:0;" onclick="event.stopPropagation()">
+              <input type="checkbox" onchange="if(this.checked) { v3App.showToast('Retake Enabled', 'success'); document.getElementById('retake-mode-${c.id}').disabled=false; } else { document.getElementById('retake-mode-${c.id}').disabled=true; }">
+              <span class="switch-slider"></span>
+            </label>
+          </td>
+          
+          <!-- Retake Mode -->
+          <td>
+            <select id="retake-mode-${c.id}" disabled style="padding:4px; border-radius:4px; border:1px solid var(--border-color); font-size:11px; background:var(--bg-color);" onclick="event.stopPropagation();" onchange="v3App.handleExamModeChange(this)">
+              <option value="In-Class" selected>In-Class</option>
+              <option value="Online">Online</option>
+            </select>
+          </td>
+          
+          <!-- Action -->
+          <td style="text-align:center;">
+            <button class="icon-button" style="color:var(--status-error); padding:4px;" onclick="event.stopPropagation(); v3App.showToast('Removed', 'info')">
+              <i class="material-icons-outlined" style="font-size:16px;">delete</i>
             </button>
           </td>
         </tr>
@@ -1658,7 +2237,7 @@ const v3App = {
         <tr>
           <th>Candidate Name</th>
           <th>Email ID</th>
-          <th>ID / Roll No</th>
+          <th>Candidate ID</th>
           <th>Score (out of 100)</th>
           <th>Result</th>
           <th>Flags / Incident</th>
@@ -1687,7 +2266,7 @@ const v3App = {
           date.setDate(date.getDate() + 7);
           retakeDate = date.toLocaleDateString();
         } else {
-          result = 'Suspended';
+          result = 'Deactivated';
           resultClass = 'badge-error';
         }
         
@@ -1726,11 +2305,12 @@ const v3App = {
         <tr>
           <th>Candidate Name</th>
           <th>Email ID</th>
-          <th>ID / Roll No</th>
-          <th>Voucher Status</th>
+          <th>Candidate ID</th>
+          <th>Voucher Code Status</th>
           <th>Learning Progress</th>
           <th>Accommodations</th>
           <th>Exam Mode</th>
+          <th>Retake Exam Mode</th>
           <th>Retake Config</th>
           <th>Actions</th>
         </tr>
@@ -1747,7 +2327,7 @@ const v3App = {
         let progressHtml = '';
         
         if (vStatus === 'Not Assigned') {
-          vBadge = `<button class="btn btn-primary" style="padding:4px 8px; font-size:11px;" onclick="event.stopPropagation(); v3App.showToast('Voucher Assigned', 'success')">Assign Voucher</button>`;
+          vBadge = `<button class="btn btn-primary" style="padding:4px 8px; font-size:11px;" onclick="event.stopPropagation(); v3App.showToast('Voucher Code Assigned', 'success')">Assign Voucher Code</button>`;
           progressHtml = `<span style="color:var(--text-secondary);">-- (Locked)</span>`;
         } else {
           vBadge = `<span class="badge ${vStatus === 'Active' ? 'badge-success' : 'badge-info'}">${vStatus}</span>`;
@@ -1774,7 +2354,18 @@ const v3App = {
             <td>${vBadge}</td>
             <td style="min-width:120px;">${progressHtml}</td>
             <td>${accommHtml}</td>
-            <td><span class="badge" style="background:var(--bg-color); border:1px solid var(--border-color); color:var(--text-primary);">In-Class</span></td>
+            <td>
+              <select style="padding:6px; border-radius:4px; border:1px solid var(--border-color); font-size:12px; background:var(--bg-color);" onclick="event.stopPropagation();" onchange="v3App.handleExamModeChange(this)">
+                <option value="In-Class" selected>In-Class</option>
+                <option value="Online">Online</option>
+              </select>
+            </td>
+            <td>
+              <select style="padding:6px; border-radius:4px; border:1px solid var(--border-color); font-size:12px; background:var(--bg-color);" onclick="event.stopPropagation();" onchange="v3App.handleExamModeChange(this)">
+                <option value="In-Class" selected>In-Class</option>
+                <option value="Online">Online</option>
+              </select>
+            </td>
             <td onclick="event.stopPropagation();">
               <div style="display:flex; align-items:center; gap:8px;">
                 <label class="switch" style="transform:scale(0.8); margin:0;">
@@ -1803,108 +2394,586 @@ const v3App = {
     const materials = this.state.materials || [];
 
     if (materials.length === 0) {
-      grid.innerHTML = '<div style="text-align:center; padding:32px; color:var(--text-secondary);">No materials attached to this session.</div>';
+      grid.innerHTML = '<div style="text-align:center; padding:48px; color:var(--text-secondary); width:100%;"><i class="material-icons-outlined" style="font-size:48px; opacity:0.5; margin-bottom:16px;">library_books</i><br>No materials attached to this class.</div>';
       return;
     }
 
-    // For ongoing sessions, use the Split-Action Asset Card framework
-    if (session && session.status === 'ongoing') {
-      const cands = this.state.candidates.slice(0, session.candidateCount || 4);
-      const thumbMap = { 'document': '/thumb_food_safety.png', 'ebook': '/thumb_food_safety.png', 'video': '/thumb_culinary.png', 'podcast': '/thumb_culinary.png', 'flashcard': '/thumb_haccp.png', 'practice exam': '/thumb_practice_exam.png' };
-      const thumbFallbacks = ['/thumb_food_safety.png', '/thumb_haccp.png', '/thumb_allergen.png', '/thumb_culinary.png', '/thumb_practice_exam.png'];
+    const cands = this.state.candidates.slice(0, session?.candidateCount || 4);
+    const totalCandidates = cands.length || 10; // Fallback to 10 for demo
 
-      grid.innerHTML = '<div class="asset-card-grid">' + materials.map((m, i) => {
-        const type = (m.type || 'ebook').toLowerCase();
-        let icon = 'menu_book', ctaText = 'Read';
-        if (type === 'video') { icon = 'play_circle'; ctaText = 'Watch'; }
-        else if (type === 'podcast') { icon = 'mic'; ctaText = 'Listen'; }
-        else if (type === 'flashcard') { icon = 'style'; ctaText = 'Review Cards'; }
-        else if (type === 'practice exam') { icon = 'quiz'; ctaText = 'Start Exam'; }
+    // Inject styles for premium cards if not already present
+    if (!document.getElementById('lm-premium-styles')) {
+      const style = document.createElement('style');
+      style.id = 'lm-premium-styles';
+      style.innerHTML = `
+        .lm-premium-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(340px, 1fr)); gap:24px; padding-top:16px; }
+        .lm-prem-card { background:#ffffff; border:1px solid rgba(0,0,0,0.06); border-radius:20px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.03); transition:all 0.3s cubic-bezier(0.16,1,0.3,1); display:flex; flex-direction:column; position:relative; }
+        .lm-prem-card:hover { transform:translateY(-6px); box-shadow:0 12px 32px rgba(0,0,0,0.08); border-color:rgba(0,0,0,0.1); }
+        .lm-prem-thumb-container { position:relative; height:180px; width:100%; overflow:hidden; background:#f1f5f9; }
+        .lm-prem-thumb { width:100%; height:100%; object-fit:cover; transition:transform 0.5s ease; }
+        .lm-prem-card:hover .lm-prem-thumb { transform:scale(1.05); }
+        .lm-prem-overlay { position:absolute; inset:0; background:linear-gradient(to top, rgba(15,23,42,0.8) 0%, transparent 60%); pointer-events:none; }
+        .lm-prem-tag { position:absolute; top:16px; left:16px; background:rgba(255,255,255,0.9); backdrop-filter:blur(8px); padding:6px 12px; border-radius:30px; font-size:11px; font-weight:700; color:#0f172a; text-transform:uppercase; letter-spacing:0.5px; display:flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+        .lm-prem-play-btn { position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:56px; height:56px; border-radius:50%; background:rgba(255,255,255,0.25); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; color:#fff; border:2px solid rgba(255,255,255,0.6); box-shadow:0 4px 24px rgba(0,0,0,0.2); transition:all 0.2s ease; cursor:pointer; z-index:2; }
+        .lm-prem-play-btn:hover { background:var(--brand-primary); border-color:var(--brand-primary); transform:translate(-50%, -50%) scale(1.1); color:#111; }
+        
+        .lm-prem-body { padding:24px; display:flex; flex-direction:column; flex:1; }
+        .lm-prem-title { font-size:18px; font-weight:700; color:#0f172a; line-height:1.4; margin-bottom:8px; }
+        .lm-prem-meta { font-size:13px; color:#64748b; display:flex; align-items:center; gap:12px; font-weight:500; margin-bottom:20px; }
+        
+        .lm-prem-stats { background:#f8fafc; border-radius:12px; padding:16px; margin-bottom:24px; border:1px solid #e2e8f0; }
+        .lm-prem-stats-hdr { display:flex; justify-content:space-between; margin-bottom:12px; }
+        .lm-prem-stat-item { text-align:center; }
+        .lm-prem-stat-val { font-size:18px; font-weight:800; line-height:1.2; }
+        .lm-prem-stat-lbl { font-size:10px; font-weight:700; text-transform:uppercase; color:#64748b; letter-spacing:0.5px; margin-top:2px; }
+        
+        .lm-prem-bar-container { height:8px; width:100%; background:#e2e8f0; border-radius:4px; overflow:hidden; display:flex; }
+        .lm-prem-bar-segment { height:100%; transition:width 0.8s cubic-bezier(0.16,1,0.3,1); }
+        .lm-prem-bar-success { background:linear-gradient(90deg, #10b981, #34d399); }
+        .lm-prem-bar-warning { background:linear-gradient(90deg, #f59e0b, #fbbf24); }
+        
+        .lm-prem-actions { display:flex; gap:12px; margin-top:auto; }
+        .lm-prem-btn { flex:1; padding:12px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.2s; border:none; }
+        .lm-prem-btn-primary { background:var(--brand-primary); color:#111; box-shadow:0 4px 12px rgba(249,173,0,0.2); }
+        .lm-prem-btn-primary:hover { transform:translateY(-2px); box-shadow:0 6px 16px rgba(249,173,0,0.3); background:#fbbf24; }
+        .lm-prem-btn-secondary { background:#f1f5f9; color:#334155; border:1px solid #e2e8f0; }
+        .lm-prem-btn-secondary:hover { background:#e2e8f0; color:#0f172a; }
 
-        let lbl1, lbl2, lbl3;
-        if (type === 'video' || type === 'podcast') { lbl1='Watched'; lbl2='Watching'; lbl3='Not Started'; }
-        else if (type === 'practice exam') { lbl1='Passed'; lbl2='In-Progress'; lbl3='Failed'; }
-        else if (type === 'flashcard') { lbl1='Mastered'; lbl2='Reviewing'; lbl3='Not Started'; }
-        else { lbl1='Completed'; lbl2='Reading'; lbl3='Not Started'; }
-
-        const thumb = m.thumb || thumbMap[type] || thumbFallbacks[i % thumbFallbacks.length];
-        const c1 = Math.floor(Math.random()*6+4), c2 = Math.floor(Math.random()*5+2), c3 = Math.floor(Math.random()*3), c4 = Math.floor(Math.random()*2);
-        const avgProg = Math.floor(Math.random()*30+55);
-
-        // Build tooltip names from the session candidates
-        const ttNames = cands.map(c => '<div class="tt-item"><span>' + c.name + '</span><span>(' + Math.floor(Math.random()*100) + '%)</span></div>').join('');
-
-        return '<div class="asset-card" style="animation-delay:' + (i * 0.08) + 's;">' +
-          '<img src="' + thumb + '" class="asset-cover" alt="Thumbnail">' +
-          '<div class="asset-header">' +
-            '<div class="asset-title">' + m.title + '</div>' +
-            '<div class="asset-meta"><i class="material-icons-outlined" style="font-size:14px;">' + icon + '</i> ' + (m.type || 'Ebook') + ' • ' + (m.duration || '120 mins') + ' total</div>' +
-          '</div>' +
-          '<div class="asset-toggles">' +
-            '<button class="asset-toggle-btn active" onclick="this.parentElement.children[0].classList.add(\x27active\x27);this.parentElement.children[1].classList.remove(\x27active\x27);document.getElementById(\x27sd-card-view-' + m.id + '\x27).style.display=\x27flex\x27;document.getElementById(\x27sd-card-prog-' + m.id + '\x27).style.display=\x27none\x27;"><i class="material-icons-outlined" style="font-size:16px; vertical-align:text-bottom;">construction</i> View Material</button>' +
-            '<button class="asset-toggle-btn" onclick="this.parentElement.children[1].classList.add(\x27active\x27);this.parentElement.children[0].classList.remove(\x27active\x27);document.getElementById(\x27sd-card-view-' + m.id + '\x27).style.display=\x27none\x27;document.getElementById(\x27sd-card-prog-' + m.id + '\x27).style.display=\x27flex\x27;"><i class="material-icons-outlined" style="font-size:16px; vertical-align:text-bottom;">analytics</i> Candidate Progress</button>' +
-          '</div>' +
-          '<div class="asset-body" id="sd-card-view-' + m.id + '">' +
-            '<div class="asset-kpi-row">' +
-              '<div class="asset-kpi"><div class="asset-kpi-val">' + (c1+c2+c3+c4) + '</div><div class="asset-kpi-lbl">Assigned</div></div>' +
-              '<div class="asset-kpi"><div class="asset-kpi-val" style="color:var(--brand-primary);">' + avgProg + '%</div><div class="asset-kpi-lbl">Avg. Complete</div></div>' +
-              '<div class="asset-kpi"><div class="asset-kpi-val" style="color:var(--status-success);">' + c2 + '</div><div class="asset-kpi-lbl">Active Now</div></div>' +
-            '</div>' +
-            '<div style="margin-bottom:16px;">' +
-              '<div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px;"><span style="color:var(--text-secondary);">Overall Class Progress</span><span style="font-weight:700; color:var(--brand-primary);">' + avgProg + '%</span></div>' +
-              '<div style="height:6px; background:var(--border-light); border-radius:3px; overflow:hidden;"><div class="asset-prog-fill" style="width:' + avgProg + '%; height:100%; background:var(--brand-primary);"></div></div>' +
-            '</div>' +
-            '<div style="font-size:11px; color:var(--text-tertiary); margin-bottom:16px; display:flex; align-items:center; gap:4px;"><i class="material-icons-outlined" style="font-size:12px;">schedule</i> Last updated: ' + new Date().toLocaleDateString() + '</div>' +
-            '<button class="asset-cta" onclick="v3App.showToast(\x27Launching Material...\x27, \x27success\x27)">' + ctaText + '</button>' +
-          '</div>' +
-          '<div class="asset-body" id="sd-card-prog-' + m.id + '" style="display:none; padding:12px;">' +
-            '<div class="batch-list-item" onclick="v3App.openBatchModal(\x27Batch 2026 - A (' + session.name.split(' — ')[0] + ')\x27, \x27' + btoa('<div class="prog-grid">' +
-              '<div class="prog-col"><div class="prog-val lbl-green">' + c1 + '</div><div class="prog-lbl">' + lbl1 + '</div><div class="tt-list">' + ttNames + '</div></div>' +
-              '<div class="prog-col"><div class="prog-val lbl-cyan">' + c2 + '</div><div class="prog-lbl">' + lbl2 + '</div><div class="tt-list">' + ttNames + '</div></div>' +
-              '<div class="prog-col"><div class="prog-val lbl-grey">' + c3 + '</div><div class="prog-lbl">' + lbl3 + '</div></div>' +
-              '<div class="prog-col" style="cursor:default;"><div class="prog-val lbl-muted">' + c4 + '</div><div class="prog-lbl lbl-muted">No Voucher</div></div>' +
-            '</div>') + '\x27)">' +
-              '<div style="font-weight:600; font-size:14px;">Batch 2026 - A (' + session.name.split(' — ')[0] + ')</div>' +
-              '<i class="material-icons-outlined">chevron_right</i>' +
-            '</div>' +
-            '<div class="batch-list-item" onclick="v3App.openBatchModal(\x27Batch 2026 - B (Retakes)\x27, \x27' + btoa('<div class="prog-grid">' +
-              '<div class="prog-col"><div class="prog-val lbl-green">' + Math.floor(c1/2) + '</div><div class="prog-lbl">' + lbl1 + '</div></div>' +
-              '<div class="prog-col"><div class="prog-val lbl-cyan">' + Math.floor(c2/2) + '</div><div class="prog-lbl">' + lbl2 + '</div></div>' +
-              '<div class="prog-col"><div class="prog-val lbl-grey">' + Math.floor(c3/2) + '</div><div class="prog-lbl">' + lbl3 + '</div></div>' +
-              '<div class="prog-col" style="cursor:default;"><div class="prog-val lbl-muted">' + Math.floor(c4/2) + '</div><div class="prog-lbl lbl-muted">No Voucher</div></div>' +
-            '</div>') + '\x27)">' +
-              '<div style="font-weight:600; font-size:14px;">Batch 2026 - B (Retakes)</div>' +
-              '<i class="material-icons-outlined">chevron_right</i>' +
-            '</div>' +
-          '</div>' +
-        '</div>';
-      }).join('') + '</div>';
-      return;
+        .lm-filters { display:flex; gap:12px; margin-bottom:24px; overflow-x:auto; padding-bottom:8px; }
+        .lm-filter-btn { padding:8px 20px; border-radius:30px; font-size:14px; font-weight:600; color:#64748b; background:#fff; border:1px solid #e2e8f0; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
+        .lm-filter-btn:hover { border-color:var(--brand-primary); color:var(--brand-primary); }
+        .lm-filter-btn.active { background:var(--brand-primary); border-color:var(--brand-primary); color:#111; box-shadow:0 4px 12px rgba(249,173,0,0.2); }
+      `;
+      document.head.appendChild(style);
     }
 
-    // For non-ongoing sessions, keep the existing category-based layout
-    const categories = ['FAQs', 'E-books', 'Audios', 'Videos', 'Practice Tests'];
+    const thumbMap = { 'document': '/thumb_food_safety.png', 'ebook': '/thumb_food_safety.png', 'video': '/thumb_culinary.png', 'podcast': '/thumb_culinary.png', 'flashcard': '/thumb_haccp.png', 'practice exam': '/thumb_practice_exam.png' };
+    const thumbFallbacks = ['/thumb_food_safety.png', '/thumb_haccp.png', '/thumb_allergen.png', '/thumb_culinary.png', '/thumb_practice_exam.png'];
+
+    const headerHtml = `
+      <div class="lm-filters">
+        <button class="lm-filter-btn active" onclick="this.parentElement.querySelectorAll('.lm-filter-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');">All Materials</button>
+        <button class="lm-filter-btn" onclick="this.parentElement.querySelectorAll('.lm-filter-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');">E-books & Guides</button>
+        <button class="lm-filter-btn" onclick="this.parentElement.querySelectorAll('.lm-filter-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');">Videos</button>
+        <button class="lm-filter-btn" onclick="this.parentElement.querySelectorAll('.lm-filter-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');">Practice Exams</button>
+      </div>
+    `;
+
+    const cardsHtml = '<div class="lm-premium-grid">' + materials.map((m, i) => {
+      const type = (m.type || 'ebook').toLowerCase();
+      let icon = 'menu_book', ctaText = 'Read Document', ctaIcon = 'import_contacts', tagColor = '#3b82f6';
+      
+      if (type === 'video') { icon = 'play_circle'; ctaText = 'Watch Video'; ctaIcon = 'play_arrow'; tagColor = '#ef4444'; }
+      else if (type === 'podcast') { icon = 'mic'; ctaText = 'Listen Now'; ctaIcon = 'headphones'; tagColor = '#8b5cf6'; }
+      else if (type === 'flashcard') { icon = 'style'; ctaText = 'Study Cards'; ctaIcon = 'auto_awesome_motion'; tagColor = '#f59e0b'; }
+      else if (type === 'practice exam') { icon = 'quiz'; ctaText = 'Start Assessment'; ctaIcon = 'edit_note'; tagColor = '#10b981'; }
+
+      const thumb = m.thumb || thumbMap[type] || thumbFallbacks[i % thumbFallbacks.length];
+      
+      // Generate realistic mock data
+      const completed = Math.floor(Math.random() * (totalCandidates * 0.7));
+      const inProgress = Math.floor(Math.random() * (totalCandidates - completed));
+      const pending = totalCandidates - completed - inProgress;
+      
+      const compPct = Math.round((completed / totalCandidates) * 100);
+      const progPct = Math.round((inProgress / totalCandidates) * 100);
+
+      const playBtn = (type === 'video' || type === 'podcast') ? 
+        `<div class="lm-prem-play-btn" onclick="v3App.showToast('Launching player...', 'info')"><i class="material-icons">play_arrow</i></div>` : '';
+
+      return `
+        <div class="lm-prem-card" style="animation: fadeSlideUp 0.4s cubic-bezier(0.16,1,0.3,1) ${i * 0.05}s both;">
+          <div class="lm-prem-thumb-container">
+            <img src="${thumb}" class="lm-prem-thumb" alt="Cover">
+            <div class="lm-prem-overlay"></div>
+            <div class="lm-prem-tag" style="color:${tagColor};"><i class="material-icons-outlined" style="font-size:14px;">${icon}</i> ${type}</div>
+            ${playBtn}
+          </div>
+          <div class="lm-prem-body">
+            <div class="lm-prem-title">${m.title}</div>
+            <div class="lm-prem-meta">
+              <span style="display:flex;align-items:center;gap:4px;"><i class="material-icons-outlined" style="font-size:14px;">schedule</i> ${m.duration || '60 mins'}</span>
+              <span>•</span>
+              <span>Required</span>
+            </div>
+            
+            <div class="lm-prem-stats">
+              <div class="lm-prem-stats-hdr">
+                <div class="lm-prem-stat-item">
+                  <div class="lm-prem-stat-val" style="color:#10b981;">${completed}</div>
+                  <div class="lm-prem-stat-lbl">Completed</div>
+                </div>
+                <div class="lm-prem-stat-item">
+                  <div class="lm-prem-stat-val" style="color:#f59e0b;">${inProgress}</div>
+                  <div class="lm-prem-stat-lbl">In Progress</div>
+                </div>
+                <div class="lm-prem-stat-item">
+                  <div class="lm-prem-stat-val" style="color:#64748b;">${pending}</div>
+                  <div class="lm-prem-stat-lbl">Not Started</div>
+                </div>
+              </div>
+              <div class="lm-prem-bar-container">
+                <div class="lm-prem-bar-segment lm-prem-bar-success" style="width:${compPct}%" title="${compPct}% Completed"></div>
+                <div class="lm-prem-bar-segment lm-prem-bar-warning" style="width:${progPct}%" title="${progPct}% In Progress"></div>
+              </div>
+              <div style="text-align:center; font-size:11px; font-weight:600; color:#64748b; margin-top:8px;">CLASS PROGRESS: ${compPct}%</div>
+            </div>
+            
+            <div class="lm-prem-actions">
+              <button class="lm-prem-btn lm-prem-btn-secondary" onclick="v3App.openMaterialProgressDrawer('${encodeURIComponent(m.title).replace(/'/g, '%27')}')">
+                <i class="material-icons-outlined" style="font-size:18px;">insights</i> Progress
+              </button>
+              <button class="lm-prem-btn lm-prem-btn-primary" onclick="v3App.openMaterialViewer('${type}', '${encodeURIComponent(m.title).replace(/'/g, '%27')}')">
+                <i class="material-icons-outlined" style="font-size:18px;">${ctaIcon}</i> ${ctaText}
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('') + '</div>';
+
+    grid.innerHTML = headerHtml + cardsHtml;
+  },
+
+  openMaterialProgressDrawer(encodedTitle) {
+    const title = decodeURIComponent(encodedTitle);
+    document.getElementById('drawer-title').textContent = 'Insights: Progress Details';
+    document.getElementById('drawer-subtitle').textContent = title;
+    document.getElementById('universal-drawer').classList.add('open');
     
-    grid.innerHTML = categories.map(cat => {
-      const catMats = materials.filter(m => {
-         if (cat === 'Videos' && m.type === 'video') return true;
-         if (cat === 'E-books' && m.type === 'document') return true;
-         return false;
-      });
-      const items = catMats.length > 0 ? catMats : [{ title: 'Sample ' + cat + ' Resource', desc: 'Essential ' + cat.toLowerCase() + ' for exam preparation.', icon: cat === 'Videos' ? 'play_circle' : cat === 'Audios' ? 'headphones' : cat === 'Practice Tests' ? 'quiz' : 'menu_book' }];
+    const cands = this.state.candidates || [];
+    const displayCands = cands.slice(0, 15);
+    
+    // Categorize
+    const completed = [];
+    const active = [];
+    const notStarted = [];
+    
+    displayCands.forEach(c => {
+      const rand = Math.random();
+      if (rand > 0.6) completed.push(c);
+      else if (rand > 0.3) active.push(c);
+      else notStarted.push(c);
+    });
 
-      return '<div>' +
-          '<h3 style="font-size:14px; font-weight:600; margin-bottom:12px; border-bottom:1px solid var(--border-color); padding-bottom:8px; display:flex; align-items:center; gap:8px;">' +
-            cat + ' <span class="badge" style="background:var(--border-light); color:var(--text-secondary); font-size:10px;">VIEW ONLY</span>' +
-          '</h3>' +
-          '<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:16px;">' +
-            items.map(m => '<div style="background:var(--bg-color); border:1px solid var(--border-color); border-radius:8px; padding:16px; display:flex; align-items:flex-start; gap:12px;">' +
-                '<i class="material-icons-outlined" style="color:var(--brand-primary); font-size:24px;">' + (m.icon || 'menu_book') + '</i>' +
-                '<div><div style="font-size:14px; font-weight:600; margin-bottom:4px;">' + m.title + '</div><div style="font-size:12px; color:var(--text-secondary);">' + m.desc + '</div></div>' +
-              '</div>').join('') +
-          '</div>' +
-        '</div>';
+    const generateList = (list, status, colorStyle) => {
+      if (list.length === 0) return `<div style="padding:16px; color:var(--text-secondary); text-align:center; font-size:13px; background:var(--surface-color); border-bottom:1px solid var(--border-light);">No candidates in this category</div>`;
+      return list.map(c => {
+        let progText = '';
+        if (status === 'Completed') progText = '100% finished';
+        if (status === 'Active') progText = Math.floor(Math.random() * 80 + 10) + '% finished';
+        if (status === 'Not Started') progText = '0% finished';
+
+        return `
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:16px; border-bottom:1px solid var(--border-light); background:var(--surface-color);">
+            <div style="display:flex; align-items:center; gap:16px;">
+              <img src="${c.photo || 'https://via.placeholder.com/150'}" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:1px solid var(--border-color);">
+              <div>
+                <div style="font-size:14px; font-weight:600; color:var(--text-primary); margin-bottom:4px;">${c.name}</div>
+                <div style="font-size:12px; color:var(--text-secondary);">ID: ${c.rollNo || c.id}</div>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:11px; padding:4px 10px; border-radius:20px; font-weight:600; margin-bottom:6px; display:inline-block; ${colorStyle}">${status}</div>
+              <div style="font-size:11px; color:var(--text-tertiary);">${progText}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    };
+
+    const completedHtml = generateList(completed, 'Completed', 'background:var(--status-success-bg); color:var(--status-success); border:1px solid var(--status-success);');
+    const activeHtml = generateList(active, 'Active', 'background:var(--status-warning-bg); color:var(--status-warning); border:1px solid var(--status-warning);');
+    const notStartedHtml = generateList(notStarted, 'Not Started', 'background:var(--border-light); color:var(--text-secondary); border:1px solid var(--border-color);');
+
+    document.getElementById('drawer-content').innerHTML = `
+      <div style="background:#f8fafc; border-radius:12px; padding:16px; margin-bottom:20px; border:1px solid var(--border-color);">
+        <h4 style="margin:0 0 8px 0; font-size:14px; color:var(--text-primary);">Learning Material</h4>
+        <div style="font-size:16px; font-weight:700; color:var(--brand-primary);">${title}</div>
+      </div>
+      
+      <div style="margin-bottom:24px;">
+        <div style="font-size:13px; font-weight:600; color:var(--status-success); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:2px solid var(--status-success); padding-bottom:4px;">Completed (${completed.length})</div>
+        <div style="border:1px solid var(--border-light); border-radius:8px; overflow:hidden;">
+          ${completedHtml}
+        </div>
+      </div>
+
+      <div style="margin-bottom:24px;">
+        <div style="font-size:13px; font-weight:600; color:var(--status-warning); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:2px solid var(--status-warning); padding-bottom:4px;">Active (${active.length})</div>
+        <div style="border:1px solid var(--border-light); border-radius:8px; overflow:hidden;">
+          ${activeHtml}
+        </div>
+      </div>
+
+      <div style="margin-bottom:24px;">
+        <div style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px; border-bottom:2px solid var(--text-secondary); padding-bottom:4px;">Not Started (${notStarted.length})</div>
+        <div style="border:1px solid var(--border-light); border-radius:8px; overflow:hidden;">
+          ${notStartedHtml}
+        </div>
+      </div>
+    `;
+    
+    document.getElementById('drawer-action-btn').style.display = 'none';
+  },
+
+  openMaterialViewer(type, encodedTitle) {
+    const title = decodeURIComponent(encodedTitle);
+    
+    // Set headers
+    const typeLabel = document.getElementById('mv-type');
+    const titleLabel = document.getElementById('mv-title');
+    const iconLabel = document.getElementById('mv-icon');
+    
+    if (typeLabel) typeLabel.textContent = type;
+    if (titleLabel) titleLabel.textContent = title;
+    
+    let icon = 'menu_book';
+    if (type === 'video') icon = 'play_circle';
+    if (type === 'podcast') icon = 'mic';
+    if (type === 'flashcard') icon = 'style';
+    if (type === 'practice exam') icon = 'quiz';
+    if (iconLabel) iconLabel.textContent = icon;
+    
+    // Hide the left TOC sidebar for iframe full width
+    const tocList = document.getElementById('mv-toc-list');
+    if (tocList && tocList.parentElement) {
+      tocList.parentElement.style.display = 'none';
+    }
+    
+    // Set Main Area to iframe
+    const mainArea = document.getElementById('mv-main-area');
+    if (mainArea) {
+      mainArea.innerHTML = `<iframe src="learning_material.html" style="width:100%; height:100%; border:none; display:block;"></iframe>`;
+    }
+    
+    // Show overlay
+    document.getElementById('material-viewer-overlay').style.display = 'block';
+    document.getElementById('material-viewer-modal').style.display = 'flex';
+  },
+
+  closeMaterialViewer() {
+    const overlay = document.getElementById('material-viewer-overlay');
+    const modal = document.getElementById('material-viewer-modal');
+    if (overlay) overlay.style.display = 'none';
+    if (modal) {
+      modal.style.display = 'none';
+      // Stop any playing media by clearing the injected iframe
+      const mainArea = document.getElementById('mv-main-area');
+      if (mainArea) mainArea.innerHTML = '';
+    }
+  },
+
+  openHubMaterialDetail(encodedTitle) {
+    const title = encodedTitle ? decodeURIComponent(encodedTitle) : 'Material';
+    const detail = document.getElementById('material-hub-detail-view');
+    if (!detail) return;
+    const titleEl = document.getElementById('hub-detail-title');
+    if (titleEl) titleEl.textContent = title;
+    // Hide the hub grid/list behind the drill-down
+    const grid = document.getElementById('materials-grid');
+    const list = document.getElementById('materials-list-view');
+    if (grid) grid.style.display = 'none';
+    if (list) list.style.display = 'none';
+    detail.style.display = 'block';
+    // Default to the first tab and populate its content
+    this.switchHubLmTab('ebooks', true);
+    detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  },
+
+  closeHubMaterialDetail() {
+    const detail = document.getElementById('material-hub-detail-view');
+    if (detail) detail.style.display = 'none';
+    // Restore the materials list/grid behind it
+    const grid = document.getElementById('materials-grid');
+    const list = document.getElementById('materials-list-view');
+    if (grid) grid.style.display = '';
+    if (list) list.style.display = '';
+  },
+
+  switchHubLmTab(tab, silent) {
+    // Toggle the active state on the resource navigation tabs
+    const tabs = document.querySelectorAll('#hub-learning-tabs .l-tab');
+    const labelMap = {
+      ebooks: 'Ebook', videos: 'Video', podcasts: 'Podcast',
+      flashcards: 'Flashcards', practice: 'Practice Test'
+    };
+    const target = (labelMap[tab] || '').toLowerCase();
+    tabs.forEach(btn => {
+      const isActive = btn.textContent.trim().toLowerCase() === target;
+      btn.classList.toggle('active', isActive);
+    });
+    // Populate the content grid for the selected resource type
+    const gridEl = document.getElementById('hub-lm-content-grid');
+    if (gridEl) {
+      const iconMap = { ebooks: 'menu_book', videos: 'play_circle', podcasts: 'mic', flashcards: 'style', practice: 'quiz' };
+      const icon = iconMap[tab] || 'menu_book';
+      const label = labelMap[tab] || 'Resource';
+      gridEl.innerHTML = Array.from({ length: 3 }, (_, i) => `
+        <div class="card" style="padding:20px; display:flex; flex-direction:column; gap:12px;">
+          <i class="material-icons-outlined" style="font-size:32px; color:var(--brand-primary);">${icon}</i>
+          <div style="font-weight:700; font-size:15px;">${label} Resource ${i + 1}</div>
+          <div style="font-size:13px; color:var(--text-secondary);">Chapter ${i + 1} &middot; ~${15 + i * 10} min</div>
+          <button class="btn btn-secondary" style="margin-top:auto;" onclick="v3App.openMaterialViewer('${tab}', '${encodeURIComponent(label + ' Resource ' + (i + 1))}')">Open</button>
+        </div>
+      `).join('');
+    }
+    if (!silent) this.showToast(`Showing ${labelMap[tab] || tab} resources`, 'info');
+  },
+
+  openRedeemVoucherModal(candId) {
+    this._modalCandidateId = candId || null;
+    const input = document.getElementById('redeem-voucher-input');
+    if (input) input.value = '';
+    const modal = document.getElementById('redeem-voucher-modal');
+    if (modal) modal.classList.add('open');
+  },
+
+  submitRedeemVoucher() {
+    const input = document.getElementById('redeem-voucher-input');
+    const code = input ? input.value.trim() : '';
+    if (!code) {
+      this.showToast('Please enter a voucher code.', 'error');
+      return;
+    }
+    if (input) input.value = '';
+    const modal = document.getElementById('redeem-voucher-modal');
+    if (modal) modal.classList.remove('open');
+    this.showToast(`Voucher Code ${code} verified and replaced.`, 'success');
+    this._modalCandidateId = null;
+  },
+
+  openDeleteCandidateModal(candId) {
+    this._modalCandidateId = candId || null;
+    const input = document.getElementById('delete-reason-input');
+    if (input) input.value = '';
+    // Close the drawer behind so the modal is the focus
+    this.closeDrawer();
+    const modal = document.getElementById('delete-reason-modal');
+    if (modal) modal.classList.add('open');
+  },
+
+  submitDeleteCandidate() {
+    const input = document.getElementById('delete-reason-input');
+    const reason = input ? input.value.trim() : '';
+    if (!reason) {
+      this.showToast('Please provide a reason for deletion.', 'error');
+      return;
+    }
+    // Actually remove the candidate from state and re-render
+    const id = this._modalCandidateId;
+    if (id && this.state.candidates) {
+      this.state.candidates = this.state.candidates.filter(c => c.id !== id);
+      if (typeof this.renderCandidates === 'function') this.renderCandidates();
+    }
+    if (input) input.value = '';
+    const modal = document.getElementById('delete-reason-modal');
+    if (modal) modal.classList.remove('open');
+    this.showToast('Candidate has been permanently removed.', 'success');
+    this._modalCandidateId = null;
+  },
+
+  openAccommodationReasonModal(candId, selectElement) {
+    this._accomCtx = { candId: candId || null, selectElement: selectElement || null };
+    const input = document.getElementById('accommodation-reason-input');
+    if (input) input.value = '';
+    const modal = document.getElementById('accommodation-reason-modal');
+    if (modal) modal.classList.add('open');
+  },
+
+  submitAccommodationReason() {
+    const input = document.getElementById('accommodation-reason-input');
+    const reason = input ? input.value.trim() : '';
+    if (!reason) {
+      this.showToast('Please provide a reason for the accommodation.', 'error');
+      return;
+    }
+    if (input) input.value = '';
+    const modal = document.getElementById('accommodation-reason-modal');
+    if (modal) modal.classList.remove('open');
+    this.showToast('Accommodation reason saved for candidate.', 'success');
+    this._accomCtx = null;
+  },
+
+  openBatchProgressModal() {
+    const body = document.getElementById('batch-modal-body');
+    const cands = (this.state.monitorState && this.state.monitorState.candidates) || this.state.candidates || [];
+    if (body) {
+      if (!cands.length) {
+        body.innerHTML = `<div style="text-align:center; padding:24px; color:var(--text-secondary);">No active candidates to display.</div>`;
+      } else {
+        const totalQ = 50;
+        body.innerHTML = cands.slice(0, 12).map((c, i) => {
+          // Realistic, varied, *stable* progress: spread candidates across the
+          // full range (not everyone at 100%) using a deterministic per-candidate
+          // seed so the numbers don't flicker between opens.
+          const seed = parseInt(String(c.id).replace(/\D/g, ''), 10) || (i + 1);
+          let attempted = c.attemptedQ;
+          if (attempted == null) {
+            // Spread: a few finished, most mid-exam, a couple just starting.
+            const buckets = [50, 47, 42, 38, 31, 27, 24, 19, 15, 11, 8, 4];
+            attempted = buckets[(seed + i) % buckets.length];
+          }
+          attempted = Math.max(0, Math.min(totalQ, attempted));
+          const pct = Math.round((attempted / totalQ) * 100);
+          const done = pct >= 100;
+          const barColor = done ? 'var(--status-success)' : 'var(--brand-primary)';
+          return `
+            <div class="batch-list-item" style="padding:10px 0; border-bottom:1px solid var(--border-light, #333);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <span style="font-size:13px;">${c.name}</span>
+                <span style="font-size:12px; color:var(--text-secondary);">${attempted}/${totalQ} questions · <span style="font-weight:600; color:${barColor};">${pct}%</span>${done ? ' · Submitted' : ''}</span>
+              </div>
+              <div style="height:6px; background:var(--border-light, #333); border-radius:4px; overflow:hidden;">
+                <div style="height:100%; width:${pct}%; background:${barColor}; border-radius:4px;"></div>
+              </div>
+            </div>`;
+        }).join('');
+      }
+    }
+    const modal = document.getElementById('batch-progress-modal');
+    if (modal) modal.classList.add('open');
+  },
+
+  switchMmTab(tab) {
+    const isAnalytics = tab === 'analytics';
+    
+    const btnA = document.getElementById('mm-tab-btn-analytics');
+    const btnP = document.getElementById('mm-tab-btn-preview');
+    const indA = document.getElementById('mm-tab-ind-analytics');
+    const indP = document.getElementById('mm-tab-ind-preview');
+    
+    if (isAnalytics) {
+      btnA.style.color = 'var(--brand-primary)';
+      btnP.style.color = 'var(--text-secondary)';
+      indA.style.display = 'block';
+      indP.style.display = 'none';
+    } else {
+      btnP.style.color = 'var(--brand-primary)';
+      btnA.style.color = 'var(--text-secondary)';
+      indP.style.display = 'block';
+      indA.style.display = 'none';
+    }
+    
+    document.getElementById('mm-tab-analytics').style.display = isAnalytics ? 'block' : 'none';
+    document.getElementById('mm-tab-preview').style.display = isAnalytics ? 'none' : 'block';
+  },
+
+  openGlobalMaterialManageDrawer(encodedTitle, type, duration, thumb) {
+    const title = decodeURIComponent(encodedTitle);
+    this.switchView('material-management');
+    
+    document.getElementById('mm-title').textContent = title;
+    document.getElementById('mm-subtitle').textContent = `${type} • ${duration}`;
+    
+    // Switch back to analytics tab automatically
+    this.switchMmTab('analytics');
+    
+    // Generate classes and candidate list
+    const cands = this.state.candidates || [];
+    const classes = ['Final Exams - Batch A', 'Safety Training - Batch B', 'Culinary Basics 101'];
+    
+    // Progress formatting based on type
+    const getProgressHtml = (c, typeStr) => {
+      let t = (typeStr || '').toLowerCase();
+      if (t.includes('book') || t.includes('guide')) {
+        return `Ebook: <span style="font-weight:600;">${Math.floor(Math.random()*3 + 1)}/3 pages read</span>`;
+      } else if (t.includes('video')) {
+        return `Video: <span style="font-weight:600;">${Math.floor(Math.random()*10 + 1)}/10 mins watched</span>`;
+      } else if (t.includes('flash')) {
+        return `Flashcards: <span style="font-weight:600;">${Math.floor(Math.random()*6 + 1)}/6 reviewed</span>`;
+      } else if (t.includes('podcast')) {
+        return `Podcast: <span style="font-weight:600;">Taken ${Math.floor(Math.random()*15 + 1)} times. Avg score: ${(Math.random()*2 + 8).toFixed(1)}</span>`;
+      } else if (t.includes('practice') || t.includes('exam')) {
+        return `Score: <span style="font-weight:600;">${(Math.random()*30 + 70).toFixed(0)}%</span> <button class="btn btn-secondary" style="padding:4px 8px; font-size:11px; margin-left:8px;" onclick="event.stopPropagation(); const el = document.getElementById('pt-review-${c.id}'); el.style.display = el.style.display==='none'?'block':'none';">Review Mistakes</button>`;
+      } else {
+        return `Progress: <span style="font-weight:600;">${Math.floor(Math.random()*100)}%</span>`;
+      }
+    };
+
+    let totalAssigned = 0;
+    
+    const accordionsHtml = classes.map((cls, idx) => {
+      // Pick 3-5 random candidates for this class
+      const classCands = cands.slice(idx * 3, idx * 3 + Math.floor(Math.random() * 3 + 3));
+      totalAssigned += classCands.length;
+      
+      const candsHtml = classCands.map(c => `
+        <div style="border-bottom:1px solid var(--border-light); background:var(--bg-color);">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 16px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <img src="${c.photo || 'https://via.placeholder.com/150'}" style="width:32px; height:32px; border-radius:50%; object-fit:cover; border:1px solid var(--border-color);">
+              <div>
+                <div style="font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:2px;">${c.name}</div>
+                <div style="font-size:11px; color:var(--text-secondary);">ID: ${c.rollNo || c.id}</div>
+              </div>
+            </div>
+            <div style="text-align:right; font-size:12px; color:var(--text-secondary);">
+              ${getProgressHtml(c, type)}
+            </div>
+          </div>
+          
+          <!-- Practice Test Drill-down (Hidden initially) -->
+          <div id="pt-review-${c.id}" style="display:none; padding:16px; background:var(--surface-color); border-top:1px solid var(--border-light);">
+            <div style="font-weight:600; font-size:13px; margin-bottom:12px; color:var(--text-primary);">Reviewing Mistakes for ${c.name}</div>
+            
+            <div style="display:flex; flex-direction:column; gap:16px;">
+              <div style="border:1px solid var(--status-error); border-radius:8px; padding:12px; background:var(--status-error-bg);">
+                <div style="font-weight:600; font-size:13px; margin-bottom:8px;">Q3: What is the correct cooking temperature for poultry?</div>
+                <div style="font-size:12px; margin-bottom:4px; color:var(--status-error);"><span style="font-weight:600;">Candidate Answer:</span> 145°F (63°C)</div>
+                <div style="font-size:12px; color:var(--status-success);"><span style="font-weight:600;">Correct Answer:</span> 165°F (74°C) for 15 seconds</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      return `
+        <div style="border:1px solid var(--border-color); border-radius:8px; margin-bottom:12px; overflow:hidden; background:var(--surface-color);">
+          <div style="padding:16px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; background:#f8fafc;" onclick="const content = this.nextElementSibling; const icon = this.querySelector('.chevron-icon'); if(content.style.display==='none'){content.style.display='block'; icon.style.transform='rotate(180deg)';}else{content.style.display='none'; icon.style.transform='rotate(0deg)';}">
+            <div style="font-weight:600; font-size:14px; display:flex; align-items:center; gap:8px;">
+              <i class="material-icons-outlined" style="font-size:18px; color:var(--brand-primary);">class</i> ${cls}
+            </div>
+            <div style="display:flex; align-items:center; gap:12px; font-size:12px; color:var(--text-secondary);">
+              <span>${classCands.length} Candidates</span>
+              <i class="material-icons chevron-icon" style="transition: transform 0.2s; font-size:20px;">expand_more</i>
+            </div>
+          </div>
+          <div style="display:none; border-top:1px solid var(--border-light);">
+            ${candsHtml}
+          </div>
+        </div>
+      `;
     }).join('');
+
+    // Tab 1: Analytics
+    document.getElementById('mm-tab-analytics').innerHTML = `
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:24px;">
+        <div class="card" style="display:flex; align-items:center; justify-content:space-between; padding:24px;">
+          <div>
+            <div style="font-size:13px; color:var(--text-secondary); text-transform:uppercase; font-weight:600; margin-bottom:4px;">Total Assigned</div>
+            <div style="font-size:28px; font-weight:800; color:var(--text-primary);">${totalAssigned} Candidates</div>
+          </div>
+          <i class="material-icons-outlined" style="font-size:32px; color:var(--border-color);">groups</i>
+        </div>
+        <div class="card" style="display:flex; align-items:center; justify-content:space-between; padding:24px;">
+          <div>
+            <div style="font-size:13px; color:var(--text-secondary); text-transform:uppercase; font-weight:600; margin-bottom:4px;">Avg. Completion</div>
+            <div style="font-size:28px; font-weight:800; color:var(--brand-primary);">42%</div>
+          </div>
+          <i class="material-icons-outlined" style="font-size:32px; color:var(--brand-primary);">trending_up</i>
+        </div>
+      </div>
+      <div>
+        <h3 style="font-size:16px; margin-bottom:16px; border-bottom:1px solid var(--border-light); padding-bottom:8px;">Classes Using This Material</h3>
+        ${accordionsHtml}
+      </div>
+    `;
+
+    // Tab 2: Preview (using iframe to load learning_material.html directly)
+    document.getElementById('mm-tab-preview').innerHTML = `
+      <iframe src="learning_material.html" style="width:100%; height:800px; border:1px solid var(--border-color); border-radius:12px; display:block;"></iframe>
+    `;
   },
 
   closeDrawer() {
@@ -1944,17 +3013,52 @@ const v3App = {
   },
 
   assignVoucher(candId) {
-    this.showToast('Voucher generation requested...', 'info');
+    this.showToast('Voucher Code generation requested...', 'info');
     setTimeout(() => {
       // Optimistic mock update for UI
       const cand = this.state.candidates.find(c => c.id === candId);
       if (cand) cand.voucherCode = 'VCH-' + Math.floor(Math.random()*10000);
       this.renderCandidates('all');
       this.openCandidateDrawer(candId); // Refresh drawer
-      this.showToast('Voucher successfully assigned.', 'success');
+      this.showToast('Voucher Code successfully assigned.', 'success');
     }, 800);
   }
 ,
+
+  confirmStartExam(id) {
+    const session = this.state.sessions.find(s => s.id === id);
+    if (!session) return;
+    const candCount = session.candidateCount || 40; // Defaulting to 40 for demo to show >35 warning
+    
+    let assistantHtml = '';
+    if (candCount > 35) {
+      assistantHtml = `
+        <div style="background:var(--status-warning-bg); border:1px solid var(--status-warning); padding:12px; border-radius:8px; margin-bottom:16px;">
+          <div style="font-size:13px; font-weight:600; color:var(--status-warning); margin-bottom:4px;"><i class="material-icons-outlined" style="font-size:14px; vertical-align:middle;">warning</i> Assistant Proctor Required</div>
+          <div style="font-size:12px; color:var(--status-warning); margin-bottom:12px;">This class has more than 35 candidates. You must provide an Assistant Proctor ID to proceed.</div>
+          <input type="text" placeholder="Assistant Proctor ID" id="assistant-proctor-code" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--surface-color);">
+        </div>
+      `;
+    }
+
+    const modalHtml = `
+      <div class="batch-modal-overlay open" id="start-exam-modal" onclick="if(event.target === this) this.remove()">
+        <div class="batch-modal-content" style="max-width: 500px;">
+          <h2 style="font-size:20px; font-weight:600; margin:0 0 16px 0;">Start Exam Confirmation</h2>
+          <p style="font-size:14px; color:var(--text-secondary); margin-bottom:24px;">Are you sure you want to start the exam? Once started, candidates will be able to begin and the timer will commence. Please ensure all candidates are present and physical IDs have been verified.</p>
+          ${assistantHtml}
+          <div style="display:flex; gap:12px; justify-content:flex-end;">
+            <button class="btn btn-secondary" onclick="document.getElementById('start-exam-modal').remove()">Cancel</button>
+            <button class="btn btn-primary" style="background:var(--status-success); color:var(--status-success-ct); border-color:var(--status-success);" onclick="
+              ${candCount > 35 ? `if(!document.getElementById('assistant-proctor-code').value) { v3App.showToast('Please enter Assistant Proctor ID.', 'error'); return; }` : ''}
+              document.getElementById('start-exam-modal').remove(); v3App.switchView('monitoring');
+            ">Confirm & Start Exam</button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+  },
 
   openSessionSupervisor(cId) {
     let c = this.state.monitorState.candidates.find(x => x.id === cId) || this.state.candidates.find(x => x.id === cId);

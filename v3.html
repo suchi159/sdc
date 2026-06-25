@@ -1,13 +1,65 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SecureProctor AI - Unified OS</title>
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
-  <link rel="stylesheet" href="v3.css">
 
-    <style>
+<html data-theme="light" lang="en">
+<head>
+    <script src="demo_mode.js"></script>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzAwMCIvPjxnIGZpbGw9IiNmZmYiPjxjaXJjbGUgY3g9IjExIiBjeT0iMTMiIHI9IjQuMyIvPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTAuOCIgcj0iNSIvPjxjaXJjbGUgY3g9IjIxIiBjeT0iMTMiIHI9IjQuMyIvPjxyZWN0IHg9IjguOCIgeT0iMTMiIHdpZHRoPSIxNC40IiBoZWlnaHQ9IjciLz48cmVjdCB4PSI5LjIiIHk9IjE5LjUiIHdpZHRoPSIxMy42IiBoZWlnaHQ9IjUuOCIgcng9IjEuMyIvPjwvZz48ZyBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMC43Ij48bGluZSB4MT0iMTYiIHkxPSIxNC41IiB4Mj0iMTYiIHkyPSIxOSIvPjxsaW5lIHgxPSIxMi40IiB5MT0iMTQuOCIgeDI9IjEyLjQiIHkyPSIxOSIvPjxsaW5lIHgxPSIxOS42IiB5MT0iMTQuOCIgeDI9IjE5LjYiIHkyPSIxOSIvPjwvZz48L3N2Zz4="/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SecureProctor AI - Unified OS</title>
+<link href="design_system.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet"/>
+<link href="index.css" rel="stylesheet"/>
+<link href="v3.css" rel="stylesheet"/>
+<style>
+      /* AUTH OVERLAY STYLES */
+      #auth-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-color);
+        background-image: radial-gradient(circle at 15% 50%, rgba(0, 99, 155, 0.05), transparent 25%),
+                          radial-gradient(circle at 85% 30%, rgba(0, 99, 155, 0.05), transparent 25%);
+        transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.4s;
+      }
+      #auth-overlay.fade-out {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      .auth-container {
+        width: 100%; max-width: 500px;
+        background: var(--surface-color);
+        border-radius: 16px; box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+        padding: 40px; box-sizing: border-box;
+        position: relative; overflow: hidden;
+      }
+      .auth-header { text-align: center; margin-bottom: 32px; }
+      .auth-header img { height: 48px; margin-bottom: 16px; }
+      .auth-header h1 { font-size: 24px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0; }
+      .auth-header p { font-size: 14px; color: var(--text-secondary); margin: 0; }
+      .view-step { display: none; }
+      .view-step.active { display: block; animation: fadeUp 0.3s ease-out forwards; }
+      @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+      .inp-group { margin-bottom: 20px; }
+      .inp-group label { display: block; font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; }
+      .inp-group input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); font-family: var(--font-sans); font-size: 14px; box-sizing: border-box; }
+      .btn-full { width: 100%; padding: 12px; font-size: 16px; font-weight: 600; justify-content: center; margin-top: 8px; }
+      .wizard-progress { display: flex; gap: 8px; margin-bottom: 24px; }
+      .wizard-dot { flex: 1; height: 4px; background: var(--border-color); border-radius: 4px; transition: 0.3s; }
+      .wizard-dot.active { background: var(--brand-primary); }
+      .quiz-option { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; }
+      .quiz-option:hover { background: var(--brand-active); border-color: var(--brand-primary); }
+      .quiz-option input { margin: 0; cursor: pointer; }
+      .quiz-option label { font-size: 14px; font-weight: 500; cursor: pointer; color: var(--text-primary); flex: 1; }
+      .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; margin-bottom: 24px; background: #000; display: flex; align-items: center; justify-content: center; }
+      .video-wrapper i { font-size: 48px; color: rgba(255,255,255,0.5); }
+      .tc-box { height: 150px; overflow-y: auto; padding: 16px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.6; }
+
       ::selection { background-color: var(--brand-primary); color: #000000 !important; }
       ::-moz-selection { background-color: var(--brand-primary); color: #000000 !important; }
       
@@ -19,324 +71,574 @@
         background: var(--brand-primary) !important;
       }
     </style>
-
 </head>
 <body>
-
-  <div class="app-container">
-    
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <img src="sdc_hat_logo.png" alt="SDC Logo" style="height:32px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.2));">
-        SecureProctor AI
-      </div>
-      
-      <nav class="sidebar-nav" id="sidebar-nav">
-        <button class="nav-item active" data-view="dashboard" id="nav-dashboard">
-          <i class="material-icons-outlined">dashboard</i>
-          <span>Dashboard</span>
-        </button>
-        <button class="nav-item" data-view="monitoring" id="nav-monitoring">
-          <i class="material-icons-outlined">videocam</i>
-          <span>Exam Monitoring</span>
-        </button>
-        <button class="nav-item" data-view="candidates" id="nav-candidates">
-          <i class="material-icons-outlined">people</i>
-          <span>Candidates</span>
-        </button>
-        <button class="nav-item" data-view="sessions" id="nav-sessions">
-          <i class="material-icons-outlined">event</i>
-          <span>Classes</span>
-        </button>
-        <button class="nav-item" data-view="materials" id="nav-materials">
-          <i class="material-icons-outlined">menu_book</i>
-          <span>Learning Materials</span>
-        </button>
-        <button class="nav-item" data-view="earnings" id="nav-earnings">
-          <i class="material-icons-outlined">payments</i>
-          <span>Earnings</span>
-        </button>
-        <button class="nav-item" data-view="reports" id="nav-reports">
-          <i class="material-icons-outlined">analytics</i>
-          <span>Reports</span>
-        </button>
-        <button class="nav-item" data-view="settings" id="nav-settings">
-          <i class="material-icons-outlined">settings</i>
-          <span>Settings</span>
-        </button>
-      </nav>
-      
-      <div class="sidebar-footer">
-        <div class="user-profile mb-4">
-          <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&q=80" alt="Avatar" class="user-avatar">
-          <div>
-            <div style="font-weight:600; font-size:14px; color:#fff;">Dr. Sarah Jenkins</div>
-            <div style="font-size:12px; color:#fff;">Administrator</div>
+<header class="global-header md-top-app-bar">
+<div class="brand" style="display: flex; align-items: center; gap: 12px;">
+<button class="icon-button menu-toggle" id="menu-toggle" title="Menu" aria-label="Open navigation" style="background:none; border:none; cursor:pointer; padding:6px; border-radius:8px; color:inherit;"><i class="material-icons-outlined">menu</i></button>
+<img alt="SDC Certifications" src="sdc_full_logo.png" style="height: 32px;"/>
+<span style="font-weight: 600; font-size: 16px;">SDC Platform</span>
+</div>
+<div class="header-actions">
+<button class="header-btn" title="Notifications">
+<i class="material-icons">notifications</i>
+</button>
+<button class="header-btn" id="globalThemeToggle" title="Toggle Dark/Light Mode">
+<i class="material-icons">dark_mode</i>
+</button>
+<div class="profile-dropdown-container">
+<button class="profile-trigger" id="profileDropdownBtn" style="display: flex; align-items: center; gap: 12px; background: transparent; border: none; cursor: pointer; text-align: left; padding: 4px; border-radius: 8px;">
+          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+          <div style="display: flex; flex-direction: column;">
+            <span class="name" style="font-size: 14px; font-weight: 600; color: var(--on-sur, var(--text-primary));">Dr. Sarah Jenkins</span>
+            <span class="email" style="font-size: 11px; color: var(--on-sur-var, var(--text-secondary));">sarah.jenkins@secureproctor.ai</span>
           </div>
-        </div>
-        <button class="btn" style="width:100%; justify-content:flex-start; background:transparent; border:none; color:#f2b8b5; padding-left:0; transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'" onclick="v3App.signOut()">
-          <i class="material-icons-outlined">logout</i> Sign Out
+          <i class="material-icons" style="color: var(--on-sur-var, var(--text-secondary));">arrow_drop_down</i>
         </button>
-      </div>
-    </aside>
-
-    <!-- MAIN AREA -->
-    <main class="main-area">
-      
-      <!-- TOP NAVIGATION -->
-      <header class="topbar">
-        <div class="topbar-left">
-          <h1 id="view-title">Dashboard</h1>
-        </div>
-        <div class="topbar-right">
-          <div class="search-box">
-            <i class="material-icons-outlined">search</i>
-            <input type="text" id="global-search" placeholder="Search candidates, classes, or ID...">
+<div class="dropdown-menu" id="profileDropdown">
+          <div class="dropdown-header">
+            <div class="name">Dr. Sarah Jenkins</div>
+            <div class="email">sarah.jenkins@secureproctor.ai</div>
           </div>
-          <div id="tab-timer" style="display:flex; align-items:center; gap:6px; background:var(--brand-primary); color:#000; padding:6px 12px; border-radius:16px; font-weight:700; font-size:14px; margin-right:12px; border:1px solid rgba(0,0,0,0.1);">
-            <i class="material-icons-outlined" style="font-size:16px;">timer</i>
-            <span id="tab-timer-text">0h 0m 0s</span>
-          </div>
-          <button class="icon-button" id="theme-toggle" title="Toggle Theme">
-            <i class="material-icons-outlined">dark_mode</i>
+          <div class="dropdown-label">Switch account</div>
+          <button class="dropdown-item account-switch-item" onclick="v3SwitchAccount(this)" data-name="Michael Chang" data-email="michael.chang@secureproctor.ai" data-avatar="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&amp;q=80">
+            <img class="dd-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&amp;q=80" alt="">
+            <span class="dd-acct"><span class="account-name">Michael Chang</span><span class="account-email">michael.chang@secureproctor.ai</span></span>
           </button>
-          <div style="position:relative;">
-            <button class="icon-button" id="notification-btn" title="Notifications">
-              <i class="material-icons-outlined">notifications</i>
-              <span id="notif-badge" style="position:absolute; top:6px; right:6px; width:8px; height:8px; background:var(--status-error); border-radius:50%; border:2px solid var(--surface-color); display:none;"></span>
-            </button>
-            <div id="notification-dropdown" style="display:none; position:absolute; top:48px; right:0; width:320px; background:var(--surface-color); border:1px solid var(--border-color); border-radius:8px; box-shadow:var(--shadow-lg); z-index:100; max-height:400px; overflow-y:auto;">
-              <div style="padding:16px; border-bottom:1px solid var(--border-light); font-weight:600;">Notifications</div>
-              <div id="notification-list" style="padding:8px;"></div>
-            </div>
-          </div>
+          <button class="dropdown-item account-switch-item" onclick="v3SwitchAccount(this)" data-name="Emily Rodriguez" data-email="emily.rodriguez@secureproctor.ai" data-avatar="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&amp;q=80">
+            <img class="dd-avatar" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&amp;q=80" alt="">
+            <span class="dd-acct"><span class="account-name">Emily Rodriguez</span><span class="account-email">emily.rodriguez@secureproctor.ai</span></span>
+          </button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item" onclick="v3App.authStartRegistration(); document.getElementById('profileDropdown').classList.remove('show');">
+            <i class="material-icons">person_add</i>
+            Add new account
+          </button>
+          <button class="dropdown-item" style="color: #ef4444;" onclick="handleLogout()">
+            <i class="material-icons">logout</i>
+            Logout
+          </button>
         </div>
-      </header>
+      </div>
+    </div>
+  </header>
+<!-- ==================== AUTH OVERLAY ==================== -->
+<div id="auth-overlay">
+<div class="auth-container">
+<div class="auth-header">
+<img alt="SecureProctor" src="sdc_hat_logo.png"/>
+<h1 id="flow-title">Proctor Sign In</h1>
+<p id="flow-subtitle">Access your control center</p>
+</div>
+<!-- 1. LOGIN VIEW -->
+<div class="view-step active" id="view-login">
+<div class="inp-group">
+<label for="login-email">Email Address</label>
+<input id="login-email" placeholder="proctor@secureproctor.ai" type="email" value="sarah.jenkins@secureproctor.ai"/>
+</div>
+<div class="inp-group">
+<label for="login-password">Password</label>
+<input id="login-password" placeholder="••••••••" type="password" value="password123"/>
+</div>
+<div style="text-align:right; margin:-8px 0 16px;">
+<a href="#" onclick="v3App.authForgotPassword(event)" style="font-size:13px; font-weight:600; color:var(--brand-primary); text-decoration:none;">Forgot password?</a>
+</div>
+<button class="btn btn-primary btn-full" onclick="v3App.authLogin()">Sign In</button>
+<div style="text-align:center; margin-top:24px; font-size:14px; color:var(--text-secondary);">
+          Don't have an account? <a href="#" onclick="v3App.authStartRegistration()" style="color:var(--brand-primary); font-weight:600; text-decoration:none;">Register as a Proctor</a>
+</div>
+</div>
+<!-- 2. REGISTRATION: STEP 0 APPLICATION -->
+<div class="view-step" id="view-reg-0">
+<div class="wizard-progress">
+<div class="wizard-dot active"></div>
+<div class="wizard-dot"></div>
+<div class="wizard-dot"></div>
+<div class="wizard-dot"></div>
+</div>
+<h3 style="margin:0 0 16px 0; font-size:18px;">Step 1: Proctor Application</h3>
+<p style="font-size:14px; color:var(--text-secondary); margin-bottom:16px;">Please provide your details to begin.</p>
+<div class="inp-group">
+<label for="input-reg-name">Full Name</label>
+<input id="input-reg-name" placeholder="e.g. John Doe" type="text" oninput="v3App.checkRegStep0()"/>
+</div>
+<div class="inp-group">
+<label for="input-reg-email">Email Address</label>
+<input id="input-reg-email" placeholder="e.g. john@example.com" type="email" oninput="v3App.checkRegStep0()"/>
+</div>
+<button class="btn btn-primary btn-full" disabled="" id="btn-reg-0" onclick="v3App.authNextStep(1)">Submit &amp; Continue</button>
+</div>
+<!-- 3. REGISTRATION: STEP 1 VIDEO -->
+<div class="view-step" id="view-reg-1">
+<div class="wizard-progress">
+<div class="wizard-dot active"></div>
+<div class="wizard-dot active"></div>
+<div class="wizard-dot"></div>
+<div class="wizard-dot"></div>
+</div>
+<h3 style="margin:0 0 16px 0; font-size:18px;">Step 2: Training Video</h3>
+<p style="font-size:14px; color:var(--text-secondary); margin-bottom:24px;">Please watch this mandatory training video on platform integrity and incident management.</p>
+<div class="video-wrapper" onclick="v3App.authPlayVideo(this)" style="cursor:pointer;">
+<i class="material-icons">play_circle_outline</i>
+<div id="video-overlay-text" style="position:absolute; bottom:16px; text-align:center; width:100%; color:rgba(255,255,255,0.8); font-size:12px;">Click to watch training</div>
+</div>
+<button class="btn btn-primary btn-full" disabled="" id="btn-reg-1" onclick="v3App.authNextStep(2)">Proceed to Knowledge Check</button>
+</div>
+<!-- 4. REGISTRATION: STEP 2 QUIZ -->
+<div class="view-step" id="view-reg-2">
+<div class="wizard-progress">
+<div class="wizard-dot active"></div>
+<div class="wizard-dot active"></div>
+<div class="wizard-dot active"></div>
+<div class="wizard-dot"></div>
+</div>
+<h3 style="margin:0 0 16px 0; font-size:18px;">Step 3: Knowledge Check</h3>
+<p style="font-size:14px; color:var(--text-secondary); margin-bottom:24px;">Answer the following questions to verify your understanding of proctoring policies.</p>
+<div style="margin-bottom:24px;">
+<p style="font-weight:600; font-size:14px; margin:0 0 12px 0;">1. What should you do if the AI flags a "Secondary Person Detected"?</p>
+<label class="quiz-option"><input name="q1" type="radio" value="wrong"/> Pause the exam immediately.</label>
+<label class="quiz-option"><input name="q1" type="radio" value="correct"/> Review the live feed and log an incident if confirmed.</label>
+</div>
+<div style="margin-bottom:24px;">
+<p style="font-weight:600; font-size:14px; margin:0 0 12px 0;">2. Can candidates use calculators during an offline mode exam?</p>
+<label class="quiz-option"><input name="q2" type="radio" value="wrong"/> Yes, always.</label>
+<label class="quiz-option"><input name="q2" type="radio" value="correct"/> Only if explicitly permitted by the class settings.</label>
+</div>
+<button class="btn btn-primary btn-full" onclick="v3App.authCheckQuiz()">Verify Answers</button>
+</div>
+<!-- 5. REGISTRATION: STEP 3 T&C -->
+<div class="view-step" id="view-reg-3">
+<div class="wizard-progress">
+<div class="wizard-dot active"></div>
+<div class="wizard-dot active"></div>
+<div class="wizard-dot active"></div>
+<div class="wizard-dot active"></div>
+</div>
+<h3 style="margin:0 0 16px 0; font-size:18px;">Step 4: Terms &amp; Conditions</h3>
+<p style="font-size:14px; color:var(--text-secondary); margin-bottom:16px;">Please review the proctor compliance terms.</p>
+<div class="tc-box">
+<strong>1. Integrity Policy</strong><br/>
+          As a certified proctor, you are responsible for maintaining the integrity of all assigned examinations. Any collusion or failure to report violations will result in immediate revocation of your certification.<br/><br/>
+<strong>2. Data Privacy</strong><br/>
+          You will have access to candidate PII (Personally Identifiable Information). You agree to keep all data confidential and not share screen recordings or candidate details outside the SecureProctor platform.<br/><br/>
+<strong>3. Certification Renewal</strong><br/>
+          Proctor certifications are valid for 1 year from the date of approval. You must complete a renewal module prior to expiration.
+        </div>
+<div style="display:flex; gap:12px; align-items:flex-start; margin-bottom:24px; padding:12px; background:var(--brand-active); border-radius:8px; border:1px solid var(--border-color);">
+<input id="tc-checkbox" onchange="document.getElementById('btn-reg-3').disabled = !this.checked" style="margin-top:2px;" type="checkbox"/>
+<label for="tc-checkbox" style="font-size:14px; color:var(--text-primary); cursor:pointer;">I have read and agree to the Proctor Terms &amp; Conditions. I understand my responsibilities and obligations.</label>
+</div>
+<button class="btn btn-primary btn-full" disabled="" id="btn-reg-3" onclick="v3App.authSubmitApproval()">Submit for Approval</button>
+</div>
+<!-- 5. REGISTRATION: SUCCESS -->
+<div class="view-step" id="view-reg-success" style="text-align:center;">
+<i class="material-icons-outlined" style="font-size:64px; color:var(--status-success); margin-bottom:16px;">verified</i>
+<h3 style="margin:0 0 8px 0; font-size:20px;">Certification Approved</h3>
+<p style="font-size:13px; color:var(--text-secondary); margin:0 0 8px 0;">Your unique Proctor SDC ID</p>
+<div style="font-size:24px; font-weight:700; letter-spacing:2px; color:var(--brand-primary); margin:0 auto 24px; padding:14px; border:2px dashed var(--brand-primary); border-radius:8px; display:inline-block; font-family:var(--font-mono, monospace);" id="reg-success-sdc-id">—</div>
+<p style="font-size:14px; color:var(--text-secondary); margin-bottom:32px;">Congratulations! You are now a certified SecureProctor. Keep your Proctor SDC ID safe — you'll find it on your dashboard along with your renewal date.</p>
+<button class="btn btn-primary btn-full" onclick="v3App.completeAuth()">Go to Dashboard</button>
+</div>
+</div>
+</div>
+<div class="view-panel active" id="main-view">
+<div class="app-layout">
+<!-- SIDEBAR -->
+<div class="app-body">
+<aside class="sidebar md-navigation-drawer">
+<nav class="sidebar-nav" id="sidebar-nav">
+<button class="nav-item active" data-view="dashboard" id="nav-dashboard">
+<i class="material-icons-outlined">dashboard</i>
+<span>Dashboard</span>
+</button>
+<button class="nav-item" data-view="monitoring" id="nav-monitoring">
+<i class="material-icons-outlined">videocam</i>
+<span>Exam Monitoring</span>
+</button>
+<button class="nav-item" data-view="candidates" id="nav-candidates">
+<i class="material-icons-outlined">people</i>
+<span>Candidates</span>
+</button>
+<button class="nav-item" data-view="sessions" id="nav-sessions">
+<i class="material-icons-outlined">event</i>
+<span>Classes</span>
+</button>
+<button class="nav-item" data-view="materials" id="nav-materials">
+<i class="material-icons-outlined">menu_book</i>
+<span>Learning Materials</span>
+</button>
+<button class="nav-item" data-view="earnings" id="nav-earnings">
+<i class="material-icons-outlined">payments</i>
+<span>Earnings</span>
+</button>
+<button class="nav-item" data-view="reports" id="nav-reports">
+<i class="material-icons-outlined">analytics</i>
+<span>Reports</span>
+</button>
+<button class="nav-item" data-view="settings" id="nav-settings">
+<i class="material-icons-outlined">settings</i>
+<span>Settings</span>
+</button>
+</nav>
+</aside><div class="sidebar-backdrop" id="sidebar-backdrop"></div></div>
+</div>
+<style>
+              /* Account switcher inside the profile dropdown */
+              .dropdown-label { padding: 8px 16px 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-tertiary, var(--text-secondary)); }
+              .account-switch-item { gap: 10px; }
+              .account-switch-item .dd-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+              .account-switch-item .dd-acct { display: flex; flex-direction: column; min-width: 0; }
+              .account-name { font-size: 14px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+              .account-email { font-size: 11px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            </style>
+<script>
+              // Switch the displayed account (demo): update the topbar profile + close menu.
+              function v3SwitchAccount(btn) {
+                var trig = document.getElementById('profileDropdownBtn');
+                if (trig) {
+                  var n = trig.querySelector('.name'), e = trig.querySelector('.email'), img = trig.querySelector('img');
+                  if (n) n.textContent = btn.dataset.name;
+                  if (e) e.textContent = btn.dataset.email;
+                  if (img && btn.dataset.avatar) img.src = btn.dataset.avatar;
+                }
+                var menu = document.getElementById('profileDropdown');
+                if (menu) menu.classList.remove('show');
+                if (window.v3App && v3App.toast) v3App.toast('Switched to ' + btn.dataset.name);
+              }
+            </script>
 
-      <!-- WORKSPACES -->
-      
-      <!-- 1. DASHBOARD -->
-      <section id="view-dashboard" class="workspace active">
-        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:24px;">
-          <div>
-            <h2 style="font-size:24px; font-weight:600; color:var(--text-primary);">Good morning, Sarah</h2>
-            <p style="color:var(--text-secondary); margin-top:4px;">Here is what's happening at SecureProctor University today.</p>
-          </div>
-          <button class="btn btn-primary" onclick="v3App.openFormDrawer('session')"><i class="material-icons">add</i> Add Class</button>
-        </div>
 
-        <!-- KPI Grid -->
-        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:24px; margin-bottom:32px;" id="dashboard-kpis">
-          <!-- Populated by JS -->
-        </div>
 
-        <div style="display:grid; grid-template-columns:2fr 1fr; gap:24px;">
-          <!-- Left Col -->
-          <div style="display:flex; flex-direction:column; gap:24px;">
-            <div class="card">
-              <h3 style="font-size:16px; margin-bottom:16px; display:flex; align-items:center; gap:8px;"><i class="material-icons-outlined" style="color:var(--brand-primary);">event_available</i> Upcoming Classes</h3>
-              <div id="dash-upcoming-feed">
-                <!-- Populated by JS -->
-              </div>
-            </div>
-          </div>
-          
-          <!-- Right Col -->
-          <div style="display:flex; flex-direction:column; gap:24px;">
-            <div class="card">
-              <h3 style="font-size:16px; margin-bottom:16px; display:flex; align-items:center; gap:8px;"><i class="material-icons-outlined" style="color:var(--status-warning);">warning</i> Action Required</h3>
-              <div id="dash-action-feed">
-                <!-- Populated by JS -->
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      <!-- 2. CANDIDATES ROSTER -->
-      <section id="view-candidates" class="workspace">
-        <div class="flex-between mb-4">
-          <div>
-            <h2 style="font-size:20px; font-weight:600;">Master Candidate Roster</h2>
-            <p class="text-secondary mt-4">Manage enrollments, vouchers, and session assignments.</p>
-          </div>
-          <div style="display:flex; gap:12px;">
-            <button class="btn btn-secondary" onclick="v3App.simulateCsvUpload()"><i class="material-icons-outlined">upload_file</i> Import CSV</button>
-            <button class="btn btn-primary" onclick="v3App.openFormDrawer('candidate')"><i class="material-icons">person_add</i> Add Candidate</button>
-          </div>
-        </div>
-
-        <div class="card" style="padding:0;">
-          <div style="padding:16px; border-bottom:1px solid var(--border-color); display:flex; gap:8px;" id="candidate-filters">
-            <button class="badge badge-info" style="cursor:pointer;" onclick="v3App.filterCandidates('all')">All</button>
-            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterCandidates('enrolled')">Enrolled</button>
-            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterCandidates('in_progress')">Active</button>
-            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterCandidates('completed')">Completed</button>
-          </div>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th style="width:40px;"><input type="checkbox" id="bulk-select-all" onclick="v3App.toggleAllCandidates(event)"></th>
-                <th>Candidate</th>
-                <th>ID / Roll No</th>
-                <th>Voucher Status</th>
-                <th>Class Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="candidates-tbody">
-              <!-- Populated by JS -->
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- 3. SESSIONS WORKSPACE -->
-      <section id="view-sessions" class="workspace">
-         <div class="flex-between mb-4">
-          <div>
-            <h2 style="font-size:20px; font-weight:600;">Class Lifecycle Management</h2>
-            <p class="text-secondary mt-4">Create, monitor, and review classes.</p>
-          </div>
-          <button class="btn btn-primary" onclick="v3App.openFormDrawer('session')"><i class="material-icons">add</i> Add Class</button>
-        </div>
-
-        <div class="flex-between mb-4">
-          <div style="display:flex; gap:8px;" id="session-filters">
-            <button class="badge badge-info" style="cursor:pointer;" onclick="v3App.filterSessions('all')">All</button>
-            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterSessions('draft')">Draft</button>
-            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterSessions('upcoming')">Upcoming</button>
-            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterSessions('ongoing')">Ongoing</button>
-            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterSessions('live')">Live</button>
-            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterSessions('completed')">Completed</button>
-          </div>
-          <div style="display:flex; gap:8px;">
-            <button id="btn-grid-view" class="icon-button" style="background:var(--border-light); color:var(--text-primary);" onclick="v3App.setSessionViewMode('grid')"><i class="material-icons-outlined">grid_view</i></button>
-            <button id="btn-table-view" class="icon-button" style="background:transparent; color:var(--text-secondary);" onclick="v3App.setSessionViewMode('table')"><i class="material-icons-outlined">table_rows</i></button>
-          </div>
-        </div>
-
-        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:24px;" id="sessions-grid">
-          <!-- Populated by JS -->
-        </div>
-
-        <div class="card" style="padding:0; display:none;" id="sessions-table-container">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Class Name</th>
-                <th>Status</th>
-                <th>Created At</th>
-                <th>Exam Date</th>
-                <th>Candidates</th>
-                <th>Readiness</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="sessions-tbody">
-              <!-- Populated by JS -->
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- 3.1 SESSION DETAIL VIEW -->
-      <section id="view-session-detail" class="workspace">
-        <div class="flex-between mb-4">
-          <div style="display:flex; align-items:center; gap:16px;">
-            <button class="icon-button" onclick="v3App.switchView('sessions')"><i class="material-icons-outlined">arrow_back</i></button>
-            <div>
-              <h2 id="sd-title" style="font-size:20px; font-weight:600;">Class Details</h2>
-              <p id="sd-subtitle" class="text-secondary mt-4">Review enrolled candidates and learning materials.</p>
-            </div>
-          </div>
-          <div id="sd-top-actions" style="display:flex; gap:12px;">
-            <!-- Populated by JS -->
-          </div>
-        </div>
-
-        <div id="sd-voucher-warning" style="display:none; margin-bottom:24px; padding:16px; background:var(--status-error-bg); border:1px solid var(--status-error); border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
-          <div style="display:flex; align-items:center; gap:12px; color:var(--status-error);">
-            <i class="material-icons-outlined">warning</i>
-            <span style="font-size:14px; font-weight:500;">Insufficient vouchers for enrolled candidates. Candidates will not be able to access materials.</span>
-          </div>
-          <button class="btn btn-secondary" style="border-color:var(--status-error); color:var(--status-error);" onclick="v3App.showToast('Voucher Request Sent', 'success')">Request Vouchers for Materials</button>
-        </div>
-
-        <div id="sd-tabs-container" style="display:flex; border-bottom:1px solid var(--border-color); margin-bottom:24px;">
-          <button class="badge" id="sd-tab-candidates" style="background:var(--brand-active); color:var(--brand-primary); padding:12px 24px; border-radius:0; border-bottom:2px solid var(--brand-primary); cursor:pointer; font-size:14px;" onclick="v3App.switchSessionDetailTab('candidates')">Candidates</button>
-          <button class="badge" id="sd-tab-materials" style="background:transparent; color:var(--text-secondary); padding:12px 24px; border-radius:0; border-bottom:2px solid transparent; cursor:pointer; font-size:14px;" onclick="v3App.switchSessionDetailTab('materials')">Learning Materials</button>
-        </div>
-
-        <div id="sd-content-candidates" class="card" style="padding:0;">
-          <table class="data-table">
-            <thead id="sd-candidates-thead">
-              <!-- Populated by JS -->
-            </thead>
-            <tbody id="sd-candidates-tbody">
-              <!-- Populated by JS -->
-            </tbody>
-          </table>
-        </div>
-
-        <div id="sd-content-materials" class="card" style="padding:0; display:none; background:transparent; border:none; box-shadow:none;">
-          <div id="sd-materials-grid" style="display:flex; flex-direction:column; gap:24px;">
-            <!-- Populated by JS -->
-          </div>
-        </div>
-      </section>
-
-      <!-- 4. LEARNING MATERIALS -->
-      <section id="view-materials" class="workspace">
-         <div class="flex-between mb-4">
-          <div>
-            <h2 style="font-size:20px; font-weight:600;">Learning Materials Hub</h2>
-            <p class="text-secondary mt-4">Manage, review, and assign curriculum modules.</p>
-          </div>
-          <div style="display:flex; gap:8px;">
-            <button id="btn-mat-grid-view" class="icon-button" style="background:var(--border-light); color:var(--text-primary);" onclick="v3App.setMaterialViewMode('grid')"><i class="material-icons-outlined">grid_view</i></button>
-            <button id="btn-mat-table-view" class="icon-button" style="background:transparent; color:var(--text-secondary);" onclick="v3App.setMaterialViewMode('table')"><i class="material-icons-outlined">table_rows</i></button>
-          </div>
-        </div>
-
-        <div id="materials-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:24px;"></div>
-        
-        <div class="card" style="padding:0; display:none;" id="materials-table-container">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Type</th>
-                <th>Duration</th>
-                <th>Assigned</th>
-                <th>Avg. Complete</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="materials-tbody">
-              <!-- Populated by JS -->
-            </tbody>
-          </table>
-        </div>
-        <style>
+<!-- MAIN AREA -->
+<main class="main-content md-main-content">
+<!-- TOP NAVIGATION -->
+<header class="hdr">
+<div class="hdr-left">
+<h1 id="view-title">Dashboard</h1>
+</div>
+<div class="hdr-right">
+<div class="search-box">
+<i class="material-icons-outlined">search</i>
+<input id="global-search" placeholder="Search candidates, classes, or ID..." type="text"/>
+</div>
+<div id="tab-timer" style="display:flex; align-items:center; gap:8px; background:var(--brand-primary); color:#000; padding:8px 12px; border-radius:16px; font-weight:700; font-size:14px; margin-right:12px; border:1px solid rgba(0,0,0,0.1);">
+<i class="material-icons-outlined" style="font-size:16px;">timer</i>
+<span id="tab-timer-text">0h 0m 0s</span>
+</div>
+<button class="btn btn-secondary" id="proctor-manual-btn" onclick="v3App.openProctorResources('manual')" title="Proctor Manual" style="display:flex; align-items:center; gap:6px; padding:8px 14px; white-space:nowrap; flex-shrink:0;">
+<i class="material-icons-outlined" style="font-size:18px;">menu_book</i> Proctor Manual
+</button>
+<button class="btn btn-secondary" id="contact-sdc-btn" onclick="v3App.openProctorResources('contact')" title="Contact SDC" style="display:flex; align-items:center; gap:6px; padding:8px 14px; white-space:nowrap; flex-shrink:0;">
+<i class="material-icons-outlined" style="font-size:18px;">contact_support</i> Contact SDC
+</button>
+<button class="icon-button" id="theme-toggle" title="Toggle Theme">
+<i class="material-icons-outlined">dark_mode</i>
+</button>
+<div style="position:relative;">
+<button class="icon-button" id="notification-btn" title="Notifications">
+<i class="material-icons-outlined">notifications</i>
+<span id="notif-badge" style="position:absolute; top:6px; right:6px; width:8px; height:8px; background:var(--status-error); border-radius:50%; border:2px solid var(--surface-color); display:none;"></span>
+</button>
+<div id="notification-dropdown" style="display:none; position:absolute; top:48px; right:0; width:320px; background:var(--surface-color); border:1px solid var(--border-color); border-radius:8px; box-shadow:var(--shadow-lg); z-index:100; max-height:400px; overflow-y:auto;">
+<div style="padding:16px; border-bottom:1px solid var(--border-light); font-weight:600;">Notifications</div>
+<div id="notification-list" style="padding:8px;"></div>
+</div>
+</div>
+</div>
+</header>
+<!-- WORKSPACES -->
+<!-- 1. DASHBOARD -->
+<section class="workspace active" id="view-dashboard">
+<div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:24px;">
+<div>
+<h2 style="font-size:24px; font-weight:600; color:var(--text-primary);">Good morning, Sarah</h2>
+<p style="color:var(--text-secondary); margin-top:4px;">Here is what's happening at SecureProctor University today.</p>
+</div>
+</div>
+<!-- KPI Grid -->
+<div id="dashboard-kpis" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:24px; margin-bottom:32px;">
+<!-- Populated by JS -->
+</div>
+<div style="display:grid; grid-template-columns:2fr 1fr; gap:24px;">
+<!-- Left Col -->
+<div style="display:flex; flex-direction:column; gap:24px;">
+<div class="card">
+<h3 style="font-size:16px; margin-bottom:16px; display:flex; align-items:center; gap:8px;"><i class="material-icons-outlined" style="color:var(--brand-primary);">event_available</i> Upcoming Classes</h3>
+<div id="dash-upcoming-feed">
+<!-- Populated by JS -->
+</div>
+</div>
+<div class="card">
+<h3 style="font-size:16px; margin-bottom:16px; display:flex; align-items:center; gap:8px;"><i class="material-icons-outlined" style="color:var(--brand-primary);">corporate_fare</i> Associated Organization</h3>
+<p style="font-size:14px; color:var(--text-secondary); margin-bottom:16px;">You are currently associated with the following organizations:</p>
+<div style="padding:12px; border:1px solid var(--border-light); border-radius:8px; display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+<div style="display:flex; align-items:center; gap:12px;">
+<div style="width:40px; height:40px; border-radius:8px; background:var(--brand-active); display:flex; align-items:center; justify-content:center; color:var(--brand-primary); font-weight:700;">SU</div>
+<div>
+<div style="font-weight:600; font-size:14px;">SecureProctor University</div>
+<div style="font-size:12px; color:var(--text-secondary);">Role: Proctor</div>
+</div>
+</div>
+<span class="badge badge-success">Active</span>
+</div>
+<div style="display:flex; gap:12px;">
+<button class="btn btn-secondary" onclick="document.getElementById('create-org-modal').classList.add('open')" style="flex:1; justify-content:center; max-width:280px;"><i class="material-icons-outlined">add</i> Create Org</button>
+<button class="btn btn-secondary" onclick="v3App.showToast('To join an organization, ask your Org Admin to send you an email invite.', 'info')" style="flex:1; justify-content:center; max-width:280px;"><i class="material-icons-outlined">login</i> Join Org</button>
+</div>
+</div>
+</div>
+<!-- Right Col -->
+<div style="display:flex; flex-direction:column; gap:24px;">
+<div class="card" id="proctor-credential-card">
+<h3 style="font-size:16px; margin-bottom:16px; display:flex; align-items:center; gap:8px;"><i class="material-icons-outlined" style="color:var(--brand-primary);">badge</i> Proctor Credential</h3>
+<div style="padding:16px; border:1px solid var(--border-light); border-radius:8px; background:var(--brand-active); margin-bottom:16px;">
+<div style="font-size:12px; color:var(--text-secondary); margin-bottom:4px;">Proctor SDC ID</div>
+<div style="font-size:22px; font-weight:700; letter-spacing:2px; color:var(--brand-primary); font-family:var(--font-mono, monospace);" id="dash-sdc-id">—</div>
+<div style="display:flex; align-items:center; gap:6px; margin-top:12px; font-size:13px; color:var(--text-secondary);">
+<i class="material-icons-outlined" style="font-size:16px;">event</i> Valid until <strong id="dash-sdc-expiry" style="color:var(--text-primary);">—</strong>
+</div>
+</div>
+<button class="btn btn-secondary btn-full" disabled title="Renewal opens 90 days before expiry"><i class="material-icons-outlined">autorenew</i> Renewal</button>
+</div>
+<div class="card">
+<h3 style="font-size:16px; margin-bottom:16px; display:flex; align-items:center; gap:8px;"><i class="material-icons-outlined" style="color:var(--status-warning);">warning</i> Action Required</h3>
+<div id="dash-action-feed">
+<!-- Populated by JS -->
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 2. CANDIDATES ROSTER -->
+<section class="workspace" id="view-candidates">
+<div class="flex-between mb-4">
+<div>
+<h2 style="font-size:20px; font-weight:600;">Candidate Directory</h2>
+<p class="text-secondary mt-4">Manage enrollments, vouchers, and class assignments.</p>
+</div>
+<div style="display:flex; gap:12px;">
+<button class="btn btn-secondary" onclick="v3App.simulateCsvUpload()"><i class="material-icons-outlined">upload_file</i> Import CSV</button>
+<button class="btn btn-primary" onclick="v3App.openFormDrawer('candidate')"><i class="material-icons">person_add</i> Add Candidate</button>
+</div>
+</div>
+<div class="card" style="padding:0;">
+<div id="candidate-filters" style="padding:16px; border-bottom:1px solid var(--border-color); display:flex; gap:8px; flex-wrap:wrap;">
+<button class="filter-chip active" onclick="v3App.filterCandidates('all')">All</button>
+<button class="filter-chip" onclick="v3App.filterCandidates('enrolled')">Enrolled</button>
+<button class="filter-chip" onclick="v3App.filterCandidates('in_progress')">Active</button>
+<button class="filter-chip" onclick="v3App.filterCandidates('completed')">Completed</button>
+</div>
+<table class="data-table">
+<thead>
+<tr>
+<th style="width:40px;"><input id="bulk-select-all" onclick="v3App.toggleAllCandidates(event)" type="checkbox"/></th>
+<th>Candidate</th>
+<th>Candidate ID</th>
+<th>Voucher Code Status</th>
+<th>Class Status</th>
+<th>Exam Results</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="candidates-tbody">
+<!-- Populated by JS -->
+</tbody>
+</table>
+</div>
+</section>
+<!-- 3. SESSIONS WORKSPACE -->
+<section class="workspace" id="view-sessions">
+<div class="flex-between mb-4">
+<div>
+<h2 style="font-size:20px; font-weight:600;">Class Lifecycle Management</h2>
+<p class="text-secondary mt-4">Create, monitor, and review classes.</p>
+</div>
+<button class="btn btn-primary" onclick="v3App.openFormDrawer('session')"><i class="material-icons">add</i> Add Class</button>
+</div>
+<div class="flex-between mb-4">
+<div id="session-filters" style="display:flex; gap:8px;">
+<button class="badge badge-info" onclick="v3App.filterSessions('all')" style="cursor:pointer;">All</button>
+<button class="badge" onclick="v3App.filterSessions('draft')" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;">Draft</button>
+<button class="badge" onclick="v3App.filterSessions('upcoming')" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;">Upcoming</button>
+<button class="badge" onclick="v3App.filterSessions('ongoing')" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;">Ongoing</button>
+<button class="badge" onclick="v3App.filterSessions('live')" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;">Live</button>
+<button class="badge" onclick="v3App.filterSessions('completed')" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;">Completed</button>
+</div>
+<div style="display:flex; gap:8px;">
+<button class="icon-button" id="btn-grid-view" onclick="v3App.setSessionViewMode('grid')" style="background:var(--border-light); color:var(--text-primary);"><i class="material-icons-outlined">grid_view</i></button>
+<button class="icon-button" id="btn-table-view" onclick="v3App.setSessionViewMode('table')" style="background:transparent; color:var(--text-secondary);"><i class="material-icons-outlined">table_rows</i></button>
+</div>
+</div>
+<div id="sessions-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:24px;">
+<!-- Populated by JS -->
+</div>
+<div class="card" id="sessions-table-container" style="padding:0; display:none;">
+<table class="data-table">
+<thead>
+<tr>
+<th>Class Name</th>
+<th>Status</th>
+<th>Created At</th>
+<th>Exam Date</th>
+<th>Candidates</th>
+<th>Readiness</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="sessions-tbody">
+<!-- Populated by JS -->
+</tbody>
+</table>
+</div>
+</section>
+<!-- 3.1 SESSION DETAIL VIEW -->
+<section class="workspace" id="view-session-detail">
+<div class="flex-between mb-4">
+<div style="display:flex; align-items:center; gap:16px;">
+<button class="btn btn-secondary" onclick="v3App.switchView('sessions')" style="display:flex; align-items:center; gap:6px; padding:8px 14px; font-size:13px; white-space:nowrap;"><i class="material-icons-outlined" style="font-size:18px;">arrow_back</i> Back to Classes</button>
+<div>
+<h2 id="sd-title" style="font-size:20px; font-weight:600;">Class Details</h2>
+<p class="text-secondary mt-4" id="sd-subtitle">Review enrolled candidates and learning materials.</p>
+</div>
+</div>
+<div id="sd-top-actions" style="display:flex; gap:12px;">
+<!-- Populated by JS -->
+</div>
+</div>
+<div id="sd-voucher-warning" style="display:none; margin-bottom:24px; padding:16px; background:var(--status-error-bg); border:1px solid var(--status-error); border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+<div style="display:flex; align-items:center; gap:12px; color:var(--status-error);">
+<i class="material-icons-outlined">warning</i>
+<span style="font-size:14px; font-weight:500;">Insufficient vouchers for enrolled candidates. Candidates will not be able to access materials.</span>
+</div>
+<button class="btn btn-secondary" onclick="v3App.showToast('Voucher Code Request Sent', 'success')" style="border-color:var(--status-error); color:var(--status-error);">Request Voucher Codes for Materials</button>
+</div>
+<div id="sd-tabs-container" style="display:flex; border-bottom:1px solid var(--border-color); margin-bottom:24px;">
+<button class="badge" id="sd-tab-candidates" onclick="v3App.switchSessionDetailTab('candidates')" style="background:var(--brand-active); color:var(--brand-primary); padding:12px 24px; border-radius:0; border-bottom:2px solid var(--brand-primary); cursor:pointer; font-size:14px;">Candidates</button>
+<button class="badge" id="sd-tab-materials" onclick="v3App.switchSessionDetailTab('materials')" style="background:transparent; color:var(--text-secondary); padding:12px 24px; border-radius:0; border-bottom:2px solid transparent; cursor:pointer; font-size:14px;">Learning Materials</button>
+</div>
+<div class="card" id="sd-content-candidates" style="padding:0;">
+<table class="data-table">
+<thead id="sd-candidates-thead">
+<!-- Populated by JS -->
+</thead>
+<tbody id="sd-candidates-tbody">
+<!-- Populated by JS -->
+</tbody>
+</table>
+</div>
+<div class="card" id="sd-content-materials" style="padding:0; display:none; background:transparent; border:none; box-shadow:none;">
+<div id="sd-materials-grid" style="display:flex; flex-direction:column; gap:24px;">
+<!-- Populated by JS -->
+</div>
+</div>
+</section>
+<!-- 4. LEARNING MATERIALS -->
+<section class="workspace" id="view-materials">
+<div class="flex-between mb-4">
+<div>
+<h2 style="font-size:20px; font-weight:600;">Learning Materials Hub</h2>
+<p class="text-secondary mt-4">Manage, review, and assign curriculum modules.</p>
+</div>
+<div style="display:flex; gap:8px;">
+<button class="icon-button" id="btn-mat-grid-view" onclick="v3App.setMaterialViewMode('grid')" style="background:var(--border-light); color:var(--text-primary);"><i class="material-icons-outlined">grid_view</i></button>
+<button class="icon-button" id="btn-mat-table-view" onclick="v3App.setMaterialViewMode('table')" style="background:transparent; color:var(--text-secondary);"><i class="material-icons-outlined">table_rows</i></button>
+</div>
+</div>
+<div id="materials-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:24px;"></div>
+<div class="card" id="materials-table-container" style="padding:0; display:none;">
+<table class="data-table">
+<thead>
+<tr>
+<th>Title</th>
+<th>Type</th>
+<th>Duration</th>
+<th>Assigned</th>
+<th>Avg. Complete</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="materials-tbody">
+<!-- Populated by JS -->
+</tbody>
+</table>
+</div>
+<!-- NEW: Material Hub Drill-down View (hidden by default) -->
+<div id="material-hub-detail-view" style="display:none; width:100%; max-width:1200px; margin:0 auto;">
+<button class="btn btn-secondary" onclick="v3App.closeHubMaterialDetail()" style="margin-bottom:24px;">
+<i class="material-icons-outlined">arrow_back</i> Back to Hub
+          </button>
+<div class="card" style="margin-bottom: 24px; padding: 24px;">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+<div>
+<h1 id="hub-detail-title" style="font-size: 24px; font-weight: 800; margin-bottom: 8px; line-height: 1.2;">
+                  Material Title
+                </h1>
+<div style="font-size: 14px; color: var(--text-secondary); font-weight: 500;">
+                  By Chef Dominic Hawkes MCGB &amp; Daniel John Stine
+                </div>
+</div>
+<div style="display: flex; align-items: center; gap: 16px">
+<div style="text-align: right">
+<div id="hub-lm-time-display" style="font-size: 20px; font-weight: 800; color: var(--brand-primary)">
+                    45h 12m
+                  </div>
+<div style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">
+                    Total Hours Read
+                  </div>
+</div>
+<!-- Radial Progress Indicator -->
+<div style="position: relative; width: 64px; height: 64px">
+<svg style="width: 100%; height: 100%; transform: rotate(-90deg)" viewbox="0 0 60 60">
+<circle cx="30" cy="30" r="26" style="fill: none; stroke: var(--border-light); stroke-width: 6"></circle>
+<circle cx="30" cy="30" r="26" style="fill: none; stroke: var(--brand-primary); stroke-width: 6; stroke-dasharray: 163.3; stroke-dashoffset: 98; stroke-linecap: round;"></circle>
+</svg>
+<div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: var(--brand-primary);">
+                    40%
+                  </div>
+</div>
+</div>
+</div>
+<!-- Standard Search Input -->
+<div class="search-bar" style="margin-top: 24px; margin-bottom: 0; display:flex; align-items:center; background:var(--background-light); border:1px solid var(--border-color); border-radius:8px; padding:0 16px;">
+<i class="material-icons-outlined" style="color:var(--text-secondary);">search</i>
+<input placeholder="Search this learning material (e.g. 'What is the danger zone?')" style="flex:1; border:none; background:transparent; padding:12px; outline:none;" type="text">
+<i class="material-icons" style="color: var(--brand-primary); cursor: pointer;">auto_awesome</i>
+</input></div>
+<p style="font-size: 14px; color: var(--text-secondary); margin-left: 12px; margin-top: 8px; font-weight: 500;">
+<i class="material-icons-outlined" style="font-size:14px; vertical-align:middle;">info</i> Search only finds content within this specific module.
+            </p>
+</div>
+<!-- Resource Navigation Tabs -->
+<div class="learning-tabs" id="hub-learning-tabs" role="tablist" style="margin-bottom: 24px; display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
+<button class="l-tab active" onclick="v3App.switchHubLmTab('ebooks')" role="tab">Ebook</button>
+<button class="l-tab" onclick="v3App.switchHubLmTab('videos')" role="tab">Video</button>
+<button class="l-tab" onclick="v3App.switchHubLmTab('podcasts')" role="tab">Podcast</button>
+<button class="l-tab" onclick="v3App.switchHubLmTab('flashcards')" role="tab">Flashcards</button>
+<button class="l-tab" onclick="v3App.switchHubLmTab('practice')" role="tab">Practice Test</button>
+</div>
+<!-- Dynamic Content Card Grid -->
+<div class="lm-grid-container" id="hub-lm-content-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px;">
+</div>
+</div>
+<style>
           /* Scoped Material Card Styles */
           .asset-card-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(360px, 1fr)); gap:24px; }
           .asset-card { background:var(--surface-color); border:1px solid var(--border-color); border-radius:12px; overflow:visible; display:flex; flex-direction:column; box-shadow:var(--shadow-sm); position:relative; }
           .asset-cover { width:100%; height:140px; background:var(--border-light); object-fit:cover; border-radius:12px 12px 0 0; }
           .asset-header { padding:20px; border-bottom:1px solid var(--border-light); }
-          .asset-title { font-size:18px; font-weight:700; color:var(--text-primary); margin-bottom:6px; line-height:1.3; }
-          .asset-meta { font-size:13px; color:var(--text-secondary); display:flex; align-items:center; gap:6px; }
+          .asset-title { font-size:18px; font-weight:700; color:var(--text-primary); margin-bottom:8px; line-height:1.3; }
+          .asset-meta { font-size:14px; color:var(--text-secondary); display:flex; align-items:center; gap:8px; }
           
           .asset-toggles { display:flex; background:var(--bg-color); border-bottom:1px solid var(--border-light); }
-          .asset-toggle-btn { flex:1; padding:12px 0; font-size:13px; font-weight:600; text-align:center; color:var(--text-secondary); cursor:pointer; background:transparent; border:none; border-bottom:2px solid transparent; transition:all 0.2s; }
+          .asset-toggle-btn { flex:1; padding:12px 0; font-size:14px; font-weight:600; text-align:center; color:var(--text-secondary); cursor:pointer; background:transparent; border:none; border-bottom:2px solid transparent; transition:all 0.2s; }
           .asset-toggle-btn.active { color:var(--brand-primary); border-bottom:2px solid var(--brand-primary); background:var(--brand-active); }
           
           .asset-body { padding:20px; flex:1; display:flex; flex-direction:column; }
           
           /* Flow 2: Accordion & Progress */
           .batch-accordion { border:1px solid var(--border-color); border-radius:8px; margin-bottom:12px; overflow:hidden; }
-          .batch-header { background:var(--bg-color); padding:12px 16px; font-size:13px; font-weight:600; cursor:pointer; display:flex; justify-content:space-between; align-items:center; user-select:none; }
+          .batch-header { background:var(--bg-color); padding:12px 16px; font-size:14px; font-weight:600; cursor:pointer; display:flex; justify-content:space-between; align-items:center; user-select:none; }
           .batch-header:hover { background:var(--hover-bg); }
           .batch-content { padding:16px; display:none; background:var(--surface-color); border-top:1px solid var(--border-light); }
           .batch-content.open { display:block; }
@@ -356,13 +658,37 @@
           .prog-col .tt-list { visibility:hidden; opacity:0; position:absolute; bottom:100%; left:50%; transform:translateX(-50%) translateY(8px); background:#111; color:#fff; padding:12px; border-radius:8px; width:220px; max-height:180px; overflow-y:auto; box-shadow:0 10px 25px rgba(0,0,0,0.3); z-index:100; transition:all 0.2s; border:1px solid #333; pointer-events:none; font-size:12px; text-align:left; }
           .prog-col:hover .tt-list { visibility:visible; opacity:1; transform:translateX(-50%) translateY(-8px); }
           .tt-list::-webkit-scrollbar { width:4px; }
-          .tt-list::-webkit-scrollbar-thumb { background:#444; border-radius:2px; }
-          .tt-item { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #222; }
-          .tt-item:last-child { border-bottom:none; }
+          .tt-list::-webkit-scrollbar-thumb { background:#444; border-radius:4px; }
+          .tt-item { display:flex; justify-content:space-between; margin-bottom:4px; font-size:11px; }
+          .tt-item span:first-child { font-weight:600; color:var(--text-primary); }
+          .tt-item span:last-child { color:var(--text-tertiary); }
+          
+          /* Learning Material Module CSS */
+          .l-tab { padding: 8px 16px; border-radius: 16px; border: 1px solid var(--border-color); background: transparent; color: var(--text-secondary); font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s ease; white-space: nowrap; }
+          .l-tab:hover { background: var(--surface-color); color: var(--brand-primary); border-color: var(--brand-primary); }
+          .l-tab.active { background: var(--brand-active); color: var(--brand-primary); border-color: var(--brand-primary); }
+
+          .lm-card { display: flex; flex-direction: column; background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease; }
+          .lm-card:hover { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06); border-color: var(--text-tertiary); transform: translateY(-2px); }
+          .lm-card-thumb { width: 100%; height: 160px; background-size: cover; background-position: center; background-color: var(--background-light); border-bottom: 1px solid var(--border-color); position: relative; }
+          .lm-card-thumb::after { content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 50%; background: linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent); }
+          .lm-card-icon { position: absolute; bottom: 12px; left: 16px; color: #fff; z-index: 1; }
+          .lm-card-body { padding: 24px; display: flex; flex-direction: column; flex-grow: 1; }
+          .lm-card-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; line-height: 1.3; color: var(--text-primary); }
+          .lm-card-meta { font-size: 14px; color: var(--text-secondary); display: flex; align-items: center; gap: 8px; margin-bottom: 20px; font-weight: 500; }
+
+          .lm-progress-container { margin-bottom: 24px; }
+          .lm-progress-header { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; margin-bottom: 8px; }
+          .lm-progress-bg { width: 100%; height: 6px; background: var(--border-light); border-radius: 4px; overflow: hidden; }
+          .lm-progress-fill { height: 100%; background: var(--status-success); border-radius: 4px; transition: width 0.3s ease; }
+          .lm-progress-fill.in-progress { background: var(--status-warning); }
+
+          .lm-card-cta { margin-top: auto; width: 100%; justify-content: center; padding: 12px; font-weight: 700; letter-spacing: 0.02em; border-radius: 8px; border: none; background: var(--brand-active); color: var(--brand-primary); cursor: pointer; transition: 0.2s; }
+          .lm-card-cta:hover { background: rgba(0, 99, 155, 0.2); }
           
           /* Primary CTA */
-          .asset-cta { background:var(--brand-primary); color:#111; font-weight:700; border:none; border-radius:6px; padding:12px; width:100%; cursor:pointer; font-size:14px; margin-top:auto; transition:all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
-          .asset-cta:hover { opacity:0.9; transform:translateY(-1px); box-shadow:0 4px 12px rgba(249, 173, 0, 0.3); }
+          .asset-cta { background:var(--brand-primary); color:#111; font-weight:700; border:none; border-radius:8px; padding:12px; width:100%; cursor:pointer; font-size:14px; margin-top:auto; transition:all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+          .asset-cta:hover { opacity:0.9; transform:translateY(-1px); box-shadow:0 4px 12px rgba(30, 64, 175, 0.3); }
           
           /* Card hover lift */
           .asset-card { transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease; }
@@ -383,9 +709,9 @@
           
           /* KPI row styling */
           .asset-kpi-row { display:flex; gap:16px; margin-bottom:16px; }
-          .asset-kpi { flex:1; background:var(--bg-color); border:1px solid var(--border-light); border-radius:8px; padding:10px 12px; text-align:center; }
+          .asset-kpi { flex:1; background:var(--bg-color); border:1px solid var(--border-light); border-radius:8px; padding:12px 12px; text-align:center; }
           .asset-kpi-val { font-size:18px; font-weight:700; color:var(--text-primary); }
-          .asset-kpi-lbl { font-size:10px; color:var(--text-secondary); text-transform:uppercase; font-weight:600; letter-spacing:0.3px; }
+          .asset-kpi-lbl { font-size:11px; color:var(--text-secondary); text-transform:uppercase; font-weight:600; letter-spacing:0.3px; }
           
           /* Tab transition */
           .asset-body { transition: opacity 0.2s ease; }
@@ -401,7 +727,7 @@
             background: var(--surface-color); border: 1px solid var(--brand-primary); border-radius: 16px;
             width: 90%; max-width: 600px; padding: 32px;
             transform: scale(0.95) translateY(20px); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 32px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(249, 173, 0, 0.1);
+            box-shadow: 0 32px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(30, 64, 175, 0.1);
             position: relative; overflow: hidden;
           }
           .batch-modal-content::before {
@@ -411,7 +737,7 @@
           .batch-modal-overlay.open .batch-modal-content { transform: scale(1) translateY(0); }
           .batch-list-item {
             background: var(--surface-color); border: 1px solid var(--border-color);
-            border-radius: 10px; padding: 16px 20px; margin-bottom: 12px;
+            border-radius: 12px; padding: 16px 20px; margin-bottom: 12px;
             display: flex; justify-content: space-between; align-items: center;
             cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative; overflow: hidden;
@@ -421,190 +747,218 @@
             background: transparent; transition: all 0.3s;
           }
           .batch-list-item:hover { 
-            border-color: rgba(249, 173, 0, 0.5); 
+            border-color: rgba(30, 64, 175, 0.5); 
             transform: translateY(-2px); 
             background: #1a1a1a;
             box-shadow: 0 8px 24px rgba(0,0,0,0.4);
           }
           .batch-list-item:hover::after { background: var(--brand-primary); }
         </style>
-      </section>
-
-      <!-- 5. EARNINGS WORKSPACE -->
-      <section id="view-earnings" class="workspace">
-        <div class="flex-between mb-4">
-          <div>
-            <h2 style="font-size:20px; font-weight:600;">Earnings & Payments</h2>
-            <p class="text-secondary mt-4">Track your proctoring revenue and payout history.</p>
-          </div>
-        </div>
-        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; margin-bottom:32px;" id="earnings-kpis">
-          <!-- Populated by JS -->
-        </div>
-        <div class="card" style="padding:0; margin-bottom:24px;">
-          <h3 style="padding:16px; border-bottom:1px solid var(--border-color); font-size:16px;">Recent Classes</h3>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Session</th>
-                <th>Date</th>
-                <th>Duration</th>
-                <th>Amount</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="earnings-sessions-tbody">
-            </tbody>
-          </table>
-        </div>
-        <div class="card" style="padding:0;">
-          <h3 style="padding:16px; border-bottom:1px solid var(--border-color); font-size:16px;">Payout History</h3>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Amount</th>
-                <th>Method</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="earnings-payouts-tbody">
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- 6. REPORTS WORKSPACE -->
-      <section id="view-reports" class="workspace">
-        <div class="flex-between mb-4">
-          <div>
-            <h2 style="font-size:20px; font-weight:600;">Reports & Analytics</h2>
-            <p class="text-secondary mt-4">Platform-wide insights and integrity metrics.</p>
-          </div>
-          <button class="btn btn-secondary"><i class="material-icons-outlined">download</i> Export PDF</button>
-        </div>
-        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:24px; margin-bottom:32px;" id="reports-kpis">
-        </div>
-        <div style="display:grid; grid-template-columns:2fr 1fr; gap:24px;">
-          <div class="card" style="padding:0;">
-            <h3 style="padding:16px; border-bottom:1px solid var(--border-color); font-size:16px;">Class Breakdown</h3>
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Session</th>
-                  <th>Date</th>
-                  <th>Candidates</th>
-                  <th>Incidents</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="reports-sessions-tbody">
-              </tbody>
-            </table>
-          </div>
-          <div style="display:flex; flex-direction:column; gap:24px;">
-            <div class="card">
-              <h3 style="font-size:16px; margin-bottom:16px;">AI Flags Breakdown</h3>
-              <div id="reports-ai-stats">
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 7. SETTINGS WORKSPACE -->
-      <section id="view-settings" class="workspace">
-        <div class="flex-between mb-4">
-          <div>
-            <h2 style="font-size:20px; font-weight:600;">Platform Settings</h2>
-            <p class="text-secondary mt-4">Manage your profile and platform preferences.</p>
-          </div>
-        </div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
-          <div class="card">
-            <h3 style="font-size:16px; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:12px;">Personal Information</h3>
-            <div id="settings-profile-form">
-            </div>
-          </div>
-          <div class="card">
-            <h3 style="font-size:16px; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:12px;">Security & Preferences</h3>
-            <div id="settings-security-form">
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 8. LIVE MONITORING WORKSPACE -->
-      <section id="view-monitoring" class="workspace">
-        <div class="flex-between mb-4">
-          <div>
-            <h2 style="font-size:20px; font-weight:600; display:flex; align-items:center; gap:8px;">
-              <span style="width:8px; height:8px; background:var(--status-success); border-radius:50%; animation:pulseGlow 1.5s infinite;"></span> Exam Monitoring
+</section>
+<!-- MATERIAL MANAGEMENT WORKSPACE -->
+<section class="workspace" id="view-material-management" style="padding-top:24px;">
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; border-bottom:1px solid var(--border-color); padding-bottom:16px;">
+<div style="display:flex; align-items:center; gap:16px;">
+<button class="btn btn-secondary" onclick="v3App.switchView('materials')" style="display:flex; align-items:center; gap:6px; padding:8px 14px; font-size:13px; white-space:nowrap;"><i class="material-icons-outlined" style="font-size:18px;">arrow_back</i> Back to Learning Materials</button>
+<div>
+<h2 id="mm-title" style="font-size:24px; font-weight:800; margin:0 0 4px 0; color:var(--text-primary);">Material Title</h2>
+<div id="mm-subtitle" style="font-size:14px; color:var(--text-secondary); font-weight:500;">Type • Duration</div>
+</div>
+</div>
+<div style="display:flex; gap:12px;">
+<button class="btn btn-secondary" onclick="v3App.showToast('Material Assigned to Class', 'success')" style="padding:8px 16px; font-size:14px; font-weight:600;"><i class="material-icons-outlined" style="font-size:18px; vertical-align:middle; margin-right:4px;">assignment_add</i> Assign to Class</button>
+</div>
+</div>
+<div class="learning-tabs" style="display:flex; border-bottom:1px solid var(--border-color); gap:16px; margin-bottom:24px; position:relative;">
+<button class="l-tab" id="mm-tab-btn-analytics" onclick="v3App.switchMmTab('analytics')" style="background:transparent; border:none; padding:16px 8px; font-weight:600; color:var(--brand-primary); cursor:pointer; position:relative; font-size:14px; transition:color 0.2s;">
+            Class Analytics
+            <div id="mm-tab-ind-analytics" style="position:absolute; bottom:-1px; left:0; width:100%; height:3px; background:var(--brand-primary); border-radius:4px 4px 0 0; display:block;"></div>
+</button>
+<button class="l-tab" id="mm-tab-btn-preview" onclick="v3App.switchMmTab('preview')" style="background:transparent; border:none; padding:16px 8px; font-weight:600; color:var(--text-secondary); cursor:pointer; position:relative; font-size:14px; transition:color 0.2s;">
+            Material Preview
+            <div id="mm-tab-ind-preview" style="position:absolute; bottom:-1px; left:0; width:100%; height:3px; background:var(--brand-primary); border-radius:4px 4px 0 0; display:none;"></div>
+</button>
+</div>
+<div id="mm-tab-analytics" style="display:block;">
+<!-- Populated by JS -->
+</div>
+<div id="mm-tab-preview" style="display:none;">
+<!-- Populated by JS -->
+</div>
+</section>
+<!-- 5. EARNINGS WORKSPACE -->
+<section class="workspace" id="view-earnings">
+<div class="flex-between mb-4">
+<div>
+<h2 style="font-size:20px; font-weight:600;">Earnings &amp; Payments</h2>
+<p class="text-secondary mt-4">Track your proctoring revenue and payout history.</p>
+</div>
+</div>
+<div id="earnings-kpis" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; margin-bottom:32px;">
+<!-- Populated by JS -->
+</div>
+<div class="card" style="padding:0; margin-bottom:24px;">
+<h3 style="padding:16px; border-bottom:1px solid var(--border-color); font-size:16px;">Recent Classes</h3>
+<table class="data-table">
+<thead>
+<tr>
+<th>Session</th>
+<th>Date</th>
+<th>Duration</th>
+<th>Amount</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody id="earnings-sessions-tbody">
+</tbody>
+</table>
+</div>
+<div class="card" style="padding:0;">
+<h3 style="padding:16px; border-bottom:1px solid var(--border-color); font-size:16px;">Payout History</h3>
+<table class="data-table">
+<thead>
+<tr>
+<th>Date</th>
+<th>Amount</th>
+<th>Method</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody id="earnings-payouts-tbody">
+</tbody>
+</table>
+</div>
+</section>
+<!-- 6. REPORTS WORKSPACE -->
+<section class="workspace" id="view-reports">
+<div class="flex-between mb-4">
+<div>
+<h2 style="font-size:20px; font-weight:600;">Reports &amp; Analytics</h2>
+<p class="text-secondary mt-4">Platform-wide insights and integrity metrics.</p>
+</div>
+<button class="btn btn-secondary"><i class="material-icons-outlined">download</i> Export PDF</button>
+</div>
+<div id="reports-kpis" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:24px; margin-bottom:32px;">
+</div>
+<div style="display:grid; grid-template-columns:2fr 1fr; gap:24px;">
+<div class="card" style="padding:0;">
+<h3 style="padding:16px; border-bottom:1px solid var(--border-color); font-size:16px;">Class Breakdown</h3>
+<table class="data-table">
+<thead>
+<tr>
+<th>Class</th>
+<th>Date</th>
+<th>Candidates</th>
+<th>Incidents</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody id="reports-sessions-tbody">
+</tbody>
+</table>
+</div>
+<div style="display:flex; flex-direction:column; gap:24px;">
+<div class="card">
+<h3 style="font-size:16px; margin-bottom:16px;">AI Flags Breakdown</h3>
+<div id="reports-ai-stats">
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 7. SETTINGS WORKSPACE -->
+<section class="workspace" id="view-settings">
+<div class="flex-between mb-4">
+<div>
+<h2 style="font-size:20px; font-weight:600;">Platform Settings</h2>
+<p class="text-secondary mt-4">Manage your profile and platform preferences.</p>
+</div>
+</div>
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+<div class="card">
+<h3 style="font-size:16px; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:12px;">Personal Information</h3>
+<div id="settings-profile-form">
+</div>
+</div>
+<div class="card">
+<h3 style="font-size:16px; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:12px;">Security &amp; Preferences</h3>
+<div id="settings-security-form">
+</div>
+</div>
+<div class="card">
+<h3 style="font-size:16px; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:12px;">Proctor Resources</h3>
+<p style="font-size:13px; color:var(--text-secondary); margin-bottom:16px;">Policies, your signed agreements, and SDC support — also available anytime from the <strong>Proctor Resources</strong> button at the top.</p>
+<div style="display:flex; flex-direction:column; gap:10px;">
+<button class="pr-settings-link" onclick="v3App.openProctorResources('manual')"><span class="pr-ico"><i class="material-icons-outlined">menu_book</i></span> Proctor Policy Manual <i class="material-icons-outlined" style="margin-left:auto; font-size:18px; color:var(--text-tertiary);">chevron_right</i></button>
+<button class="pr-settings-link" onclick="v3App.openProctorResources('agreements')"><span class="pr-ico"><i class="material-icons-outlined">draw</i></span> Signed NDA &amp; Service Agreement <i class="material-icons-outlined" style="margin-left:auto; font-size:18px; color:var(--text-tertiary);">chevron_right</i></button>
+<button class="pr-settings-link" onclick="v3App.openProctorResources('contact')"><span class="pr-ico"><i class="material-icons-outlined">contact_support</i></span> Contact SDC <i class="material-icons-outlined" style="margin-left:auto; font-size:18px; color:var(--text-tertiary);">chevron_right</i></button>
+<button class="pr-settings-link" onclick="v3App.openProctorResources('report')" style="color:var(--status-error);"><span class="pr-ico" style="background:rgba(179,38,30,0.1); color:var(--status-error);"><i class="material-icons-outlined">flag</i></span> Report a Policy Issue <i class="material-icons-outlined" style="margin-left:auto; font-size:18px;">chevron_right</i></button>
+</div>
+</div>
+</div>
+</section>
+<!-- 8. LIVE MONITORING WORKSPACE -->
+<section class="workspace" id="view-monitoring">
+<div class="flex-between mb-4">
+<div>
+<h2 style="font-size:20px; font-weight:600; display:flex; align-items:center; gap:8px;">
+<span style="width:8px; height:8px; background:var(--status-success); border-radius:50%; animation:pulseGlow 1.5s infinite;"></span> Exam Monitoring
             </h2>
-            <p class="text-secondary mt-4">Real-time view of active test-takers and AI integrity flags.</p>
-          </div>
-          <div style="display:flex; gap:12px; align-items:center;">
-            <select id="monitor-session-select" class="btn btn-secondary" style="background:var(--bg-color);" onchange="v3App.renderMonitoring()">
-              <!-- Options populated by JS -->
-            </select>
-            <button class="btn btn-secondary" onclick="v3App.showToast('Message broadcasted to all active students.', 'info')"><i class="material-icons-outlined">campaign</i> Broadcast</button>
-            <button class="btn btn-danger" onclick="if(confirm('Are you sure you want to end this live exam session? This action cannot be undone.')) v3App.showToast('Session ended.', 'success')"><i class="material-icons-outlined">stop_circle</i> End Session</button>
-          </div>
-        </div>
-        
-        <div style="display:grid; grid-template-columns:3fr 1fr; gap:24px;">
-          <!-- Monitoring Table -->
-          <div class="card" style="padding:0;">
-            <div style="padding:16px; border-bottom:1px solid var(--border-color); display:flex; gap:8px;" id="monitor-filters">
-              <button class="badge badge-info" onclick="v3App.filterMonitoring('all')">All</button>
-              <button class="badge" style="background:var(--status-error-bg); color:var(--status-error);" onclick="v3App.filterMonitoring('red')"><i class="material-icons" style="font-size:12px;">warning</i> High Risk</button>
-              <button class="badge" style="background:var(--status-warning-bg); color:var(--status-warning);" onclick="v3App.filterMonitoring('amber')">Medium Risk</button>
-              <button class="badge" style="background:var(--status-success-bg); color:var(--status-success);" onclick="v3App.filterMonitoring('green')">Clear</button>
-            </div>
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Candidate</th>
-                  <th>Camera / Screen</th>
-                  <th>Time Left</th>
-                  <th>AI Risk</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="monitor-tbody">
-                <!-- Populated by JS -->
-              </tbody>
-            </table>
-          </div>
-
-          <!-- AI Alert Feed -->
-          <div class="card" style="padding:0; display:flex; flex-direction:column; max-height:600px;">
-            <div style="padding:16px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
-              <h3 style="font-size:14px; font-weight:600; display:flex; align-items:center; gap:8px;"><i class="material-icons-outlined" style="color:var(--brand-primary); font-size:18px;">smart_toy</i> AI Alerts</h3>
-              <span class="badge" style="background:var(--status-error-bg); color:var(--status-error);" id="monitor-alert-count">0</span>
-            </div>
-            <div id="monitor-alert-feed" style="overflow-y:auto; flex:1; padding:16px; display:flex; flex-direction:column; gap:12px;">
-              <!-- Populated by JS -->
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <style>
+<p class="text-secondary mt-4">Real-time view of active test-takers and AI integrity flags.</p>
+</div>
+<div style="display:flex; gap:12px; align-items:center;">
+<button class="btn btn-secondary" onclick="v3App.openBatchProgressModal()"><i class="material-icons-outlined">grid_view</i> Batch Progress</button>
+<button class="btn btn-secondary" onclick="v3App.showToast('Message broadcasted to all active candidates.', 'info')"><i class="material-icons-outlined">campaign</i> Broadcast</button>
+<button class="btn btn-danger" onclick="if(confirm('Are you sure you want to end this live exam class? This action cannot be undone.')) v3App.showToast('Class ended.', 'success')"><i class="material-icons-outlined">stop_circle</i> End Class</button>
+</div>
+</div>
+<div style="display:grid; grid-template-columns:3fr 1fr; gap:24px;">
+<!-- Monitoring Table -->
+<div class="card" style="padding:0;">
+<div id="monitor-filters" style="padding:16px; border-bottom:1px solid var(--border-color); display:flex; gap:8px;">
+<button class="badge badge-info" onclick="v3App.filterMonitoring('all')">All</button>
+<button class="badge" onclick="v3App.filterMonitoring('red')" style="background:var(--status-error-bg); color:var(--status-error);"><i class="material-icons" style="font-size:12px;">warning</i> High Risk</button>
+<button class="badge" onclick="v3App.filterMonitoring('amber')" style="background:var(--status-warning-bg); color:var(--status-warning);">Medium Risk</button>
+<button class="badge" onclick="v3App.filterMonitoring('green')" style="background:var(--status-success-bg); color:var(--status-success);">Clear</button>
+</div>
+<table class="data-table">
+<thead>
+<tr>
+<th>Candidate</th>
+<th>Time Left</th>
+<th>Progress</th>
+<th>AI Risk</th>
+<th>Camera / Screen</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="monitor-tbody">
+<!-- Populated by JS -->
+</tbody>
+</table>
+</div>
+<!-- AI Alert Feed -->
+<div class="card" style="padding:0; display:flex; flex-direction:column; max-height:600px;">
+<div style="padding:16px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+<h3 style="font-size:14px; font-weight:600; display:flex; align-items:center; gap:8px;"><i class="material-icons-outlined" style="color:var(--brand-primary); font-size:18px;">smart_toy</i> AI Alerts</h3>
+<span class="badge" id="monitor-alert-count" style="background:var(--status-error-bg); color:var(--status-error);">0</span>
+</div>
+<div id="monitor-alert-feed" style="overflow-y:auto; flex:1; padding:16px; display:flex; flex-direction:column; gap:12px;">
+<!-- Populated by JS -->
+</div>
+</div>
+</div>
+</section>
+<style>
         @keyframes pulseGlow {
           0% { box-shadow: 0 0 0 0 rgba(20,108,46,0.4); }
           70% { box-shadow: 0 0 0 6px rgba(20,108,46,0); }
           100% { box-shadow: 0 0 0 0 rgba(20,108,46,0); }
         }
       </style>
-    
-      
-
-
-    
-      <!-- ONGOING LEARNING MATERIAL DEEP DIVE -->
-      <section id="view-learning-deepdive" class="workspace" style="display:none; padding:24px;">
-        <style>
+<!-- ONGOING LEARNING MATERIAL DEEP DIVE -->
+<section class="workspace" id="view-learning-deepdive" style="display:none; padding:24px;">
+<style>
           /* Luxury Minimal Brutalist Sync for Deep Dive */
           #view-learning-deepdive {
             background-color: var(--bg-color);
@@ -639,12 +993,12 @@
             color: var(--text-secondary);
             border: 1px solid var(--border-color);
             padding: 8px 16px;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 14px;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             transition: all 0.2s;
             margin-bottom: 16px;
           }
@@ -680,7 +1034,7 @@
             color: var(--text-primary);
             border: 1px solid var(--border-color);
             padding: 0 24px;
-            border-radius: 6px;
+            border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
@@ -734,8 +1088,8 @@
           .dd-card-img { width: 100%; height: 160px; object-fit: cover; border-bottom: 1px solid var(--border-color); background: var(--bg-color); }
           .dd-card-body { padding: 20px; flex: 1; display: flex; flex-direction: column; }
           .dd-card-title { font-size: 16px; font-weight: 600; line-height: 1.4; margin-bottom: 12px; color: var(--text-primary); }
-          .dd-card-time { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; }
-          .dd-card-prog-track { width: 100%; height: 6px; background: var(--bg-color); border-radius: 3px; overflow: hidden; margin-bottom: 24px; }
+          .dd-card-time { font-size: 14px; color: var(--text-secondary); margin-bottom: 16px; }
+          .dd-card-prog-track { width: 100%; height: 6px; background: var(--bg-color); border-radius: 4px; overflow: hidden; margin-bottom: 24px; }
           .dd-card-prog-fill { height: 100%; background: var(--status-info); }
           .dd-card-cta {
             margin-top: auto;
@@ -744,7 +1098,7 @@
             border: none;
             padding: 12px;
             width: 100%;
-            border-radius: 6px;
+            border-radius: 8px;
             font-weight: 700;
             cursor: pointer;
             transition: opacity 0.2s;
@@ -762,7 +1116,7 @@
             background: var(--surface-color); border: 1px solid var(--brand-primary); border-radius: 16px;
             width: 90%; max-width: 600px; padding: 32px;
             transform: scale(0.95) translateY(20px); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 32px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(249, 173, 0, 0.1);
+            box-shadow: 0 32px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(30, 64, 175, 0.1);
             position: relative; overflow: hidden;
           }
           .batch-modal-content::before {
@@ -772,7 +1126,7 @@
           .batch-modal-overlay.open .batch-modal-content { transform: scale(1) translateY(0); }
           .batch-list-item {
             background: var(--surface-color); border: 1px solid var(--border-color);
-            border-radius: 10px; padding: 16px 20px; margin-bottom: 12px;
+            border-radius: 12px; padding: 16px 20px; margin-bottom: 12px;
             display: flex; justify-content: space-between; align-items: center;
             cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative; overflow: hidden;
@@ -782,106 +1136,229 @@
             background: transparent; transition: all 0.3s;
           }
           .batch-list-item:hover { 
-            border-color: rgba(249, 173, 0, 0.5); 
+            border-color: rgba(30, 64, 175, 0.5); 
             transform: translateY(-2px); 
             background: #1a1a1a;
             box-shadow: 0 8px 24px rgba(0,0,0,0.4);
           }
           .batch-list-item:hover::after { background: var(--brand-primary); }
         </style>
-
-        <button class="dd-back" onclick="v3App.switchView('session-detail')" style="margin-bottom:20px;">
-          <i class="material-icons-outlined" style="font-size:16px;">arrow_back</i> Back to Class
+<button class="dd-back" onclick="v3App.switchView('session-detail')" style="margin-bottom:20px;">
+<i class="material-icons-outlined" style="font-size:16px;">arrow_back</i> Back to Class
         </button>
-        
-        <!-- Enhanced Header with KPI Strip -->
-        <div style="background:#151515; border:1px solid #222; border-radius:12px; padding:32px; margin-bottom:24px;" class="dd-animate-in">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
-            <div>
-              <h2 class="dd-cand-name" id="dd-cand-name" style="font-size:28px; font-weight:700; margin:0 0 6px 0; letter-spacing:-0.5px;">Candidate Name</h2>
-              <div class="dd-cand-meta" style="font-size:14px; color:#888; display:flex; gap:12px; align-items:center;">
-                <span id="dd-cand-email">candidate@email.com</span> • 
+<!-- Enhanced Header with KPI Strip -->
+<div class="dd-animate-in" style="background:#151515; border:1px solid #222; border-radius:12px; padding:32px; margin-bottom:24px;">
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+<div>
+<h2 class="dd-cand-name" id="dd-cand-name" style="font-size:28px; font-weight:700; margin:0 0 8px 0; letter-spacing:-0.5px;">Candidate Name</h2>
+<div class="dd-cand-meta" style="font-size:14px; color:#888; display:flex; gap:12px; align-items:center;">
+<span id="dd-cand-email">candidate@email.com</span> • 
                 <span id="dd-cand-class" style="color:var(--brand-primary);">Class Name</span>
-              </div>
-            </div>
-            <div style="display:flex; align-items:center; gap:24px;">
-              <div style="text-align:right;">
-                <div style="font-size:20px; font-weight:700; color:var(--brand-primary);" id="dd-total-hours">12h 45m</div>
-                <div style="font-size:11px; color:#666; text-transform:uppercase; font-weight:600;">Total Hours Read</div>
-              </div>
-              <div style="width:64px; height:64px; border-radius:50%; background:conic-gradient(var(--brand-primary) var(--dd-prog-deg, 252deg), #222 0); display:flex; align-items:center; justify-content:center;">
-                <div style="width:52px; height:52px; border-radius:50%; background:#151515; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px;" id="dd-cand-progval">70%</div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Search Bar -->
-          <div style="position:relative; background:#1A1A1A; border:1px solid var(--brand-primary); border-radius:8px; display:flex; align-items:center; overflow:hidden;">
-            <span style="padding-left:16px; color:var(--brand-primary); font-size:18px;"><i class="material-icons-outlined" style="font-size:20px; vertical-align:middle;">auto_awesome</i></span>
-            <input type="text" style="width:100%; background:transparent; border:none; color:#FFF; padding:16px 20px; font-size:14px; outline:none;" placeholder="Search this learning material (e.g. 'What is the danger zone?')">
-            <button style="background:#2A2A2A; color:#FFF; border:none; padding:10px 24px; margin-right:6px; border-radius:6px; font-weight:600; font-size:12px; cursor:pointer; letter-spacing:0.5px; transition:0.2s;" onmouseover="this.style.background='#333'" onmouseout="this.style.background='#2A2A2A'">SEARCH</button>
-          </div>
-          <p style="color:#555; font-size:11px; margin-top:10px; font-style:italic;">Note: This helps in finding only content from this material.</p>
-        </div>
+</div>
+</div>
+<div style="display:flex; align-items:center; gap:24px;">
+<div style="text-align:right;">
+<div id="dd-total-hours" style="font-size:20px; font-weight:700; color:var(--brand-primary);">12h 45m</div>
+<div style="font-size:11px; color:#666; text-transform:uppercase; font-weight:600;">Total Hours Read</div>
+</div>
+<div style="width:64px; height:64px; border-radius:50%; background:conic-gradient(var(--brand-primary) var(--dd-prog-deg, 252deg), #222 0); display:flex; align-items:center; justify-content:center;">
+<div id="dd-cand-progval" style="width:52px; height:52px; border-radius:50%; background:#151515; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px;">70%</div>
+</div>
+</div>
+</div>
+<!-- Search Bar -->
+<div style="position:relative; background:#1A1A1A; border:1px solid var(--brand-primary); border-radius:8px; display:flex; align-items:center; overflow:hidden;">
+<span style="padding-left:16px; color:var(--brand-primary); font-size:18px;"><i class="material-icons-outlined" style="font-size:20px; vertical-align:middle;">auto_awesome</i></span>
+<input placeholder="Search this learning material (e.g. 'What is the danger zone?')" style="width:100%; background:transparent; border:none; color:#FFF; padding:16px 20px; font-size:14px; outline:none;" type="text"/>
+<button onmouseout="this.style.background='#2A2A2A'" onmouseover="this.style.background='#333'" style="background:#2A2A2A; color:#FFF; border:none; padding:12px 24px; margin-right:8px; border-radius:8px; font-weight:600; font-size:12px; cursor:pointer; letter-spacing:0.5px; transition:0.2s;">SEARCH</button>
+</div>
+<p style="color:#555; font-size:11px; margin-top:12px; font-style:italic;">Note: This helps in finding only content from this material.</p>
+</div>
+<!-- Tabs with animated underline -->
+<div class="dd-tabs" id="dd-tabs-container" style="display:flex; gap:32px; border-bottom:1px solid #222; margin-bottom:32px; padding-bottom:0;">
+<div class="dd-tab active" onclick="v3App.switchDeepDiveTab(this, 'ebook')">Ebook</div>
+<div class="dd-tab" onclick="v3App.switchDeepDiveTab(this, 'video')">Video</div>
+<div class="dd-tab" onclick="v3App.switchDeepDiveTab(this, 'podcast')">Podcast</div>
+<div class="dd-tab" onclick="v3App.switchDeepDiveTab(this, 'flashcards')">Flashcards</div>
+<div class="dd-tab" onclick="v3App.switchDeepDiveTab(this, 'practice')">Practice Test</div>
+</div>
+<div class="dd-cards-grid" id="dd-cards-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:24px;">
+<!-- Populated by JS -->
+</div>
+</section>
+</main>
 
-        <!-- Tabs with animated underline -->
-        <div class="dd-tabs" id="dd-tabs-container" style="display:flex; gap:32px; border-bottom:1px solid #222; margin-bottom:32px; padding-bottom:0;">
-          <div class="dd-tab active" onclick="v3App.switchDeepDiveTab(this, 'ebook')">Ebook</div>
-          <div class="dd-tab" onclick="v3App.switchDeepDiveTab(this, 'video')">Video</div>
-          <div class="dd-tab" onclick="v3App.switchDeepDiveTab(this, 'podcast')">Podcast</div>
-          <div class="dd-tab" onclick="v3App.switchDeepDiveTab(this, 'flashcards')">Flashcards</div>
-          <div class="dd-tab" onclick="v3App.switchDeepDiveTab(this, 'practice')">Practice Test</div>
-        </div>
+<!-- UNIVERSAL SLIDING DRAWER -->
+<!-- Batch Progress Modal -->
+<div class="batch-modal-overlay" id="batch-progress-modal" onclick="if(event.target === this) this.classList.remove('open')">
+<div class="batch-modal-content">
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; border-bottom:1px solid #333; padding-bottom:16px;">
+<h2 id="batch-modal-title" style="font-size:20px; font-weight:600; margin:0;">Batch Progress</h2>
+<button onclick="document.getElementById('batch-progress-modal').classList.remove('open')" style="background:none; border:none; color:#888; cursor:pointer;">
+<i class="material-icons-outlined">close</i>
+</button>
+</div>
+<div id="batch-modal-body">
+<!-- Grid injected here -->
+</div>
+</div>
+</div>
+<!-- Redeem Voucher Code Modal -->
+<div class="batch-modal-overlay" id="redeem-voucher-modal" onclick="if(event.target === this) this.classList.remove('open')">
+<div class="batch-modal-content" style="max-width: 400px;">
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; border-bottom:1px solid var(--border-light); padding-bottom:16px;">
+<h2 style="font-size:20px; font-weight:600; margin:0; color:var(--text-primary);">Redeem Voucher Code</h2>
+<button onclick="document.getElementById('redeem-voucher-modal').classList.remove('open')" style="background:none; border:none; color:var(--text-secondary); cursor:pointer;">
+<i class="material-icons-outlined">close</i>
+</button>
+</div>
+<div>
+<label for="redeem-voucher-input" style="display:block; font-size:14px; font-weight:600; margin-bottom: 4px; color:var(--text-secondary);">Enter Voucher Code</label>
+<input id="redeem-voucher-input" placeholder="e.g. VCH-A1001" style="width:100%; padding:12px; border:1px solid var(--border-color); background:var(--bg-color); border-radius:8px; color:var(--text-primary); margin-bottom:16px; font-family:monospace; font-size:14px;" type="text"/>
+<button class="btn btn-primary" onclick="v3App.submitRedeemVoucher()" style="width:100%; padding:12px; font-size:14px; display:flex; justify-content:center; gap:8px;"><i class="material-icons-outlined" style="font-size:18px;">verified</i> Verify &amp; Replace</button>
+</div>
+</div>
+</div>
+<!-- Create Org Modal -->
+<div class="batch-modal-overlay" id="create-org-modal" onclick="if(event.target === this) this.classList.remove('open')">
+<div class="batch-modal-content" style="max-width: 500px;">
+<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-light); padding-bottom:16px; margin-bottom:16px;">
+<h2 style="font-size:20px; font-weight:600; margin:0;">Create Organization</h2>
+<button onclick="document.getElementById('create-org-modal').classList.remove('open')" style="background:none; border:none; color:var(--text-secondary); cursor:pointer;">
+<i class="material-icons">close</i>
+</button>
+</div>
+<div id="create-org-body">
+<p style="font-size:14px; color:var(--text-secondary); margin-bottom:24px;">Select the type of organization you want to create.</p>
+<label class="quiz-option" style="display:block; padding:16px; border:1px solid var(--border-color); border-radius:8px; margin-bottom:12px; cursor:pointer;">
+<input name="orgType" style="margin-right:12px;" type="radio" value="admin_proctor"/>
+<div>
+<div style="font-weight:600; font-size:14px;">I will be Org Admin &amp; Proctor</div>
+<div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">Create an organization where you will both manage users/billing and actively proctor exams.</div>
+</div>
+</label>
+<label class="quiz-option" style="display:block; padding:16px; border:1px solid var(--border-color); border-radius:8px; margin-bottom:12px; cursor:pointer;">
+<input name="orgType" style="margin-right:12px;" type="radio" value="email_person"/>
+<div>
+<div style="font-weight:600; font-size:14px;">Invite someone else to create the Org</div>
+<div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">Email a person in my Org on how to create an Org account with a link to get started.</div>
+</div>
+</label>
+<label class="quiz-option" style="display:block; padding:16px; border:1px solid var(--border-color); border-radius:8px; margin-bottom:24px; cursor:pointer;">
+<input name="orgType" style="margin-right:12px;" type="radio" value="private_proctor"/>
+<div>
+<div style="font-weight:600; font-size:14px;">Private Proctoring Service</div>
+<div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">I am setting up a private proctoring business. (We recommend using a personal email for this Org).</div>
+</div>
+</label>
+<button class="btn btn-primary btn-full" onclick="document.getElementById('create-org-modal').classList.remove('open'); v3App.showToast('Organization created successfully.', 'success');">Continue</button>
+</div>
+</div>
+</div>
+<!-- Delete Reason Modal -->
+<div class="batch-modal-overlay" id="delete-reason-modal" onclick="if(event.target === this) this.classList.remove('open')">
+<div class="batch-modal-content" style="max-width: 400px;">
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; border-bottom:1px solid var(--border-light); padding-bottom:16px;">
+<h2 style="font-size:20px; font-weight:600; margin:0; color:var(--text-primary);">Remove Candidate</h2>
+<button onclick="document.getElementById('delete-reason-modal').classList.remove('open')" style="background:none; border:none; color:var(--text-secondary); cursor:pointer;">
+<i class="material-icons-outlined">close</i>
+</button>
+</div>
+<div>
+<label for="delete-reason-input" style="display:block; font-size:14px; font-weight:600; margin-bottom: 4px; color:var(--text-secondary);">Reason for Deletion</label>
+<textarea id="delete-reason-input" placeholder="Why are you removing this candidate?" style="width:100%; padding:12px; border:1px solid var(--border-color); background:var(--bg-color); border-radius:8px; color:var(--text-primary); margin-bottom:16px; min-height:80px; resize:vertical; font-family:var(--font-sans);"></textarea>
+<button class="btn btn-primary" onclick="v3App.submitDeleteCandidate()" style="width:100%; padding:12px; background:var(--status-error); border-color:var(--status-error); color:#fff; display:flex; justify-content:center; gap:8px;"><i class="material-icons-outlined" style="font-size:18px;">delete_forever</i> Confirm Delete</button>
+</div>
+</div>
+</div>
+<!-- Accommodation Reason Modal -->
+<div class="batch-modal-overlay" id="accommodation-reason-modal" onclick="if(event.target === this) this.classList.remove('open')">
+<div class="batch-modal-content" style="max-width: 400px;">
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; border-bottom:1px solid var(--border-light); padding-bottom:16px;">
+<h2 style="font-size:20px; font-weight:600; margin:0; color:var(--text-primary);">Accommodation Reason</h2>
+<button onclick="document.getElementById('accommodation-reason-modal').classList.remove('open')" style="background:none; border:none; color:var(--text-secondary); cursor:pointer;">
+<i class="material-icons-outlined">close</i>
+</button>
+</div>
+<div>
+<label for="accommodation-reason-input" style="display:block; font-size:14px; font-weight:600; margin-bottom: 4px; color:var(--text-secondary);">Reason for Accommodation</label>
+<textarea id="accommodation-reason-input" placeholder="e.g. Extended time (1.5x) required due to documented IEP." style="width:100%; padding:12px; border:1px solid var(--border-color); background:var(--bg-color); border-radius:8px; color:var(--text-primary); margin-bottom:16px; min-height:80px; resize:vertical; font-family:var(--font-sans);"></textarea>
+<button class="btn btn-primary" onclick="v3App.submitAccommodationReason()" style="width:100%; padding:12px; display:flex; justify-content:center; gap:8px;"><i class="material-icons-outlined" style="font-size:18px;">save</i> Save Accommodation</button>
+</div>
+</div>
+</div>
+<!-- Proctor Resources slide-over panel -->
+<div class="drawer-overlay" id="pr-overlay" onclick="v3App.closeProctorResources()"></div>
+<aside class="drawer" id="proctor-resources-panel" aria-label="Proctor Resources">
+<div class="drawer-header">
+<div>
+<h3 style="font-size:18px; font-weight:600; display:flex; align-items:center; gap:8px;"><i class="material-icons-outlined">menu_book</i> Proctor Resources</h3>
+<span style="font-size:13px; color:var(--text-secondary);">Policies, agreements &amp; support</span>
+</div>
+<button class="icon-button" onclick="v3App.closeProctorResources()"><i class="material-icons">close</i></button>
+</div>
+<div class="drawer-content" id="pr-content"></div>
+</aside>
 
-        <div class="dd-cards-grid" id="dd-cards-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:24px;">
-          <!-- Populated by JS -->
-        </div>
+<div class="drawer-overlay" id="drawer-overlay" onclick="v3App.closeDrawer()"></div>
+<div class="drawer" id="universal-drawer">
+<div class="drawer-header">
+<div>
+<h3 id="drawer-title" style="font-size:18px; font-weight:600;">Drawer Title</h3>
+<span id="drawer-subtitle" style="font-size:14px; color:var(--text-secondary); font-family:var(--font-mono);">Subtitle</span>
+</div>
+<button class="icon-button" onclick="v3App.closeDrawer()"><i class="material-icons">close</i></button>
+</div>
+<div class="drawer-content" id="drawer-content">
+<!-- Injected Content -->
+</div>
+<div class="drawer-footer" id="drawer-footer">
+<button class="btn btn-secondary" onclick="v3App.closeDrawer()">Cancel</button>
+<button class="btn btn-primary" id="drawer-action-btn">Save Changes</button>
+</div>
+</div>
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+<!-- MATERIAL VIEWER OVERLAY (READER/VIDEO) -->
+<div class="drawer-overlay" id="material-viewer-overlay" onclick="v3App.closeMaterialViewer()" style="display:none; z-index: 9999;"></div>
+<div id="material-viewer-modal" style="display:none; position: fixed; top: 20px; left: 20px; right: 20px; bottom: 20px; background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; z-index: 10000; flex-direction: column; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+<!-- Header -->
+<div style="display:flex; justify-content:space-between; align-items:center; padding: 16px 24px; border-bottom: 1px solid var(--border-color); background: rgba(0,0,0,0.2);">
+<div style="display:flex; align-items:center; gap: 12px;">
+<div id="mv-icon-container" style="background: var(--brand-primary); color: #000; width: 36px; height: 36px; border-radius: 8px; display:flex; align-items:center; justify-content:center;">
+<i class="material-icons-outlined" id="mv-icon">menu_book</i>
+</div>
+<div>
+<div id="mv-type" style="font-size:12px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:1px; font-weight:700;">E-Book</div>
+<div id="mv-title" style="font-size:16px; font-weight:700; color:var(--text-primary);">Document Title</div>
+</div>
+</div>
+<div style="display:flex; gap:12px; align-items:center;">
+<button class="btn btn-secondary" onclick="v3App.showToast('Note saved!', 'success')"><i class="material-icons-outlined" style="font-size:18px;">edit_note</i> Add Note</button>
+<button class="icon-button" onclick="v3App.closeMaterialViewer()"><i class="material-icons">close</i></button>
+</div>
+</div>
+<!-- Body -->
+<div style="display:flex; flex:1; overflow:hidden;">
+<!-- Table of Contents / Modules (Left Sidebar) -->
+<div style="width: 280px; border-right: 1px solid var(--border-color); background: rgba(0,0,0,0.1); overflow-y:auto; padding: 16px;">
+<h4 style="font-size:12px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:1px; margin-bottom:16px;">Contents</h4>
+<div id="mv-toc-list" style="display:flex; flex-direction:column; gap:8px;">
+<!-- Injected via JS -->
+</div>
+</div>
+<!-- Main Viewer Area -->
+<div id="mv-main-area" style="flex:1; background: #fff; position: relative; overflow-y:auto; display:flex; flex-direction:column;">
+<!-- Reader/Video content injected via JS -->
+</div>
+</div>
+</div>
+<script src="v3.js?v=10538"></script>
+<!-- init() is invoked once on DOMContentLoaded inside v3.js. A second inline
+     call here caused bindEvents() to run twice, double-binding every toggle
+     (theme, mobile nav) so clicks fired the handler twice and cancelled out. -->
 
-      </section>
-
-      </main>
-  </div>
-
-  <!-- UNIVERSAL SLIDING DRAWER -->
-  <!-- Batch Progress Modal -->
-  <div class="batch-modal-overlay" id="batch-progress-modal" onclick="if(event.target === this) this.classList.remove('open')">
-    <div class="batch-modal-content">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; border-bottom:1px solid #333; padding-bottom:16px;">
-        <h2 style="font-size:20px; font-weight:600; margin:0;" id="batch-modal-title">Batch Progress</h2>
-        <button style="background:none; border:none; color:#888; cursor:pointer;" onclick="document.getElementById('batch-progress-modal').classList.remove('open')">
-          <i class="material-icons-outlined">close</i>
-        </button>
-      </div>
-      <div id="batch-modal-body">
-        <!-- Grid injected here -->
-      </div>
-    </div>
-  </div>
-
-  <div class="drawer-overlay" id="drawer-overlay" onclick="v3App.closeDrawer()"></div> onclick="v3App.closeDrawer()"></div>
-  <div class="drawer" id="universal-drawer">
-    <div class="drawer-header">
-      <div>
-        <h3 id="drawer-title" style="font-size:18px; font-weight:600;">Drawer Title</h3>
-        <span id="drawer-subtitle" style="font-size:13px; color:var(--text-secondary); font-family:var(--font-mono);">Subtitle</span>
-      </div>
-      <button class="icon-button" onclick="v3App.closeDrawer()"><i class="material-icons">close</i></button>
-    </div>
-    <div class="drawer-content" id="drawer-content">
-      <!-- Injected Content -->
-    </div>
-    <div class="drawer-footer" id="drawer-footer">
-      <button class="btn btn-secondary" onclick="v3App.closeDrawer()">Cancel</button>
-      <button class="btn btn-primary" id="drawer-action-btn">Save Changes</button>
-    </div>
-  </div>
-
-  <!-- TOAST CONTAINER -->
-  <div id="toast-container"></div>
-
-  <script src="v3.js?v=10517"></script>
-  <script>v3App.init();</script>
-  <script>
+<script>
     (function(){
       let todayKey = 'v3_tab_time_' + new Date().toDateString();
       let seconds = parseInt(localStorage.getItem(todayKey) || '0');
@@ -911,5 +1388,8 @@
       updateDisplay();
     })();
   </script>
+
+<script src="global_nav.js"></script>
+</div>
 </body>
 </html>
