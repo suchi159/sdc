@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+
+<html data-theme="light" lang="en">
+<head>
+    <script src="offline_mock_api.js"></script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzAwMCIvPjxnIGZpbGw9IiNmZmYiPjxjaXJjbGUgY3g9IjExIiBjeT0iMTMiIHI9IjQuMyIvPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTAuOCIgcj0iNSIvPjxjaXJjbGUgY3g9IjIxIiBjeT0iMTMiIHI9IjQuMyIvPjxyZWN0IHg9IjguOCIgeT0iMTMiIHdpZHRoPSIxNC40IiBoZWlnaHQ9IjciLz48cmVjdCB4PSI5LjIiIHk9IjE5LjUiIHdpZHRoPSIxMy42IiBoZWlnaHQ9IjUuOCIgcng9IjEuMyIvPjwvZz48ZyBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMC43Ij48bGluZSB4MT0iMTYiIHkxPSIxNC41IiB4Mj0iMTYiIHkyPSIxOSIvPjxsaW5lIHgxPSIxMi40IiB5MT0iMTQuOCIgeDI9IjEyLjQiIHkyPSIxOSIvPjxsaW5lIHgxPSIxOS42IiB5MT0iMTQuOCIgeDI9IjE5LjYiIHkyPSIxOSIvPjwvZz48L3N2Zz4="/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SecureProctor AI - Proctor Registration</title>
+<link href="design_system.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet"/>
+<link href="index.css" rel="stylesheet"/>
+<link href="v3.css" rel="stylesheet"/>
+<style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-color);
+      background-image: radial-gradient(circle at 15% 50%, rgba(0, 99, 155, 0.05), transparent 25%),
+                        radial-gradient(circle at 85% 30%, rgba(0, 99, 155, 0.05), transparent 25%);
+    }
+
+    .auth-container {
+      width: 100%;
+      max-width: 500px;
+      max-height: 94vh;
+      overflow-y: auto;
+      background: var(--surface-color);
+      border-radius: 16px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-color);
+      padding: 40px;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .auth-header img {
+      height: 48px;
+      margin-bottom: 16px;
+    }
+
+    .auth-header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 8px 0;
+    }
+
+    .auth-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    /* Views */
+    .view-step { display: none; }
+    .view-step.active { display: block; animation: fadeUp 0.3s ease-out forwards; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Forms */
+    .inp-group { margin-bottom: 20px; }
+    .reg-section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary, var(--text-secondary)); margin: 8px 0 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color); }
+    .req { color: var(--err, #b3261e); }
+    .reg-select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); font-family: var(--font-sans); font-size: 14px; box-sizing: border-box; }
+    .inp-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; }
+    .inp-group input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); font-family: var(--font-sans); font-size: 14px; box-sizing: border-box; }
+    
+    .btn-full { width: 100%; padding: 12px; font-size: 15px; font-weight: 600; justify-content: center; margin-top: 8px; }
+
+    /* Wizard steps */
+    .wizard-progress { display: flex; gap: 8px; margin-bottom: 24px; }
+    .wizard-dot { flex: 1; height: 4px; background: var(--border-color); border-radius: 2px; transition: 0.3s; }
+    .wizard-dot.active { background: var(--brand-primary); }
+
+    /* Quiz */
+    .quiz-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .quiz-option:hover { background: var(--brand-active); border-color: var(--brand-primary); }
+    .quiz-option input { margin: 0; cursor: pointer; }
+    .quiz-option label { font-size: 14px; font-weight: 500; cursor: pointer; color: var(--text-primary); flex: 1; }
+
+    /* Video wrapper */
+    .video-wrapper {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 */
+      height: 0;
+      overflow: hidden;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .video-wrapper i { font-size: 48px; color: rgba(255,255,255,0.5); }
+
+    /* T&C */
+    .tc-box {
+      height: 150px;
+      overflow-y: auto;
+      padding: 16px;
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+  </style>
+</head>
+<body>
+<div class="auth-container">
+<div class="auth-header">
+<img alt="SecureProctor" src="sdc_hat_logo.png"/>
+<h1 id="flow-title">Proctor Sign In</h1>
+<p id="flow-subtitle">Access your control center</p>
+</div>
+<!-- 1. LOGIN VIEW -->
+<div class="view-step active" id="view-login">
+<div class="inp-group">
+<label for="input-4b8f2752">Email Address</label>
+<input id="input-4b8f2752" placeholder="proctor@secureproctor.ai" type="email" value="sarah.jenkins@secureproctor.ai"/>
+</div>
+<div class="inp-group">
+<label for="input-0a9cd66d">Password</label>
+<input id="input-0a9cd66d" placeholder="••••••••" type="password" value="password123"/>
+</div>
+<div style="text-align:right; margin:-8px 0 16px;">
+<a href="#" onclick="event.preventDefault(); var em=document.getElementById('input-4b8f2752').value.trim(); alert(em ? 'Password reset link sent to '+em : 'Enter your email above, then click Forgot password.');" style="font-size:13px; font-weight:600; color:var(--brand-primary); text-decoration:none;">Forgot password?</a>
+</div>
+<button class="btn btn-primary btn-full" onclick="window.location.href='v3.html'">Sign In</button>
+<div style="text-align:center; margin-top:24px; font-size:13px; color:var(--text-secondary);">
+        Don't have an account? <a href="#" onclick="authFlow.startRegistration()" style="color:var(--brand-primary); font-weight:600; text-decoration:none;">Register as a Proctor</a>
+</div>
+</div>
+<!-- 2. REGISTRATION: STEP 0 DETAILS -->
+<div class="view-step" id="view-reg-0">
+<div class="wizard-progress">
+<div class="wizard-dot active"></div>
+<div class="wizard-dot"></div>
+<div class="wizard-dot"></div>
+<div class="wizard-dot"></div>
+</div>
+<h3 style="margin:0 0 16px 0; font-size:18px;">Step 1: Proctor Application</h3>
+<p style="font-size:13px; color:var(--text-secondary); margin-bottom:24px;">Complete your application. Fields marked <span style="color:var(--err, #b3261e);">*</span> are required.</p>
+
+<!-- Personal details -->
+<p class="reg-section-label">Personal Details</p>
+<div style="display:flex; gap:12px;">
+<div class="inp-group" style="flex:1;">
+<label for="reg-first">First Name <span class="req">*</span></label>
+<input id="reg-first" placeholder="Jordan" type="text"/>
+</div>
+<div class="inp-group" style="flex:1;">
+<label for="reg-last">Last Name <span class="req">*</span></label>
+<input id="reg-last" placeholder="Lee" type="text"/>
+</div>
+</div>
+<div class="inp-group">
+<label for="reg-dob">Date of Birth <span class="req">*</span></label>
+<input id="reg-dob" type="date"/>
+</div>
+
+<!-- Contact & address -->
+<p class="reg-section-label">Contact &amp; Address</p>
+<div class="inp-group">
+<label for="reg-email">Email Address <span class="req">*</span></label>
+<input id="reg-email" placeholder="jordan.lee@example.com" type="email"/>
+</div>
+<div class="inp-group">
+<label for="reg-phone">Phone <span class="req">*</span></label>
+<input id="reg-phone" placeholder="+1 (555) 012-3456" type="tel"/>
+</div>
+<div class="inp-group">
+<label for="reg-street">Street Address</label>
+<input id="reg-street" placeholder="123 Main St, Apt 4" type="text"/>
+</div>
+<div style="display:flex; gap:12px;">
+<div class="inp-group" style="flex:1.4;">
+<label for="reg-city">City</label>
+<input id="reg-city" placeholder="Chicago" type="text"/>
+</div>
+<div class="inp-group" style="flex:1;">
+<label for="reg-state">State / Province</label>
+<input id="reg-state" placeholder="IL" type="text"/>
+</div>
+</div>
+<div style="display:flex; gap:12px;">
+<div class="inp-group" style="flex:1;">
+<label for="reg-zip">Postal Code</label>
+<input id="reg-zip" placeholder="60601" type="text"/>
+</div>
+<div class="inp-group" style="flex:1.4;">
+<label for="reg-country">Country</label>
+<input id="reg-country" placeholder="United States" type="text"/>
+</div>
+</div>
+
+<!-- Identity verification -->
+<p class="reg-section-label">Identity Verification</p>
+<div style="display:flex; gap:12px;">
+<div class="inp-group" style="flex:1;">
+<label for="reg-idtype">Government ID Type <span class="req">*</span></label>
+<select id="reg-idtype" class="reg-select">
+<option value="">Select…</option>
+<option>Passport</option>
+<option>Driver's License</option>
+<option>National ID Card</option>
+<option>State ID</option>
+</select>
+</div>
+<div class="inp-group" style="flex:1.2;">
+<label for="reg-idnum">ID Number <span class="req">*</span></label>
+<input id="reg-idnum" placeholder="e.g. X1234567" type="text"/>
+</div>
+</div>
+
+<!-- Professional background -->
+<p class="reg-section-label">Professional Background</p>
+<div class="inp-group">
+<label for="reg-employer">Current Employer / Organization</label>
+<input id="reg-employer" placeholder="Northwind Culinary Institute" type="text"/>
+</div>
+<div style="display:flex; gap:12px;">
+<div class="inp-group" style="flex:1.4;">
+<label for="reg-title">Job Title</label>
+<input id="reg-title" placeholder="Head Instructor" type="text"/>
+</div>
+<div class="inp-group" style="flex:1;">
+<label for="reg-experience">Years of Experience</label>
+<input id="reg-experience" placeholder="5" type="number" min="0"/>
+</div>
+</div>
+<div class="inp-group">
+<label for="reg-highcert">Highest Food-Safety Certification Held</label>
+<input id="reg-highcert" placeholder="ACF Certified Executive Chef" type="text"/>
+</div>
+
+<!-- Proctoring -->
+<p class="reg-section-label">Proctoring</p>
+<div class="inp-group">
+<label for="reg-course">Certificate Course <span class="req">*</span></label>
+<select id="reg-course" class="reg-select"></select>
+</div>
+<button class="btn btn-primary btn-full" onclick="authFlow.submitDetails()">Continue to Training</button>
+</div>
+<!-- 3. REGISTRATION: STEP 1 VIDEO -->
+<div class="view-step" id="view-reg-1">
+<div class="wizard-progress">
+<div class="wizard-dot active"></div>
+<div class="wizard-dot active"></div>
+<div class="wizard-dot"></div>
+<div class="wizard-dot"></div>
+</div>
+<h3 style="margin:0 0 16px 0; font-size:18px;">Step 2: Training Video</h3>
+<p style="font-size:13px; color:var(--text-secondary); margin-bottom:24px;" id="reg-video-sub">Please watch this mandatory training video on proctoring this certificate course.</p>
+<div class="video-wrapper" onclick="authFlow.playVideo(this)" style="cursor:pointer;">
+<i class="material-icons">play_circle_outline</i>
+<div id="video-overlay-text" style="position:absolute; bottom:16px; text-align:center; width:100%; color:rgba(255,255,255,0.8); font-size:12px;">Click to watch training</div>
+</div>
+<button class="btn btn-primary btn-full" disabled="" id="btn-reg-1" onclick="authFlow.nextStep(2)">Proceed to Knowledge Check</button>
+</div>
+<!-- 4. REGISTRATION: STEP 2 QUIZ (12 questions, rendered by JS) -->
+<div class="view-step" id="view-reg-2"></div>
+<!-- 5. REGISTRATION: STEP 3 NDA + T&C -->
+<div class="view-step" id="view-reg-3">
+<div class="wizard-progress">
+<div class="wizard-dot active"></div>
+<div class="wizard-dot active"></div>
+<div class="wizard-dot active"></div>
+<div class="wizard-dot active"></div>
+</div>
+<h3 style="margin:0 0 16px 0; font-size:18px;">Step 4: Sign NDA &amp; Terms</h3>
+<p style="font-size:13px; color:var(--text-secondary); margin-bottom:16px;">Review and sign the Non-Disclosure Agreement and the proctor compliance terms.</p>
+<p style="font-weight:600; font-size:13px; margin:0 0 8px 0;">Non-Disclosure Agreement</p>
+<div class="tc-box">
+<strong>Confidentiality</strong><br/>
+        You will have access to candidate PII (Personally Identifiable Information), exam content, and screen recordings. You agree to keep all such information strictly confidential and to use it solely for proctoring duties on the SecureProctor platform.<br/><br/>
+<strong>Non-Disclosure</strong><br/>
+        You will not copy, distribute, publish, or disclose any exam materials, candidate data, or recordings to any third party. This obligation survives the termination of your certification.
+      </div>
+<div style="display:flex; gap:12px; align-items:flex-start; margin-bottom:20px; padding:12px; background:var(--brand-active); border-radius:8px; border:1px solid var(--border-color);">
+<input id="nda-checkbox" style="margin-top:2px;" type="checkbox"/>
+<label for="nda-checkbox" style="font-size:13px; color:var(--text-primary); cursor:pointer;">I have read and sign the Non-Disclosure Agreement.</label>
+</div>
+<p style="font-weight:600; font-size:13px; margin:0 0 8px 0;">Terms &amp; Conditions</p>
+<div class="tc-box">
+<strong>1. Integrity Policy</strong><br/>
+        As a certified proctor, you are responsible for maintaining the integrity of all assigned examinations. Any collusion or failure to report violations will result in immediate revocation of your certification.<br/><br/>
+<strong>2. Certification Scope</strong><br/>
+        Your SDC Proctor ID certifies you to proctor the specific certificate course selected during registration for in-class examinations.<br/><br/>
+<strong>3. Certification Renewal</strong><br/>
+        Proctor certifications are valid for 1 year from the date of approval. You must renew prior to expiration.
+      </div>
+<div style="display:flex; gap:12px; align-items:flex-start; margin-bottom:24px; padding:12px; background:var(--brand-active); border-radius:8px; border:1px solid var(--border-color);">
+<input id="tc-checkbox" style="margin-top:2px;" type="checkbox"/>
+<label for="tc-checkbox" style="font-size:13px; color:var(--text-primary); cursor:pointer;">I have read and agree to the Proctor Terms &amp; Conditions.</label>
+</div>
+<button class="btn btn-primary btn-full" disabled="" id="btn-reg-3" onclick="authFlow.submitApproval()">Submit for Approval</button>
+</div>
+<!-- 6. REGISTRATION: SUCCESS -->
+<div class="view-step" id="view-reg-success" style="text-align:center;">
+<i class="material-icons-outlined" style="font-size:64px; color:var(--status-success); margin-bottom:16px;">verified</i>
+<h3 style="margin:0 0 8px 0; font-size:20px;">Approved &amp; Verified</h3>
+<p style="font-size:14px; color:var(--text-secondary); margin-bottom:20px;" id="reg-success-desc">You are now a verified SDC proctor. Save your SDC Proctor ID below — you can also find it anytime under Settings → Proctor ID.</p>
+<div style="background:var(--bg-color); border:1px dashed var(--brand-primary); border-radius:12px; padding:20px; margin-bottom:8px;">
+<div style="font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-secondary); margin-bottom:8px;">Your SDC Proctor ID</div>
+<div id="reg-code-value" style="font-family:var(--font-mono, monospace); font-size:24px; font-weight:700; color:var(--text-primary); letter-spacing:0.05em;">—</div>
+<div id="reg-code-expiry" style="font-size:12px; color:var(--text-secondary); margin-top:8px;"></div>
+</div>
+<button class="btn btn-secondary btn-full" style="margin-bottom:12px;" onclick="authFlow.copyCode()"><i class="material-icons" style="font-size:16px; vertical-align:middle;">content_copy</i> Copy Code</button>
+<button class="btn btn-primary btn-full" onclick="window.location.href='/online_proctor.html'">Enter Proctor Portal</button>
+</div>
+</div>
+<script src="proctor_auth.js"></script>
+</body>
+</html>

@@ -1,5 +1,7 @@
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzAwMCIvPjxnIGZpbGw9IiNmZmYiPjxjaXJjbGUgY3g9IjExIiBjeT0iMTMiIHI9IjQuMyIvPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTAuOCIgcj0iNSIvPjxjaXJjbGUgY3g9IjIxIiBjeT0iMTMiIHI9IjQuMyIvPjxyZWN0IHg9IjguOCIgeT0iMTMiIHdpZHRoPSIxNC40IiBoZWlnaHQ9IjciLz48cmVjdCB4PSI5LjIiIHk9IjE5LjUiIHdpZHRoPSIxMy42IiBoZWlnaHQ9IjUuOCIgcng9IjEuMyIvPjwvZz48ZyBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMC43Ij48bGluZSB4MT0iMTYiIHkxPSIxNC41IiB4Mj0iMTYiIHkyPSIxOSIvPjxsaW5lIHgxPSIxMi40IiB5MT0iMTQuOCIgeDI9IjEyLjQiIHkyPSIxOSIvPjxsaW5lIHgxPSIxOS42IiB5MT0iMTQuOCIgeDI9IjE5LjYiIHkyPSIxOSIvPjwvZz48L3N2Zz4="/>
 
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="design_system.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
 <style>
 :root {
   --font: 'Inter', system-ui, sans-serif;
@@ -167,462 +169,435 @@ body{font-family:var(--font);background:var(--md-bg);color:var(--on-sur);font-si
 
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0;}
 </style>
-
 <h2 class="sr-only">Material Design 3 token system with Inter font, WCAG 2.2 validated colors, and full component states</h2>
-
 <div class="wrap">
 <div class="hdr">
-  <div class="brand">
-    <div class="badge">M3</div>
-    <div>
-      <div class="brand-txt">Material Design 3 — Design Tokens</div>
-      <div class="brand-sub">Inter · #f9ad00 brand · WCAG 2.2 validated</div>
-    </div>
-  </div>
-  <div class="toggle">
-    <button class="tbtn on" onclick="setT('light')">Light</button>
-    <button class="tbtn" onclick="setT('dark')">Dark</button>
-  </div>
+<div class="brand">
+<div class="badge">M3</div>
+<div>
+<div class="brand-txt">Material Design 3 — Design Tokens</div>
+<div class="brand-sub">Inter · #f9ad00 brand · WCAG 2.2 validated</div>
 </div>
-
+</div>
+<div class="toggle">
+<button class="tbtn on" onclick="setT('light')">Light</button>
+<button class="tbtn" onclick="setT('dark')">Dark</button>
+</div>
+</div>
 <div class="tabs">
-  <button class="tab on" onclick="go('colors',this)">Colors</button>
-  <button class="tab" onclick="go('semantic',this)">Semantic</button>
-  <button class="tab" onclick="go('buttons',this)">Buttons</button>
-  <button class="tab" onclick="go('icons',this)">Icons</button>
-  <button class="tab" onclick="go('type',this)">Typography</button>
-  <button class="tab" onclick="go('tokens',this)">Tokens</button>
+<button class="tab on" onclick="go('colors',this)">Colors</button>
+<button class="tab" onclick="go('semantic',this)">Semantic</button>
+<button class="tab" onclick="go('buttons',this)">Buttons</button>
+<button class="tab" onclick="go('icons',this)">Icons</button>
+<button class="tab" onclick="go('type',this)">Typography</button>
+<button class="tab" onclick="go('tokens',this)">Tokens</button>
 </div>
-
 <div class="panel on" id="p-colors">
-  <div class="slabel">Primary — #f9ad00 · MD3 key color</div>
-  <div class="scale">
-    <div class="sw" style="background:#fff8e6;"><span style="color:#7a4e00">0</span></div>
-    <div class="sw" style="background:#ffedaa;"><span style="color:#7a4e00">10</span></div>
-    <div class="sw" style="background:#ffd966;"><span style="color:#5c3900">20</span></div>
-    <div class="sw" style="background:#ffbe1a;"><span style="color:#3a2100">30</span></div>
-    <div class="sw" style="background:#f9ad00; outline:2px solid #d4920a; outline-offset:-2px;"><span style="color:#1c0f00">40✦</span></div>
-    <div class="sw" style="background:#e69e00;"><span style="color:#fff8e6">50</span></div>
-    <div class="sw" style="background:#d4920a;"><span style="color:#fff8e6">60</span></div>
-    <div class="sw" style="background:#a86e00;"><span style="color:#ffedaa">70</span></div>
-    <div class="sw" style="background:#7a4e00;"><span style="color:#ffd966">80</span></div>
-    <div class="sw" style="background:#4d3000;"><span style="color:#ffbe1a">90</span></div>
-    <div class="sw" style="background:#2a1800;"><span style="color:#f9ad00">95</span></div>
-    <div class="sw" style="background:#100900;"><span style="color:#a86e00">99</span></div>
-  </div>
-
-  <div class="slabel">Neutral / surface</div>
-  <div class="scale">
-    <div class="sw" style="background:#fffbfe;border:1px solid #e6e0e9;"><span style="color:#49454f">0</span></div>
-    <div class="sw" style="background:#f4eff4;"><span style="color:#49454f">10</span></div>
-    <div class="sw" style="background:#e6e0e9;"><span style="color:#49454f">20</span></div>
-    <div class="sw" style="background:#cac4d0;"><span style="color:#1c1b1f">30</span></div>
-    <div class="sw" style="background:#938f99;"><span style="color:#fffbfe">50</span></div>
-    <div class="sw" style="background:#79747e;"><span style="color:#fffbfe">60</span></div>
-    <div class="sw" style="background:#49454f;"><span style="color:#e6e0e9">70</span></div>
-    <div class="sw" style="background:#2b2930;"><span style="color:#cac4d0">80</span></div>
-    <div class="sw" style="background:#1c1b1f;"><span style="color:#938f99">90</span></div>
-    <div class="sw" style="background:#0d0d0d;"><span style="color:#79747e">99</span></div>
-  </div>
-
-  <div class="slabel">Secondary (violet)</div>
-  <div class="scale">
-    <div class="sw" style="background:#f3efff;"><span style="color:#4a3f75">10</span></div>
-    <div class="sw" style="background:#d6cfff;"><span style="color:#321e73">20</span></div>
-    <div class="sw" style="background:#b0a7e8;"><span style="color:#1a0b55">40</span></div>
-    <div class="sw" style="background:#7c6fba;"><span style="color:#f3efff">60</span></div>
-    <div class="sw" style="background:#6750a4;"><span style="color:#f3efff">70</span></div>
-    <div class="sw" style="background:#321e73;"><span style="color:#d6cfff">90</span></div>
-    <div class="sw" style="background:#1a0b55;"><span style="color:#b0a7e8">99</span></div>
-  </div>
-
-  <div class="slabel">Error · Warning · Success · Info</div>
-  <div class="scale">
-    <div class="sw" style="background:#fcedeb;border-radius:4px 0 0 4px;"><span style="color:#b3261e">Er</span></div>
-    <div class="sw" style="background:#f2b8b5;"><span style="color:#601410">—</span></div>
-    <div class="sw" style="background:#b3261e;"><span style="color:#fff">—</span></div>
-    <div class="sw" style="background:#601410;border-radius:0 4px 4px 0;"><span style="color:#f2b8b5">—</span></div>
-    <div class="sw" style="background:transparent;width:8px;flex:none;"></div>
-    <div class="sw" style="background:#fff8db;border-radius:4px 0 0 4px;"><span style="color:#7d5700">Wn</span></div>
-    <div class="sw" style="background:#ffdf80;"><span style="color:#3c2800">—</span></div>
-    <div class="sw" style="background:#7d5700;"><span style="color:#fff">—</span></div>
-    <div class="sw" style="background:#3c2800;border-radius:0 4px 4px 0;"><span style="color:#ffdf80">—</span></div>
-    <div class="sw" style="background:transparent;width:8px;flex:none;"></div>
-    <div class="sw" style="background:#d2f4de;border-radius:4px 0 0 4px;"><span style="color:#146c2e">Ok</span></div>
-    <div class="sw" style="background:#6dd58c;"><span style="color:#003917">—</span></div>
-    <div class="sw" style="background:#146c2e;"><span style="color:#fff">—</span></div>
-    <div class="sw" style="background:#003917;border-radius:0 4px 4px 0;"><span style="color:#6dd58c">—</span></div>
-    <div class="sw" style="background:transparent;width:8px;flex:none;"></div>
-    <div class="sw" style="background:#d3eaff;border-radius:4px 0 0 4px;"><span style="color:#00639b">In</span></div>
-    <div class="sw" style="background:#7fcfff;"><span style="color:#003350">—</span></div>
-    <div class="sw" style="background:#00639b;"><span style="color:#fff">—</span></div>
-    <div class="sw" style="background:#003350;border-radius:0 4px 4px 0;"><span style="color:#7fcfff">—</span></div>
-  </div>
-
-  <div class="slabel">Graph — categorical (10 colors, all WCAG AA on white)</div>
-  <div class="scale">
-    <div class="sw" style="background:#2563eb;"><span style="color:#dbeafe">S1</span></div>
-    <div class="sw" style="background:#f9ad00;"><span style="color:#1c0f00">S2</span></div>
-    <div class="sw" style="background:#059669;"><span style="color:#d1fae5">S3</span></div>
-    <div class="sw" style="background:#dc2626;"><span style="color:#fee2e2">S4</span></div>
-    <div class="sw" style="background:#7c3aed;"><span style="color:#ede9fe">S5</span></div>
-    <div class="sw" style="background:#0891b2;"><span style="color:#cffafe">S6</span></div>
-    <div class="sw" style="background:#ea580c;"><span style="color:#ffedd5">S7</span></div>
-    <div class="sw" style="background:#be185d;"><span style="color:#fce7f3">S8</span></div>
-    <div class="sw" style="background:#65a30d;"><span style="color:#ecfccb">S9</span></div>
-    <div class="sw" style="background:#475569;"><span style="color:#f1f5f9">S10</span></div>
-  </div>
+<div class="slabel">Primary — #f9ad00 · MD3 key color</div>
+<div class="scale">
+<div class="sw" style="background:#fff8e6;"><span style="color:#7a4e00">0</span></div>
+<div class="sw" style="background:#ffedaa;"><span style="color:#7a4e00">10</span></div>
+<div class="sw" style="background:#ffd966;"><span style="color:#5c3900">20</span></div>
+<div class="sw" style="background:#ffbe1a;"><span style="color:#3a2100">30</span></div>
+<div class="sw" style="background:#f9ad00; outline:2px solid #d4920a; outline-offset:-2px;"><span style="color:#1c0f00">40✦</span></div>
+<div class="sw" style="background:#e69e00;"><span style="color:#fff8e6">50</span></div>
+<div class="sw" style="background:#d4920a;"><span style="color:#fff8e6">60</span></div>
+<div class="sw" style="background:#a86e00;"><span style="color:#ffedaa">70</span></div>
+<div class="sw" style="background:#7a4e00;"><span style="color:#ffd966">80</span></div>
+<div class="sw" style="background:#4d3000;"><span style="color:#ffbe1a">90</span></div>
+<div class="sw" style="background:#2a1800;"><span style="color:#f9ad00">95</span></div>
+<div class="sw" style="background:#100900;"><span style="color:#a86e00">99</span></div>
 </div>
-
+<div class="slabel">Neutral / surface</div>
+<div class="scale">
+<div class="sw" style="background:#fffbfe;border:1px solid #e6e0e9;"><span style="color:#49454f">0</span></div>
+<div class="sw" style="background:#f4eff4;"><span style="color:#49454f">10</span></div>
+<div class="sw" style="background:#e6e0e9;"><span style="color:#49454f">20</span></div>
+<div class="sw" style="background:#cac4d0;"><span style="color:#1c1b1f">30</span></div>
+<div class="sw" style="background:#938f99;"><span style="color:#fffbfe">50</span></div>
+<div class="sw" style="background:#79747e;"><span style="color:#fffbfe">60</span></div>
+<div class="sw" style="background:#49454f;"><span style="color:#e6e0e9">70</span></div>
+<div class="sw" style="background:#2b2930;"><span style="color:#cac4d0">80</span></div>
+<div class="sw" style="background:#1c1b1f;"><span style="color:#938f99">90</span></div>
+<div class="sw" style="background:#0d0d0d;"><span style="color:#79747e">99</span></div>
+</div>
+<div class="slabel">Secondary (violet)</div>
+<div class="scale">
+<div class="sw" style="background:#f3efff;"><span style="color:#4a3f75">10</span></div>
+<div class="sw" style="background:#d6cfff;"><span style="color:#321e73">20</span></div>
+<div class="sw" style="background:#b0a7e8;"><span style="color:#1a0b55">40</span></div>
+<div class="sw" style="background:#7c6fba;"><span style="color:#f3efff">60</span></div>
+<div class="sw" style="background:#6750a4;"><span style="color:#f3efff">70</span></div>
+<div class="sw" style="background:#321e73;"><span style="color:#d6cfff">90</span></div>
+<div class="sw" style="background:#1a0b55;"><span style="color:#b0a7e8">99</span></div>
+</div>
+<div class="slabel">Error · Warning · Success · Info</div>
+<div class="scale">
+<div class="sw" style="background:#fcedeb;border-radius:4px 0 0 4px;"><span style="color:#b3261e">Er</span></div>
+<div class="sw" style="background:#f2b8b5;"><span style="color:#601410">—</span></div>
+<div class="sw" style="background:#b3261e;"><span style="color:#fff">—</span></div>
+<div class="sw" style="background:#601410;border-radius:0 4px 4px 0;"><span style="color:#f2b8b5">—</span></div>
+<div class="sw" style="background:transparent;width:8px;flex:none;"></div>
+<div class="sw" style="background:#fff8db;border-radius:4px 0 0 4px;"><span style="color:#7d5700">Wn</span></div>
+<div class="sw" style="background:#ffdf80;"><span style="color:#3c2800">—</span></div>
+<div class="sw" style="background:#7d5700;"><span style="color:#fff">—</span></div>
+<div class="sw" style="background:#3c2800;border-radius:0 4px 4px 0;"><span style="color:#ffdf80">—</span></div>
+<div class="sw" style="background:transparent;width:8px;flex:none;"></div>
+<div class="sw" style="background:#d2f4de;border-radius:4px 0 0 4px;"><span style="color:#146c2e">Ok</span></div>
+<div class="sw" style="background:#6dd58c;"><span style="color:#003917">—</span></div>
+<div class="sw" style="background:#146c2e;"><span style="color:#fff">—</span></div>
+<div class="sw" style="background:#003917;border-radius:0 4px 4px 0;"><span style="color:#6dd58c">—</span></div>
+<div class="sw" style="background:transparent;width:8px;flex:none;"></div>
+<div class="sw" style="background:#d3eaff;border-radius:4px 0 0 4px;"><span style="color:#00639b">In</span></div>
+<div class="sw" style="background:#7fcfff;"><span style="color:#003350">—</span></div>
+<div class="sw" style="background:#00639b;"><span style="color:#fff">—</span></div>
+<div class="sw" style="background:#003350;border-radius:0 4px 4px 0;"><span style="color:#7fcfff">—</span></div>
+</div>
+<div class="slabel">Graph — categorical (10 colors, all WCAG AA on white)</div>
+<div class="scale">
+<div class="sw" style="background:#2563eb;"><span style="color:#dbeafe">S1</span></div>
+<div class="sw" style="background:#f9ad00;"><span style="color:#1c0f00">S2</span></div>
+<div class="sw" style="background:#059669;"><span style="color:#d1fae5">S3</span></div>
+<div class="sw" style="background:#dc2626;"><span style="color:#fee2e2">S4</span></div>
+<div class="sw" style="background:#7c3aed;"><span style="color:#ede9fe">S5</span></div>
+<div class="sw" style="background:#0891b2;"><span style="color:#cffafe">S6</span></div>
+<div class="sw" style="background:#ea580c;"><span style="color:#ffedd5">S7</span></div>
+<div class="sw" style="background:#be185d;"><span style="color:#fce7f3">S8</span></div>
+<div class="sw" style="background:#65a30d;"><span style="color:#ecfccb">S9</span></div>
+<div class="sw" style="background:#475569;"><span style="color:#f1f5f9">S10</span></div>
+</div>
+</div>
 <div class="panel" id="p-semantic">
-  <div class="slabel">WCAG 2.2 contrast ratios — all roles validated</div>
-  <div class="trow"><div class="tsw" style="background:#f9ad00;"></div><div class="tn">primary (on black)</div><div class="th">#f9ad00 on #000</div><div class="td">9.3:1 <span class="wcag aaa">AAA</span></div></div>
-  <div class="trow"><div class="tsw" style="background:#7a4e00;"></div><div class="tn">primary-container</div><div class="th">#7a4e00 on #fff</div><div class="td">8.2:1 <span class="wcag aaa">AAA</span></div></div>
-  <div class="trow"><div class="tsw" style="background:#1c1b1f;"></div><div class="tn">on-surface</div><div class="th">#1c1b1f on #fffbfe</div><div class="td">19.7:1 <span class="wcag aaa">AAA</span></div></div>
-  <div class="trow"><div class="tsw" style="background:#49454f;"></div><div class="tn">on-surface-variant</div><div class="th">#49454f on #fffbfe</div><div class="td">8.7:1 <span class="wcag aaa">AAA</span></div></div>
-  <div class="trow"><div class="tsw" style="background:#6750a4;"></div><div class="tn">secondary</div><div class="th">#6750a4 on #fff</div><div class="td">5.8:1 <span class="wcag aa">AA</span></div></div>
-  <div class="trow"><div class="tsw" style="background:#b3261e;"></div><div class="tn">error</div><div class="th">#b3261e on #fff</div><div class="td">5.2:1 <span class="wcag aa">AA</span></div></div>
-  <div class="trow"><div class="tsw" style="background:#7d5700;"></div><div class="tn">warning (text)</div><div class="th">#7d5700 on #fff</div><div class="td">7.0:1 <span class="wcag aaa">AAA</span></div></div>
-  <div class="trow"><div class="tsw" style="background:#146c2e;"></div><div class="tn">success (text)</div><div class="th">#146c2e on #fff</div><div class="td">7.1:1 <span class="wcag aaa">AAA</span></div></div>
-  <div class="trow"><div class="tsw" style="background:#00639b;"></div><div class="tn">info (text)</div><div class="th">#00639b on #fff</div><div class="td">5.3:1 <span class="wcag aa">AA</span></div></div>
-  <div class="trow"><div class="tsw" style="background:#79747e;"></div><div class="tn">outline</div><div class="th">#79747e on #fff</div><div class="td">4.6:1 <span class="wcag aa">AA</span></div></div>
-
-  <div class="div"></div>
-  <div class="slabel">Status badges</div>
-  <div class="badge-row">
-    <span class="bdg" style="background:#d3eaff;color:#003350;"><i class="ti ti-info-circle" style="font-size:14px;" aria-hidden="true"></i> Info</span>
-    <span class="bdg" style="background:#d2f4de;color:#003917;"><i class="ti ti-circle-check" style="font-size:14px;" aria-hidden="true"></i> Success</span>
-    <span class="bdg" style="background:#fff8db;color:#3c2800;"><i class="ti ti-alert-triangle" style="font-size:14px;" aria-hidden="true"></i> Warning</span>
-    <span class="bdg" style="background:#fcedeb;color:#601410;"><i class="ti ti-circle-x" style="font-size:14px;" aria-hidden="true"></i> Error</span>
-    <span class="bdg" style="background:#fff8e6;color:#4d3000;"><i class="ti ti-star" style="font-size:14px;" aria-hidden="true"></i> Brand</span>
-    <span class="bdg" style="background:#f3efff;color:#321e73;"><i class="ti ti-clock" style="font-size:14px;" aria-hidden="true"></i> In review</span>
-    <span class="bdg" style="background:#f4eff4;color:#49454f;">To do</span>
-    <span class="bdg" style="background:#dbeafe;color:#1e3a8a;">In progress</span>
-    <span class="bdg" style="background:#d2f4de;color:#003917;">Done</span>
-    <span class="bdg" style="background:#fcedeb;color:#601410;">Blocked</span>
-  </div>
-
-  <div class="div"></div>
-  <div class="slabel">Chips — filter, input, suggestion, assist</div>
-  <div class="chip-row">
-    <button class="chip" aria-pressed="false"><i class="ti ti-filter" style="font-size:16px;color:var(--pri-dk);" aria-hidden="true"></i> Filter</button>
-    <button class="chip selected" aria-pressed="true"><i class="ti ti-check" style="font-size:16px;" aria-hidden="true"></i> Selected</button>
-    <button class="chip"><i class="ti ti-user" style="font-size:16px;" aria-hidden="true"></i> Assist</button>
-    <button class="chip disabled" aria-disabled="true">Disabled</button>
-    <button class="chip"><i class="ti ti-star" style="font-size:16px;color:#f9ad00;" aria-hidden="true"></i> Suggested</button>
-  </div>
-
-  <div class="div"></div>
-  <div class="slabel">Input field states</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-    <div class="inp-group">
-      <label class="inp-label">Default</label>
-      <input class="inp" type="text" placeholder="Enter value" value="">
-      <div class="inp-help">Supporting helper text</div>
-    </div>
-    <div class="inp-group">
-      <label class="inp-label" style="color:var(--pri-dk);">Focused</label>
-      <input class="inp" type="text" style="border-color:var(--pri);border-width:2px;padding:9px 13px;" value="Focused input">
-      <div class="inp-help">Helper text</div>
-    </div>
-    <div class="inp-group">
-      <label class="inp-label" style="color:var(--err);">Error</label>
-      <input class="inp err-state" type="text" value="Wrong value" aria-invalid="true">
-      <div class="inp-err"><i class="ti ti-alert-circle" style="font-size:13px;vertical-align:-1px;" aria-hidden="true"></i> This field is required</div>
-    </div>
-    <div class="inp-group">
-      <label class="inp-label" style="opacity:.38;">Disabled</label>
-      <input class="inp disabled-state" type="text" placeholder="Disabled" disabled aria-disabled="true">
-      <div class="inp-help" style="opacity:.38;">Not editable</div>
-    </div>
-  </div>
+<div class="slabel">WCAG 2.2 contrast ratios — all roles validated</div>
+<div class="trow"><div class="tsw" style="background:#f9ad00;"></div><div class="tn">primary (on black)</div><div class="th">#f9ad00 on #000</div><div class="td">9.3:1 <span class="wcag aaa">AAA</span></div></div>
+<div class="trow"><div class="tsw" style="background:#7a4e00;"></div><div class="tn">primary-container</div><div class="th">#7a4e00 on #fff</div><div class="td">8.2:1 <span class="wcag aaa">AAA</span></div></div>
+<div class="trow"><div class="tsw" style="background:#1c1b1f;"></div><div class="tn">on-surface</div><div class="th">#1c1b1f on #fffbfe</div><div class="td">19.7:1 <span class="wcag aaa">AAA</span></div></div>
+<div class="trow"><div class="tsw" style="background:#49454f;"></div><div class="tn">on-surface-variant</div><div class="th">#49454f on #fffbfe</div><div class="td">8.7:1 <span class="wcag aaa">AAA</span></div></div>
+<div class="trow"><div class="tsw" style="background:#6750a4;"></div><div class="tn">secondary</div><div class="th">#6750a4 on #fff</div><div class="td">5.8:1 <span class="wcag aa">AA</span></div></div>
+<div class="trow"><div class="tsw" style="background:#b3261e;"></div><div class="tn">error</div><div class="th">#b3261e on #fff</div><div class="td">5.2:1 <span class="wcag aa">AA</span></div></div>
+<div class="trow"><div class="tsw" style="background:#7d5700;"></div><div class="tn">warning (text)</div><div class="th">#7d5700 on #fff</div><div class="td">7.0:1 <span class="wcag aaa">AAA</span></div></div>
+<div class="trow"><div class="tsw" style="background:#146c2e;"></div><div class="tn">success (text)</div><div class="th">#146c2e on #fff</div><div class="td">7.1:1 <span class="wcag aaa">AAA</span></div></div>
+<div class="trow"><div class="tsw" style="background:#00639b;"></div><div class="tn">info (text)</div><div class="th">#00639b on #fff</div><div class="td">5.3:1 <span class="wcag aa">AA</span></div></div>
+<div class="trow"><div class="tsw" style="background:#79747e;"></div><div class="tn">outline</div><div class="th">#79747e on #fff</div><div class="td">4.6:1 <span class="wcag aa">AA</span></div></div>
+<div class="div"></div>
+<div class="slabel">Status badges</div>
+<div class="badge-row">
+<span class="bdg" style="background:#d3eaff;color:#003350;"><i aria-hidden="true" class="ti ti-info-circle" style="font-size:14px;"></i> Info</span>
+<span class="bdg" style="background:#d2f4de;color:#003917;"><i aria-hidden="true" class="ti ti-circle-check" style="font-size:14px;"></i> Success</span>
+<span class="bdg" style="background:#fff8db;color:#3c2800;"><i aria-hidden="true" class="ti ti-alert-triangle" style="font-size:14px;"></i> Warning</span>
+<span class="bdg" style="background:#fcedeb;color:#601410;"><i aria-hidden="true" class="ti ti-circle-x" style="font-size:14px;"></i> Error</span>
+<span class="bdg" style="background:#fff8e6;color:#4d3000;"><i aria-hidden="true" class="ti ti-star" style="font-size:14px;"></i> Brand</span>
+<span class="bdg" style="background:#f3efff;color:#321e73;"><i aria-hidden="true" class="ti ti-clock" style="font-size:14px;"></i> In review</span>
+<span class="bdg" style="background:#f4eff4;color:#49454f;">To do</span>
+<span class="bdg" style="background:#dbeafe;color:#1e3a8a;">In progress</span>
+<span class="bdg" style="background:#d2f4de;color:#003917;">Done</span>
+<span class="bdg" style="background:#fcedeb;color:#601410;">Blocked</span>
 </div>
-
+<div class="div"></div>
+<div class="slabel">Chips — filter, input, suggestion, assist</div>
+<div class="chip-row">
+<button aria-pressed="false" class="chip"><i aria-hidden="true" class="ti ti-filter" style="font-size:16px;color:var(--pri-dk);"></i> Filter</button>
+<button aria-pressed="true" class="chip selected"><i aria-hidden="true" class="ti ti-check" style="font-size:16px;"></i> Selected</button>
+<button class="chip"><i aria-hidden="true" class="ti ti-user" style="font-size:16px;"></i> Assist</button>
+<button aria-disabled="true" class="chip disabled">Disabled</button>
+<button class="chip"><i aria-hidden="true" class="ti ti-star" style="font-size:16px;color:#f9ad00;"></i> Suggested</button>
+</div>
+<div class="div"></div>
+<div class="slabel">Input field states</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+<div class="inp-group">
+<label class="inp-label" for="input-6c74c190">Default</label>
+<input class="inp" id="input-6c74c190" placeholder="Enter value" type="text" value=""/>
+<div class="inp-help">Supporting helper text</div>
+</div>
+<div class="inp-group">
+<label class="inp-label" for="input-b7f7e3bf" style="color:var(--pri-dk);">Focused</label>
+<input class="inp" id="input-b7f7e3bf" style="border-color:var(--pri);border-width:2px;padding:9px 13px;" type="text" value="Focused input"/>
+<div class="inp-help">Helper text</div>
+</div>
+<div class="inp-group">
+<label class="inp-label" for="input-336b3281" style="color:var(--err);">Error</label>
+<input aria-invalid="true" class="inp err-state" id="input-336b3281" type="text" value="Wrong value"/>
+<div class="inp-err"><i aria-hidden="true" class="ti ti-alert-circle" style="font-size:13px;vertical-align:-1px;"></i> This field is required</div>
+</div>
+<div class="inp-group">
+<label class="inp-label" for="input-f7443994" style="opacity:.38;">Disabled</label>
+<input aria-disabled="true" class="inp disabled-state" disabled="" id="input-f7443994" placeholder="Disabled" type="text"/>
+<div class="inp-help" style="opacity:.38;">Not editable</div>
+</div>
+</div>
+</div>
 <div class="panel" id="p-buttons">
-  <div class="slabel">Filled button — primary action</div>
-  <div class="btn-grid">
-    <div class="btn-col"><button class="mdbtn btn-filled">Label</button><span class="state-label">Enabled</span></div>
-    <div class="btn-col"><button class="mdbtn btn-filled" style="background:#e69e00;">Label</button><span class="state-label">Hover</span></div>
-    <div class="btn-col"><button class="mdbtn btn-filled" style="background:#cc8d00;">Label</button><span class="state-label">Pressed</span></div>
-    <div class="btn-col"><button class="mdbtn btn-filled disabled" aria-disabled="true">Label</button><span class="state-label">Disabled</span></div>
-    <div class="btn-col"><button class="mdbtn btn-filled" style="outline:3px solid var(--pri);outline-offset:2px;">Label</button><span class="state-label">Focused</span></div>
-    <div class="btn-col"><button class="mdbtn btn-filled"><i class="ti ti-plus" style="font-size:18px;" aria-hidden="true"></i> With icon</button><span class="state-label">Icon left</span></div>
-  </div>
-
-  <div class="slabel">Tonal button — secondary action</div>
-  <div class="btn-grid">
-    <div class="btn-col"><button class="mdbtn btn-tonal">Label</button><span class="state-label">Enabled</span></div>
-    <div class="btn-col"><button class="mdbtn btn-tonal" style="background:#e8dff5;">Label</button><span class="state-label">Hover</span></div>
-    <div class="btn-col"><button class="mdbtn btn-tonal" style="background:#ddd4ed;">Label</button><span class="state-label">Pressed</span></div>
-    <div class="btn-col"><button class="mdbtn btn-tonal disabled" aria-disabled="true">Label</button><span class="state-label">Disabled</span></div>
-    <div class="btn-col"><button class="mdbtn btn-tonal" style="outline:3px solid var(--pri);outline-offset:2px;">Label</button><span class="state-label">Focused</span></div>
-    <div class="btn-col"><button class="mdbtn btn-tonal"><i class="ti ti-download" style="font-size:18px;" aria-hidden="true"></i> Export</button><span class="state-label">Icon left</span></div>
-  </div>
-
-  <div class="slabel">Outlined button — alternative action</div>
-  <div class="btn-grid">
-    <div class="btn-col"><button class="mdbtn btn-outlined">Label</button><span class="state-label">Enabled</span></div>
-    <div class="btn-col"><button class="mdbtn btn-outlined" style="background:rgba(249,173,0,.08);">Label</button><span class="state-label">Hover</span></div>
-    <div class="btn-col"><button class="mdbtn btn-outlined" style="background:rgba(249,173,0,.12);">Label</button><span class="state-label">Pressed</span></div>
-    <div class="btn-col"><button class="mdbtn btn-outlined disabled" aria-disabled="true">Label</button><span class="state-label">Disabled</span></div>
-    <div class="btn-col"><button class="mdbtn btn-outlined" style="outline:3px solid var(--pri);outline-offset:2px;">Label</button><span class="state-label">Focused</span></div>
-    <div class="btn-col"><button class="mdbtn btn-outlined"><i class="ti ti-edit" style="font-size:18px;" aria-hidden="true"></i> Edit</button><span class="state-label">Icon left</span></div>
-  </div>
-
-  <div class="slabel">Text button — low-emphasis action</div>
-  <div class="btn-grid">
-    <div class="btn-col"><button class="mdbtn btn-text">Label</button><span class="state-label">Enabled</span></div>
-    <div class="btn-col"><button class="mdbtn btn-text" style="background:rgba(249,173,0,.08);">Label</button><span class="state-label">Hover</span></div>
-    <div class="btn-col"><button class="mdbtn btn-text" style="background:rgba(249,173,0,.12);">Label</button><span class="state-label">Pressed</span></div>
-    <div class="btn-col"><button class="mdbtn btn-text disabled" aria-disabled="true">Label</button><span class="state-label">Disabled</span></div>
-    <div class="btn-col"><button class="mdbtn btn-text" style="outline:3px solid var(--pri);outline-offset:2px;">Label</button><span class="state-label">Focused</span></div>
-    <div class="btn-col"><button class="mdbtn btn-text"><i class="ti ti-external-link" style="font-size:18px;" aria-hidden="true"></i> Open</button><span class="state-label">Icon left</span></div>
-  </div>
-
-  <div class="slabel">Elevated button</div>
-  <div class="btn-grid">
-    <div class="btn-col"><button class="mdbtn btn-elevated">Label</button><span class="state-label">Enabled</span></div>
-    <div class="btn-col"><button class="mdbtn btn-elevated" style="box-shadow:0 2px 4px rgba(0,0,0,.3);">Label</button><span class="state-label">Hover</span></div>
-    <div class="btn-col"><button class="mdbtn btn-elevated" style="transform:scale(.98);">Label</button><span class="state-label">Pressed</span></div>
-    <div class="btn-col"><button class="mdbtn btn-elevated disabled" aria-disabled="true">Label</button><span class="state-label">Disabled</span></div>
-    <div class="btn-col"><button class="mdbtn btn-elevated" style="outline:3px solid var(--pri);outline-offset:2px;">Label</button><span class="state-label">Focused</span></div>
-  </div>
-
-  <div class="slabel">FAB — floating action button</div>
-  <div class="btn-grid" style="align-items:flex-end;">
-    <div class="btn-col"><button class="fab fab-sm fab-surf" aria-label="Add item"><i class="ti ti-plus" style="font-size:18px;" aria-hidden="true"></i></button><span class="state-label">Small</span></div>
-    <div class="btn-col"><button class="fab fab-surf" aria-label="Add item"><i class="ti ti-plus" style="font-size:24px;" aria-hidden="true"></i></button><span class="state-label">Standard</span></div>
-    <div class="btn-col"><button class="fab fab-pri" aria-label="Create"><i class="ti ti-plus" style="font-size:24px;" aria-hidden="true"></i></button><span class="state-label">Primary</span></div>
-    <div class="btn-col"><button class="fab fab-surf" style="border-radius:16px;padding:16px 20px;min-width:auto;gap:8px;" aria-label="Extended FAB"><i class="ti ti-plus" style="font-size:20px;" aria-hidden="true"></i><span style="font-family:var(--font);font-size:14px;font-weight:500;">Create</span></button><span class="state-label">Extended</span></div>
-    <div class="btn-col"><button class="fab fab-surf" style="outline:3px solid var(--pri);outline-offset:2px;" aria-label="Focused FAB"><i class="ti ti-plus" style="font-size:24px;" aria-hidden="true"></i></button><span class="state-label">Focused</span></div>
-  </div>
+<div class="slabel">Filled button — primary action</div>
+<div class="btn-grid">
+<div class="btn-col"><button class="mdbtn btn-filled">Label</button><span class="state-label">Enabled</span></div>
+<div class="btn-col"><button class="mdbtn btn-filled" style="background:#e69e00;">Label</button><span class="state-label">Hover</span></div>
+<div class="btn-col"><button class="mdbtn btn-filled" style="background:#cc8d00;">Label</button><span class="state-label">Pressed</span></div>
+<div class="btn-col"><button aria-disabled="true" class="mdbtn btn-filled disabled">Label</button><span class="state-label">Disabled</span></div>
+<div class="btn-col"><button class="mdbtn btn-filled" style="outline:3px solid var(--pri);outline-offset:2px;">Label</button><span class="state-label">Focused</span></div>
+<div class="btn-col"><button class="mdbtn btn-filled"><i aria-hidden="true" class="ti ti-plus" style="font-size:18px;"></i> With icon</button><span class="state-label">Icon left</span></div>
 </div>
-
+<div class="slabel">Tonal button — secondary action</div>
+<div class="btn-grid">
+<div class="btn-col"><button class="mdbtn btn-tonal">Label</button><span class="state-label">Enabled</span></div>
+<div class="btn-col"><button class="mdbtn btn-tonal" style="background:#e8dff5;">Label</button><span class="state-label">Hover</span></div>
+<div class="btn-col"><button class="mdbtn btn-tonal" style="background:#ddd4ed;">Label</button><span class="state-label">Pressed</span></div>
+<div class="btn-col"><button aria-disabled="true" class="mdbtn btn-tonal disabled">Label</button><span class="state-label">Disabled</span></div>
+<div class="btn-col"><button class="mdbtn btn-tonal" style="outline:3px solid var(--pri);outline-offset:2px;">Label</button><span class="state-label">Focused</span></div>
+<div class="btn-col"><button class="mdbtn btn-tonal"><i aria-hidden="true" class="ti ti-download" style="font-size:18px;"></i> Export</button><span class="state-label">Icon left</span></div>
+</div>
+<div class="slabel">Outlined button — alternative action</div>
+<div class="btn-grid">
+<div class="btn-col"><button class="mdbtn btn-outlined">Label</button><span class="state-label">Enabled</span></div>
+<div class="btn-col"><button class="mdbtn btn-outlined" style="background:rgba(249,173,0,.08);">Label</button><span class="state-label">Hover</span></div>
+<div class="btn-col"><button class="mdbtn btn-outlined" style="background:rgba(249,173,0,.12);">Label</button><span class="state-label">Pressed</span></div>
+<div class="btn-col"><button aria-disabled="true" class="mdbtn btn-outlined disabled">Label</button><span class="state-label">Disabled</span></div>
+<div class="btn-col"><button class="mdbtn btn-outlined" style="outline:3px solid var(--pri);outline-offset:2px;">Label</button><span class="state-label">Focused</span></div>
+<div class="btn-col"><button class="mdbtn btn-outlined"><i aria-hidden="true" class="ti ti-edit" style="font-size:18px;"></i> Edit</button><span class="state-label">Icon left</span></div>
+</div>
+<div class="slabel">Text button — low-emphasis action</div>
+<div class="btn-grid">
+<div class="btn-col"><button class="mdbtn btn-text">Label</button><span class="state-label">Enabled</span></div>
+<div class="btn-col"><button class="mdbtn btn-text" style="background:rgba(249,173,0,.08);">Label</button><span class="state-label">Hover</span></div>
+<div class="btn-col"><button class="mdbtn btn-text" style="background:rgba(249,173,0,.12);">Label</button><span class="state-label">Pressed</span></div>
+<div class="btn-col"><button aria-disabled="true" class="mdbtn btn-text disabled">Label</button><span class="state-label">Disabled</span></div>
+<div class="btn-col"><button class="mdbtn btn-text" style="outline:3px solid var(--pri);outline-offset:2px;">Label</button><span class="state-label">Focused</span></div>
+<div class="btn-col"><button class="mdbtn btn-text"><i aria-hidden="true" class="ti ti-external-link" style="font-size:18px;"></i> Open</button><span class="state-label">Icon left</span></div>
+</div>
+<div class="slabel">Elevated button</div>
+<div class="btn-grid">
+<div class="btn-col"><button class="mdbtn btn-elevated">Label</button><span class="state-label">Enabled</span></div>
+<div class="btn-col"><button class="mdbtn btn-elevated" style="box-shadow:0 2px 4px rgba(0,0,0,.3);">Label</button><span class="state-label">Hover</span></div>
+<div class="btn-col"><button class="mdbtn btn-elevated" style="transform:scale(.98);">Label</button><span class="state-label">Pressed</span></div>
+<div class="btn-col"><button aria-disabled="true" class="mdbtn btn-elevated disabled">Label</button><span class="state-label">Disabled</span></div>
+<div class="btn-col"><button class="mdbtn btn-elevated" style="outline:3px solid var(--pri);outline-offset:2px;">Label</button><span class="state-label">Focused</span></div>
+</div>
+<div class="slabel">FAB — floating action button</div>
+<div class="btn-grid" style="align-items:flex-end;">
+<div class="btn-col"><button aria-label="Add item" class="fab fab-sm fab-surf"><i aria-hidden="true" class="ti ti-plus" style="font-size:18px;"></i></button><span class="state-label">Small</span></div>
+<div class="btn-col"><button aria-label="Add item" class="fab fab-surf"><i aria-hidden="true" class="ti ti-plus" style="font-size:24px;"></i></button><span class="state-label">Standard</span></div>
+<div class="btn-col"><button aria-label="Create" class="fab fab-pri"><i aria-hidden="true" class="ti ti-plus" style="font-size:24px;"></i></button><span class="state-label">Primary</span></div>
+<div class="btn-col"><button aria-label="Extended FAB" class="fab fab-surf" style="border-radius:16px;padding:16px 20px;min-width:auto;gap:8px;"><i aria-hidden="true" class="ti ti-plus" style="font-size:20px;"></i><span style="font-family:var(--font);font-size:14px;font-weight:500;">Create</span></button><span class="state-label">Extended</span></div>
+<div class="btn-col"><button aria-label="Focused FAB" class="fab fab-surf" style="outline:3px solid var(--pri);outline-offset:2px;"><i aria-hidden="true" class="ti ti-plus" style="font-size:24px;"></i></button><span class="state-label">Focused</span></div>
+</div>
+</div>
 <div class="panel" id="p-icons">
-  <div class="slabel">Standard icon button — all states</div>
-  <div class="irow">
-    <div style="text-align:center;">
-      <button class="icon-btn" aria-label="Settings"><i class="ti ti-settings" aria-hidden="true"></i></button>
-      <div class="state-label">Default</div>
-    </div>
-    <div style="text-align:center;">
-      <button class="icon-btn" style="background:rgba(28,27,31,.08);" aria-label="Settings hovered"><i class="ti ti-settings" aria-hidden="true"></i></button>
-      <div class="state-label">Hover</div>
-    </div>
-    <div style="text-align:center;">
-      <button class="icon-btn" style="background:rgba(28,27,31,.12);" aria-label="Settings pressed"><i class="ti ti-settings" aria-hidden="true"></i></button>
-      <div class="state-label">Pressed</div>
-    </div>
-    <div style="text-align:center;">
-      <button class="icon-btn" style="outline:3px solid var(--pri);outline-offset:2px;" aria-label="Settings focused"><i class="ti ti-settings" aria-hidden="true"></i></button>
-      <div class="state-label">Focused</div>
-    </div>
-    <div style="text-align:center;">
-      <button class="icon-btn selected" aria-label="Starred" aria-pressed="true"><i class="ti ti-star" aria-hidden="true"></i></button>
-      <div class="state-label">Selected</div>
-    </div>
-    <div style="text-align:center;">
-      <button class="icon-btn disabled" aria-label="Delete disabled" aria-disabled="true"><i class="ti ti-trash" aria-hidden="true"></i></button>
-      <div class="state-label">Disabled</div>
-    </div>
-  </div>
-
-  <div class="slabel">Contained icon button</div>
-  <div class="irow">
-    <div style="text-align:center;">
-      <button class="icon-btn contained" aria-label="Add"><i class="ti ti-plus" aria-hidden="true"></i></button>
-      <div class="state-label">Tonal</div>
-    </div>
-    <div style="text-align:center;">
-      <button class="icon-btn contained filled" aria-label="Confirm"><i class="ti ti-check" aria-hidden="true"></i></button>
-      <div class="state-label">Filled</div>
-    </div>
-    <div style="text-align:center;">
-      <button class="icon-btn contained" style="border:1px solid var(--out-var);background:transparent;" aria-label="Edit"><i class="ti ti-edit" aria-hidden="true"></i></button>
-      <div class="state-label">Outlined</div>
-    </div>
-    <div style="text-align:center;">
-      <button class="icon-btn contained filled" style="outline:3px solid var(--pri);outline-offset:2px;" aria-label="Focused"><i class="ti ti-check" aria-hidden="true"></i></button>
-      <div class="state-label">Focused</div>
-    </div>
-    <div style="text-align:center;">
-      <button class="icon-btn selected" aria-label="Bookmarked" aria-pressed="true"><i class="ti ti-bookmark" aria-hidden="true"></i></button>
-      <div class="state-label">Toggle on</div>
-    </div>
-    <div style="text-align:center;">
-      <button class="icon-btn" aria-label="Bookmark" aria-pressed="false"><i class="ti ti-bookmark" aria-hidden="true"></i></button>
-      <div class="state-label">Toggle off</div>
-    </div>
-  </div>
-
-  <div class="div"></div>
-  <div class="slabel">Icon sizes — M3 spec (20 / 24 / 40 / 48dp)</div>
-  <div class="irow" style="align-items:center;">
-    <div style="text-align:center;">
-      <i class="ti ti-home" style="font-size:20px;color:var(--on-sur);" aria-hidden="true"></i>
-      <div class="state-label">20dp</div>
-    </div>
-    <div style="text-align:center;">
-      <i class="ti ti-home" style="font-size:24px;color:var(--on-sur);" aria-hidden="true"></i>
-      <div class="state-label">24dp</div>
-    </div>
-    <div style="text-align:center;">
-      <i class="ti ti-home" style="font-size:40px;color:var(--on-sur);" aria-hidden="true"></i>
-      <div class="state-label">40dp</div>
-    </div>
-    <div style="text-align:center;">
-      <i class="ti ti-home" style="font-size:48px;color:var(--on-sur);" aria-hidden="true"></i>
-      <div class="state-label">48dp</div>
-    </div>
-    <div style="width:1px;height:48px;background:var(--out-var);margin:0 4px;"></div>
-    <div style="text-align:center;">
-      <i class="ti ti-home" style="font-size:24px;color:var(--pri-dk);" aria-hidden="true"></i>
-      <div class="state-label">Primary</div>
-    </div>
-    <div style="text-align:center;">
-      <i class="ti ti-check-circle" style="font-size:24px;color:var(--suc);" aria-hidden="true"></i>
-      <div class="state-label">Success</div>
-    </div>
-    <div style="text-align:center;">
-      <i class="ti ti-alert-triangle" style="font-size:24px;color:var(--wrn);" aria-hidden="true"></i>
-      <div class="state-label">Warning</div>
-    </div>
-    <div style="text-align:center;">
-      <i class="ti ti-circle-x" style="font-size:24px;color:var(--err);" aria-hidden="true"></i>
-      <div class="state-label">Error</div>
-    </div>
-    <div style="text-align:center;">
-      <i class="ti ti-info-circle" style="font-size:24px;color:var(--inf);" aria-hidden="true"></i>
-      <div class="state-label">Info</div>
-    </div>
-    <div style="text-align:center;">
-      <i class="ti ti-settings" style="font-size:24px;color:var(--out);" aria-hidden="true"></i>
-      <div class="state-label">Muted</div>
-    </div>
-  </div>
-
-  <div class="div"></div>
-  <div class="slabel">Icon + label patterns</div>
-  <div class="irow" style="flex-wrap:wrap;gap:12px;">
-    <div style="display:flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--on-sur);"><i class="ti ti-calendar" style="font-size:18px;color:var(--pri-dk);" aria-hidden="true"></i> Schedule</div>
-    <div style="display:flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--on-sur);"><i class="ti ti-user" style="font-size:18px;color:var(--sec);" aria-hidden="true"></i> Assignee</div>
-    <div style="display:flex;align-items:center;gap:6px;font-size:14px;color:var(--suc);"><i class="ti ti-circle-check" style="font-size:18px;" aria-hidden="true"></i> Saved</div>
-    <div style="display:flex;align-items:center;gap:6px;font-size:14px;color:var(--err);"><i class="ti ti-alert-circle" style="font-size:18px;" aria-hidden="true"></i> Failed</div>
-    <div style="display:flex;align-items:center;gap:6px;font-size:14px;color:var(--wrn);"><i class="ti ti-alert-triangle" style="font-size:18px;" aria-hidden="true"></i> At risk</div>
-    <div style="display:flex;align-items:center;gap:6px;font-size:14px;color:var(--inf);"><i class="ti ti-info-circle" style="font-size:18px;" aria-hidden="true"></i> Info</div>
-  </div>
+<div class="slabel">Standard icon button — all states</div>
+<div class="irow">
+<div style="text-align:center;">
+<button aria-label="Settings" class="icon-btn"><i aria-hidden="true" class="ti ti-settings"></i></button>
+<div class="state-label">Default</div>
 </div>
-
+<div style="text-align:center;">
+<button aria-label="Settings hovered" class="icon-btn" style="background:rgba(28,27,31,.08);"><i aria-hidden="true" class="ti ti-settings"></i></button>
+<div class="state-label">Hover</div>
+</div>
+<div style="text-align:center;">
+<button aria-label="Settings pressed" class="icon-btn" style="background:rgba(28,27,31,.12);"><i aria-hidden="true" class="ti ti-settings"></i></button>
+<div class="state-label">Pressed</div>
+</div>
+<div style="text-align:center;">
+<button aria-label="Settings focused" class="icon-btn" style="outline:3px solid var(--pri);outline-offset:2px;"><i aria-hidden="true" class="ti ti-settings"></i></button>
+<div class="state-label">Focused</div>
+</div>
+<div style="text-align:center;">
+<button aria-label="Starred" aria-pressed="true" class="icon-btn selected"><i aria-hidden="true" class="ti ti-star"></i></button>
+<div class="state-label">Selected</div>
+</div>
+<div style="text-align:center;">
+<button aria-disabled="true" aria-label="Delete disabled" class="icon-btn disabled"><i aria-hidden="true" class="ti ti-trash"></i></button>
+<div class="state-label">Disabled</div>
+</div>
+</div>
+<div class="slabel">Contained icon button</div>
+<div class="irow">
+<div style="text-align:center;">
+<button aria-label="Add" class="icon-btn contained"><i aria-hidden="true" class="ti ti-plus"></i></button>
+<div class="state-label">Tonal</div>
+</div>
+<div style="text-align:center;">
+<button aria-label="Confirm" class="icon-btn contained filled"><i aria-hidden="true" class="ti ti-check"></i></button>
+<div class="state-label">Filled</div>
+</div>
+<div style="text-align:center;">
+<button aria-label="Edit" class="icon-btn contained" style="border:1px solid var(--out-var);background:transparent;"><i aria-hidden="true" class="ti ti-edit"></i></button>
+<div class="state-label">Outlined</div>
+</div>
+<div style="text-align:center;">
+<button aria-label="Focused" class="icon-btn contained filled" style="outline:3px solid var(--pri);outline-offset:2px;"><i aria-hidden="true" class="ti ti-check"></i></button>
+<div class="state-label">Focused</div>
+</div>
+<div style="text-align:center;">
+<button aria-label="Bookmarked" aria-pressed="true" class="icon-btn selected"><i aria-hidden="true" class="ti ti-bookmark"></i></button>
+<div class="state-label">Toggle on</div>
+</div>
+<div style="text-align:center;">
+<button aria-label="Bookmark" aria-pressed="false" class="icon-btn"><i aria-hidden="true" class="ti ti-bookmark"></i></button>
+<div class="state-label">Toggle off</div>
+</div>
+</div>
+<div class="div"></div>
+<div class="slabel">Icon sizes — M3 spec (20 / 24 / 40 / 48dp)</div>
+<div class="irow" style="align-items:center;">
+<div style="text-align:center;">
+<i aria-hidden="true" class="ti ti-home" style="font-size:20px;color:var(--on-sur);"></i>
+<div class="state-label">20dp</div>
+</div>
+<div style="text-align:center;">
+<i aria-hidden="true" class="ti ti-home" style="font-size:24px;color:var(--on-sur);"></i>
+<div class="state-label">24dp</div>
+</div>
+<div style="text-align:center;">
+<i aria-hidden="true" class="ti ti-home" style="font-size:40px;color:var(--on-sur);"></i>
+<div class="state-label">40dp</div>
+</div>
+<div style="text-align:center;">
+<i aria-hidden="true" class="ti ti-home" style="font-size:48px;color:var(--on-sur);"></i>
+<div class="state-label">48dp</div>
+</div>
+<div style="width:1px;height:48px;background:var(--out-var);margin:0 4px;"></div>
+<div style="text-align:center;">
+<i aria-hidden="true" class="ti ti-home" style="font-size:24px;color:var(--pri-dk);"></i>
+<div class="state-label">Primary</div>
+</div>
+<div style="text-align:center;">
+<i aria-hidden="true" class="ti ti-check-circle" style="font-size:24px;color:var(--suc);"></i>
+<div class="state-label">Success</div>
+</div>
+<div style="text-align:center;">
+<i aria-hidden="true" class="ti ti-alert-triangle" style="font-size:24px;color:var(--wrn);"></i>
+<div class="state-label">Warning</div>
+</div>
+<div style="text-align:center;">
+<i aria-hidden="true" class="ti ti-circle-x" style="font-size:24px;color:var(--err);"></i>
+<div class="state-label">Error</div>
+</div>
+<div style="text-align:center;">
+<i aria-hidden="true" class="ti ti-info-circle" style="font-size:24px;color:var(--inf);"></i>
+<div class="state-label">Info</div>
+</div>
+<div style="text-align:center;">
+<i aria-hidden="true" class="ti ti-settings" style="font-size:24px;color:var(--out);"></i>
+<div class="state-label">Muted</div>
+</div>
+</div>
+<div class="div"></div>
+<div class="slabel">Icon + label patterns</div>
+<div class="irow" style="flex-wrap:wrap;gap:12px;">
+<div style="display:flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--on-sur);"><i aria-hidden="true" class="ti ti-calendar" style="font-size:18px;color:var(--pri-dk);"></i> Schedule</div>
+<div style="display:flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--on-sur);"><i aria-hidden="true" class="ti ti-user" style="font-size:18px;color:var(--sec);"></i> Assignee</div>
+<div style="display:flex;align-items:center;gap:6px;font-size:14px;color:var(--suc);"><i aria-hidden="true" class="ti ti-circle-check" style="font-size:18px;"></i> Saved</div>
+<div style="display:flex;align-items:center;gap:6px;font-size:14px;color:var(--err);"><i aria-hidden="true" class="ti ti-alert-circle" style="font-size:18px;"></i> Failed</div>
+<div style="display:flex;align-items:center;gap:6px;font-size:14px;color:var(--wrn);"><i aria-hidden="true" class="ti ti-alert-triangle" style="font-size:18px;"></i> At risk</div>
+<div style="display:flex;align-items:center;gap:6px;font-size:14px;color:var(--inf);"><i aria-hidden="true" class="ti ti-info-circle" style="font-size:18px;"></i> Info</div>
+</div>
+</div>
 <div class="panel" id="p-type">
-  <div class="slabel">M3 type scale — Inter</div>
-  <div style="padding:12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);">
-    <div style="font-family:var(--font);font-size:57px;font-weight:400;letter-spacing:-.25px;line-height:1.12;color:var(--on-sur);margin-bottom:2px;">Display Large</div>
-    <div style="font-size:11px;font-family:monospace;color:var(--out);">57px / w400 / ls -0.25px / lh 1.12</div>
-  </div>
-  <div style="padding:12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);">
-    <div style="font-family:var(--font);font-size:45px;font-weight:400;letter-spacing:0;line-height:1.16;color:var(--on-sur);margin-bottom:2px;">Display Medium</div>
-    <div style="font-size:11px;font-family:monospace;color:var(--out);">45px / w400 / ls 0 / lh 1.16</div>
-  </div>
-  <div style="padding:12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);">
-    <div style="font-family:var(--font);font-size:36px;font-weight:400;letter-spacing:0;line-height:1.22;color:var(--on-sur);margin-bottom:2px;">Display Small</div>
-    <div style="font-size:11px;font-family:monospace;color:var(--out);">36px / w400 / ls 0 / lh 1.22</div>
-  </div>
-  <div style="padding:12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);">
-    <div style="font-family:var(--font);font-size:32px;font-weight:400;letter-spacing:0;line-height:1.25;color:var(--on-sur);margin-bottom:2px;">Headline Large</div>
-    <div style="font-size:11px;font-family:monospace;color:var(--out);">32px / w400 / ls 0 / lh 1.25</div>
-  </div>
-  <div style="padding:12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);">
-    <div style="font-family:var(--font);font-size:28px;font-weight:400;letter-spacing:0;line-height:1.29;color:var(--on-sur);margin-bottom:2px;">Headline Medium</div>
-    <div style="font-size:11px;font-family:monospace;color:var(--out);">28px / w400 / ls 0 / lh 1.29</div>
-  </div>
-  <div style="padding:12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);">
-    <div style="font-family:var(--font);font-size:24px;font-weight:400;letter-spacing:0;line-height:1.33;color:var(--on-sur);margin-bottom:2px;">Headline Small</div>
-    <div style="font-size:11px;font-family:monospace;color:var(--out);">24px / w400 / ls 0 / lh 1.33</div>
-  </div>
-  <div style="padding:10px 12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);display:flex;align-items:baseline;justify-content:space-between;">
-    <div style="font-family:var(--font);font-size:22px;font-weight:500;letter-spacing:0;line-height:1.27;color:var(--on-sur);">Title Large · 22px w500</div>
-    <div style="font-size:11px;font-family:monospace;color:var(--out);">ls 0 / lh 1.27</div>
-  </div>
-  <div style="padding:10px 12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);display:flex;align-items:baseline;justify-content:space-between;">
-    <div style="font-family:var(--font);font-size:16px;font-weight:600;letter-spacing:.1px;line-height:1.5;color:var(--on-sur);">Title Medium · 16px w600</div>
-    <div style="font-size:11px;font-family:monospace;color:var(--out);">ls 0.1px / lh 1.5</div>
-  </div>
-  <div style="padding:10px 12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);display:flex;align-items:baseline;justify-content:space-between;">
-    <div style="font-family:var(--font);font-size:14px;font-weight:600;letter-spacing:.1px;line-height:1.43;color:var(--on-sur);">Title Small · 14px w600</div>
-    <div style="font-size:11px;font-family:monospace;color:var(--out);">ls 0.1px / lh 1.43</div>
-  </div>
-  <div style="padding:10px 12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);display:flex;align-items:baseline;justify-content:space-between;">
-    <div style="font-family:var(--font);font-size:14px;font-weight:500;letter-spacing:.006em;line-height:1.43;color:var(--on-sur);">Label Large · 14px w500 — button text</div>
-    <div style="font-size:11px;font-family:monospace;color:var(--out);">ls 0.006em / lh 1.43</div>
-  </div>
-  <div style="padding:10px 12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);display:flex;align-items:baseline;justify-content:space-between;">
-    <div style="font-family:var(--font);font-size:12px;font-weight:500;letter-spacing:.05em;line-height:1.33;color:var(--on-sur);">Label Medium · 12px w500</div>
-    <div style="font-size:11px;font-family:monospace;color:var(--out);">ls 0.05em / lh 1.33</div>
-  </div>
-  <div style="padding:10px 12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);display:flex;align-items:baseline;justify-content:space-between;">
-    <div style="font-family:var(--font);font-size:11px;font-weight:500;letter-spacing:.05em;line-height:1.45;color:var(--on-sur);">Label Small · 11px w500</div>
-    <div style="font-size:11px;font-family:monospace;color:var(--out);">ls 0.05em / lh 1.45</div>
-  </div>
-  <div style="padding:10px 12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);display:flex;align-items:baseline;justify-content:space-between;">
-    <div style="font-family:var(--font);font-size:16px;font-weight:400;letter-spacing:.03em;line-height:1.5;color:var(--on-sur);">Body Large · 16px w400</div>
-    <div style="font-size:11px;font-family:monospace;color:var(--out);">ls 0.03em / lh 1.5</div>
-  </div>
-  <div style="padding:10px 12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);display:flex;align-items:baseline;justify-content:space-between;">
-    <div style="font-family:var(--font);font-size:14px;font-weight:400;letter-spacing:.015em;line-height:1.43;color:var(--on-sur);">Body Medium · 14px w400</div>
-    <div style="font-size:11px;font-family:monospace;color:var(--out);">ls 0.015em / lh 1.43</div>
-  </div>
-  <div style="padding:10px 12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);display:flex;align-items:baseline;justify-content:space-between;">
-    <div style="font-family:var(--font);font-size:12px;font-weight:400;letter-spacing:.033em;line-height:1.33;color:var(--on-sur-var);">Body Small · 12px w400 — captions, metadata</div>
-    <div style="font-size:11px;font-family:monospace;color:var(--out);">ls 0.033em / lh 1.33</div>
-  </div>
+<div class="slabel">M3 type scale — Inter</div>
+<div style="padding:12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);">
+<div style="font-family:var(--font);font-size:57px;font-weight:400;letter-spacing:-.25px;line-height:1.12;color:var(--on-sur);margin-bottom:2px;">Display Large</div>
+<div style="font-size:11px;font-family:monospace;color:var(--out);">57px / w400 / ls -0.25px / lh 1.12</div>
 </div>
-
+<div style="padding:12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);">
+<div style="font-family:var(--font);font-size:45px;font-weight:400;letter-spacing:0;line-height:1.16;color:var(--on-sur);margin-bottom:2px;">Display Medium</div>
+<div style="font-size:11px;font-family:monospace;color:var(--out);">45px / w400 / ls 0 / lh 1.16</div>
+</div>
+<div style="padding:12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);">
+<div style="font-family:var(--font);font-size:36px;font-weight:400;letter-spacing:0;line-height:1.22;color:var(--on-sur);margin-bottom:2px;">Display Small</div>
+<div style="font-size:11px;font-family:monospace;color:var(--out);">36px / w400 / ls 0 / lh 1.22</div>
+</div>
+<div style="padding:12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);">
+<div style="font-family:var(--font);font-size:32px;font-weight:400;letter-spacing:0;line-height:1.25;color:var(--on-sur);margin-bottom:2px;">Headline Large</div>
+<div style="font-size:11px;font-family:monospace;color:var(--out);">32px / w400 / ls 0 / lh 1.25</div>
+</div>
+<div style="padding:12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);">
+<div style="font-family:var(--font);font-size:28px;font-weight:400;letter-spacing:0;line-height:1.29;color:var(--on-sur);margin-bottom:2px;">Headline Medium</div>
+<div style="font-size:11px;font-family:monospace;color:var(--out);">28px / w400 / ls 0 / lh 1.29</div>
+</div>
+<div style="padding:12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);">
+<div style="font-family:var(--font);font-size:24px;font-weight:400;letter-spacing:0;line-height:1.33;color:var(--on-sur);margin-bottom:2px;">Headline Small</div>
+<div style="font-size:11px;font-family:monospace;color:var(--out);">24px / w400 / ls 0 / lh 1.33</div>
+</div>
+<div style="padding:10px 12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);display:flex;align-items:baseline;justify-content:space-between;">
+<div style="font-family:var(--font);font-size:22px;font-weight:500;letter-spacing:0;line-height:1.27;color:var(--on-sur);">Title Large · 22px w500</div>
+<div style="font-size:11px;font-family:monospace;color:var(--out);">ls 0 / lh 1.27</div>
+</div>
+<div style="padding:10px 12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);display:flex;align-items:baseline;justify-content:space-between;">
+<div style="font-family:var(--font);font-size:16px;font-weight:600;letter-spacing:.1px;line-height:1.5;color:var(--on-sur);">Title Medium · 16px w600</div>
+<div style="font-size:11px;font-family:monospace;color:var(--out);">ls 0.1px / lh 1.5</div>
+</div>
+<div style="padding:10px 12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);display:flex;align-items:baseline;justify-content:space-between;">
+<div style="font-family:var(--font);font-size:14px;font-weight:600;letter-spacing:.1px;line-height:1.43;color:var(--on-sur);">Title Small · 14px w600</div>
+<div style="font-size:11px;font-family:monospace;color:var(--out);">ls 0.1px / lh 1.43</div>
+</div>
+<div style="padding:10px 12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);display:flex;align-items:baseline;justify-content:space-between;">
+<div style="font-family:var(--font);font-size:14px;font-weight:500;letter-spacing:.006em;line-height:1.43;color:var(--on-sur);">Label Large · 14px w500 — button text</div>
+<div style="font-size:11px;font-family:monospace;color:var(--out);">ls 0.006em / lh 1.43</div>
+</div>
+<div style="padding:10px 12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);display:flex;align-items:baseline;justify-content:space-between;">
+<div style="font-family:var(--font);font-size:12px;font-weight:500;letter-spacing:.05em;line-height:1.33;color:var(--on-sur);">Label Medium · 12px w500</div>
+<div style="font-size:11px;font-family:monospace;color:var(--out);">ls 0.05em / lh 1.33</div>
+</div>
+<div style="padding:10px 12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);display:flex;align-items:baseline;justify-content:space-between;">
+<div style="font-family:var(--font);font-size:11px;font-weight:500;letter-spacing:.05em;line-height:1.45;color:var(--on-sur);">Label Small · 11px w500</div>
+<div style="font-size:11px;font-family:monospace;color:var(--out);">ls 0.05em / lh 1.45</div>
+</div>
+<div style="padding:10px 12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);display:flex;align-items:baseline;justify-content:space-between;">
+<div style="font-family:var(--font);font-size:16px;font-weight:400;letter-spacing:.03em;line-height:1.5;color:var(--on-sur);">Body Large · 16px w400</div>
+<div style="font-size:11px;font-family:monospace;color:var(--out);">ls 0.03em / lh 1.5</div>
+</div>
+<div style="padding:10px 12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);display:flex;align-items:baseline;justify-content:space-between;">
+<div style="font-family:var(--font);font-size:14px;font-weight:400;letter-spacing:.015em;line-height:1.43;color:var(--on-sur);">Body Medium · 14px w400</div>
+<div style="font-size:11px;font-family:monospace;color:var(--out);">ls 0.015em / lh 1.43</div>
+</div>
+<div style="padding:10px 12px;border:1px solid var(--out-var);border-radius:8px;margin-bottom:4px;background:var(--sur);display:flex;align-items:baseline;justify-content:space-between;">
+<div style="font-family:var(--font);font-size:12px;font-weight:400;letter-spacing:.033em;line-height:1.33;color:var(--on-sur-var);">Body Small · 12px w400 — captions, metadata</div>
+<div style="font-size:11px;font-family:monospace;color:var(--out);">ls 0.033em / lh 1.33</div>
+</div>
+</div>
 <div class="panel" id="p-tokens">
-  <div class="slabel">MD3 color role tokens</div>
-  <div class="trow"><div class="tsw" style="background:#f9ad00;"></div><div class="tn">md.sys.color.primary</div><div class="th">#f9ad00 (light)</div><div class="td">Key brand</div></div>
-  <div class="trow"><div class="tsw" style="background:#000000;"></div><div class="tn">md.sys.color.on-primary</div><div class="th">#000000</div><div class="td">9.3:1 <span class="wcag aaa">AAA</span></div></div>
-  <div class="trow"><div class="tsw" style="background:#fff8e6;"></div><div class="tn">md.sys.color.primary-container</div><div class="th">#fff8e6</div><div class="td">Subtle bg</div></div>
-  <div class="trow"><div class="tsw" style="background:#7a4e00;"></div><div class="tn">md.sys.color.on-primary-container</div><div class="th">#7a4e00</div><div class="td">8.2:1 <span class="wcag aaa">AAA</span></div></div>
-  <div class="trow"><div class="tsw" style="background:#6750a4;"></div><div class="tn">md.sys.color.secondary</div><div class="th">#6750a4</div><div class="td">5.8:1 <span class="wcag aa">AA</span></div></div>
-  <div class="trow"><div class="tsw" style="background:#ffffff;border:1px solid #e6e0e9;"></div><div class="tn">md.sys.color.on-secondary</div><div class="th">#ffffff</div><div class="td">On secondary</div></div>
-  <div class="trow"><div class="tsw" style="background:#b3261e;"></div><div class="tn">md.sys.color.error</div><div class="th">#b3261e</div><div class="td">5.2:1 <span class="wcag aa">AA</span></div></div>
-  <div class="trow"><div class="tsw" style="background:#fcedeb;"></div><div class="tn">md.sys.color.error-container</div><div class="th">#fcedeb</div><div class="td">Error bg</div></div>
-  <div class="trow"><div class="tsw" style="background:#fffbfe;border:1px solid #e6e0e9;"></div><div class="tn">md.sys.color.surface</div><div class="th">#fffbfe (light)</div><div class="td">Base surface</div></div>
-  <div class="trow"><div class="tsw" style="background:#f3edf7;"></div><div class="tn">md.sys.color.surface-variant</div><div class="th">#f3edf7</div><div class="td">Card / chip bg</div></div>
-  <div class="trow"><div class="tsw" style="background:#1c1b1f;"></div><div class="tn">md.sys.color.on-surface</div><div class="th">#1c1b1f</div><div class="td">19.7:1 <span class="wcag aaa">AAA</span></div></div>
-  <div class="trow"><div class="tsw" style="background:#49454f;"></div><div class="tn">md.sys.color.on-surface-variant</div><div class="th">#49454f</div><div class="td">8.7:1 <span class="wcag aaa">AAA</span></div></div>
-  <div class="trow"><div class="tsw" style="background:#79747e;"></div><div class="tn">md.sys.color.outline</div><div class="th">#79747e</div><div class="td">4.6:1 <span class="wcag aa">AA</span></div></div>
-  <div class="trow"><div class="tsw" style="background:#cac4d0;"></div><div class="tn">md.sys.color.outline-variant</div><div class="th">#cac4d0</div><div class="td">Subtle divider</div></div>
-  <div class="trow"><div class="tsw" style="background:#7d5700;"></div><div class="tn">md.sys.color.warning (custom)</div><div class="th">#7d5700</div><div class="td">7.0:1 <span class="wcag aaa">AAA</span></div></div>
-  <div class="trow"><div class="tsw" style="background:#146c2e;"></div><div class="tn">md.sys.color.success (custom)</div><div class="th">#146c2e</div><div class="td">7.1:1 <span class="wcag aaa">AAA</span></div></div>
-  <div class="trow"><div class="tsw" style="background:#00639b;"></div><div class="tn">md.sys.color.info (custom)</div><div class="th">#00639b</div><div class="td">5.3:1 <span class="wcag aa">AA</span></div></div>
-
-  <div class="slabel">Spacing (M3 4dp grid)</div>
-  <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
-    <span style="padding:4px 10px;border-radius:4px;background:var(--pri);color:var(--on-pri);font-size:11px;font-weight:700;">sp.1 · 4dp</span>
-    <span style="padding:4px 10px;border-radius:4px;background:var(--pri);color:var(--on-pri);font-size:11px;font-weight:700;">sp.2 · 8dp</span>
-    <span style="padding:4px 10px;border-radius:4px;background:var(--pri);color:var(--on-pri);font-size:11px;font-weight:700;">sp.3 · 12dp</span>
-    <span style="padding:4px 10px;border-radius:4px;background:var(--pri);color:var(--on-pri);font-size:11px;font-weight:700;">sp.4 · 16dp</span>
-    <span style="padding:4px 10px;border-radius:4px;background:var(--pri);color:var(--on-pri);font-size:11px;font-weight:700;">sp.5 · 20dp</span>
-    <span style="padding:4px 10px;border-radius:4px;background:var(--pri);color:var(--on-pri);font-size:11px;font-weight:700;">sp.6 · 24dp</span>
-    <span style="padding:4px 10px;border-radius:4px;background:var(--pri);color:var(--on-pri);font-size:11px;font-weight:700;">sp.8 · 32dp</span>
-    <span style="padding:4px 10px;border-radius:4px;background:var(--pri);color:var(--on-pri);font-size:11px;font-weight:700;">sp.10 · 40dp</span>
-    <span style="padding:4px 10px;border-radius:4px;background:var(--pri);color:var(--on-pri);font-size:11px;font-weight:700;">sp.12 · 48dp</span>
-  </div>
-
-  <div class="slabel">Shape (M3 corner radius)</div>
-  <div style="display:flex;flex-wrap:wrap;gap:6px;">
-    <span style="padding:5px 12px;border-radius:0;border:1px solid var(--out-var);font-size:11px;font-weight:600;color:var(--on-sur);">None · 0</span>
-    <span style="padding:5px 12px;border-radius:4px;border:1px solid var(--out-var);font-size:11px;font-weight:600;color:var(--on-sur);">Extra-small · 4</span>
-    <span style="padding:5px 12px;border-radius:8px;border:1px solid var(--out-var);font-size:11px;font-weight:600;color:var(--on-sur);">Small · 8</span>
-    <span style="padding:5px 12px;border-radius:12px;border:1px solid var(--out-var);font-size:11px;font-weight:600;color:var(--on-sur);">Medium · 12</span>
-    <span style="padding:5px 12px;border-radius:16px;border:1px solid var(--out-var);font-size:11px;font-weight:600;color:var(--on-sur);">Large · 16</span>
-    <span style="padding:5px 12px;border-radius:20px;border:1px solid var(--out-var);font-size:11px;font-weight:600;color:var(--on-sur);">Button · 20</span>
-    <span style="padding:5px 20px;border-radius:9999px;border:1px solid var(--out-var);font-size:11px;font-weight:600;color:var(--on-sur);">Full · ∞</span>
-  </div>
+<div class="slabel">MD3 color role tokens</div>
+<div class="trow"><div class="tsw" style="background:#f9ad00;"></div><div class="tn">md.sys.color.primary</div><div class="th">#f9ad00 (light)</div><div class="td">Key brand</div></div>
+<div class="trow"><div class="tsw" style="background:#000000;"></div><div class="tn">md.sys.color.on-primary</div><div class="th">#000000</div><div class="td">9.3:1 <span class="wcag aaa">AAA</span></div></div>
+<div class="trow"><div class="tsw" style="background:#fff8e6;"></div><div class="tn">md.sys.color.primary-container</div><div class="th">#fff8e6</div><div class="td">Subtle bg</div></div>
+<div class="trow"><div class="tsw" style="background:#7a4e00;"></div><div class="tn">md.sys.color.on-primary-container</div><div class="th">#7a4e00</div><div class="td">8.2:1 <span class="wcag aaa">AAA</span></div></div>
+<div class="trow"><div class="tsw" style="background:#6750a4;"></div><div class="tn">md.sys.color.secondary</div><div class="th">#6750a4</div><div class="td">5.8:1 <span class="wcag aa">AA</span></div></div>
+<div class="trow"><div class="tsw" style="background:#ffffff;border:1px solid #e6e0e9;"></div><div class="tn">md.sys.color.on-secondary</div><div class="th">#ffffff</div><div class="td">On secondary</div></div>
+<div class="trow"><div class="tsw" style="background:#b3261e;"></div><div class="tn">md.sys.color.error</div><div class="th">#b3261e</div><div class="td">5.2:1 <span class="wcag aa">AA</span></div></div>
+<div class="trow"><div class="tsw" style="background:#fcedeb;"></div><div class="tn">md.sys.color.error-container</div><div class="th">#fcedeb</div><div class="td">Error bg</div></div>
+<div class="trow"><div class="tsw" style="background:#fffbfe;border:1px solid #e6e0e9;"></div><div class="tn">md.sys.color.surface</div><div class="th">#fffbfe (light)</div><div class="td">Base surface</div></div>
+<div class="trow"><div class="tsw" style="background:#f3edf7;"></div><div class="tn">md.sys.color.surface-variant</div><div class="th">#f3edf7</div><div class="td">Card / chip bg</div></div>
+<div class="trow"><div class="tsw" style="background:#1c1b1f;"></div><div class="tn">md.sys.color.on-surface</div><div class="th">#1c1b1f</div><div class="td">19.7:1 <span class="wcag aaa">AAA</span></div></div>
+<div class="trow"><div class="tsw" style="background:#49454f;"></div><div class="tn">md.sys.color.on-surface-variant</div><div class="th">#49454f</div><div class="td">8.7:1 <span class="wcag aaa">AAA</span></div></div>
+<div class="trow"><div class="tsw" style="background:#79747e;"></div><div class="tn">md.sys.color.outline</div><div class="th">#79747e</div><div class="td">4.6:1 <span class="wcag aa">AA</span></div></div>
+<div class="trow"><div class="tsw" style="background:#cac4d0;"></div><div class="tn">md.sys.color.outline-variant</div><div class="th">#cac4d0</div><div class="td">Subtle divider</div></div>
+<div class="trow"><div class="tsw" style="background:#7d5700;"></div><div class="tn">md.sys.color.warning (custom)</div><div class="th">#7d5700</div><div class="td">7.0:1 <span class="wcag aaa">AAA</span></div></div>
+<div class="trow"><div class="tsw" style="background:#146c2e;"></div><div class="tn">md.sys.color.success (custom)</div><div class="th">#146c2e</div><div class="td">7.1:1 <span class="wcag aaa">AAA</span></div></div>
+<div class="trow"><div class="tsw" style="background:#00639b;"></div><div class="tn">md.sys.color.info (custom)</div><div class="th">#00639b</div><div class="td">5.3:1 <span class="wcag aa">AA</span></div></div>
+<div class="slabel">Spacing (M3 4dp grid)</div>
+<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+<span style="padding:4px 10px;border-radius:4px;background:var(--pri);color:var(--on-pri);font-size:11px;font-weight:700;">sp.1 · 4dp</span>
+<span style="padding:4px 10px;border-radius:4px;background:var(--pri);color:var(--on-pri);font-size:11px;font-weight:700;">sp.2 · 8dp</span>
+<span style="padding:4px 10px;border-radius:4px;background:var(--pri);color:var(--on-pri);font-size:11px;font-weight:700;">sp.3 · 12dp</span>
+<span style="padding:4px 10px;border-radius:4px;background:var(--pri);color:var(--on-pri);font-size:11px;font-weight:700;">sp.4 · 16dp</span>
+<span style="padding:4px 10px;border-radius:4px;background:var(--pri);color:var(--on-pri);font-size:11px;font-weight:700;">sp.5 · 20dp</span>
+<span style="padding:4px 10px;border-radius:4px;background:var(--pri);color:var(--on-pri);font-size:11px;font-weight:700;">sp.6 · 24dp</span>
+<span style="padding:4px 10px;border-radius:4px;background:var(--pri);color:var(--on-pri);font-size:11px;font-weight:700;">sp.8 · 32dp</span>
+<span style="padding:4px 10px;border-radius:4px;background:var(--pri);color:var(--on-pri);font-size:11px;font-weight:700;">sp.10 · 40dp</span>
+<span style="padding:4px 10px;border-radius:4px;background:var(--pri);color:var(--on-pri);font-size:11px;font-weight:700;">sp.12 · 48dp</span>
+</div>
+<div class="slabel">Shape (M3 corner radius)</div>
+<div style="display:flex;flex-wrap:wrap;gap:6px;">
+<span style="padding:5px 12px;border-radius:0;border:1px solid var(--out-var);font-size:11px;font-weight:600;color:var(--on-sur);">None · 0</span>
+<span style="padding:5px 12px;border-radius:4px;border:1px solid var(--out-var);font-size:11px;font-weight:600;color:var(--on-sur);">Extra-small · 4</span>
+<span style="padding:5px 12px;border-radius:8px;border:1px solid var(--out-var);font-size:11px;font-weight:600;color:var(--on-sur);">Small · 8</span>
+<span style="padding:5px 12px;border-radius:12px;border:1px solid var(--out-var);font-size:11px;font-weight:600;color:var(--on-sur);">Medium · 12</span>
+<span style="padding:5px 12px;border-radius:16px;border:1px solid var(--out-var);font-size:11px;font-weight:600;color:var(--on-sur);">Large · 16</span>
+<span style="padding:5px 12px;border-radius:20px;border:1px solid var(--out-var);font-size:11px;font-weight:600;color:var(--on-sur);">Button · 20</span>
+<span style="padding:5px 20px;border-radius:9999px;border:1px solid var(--out-var);font-size:11px;font-weight:600;color:var(--on-sur);">Full · ∞</span>
 </div>
 </div>
-
+</div>
 <script>
 function setT(t){document.body.parentElement.setAttribute('data-t',t==='dark'?'dark':'');document.querySelectorAll('.tbtn').forEach(b=>b.classList.toggle('on',b.textContent.toLowerCase()===t));}
 function go(id,el){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));document.getElementById('p-'+id).classList.add('on');el.classList.add('on');}

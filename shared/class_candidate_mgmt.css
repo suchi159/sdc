@@ -1,0 +1,252 @@
+/* ==========================================================================
+ * Shared Class & Candidate Management styles
+ * --------------------------------------------------------------------------
+ * Fills the CSS gaps so the markup emitted by class_candidate_mgmt.js (CCM)
+ * renders identically on both classroom-proctor.html and admin_portal.html.
+ *
+ * The org portal (admin_portal.css / design_system.css) already defines the
+ * component classes (.card, .badge, .badge-*, .btn-primary/secondary/danger,
+ * .data-table, .switch, .font-mono, .flex-between) and the --border-* /
+ * --text-* tokens. It is MISSING the brand/surface/status alias variables and
+ * a base `.btn {}` layout rule that the in-class app relies on. Values below
+ * mirror the in-class app's light theme so the two surfaces look the same.
+ *
+ * On classroom-proctor.html this file is linked BEFORE the page's own inline
+ * <style>, so the page's theme-adaptive definitions win and override these
+ * (keeping dark-mode intact). On admin_portal.html it is linked AFTER the
+ * page styles, so these fill the gaps.
+ * ========================================================================== */
+:root {
+  --brand-primary: #f9ad00;
+  --brand-hover: #7a4e00;
+  --brand-active: #fff8e6;
+
+  --surface-color: #ffffff;
+  --bg-color: #f8f9fa;
+  --hover-bg: rgba(0, 0, 0, 0.03);
+
+  --status-success: #146c2e;
+  --status-success-bg: rgba(20, 108, 46, 0.15);
+  --status-success-ct: #ffffff;
+  --status-warning: #7d5700;
+  --status-warning-bg: rgba(125, 87, 0, 0.15);
+  --status-warning-ct: #ffffff;
+  --status-error: #b3261e;
+  --status-error-bg: rgba(179, 38, 30, 0.15);
+  --status-error-ct: #ffffff;
+  --status-info: #00639b;
+  --status-info-bg: rgba(0, 99, 155, 0.15);
+
+  --err-ct: #ffffff;
+  --wrn-ct: #ffffff;
+  --inf: #00639b;
+
+  --font-mono: 'Roboto Mono', monospace;
+}
+
+/* Dark mode: the status tokens above are tone-40 colors meant for white
+   backgrounds. Used as text (Pass/Fail, "not assigned") on a dark surface they
+   read dark-on-dark, so lift them to tone-80 + translucent tints. On
+   classroom-proctor.html the page's own inline theme styles still win (this
+   file is linked first), so this only takes effect on admin_portal.html. */
+[data-t="dark"], [data-theme="dark"] {
+  --status-success: #7ee2a8;
+  --status-success-bg: rgba(126, 226, 168, 0.16);
+  --status-warning: #f7bf50;
+  --status-warning-bg: rgba(247, 191, 80, 0.18);
+  --status-error: #ff8a80;
+  --status-error-bg: rgba(255, 138, 128, 0.16);
+  --status-info: #96ccff;
+  --status-info-bg: rgba(150, 204, 255, 0.18);
+}
+
+/* Base button layout (org defines .btn-primary/secondary/danger but no base) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+/* Filter chips emitted by CCM use `.badge` / `.badge badge-info`; ensure they
+   read as clickable pills regardless of host base styles. */
+#session-filters .badge,
+#candidate-filters .badge {
+  cursor: pointer;
+}
+
+/* ==========================================================================
+ * Candidate Directory accordion
+ * The directory candidate table renders as expandable rows: a clickable header
+ * row (name / class / Start Exam) and a hidden detail row holding the full
+ * exam configuration. Shared by both the org portal and the proctor dashboard.
+ * ========================================================================== */
+.cand-acc-head { transition: background-color 0.15s ease; }
+.cand-acc-head:hover {
+  background: var(--surface-hover, rgba(127, 127, 127, 0.05));
+}
+.cand-acc-chevron {
+  font-size: 20px;
+  color: var(--text-secondary, var(--on-sur-var));
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+/* Open-row highlight: subtle accent tint + a left accent rail. Decoupled from
+   the gold --brand-active default so it reads on-brand on the blue admin portal. */
+.cand-acc-head.cand-acc-open {
+  background: rgba(30, 64, 175, 0.05);
+  box-shadow: inset 3px 0 0 0 var(--pri, #1e40af);
+}
+.cand-acc-head.cand-acc-open .cand-acc-chevron {
+  transform: rotate(180deg);
+  color: var(--pri, #1e40af);
+}
+.cand-acc-detail > td { background: rgba(30, 64, 175, 0.025); }
+html[data-t="dark"] .cand-acc-head.cand-acc-open , html[data-theme="dark"] .cand-acc-head.cand-acc-open { background: rgba(175, 198, 250, 0.08); }
+html[data-t="dark"] .cand-acc-detail > td , html[data-theme="dark"] .cand-acc-detail > td { background: rgba(255, 255, 255, 0.02); }
+
+.cand-acc-panel {
+  padding: 18px 22px 22px;
+  border-top: 1px solid var(--border-color, var(--border));
+}
+/* Section label above the config grid */
+.cand-cfg-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-secondary, var(--on-sur-var));
+}
+.cand-cfg-head .material-icons { font-size: 18px; color: var(--pri, #1e40af); }
+
+.cand-cfg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+  align-items: stretch;
+}
+/* Each config control sits in its own subtle card for clearer grouping */
+.cand-cfg {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 14px;
+  background: var(--surface, #fff);
+  border: 1px solid var(--border-color, var(--border, #e5e7eb));
+  border-radius: 10px;
+}
+html[data-t="dark"] .cand-cfg , html[data-theme="dark"] .cand-cfg { background: rgba(255, 255, 255, 0.03); }
+.cand-cfg-lbl {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-secondary, var(--on-sur-var));
+}
+.cand-cfg-ctl {
+  margin-top: 6px;
+  width: 100%;
+  max-width: none;
+}
+
+/* ==========================================================================
+ * Directory filter chips — self-contained so both the org portal (admin) and
+ * index.html render the segmented control + count pills without depending on
+ * page-specific stylesheets.
+ * ========================================================================== */
+.chip-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.filter-chip .chip-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  background: var(--border-light, rgba(127, 127, 127, 0.12));
+  color: var(--text-secondary, var(--on-sur-var));
+}
+.filter-chip.active .chip-count { background: rgba(255, 255, 255, 0.28); color: inherit; }
+
+/* ==========================================================================
+ * Candidate avatar — real photo, or on-brand tinted initials fallback.
+ * ========================================================================== */
+.cand-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px var(--border-color, rgba(0, 0, 0, 0.06));
+}
+.cand-avatar--initials {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  background: rgba(30, 64, 175, 0.12);
+  color: #1e40af;
+  box-shadow: none;
+}
+html[data-t="dark"] .cand-avatar--initials , html[data-theme="dark"] .cand-avatar--initials { background: rgba(175, 198, 250, 0.18); color: #afc6fa; }
+
+/* ==========================================================================
+ * Status pills — tinted (dot + label) instead of heavy solid badges.
+ * ========================================================================== */
+.cand-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px 3px 9px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.cand-pill::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+.cand-pill--enrolled { background: rgba(100, 116, 139, 0.14); color: #475569; }
+.cand-pill--active   { background: rgba(125, 87, 0, 0.13);  color: #8a5e00; }
+.cand-pill--completed{ background: rgba(20, 108, 46, 0.13); color: #146c2e; }
+
+/* Exam-config inheritance badges — show where a rule value comes from so admins
+   don't over-configure. 'override' also renders a Reset-to-inherited link. */
+.cfg-src {
+  display: inline-block; margin-left: 6px; padding: 1px 7px;
+  border-radius: 999px; font-size: 10px; font-weight: 700;
+  letter-spacing: .02em; vertical-align: middle; text-transform: uppercase;
+}
+.cfg-src--default  { background: rgba(100, 116, 139, 0.14); color: #475569; }
+.cfg-src--class    { background: rgba(37, 99, 235, 0.13);   color: #1d4ed8; }
+.cfg-src--override { background: rgba(125, 87, 0, 0.14);    color: #8a5e00; }
+.cfg-reset { margin-left: 6px; font-size: 11px; font-weight: 600; color: var(--primary, #1d4ed8); text-decoration: none; }
+.cfg-reset:hover { text-decoration: underline; }
+html[data-t="dark"] .cfg-src--default, html[data-theme="dark"] .cfg-src--default { background: rgba(148,163,184,.18); color:#cbd5e1; }
+html[data-t="dark"] .cfg-src--class,   html[data-theme="dark"] .cfg-src--class   { background: rgba(96,165,250,.18);  color:#93c5fd; }
+html[data-t="dark"] .cfg-src--override,html[data-theme="dark"] .cfg-src--override{ background: rgba(247,191,80,.18);  color:#f7bf50; }
+
+html[data-t="dark"] .cand-pill--enrolled , html[data-theme="dark"] .cand-pill--enrolled { background: rgba(148, 163, 184, 0.18); color: #cbd5e1; }
+html[data-t="dark"] .cand-pill--active   , html[data-theme="dark"] .cand-pill--active   { background: rgba(247, 191, 80, 0.18); color: #f7bf50; }
+html[data-t="dark"] .cand-pill--completed, html[data-theme="dark"] .cand-pill--completed{ background: rgba(126, 226, 168, 0.16); color: #7ee2a8; }

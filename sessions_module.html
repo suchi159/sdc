@@ -1,0 +1,47 @@
+      <section id="view-sessions" class="workspace">
+         <div class="flex-between mb-4">
+          <div>
+            <h2 style="font-size:20px; font-weight:600;">Class Lifecycle Management</h2>
+            <p class="text-secondary mt-4">Create, monitor, and review classes.</p>
+          </div>
+          <button class="btn btn-primary" onclick="v3App.openFormDrawer('session')"><i class="material-icons">add</i> Add Class</button>
+        </div>
+
+        <div class="flex-between mb-4">
+          <div style="display:flex; gap:8px;" id="session-filters">
+            <button class="badge badge-info" style="cursor:pointer;" onclick="v3App.filterSessions('all')">All</button>
+            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterSessions('draft')">Draft</button>
+            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterSessions('upcoming')">Upcoming</button>
+            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterSessions('ongoing')">Ongoing</button>
+            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterSessions('live')">Live</button>
+            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterSessions('completed')">Completed</button>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button id="btn-grid-view" class="icon-button" style="background:var(--border-light); color:var(--text-primary);" onclick="v3App.setSessionViewMode('grid')"><i class="material-icons-outlined">grid_view</i></button>
+            <button id="btn-table-view" class="icon-button" style="background:transparent; color:var(--text-secondary);" onclick="v3App.setSessionViewMode('table')"><i class="material-icons-outlined">table_rows</i></button>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:24px;" id="sessions-grid">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="card" style="padding:0; display:none;" id="sessions-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Class Name</th>
+                <th>Status</th>
+                <th>Created At</th>
+                <th>Exam Date</th>
+                <th>Candidates</th>
+                <th>Readiness</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="sessions-tbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>

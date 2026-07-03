@@ -1,0 +1,36 @@
+      <section id="view-candidates" class="workspace">
+        <div class="flex-between mb-4">
+          <div>
+            <h2 style="font-size:20px; font-weight:600;">Master Candidate Roster</h2>
+            <p class="text-secondary mt-4">Manage enrollments, vouchers, and session assignments.</p>
+          </div>
+          <div style="display:flex; gap:12px;">
+            <button class="btn btn-secondary" onclick="v3App.simulateCsvUpload()"><i class="material-icons-outlined">upload_file</i> Import CSV</button>
+            <button class="btn btn-primary" onclick="v3App.openFormDrawer('candidate')"><i class="material-icons">person_add</i> Add Candidate</button>
+          </div>
+        </div>
+
+        <div class="card" style="padding:0;">
+          <div style="padding:16px; border-bottom:1px solid var(--border-color); display:flex; gap:8px;" id="candidate-filters">
+            <button class="badge badge-info" style="cursor:pointer;" onclick="v3App.filterCandidates('all')">All</button>
+            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterCandidates('enrolled')">Enrolled</button>
+            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterCandidates('in_progress')">Active</button>
+            <button class="badge" style="background:var(--border-light); color:var(--text-secondary); cursor:pointer;" onclick="v3App.filterCandidates('completed')">Completed</button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width:40px;"><input type="checkbox" id="bulk-select-all" onclick="v3App.toggleAllCandidates(event)"></th>
+                <th>Candidate</th>
+                <th>ID / Roll No</th>
+                <th>Voucher Status</th>
+                <th>Class Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="candidates-tbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>

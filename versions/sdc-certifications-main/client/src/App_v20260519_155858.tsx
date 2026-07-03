@@ -51,6 +51,7 @@ const LiveArena = lazy(() => import("./pages/LiveArena"));
 const Gamification = lazy(() => import("./pages/Gamification"));
 const OrgOnboarding = lazy(() => import("./pages/OrgOnboarding"));
 const Integrations = lazy(() => import("./pages/Integrations"));
+const ProctorOnboarding = lazy(() => import("./pages/ProctorOnboarding"));
 
 // PortalSkeleton is imported above — it renders a full layout-accurate shimmer
 
@@ -123,6 +124,7 @@ function Router() {
         <Route path="/proctor/anomalies" component={AnomalyDashboard} />
         <Route path="/proctor/availability"><Redirect to="/proctor/calendar" /></Route>
         <Route path="/proctor/calendar" component={ProctorCalendar} />
+        <Route path="/proctor/onboarding" component={ProctorOnboarding} />
 
         {/* Proctor portal — wildcard tab route AFTER specific routes */}
         <Route path="/proctor" component={ProctorPortal} />

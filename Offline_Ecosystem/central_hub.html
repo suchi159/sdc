@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+
+<html data-accessibility="normal" lang="en">
+<head>
+    <script src="offline_mock_api.js"></script>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzAwMCIvPjxnIGZpbGw9IiNmZmYiPjxjaXJjbGUgY3g9IjExIiBjeT0iMTMiIHI9IjQuMyIvPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTAuOCIgcj0iNSIvPjxjaXJjbGUgY3g9IjIxIiBjeT0iMTMiIHI9IjQuMyIvPjxyZWN0IHg9IjguOCIgeT0iMTMiIHdpZHRoPSIxNC40IiBoZWlnaHQ9IjciLz48cmVjdCB4PSI5LjIiIHk9IjE5LjUiIHdpZHRoPSIxMy42IiBoZWlnaHQ9IjUuOCIgcng9IjEuMyIvPjwvZz48ZyBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMC43Ij48bGluZSB4MT0iMTYiIHkxPSIxNC41IiB4Mj0iMTYiIHkyPSIxOSIvPjxsaW5lIHgxPSIxMi40IiB5MT0iMTQuOCIgeDI9IjEyLjQiIHkyPSIxOSIvPjxsaW5lIHgxPSIxOS42IiB5MT0iMTQuOCIgeDI9IjE5LjYiIHkyPSIxOSIvPjwvZz48L3N2Zz4="/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SecureProctor - Central Hub</title>
+<link href="design_system.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<style>
+        :root {
+            --bg: #0d0f1a;
+            --sur: #171a2e;
+            --pri: #afc6fa; /* Proctor Blue tone 80 — AAA on dark (10.8:1) */
+            --pri-text: #afc6fa; /* accent-as-text must be light on this dark page */
+            --pri-hover: #c9d8ff;
+            --pri-dk: #c9d8ff;   /* shared .btn-primary:hover reads --pri-dk (not --pri-hover) */
+            --pri-light: rgba(175, 198, 250, 0.12);
+            --text: #f1f3f9;
+            --text-muted: #c5cbdc; /* AAA compliant muted text on dark */
+            --border: rgba(139, 146, 182, 0.15);
+
+            /* Bridge design_system.css generic tokens to the hub's dark palette
+               so shared rules (headings, .btn-secondary) use the hub's light text
+               instead of the default dark --text-primary (invisible on dark bg). */
+            --text-primary: var(--text);
+            --text-secondary: var(--text-muted);
+            --text-tertiary: var(--text-muted);
+            --surface: var(--sur);
+            --surface-hover: rgba(139, 146, 182, 0.10);
+            --surface-bg: var(--bg);
+            --on-pri: #082c84; /* deep blue text on tone-80 fill — 7.2:1 AAA */
+            /* .app-layout and .md-top-app-bar read these raw M3 tokens directly
+               (not the bridged --bg/--surface), so without these overrides the
+               whole shell paints white and the hub's light text washes out. */
+            --md-sys-color-background: var(--bg);
+            --md-sys-color-surface: var(--sur);
+            --md-sys-color-on-background: var(--text);
+            --md-sys-color-on-surface: var(--text);
+
+            --card-padding: 24px;
+            --title-size: 18px;
+            --desc-size: 13px;
+            --btn-size: 13px;
+        }
+
+        /* High contrast mode */
+        html[data-accessibility="easy"] {
+            --bg: #ffffff;
+            --sur: #f3f4f6;
+            --pri: #1e40af; /* Proctor Blue tone 30 — AAA on white (8.7:1) */
+            --pri-text: #1e40af; /* accent-as-text on white (easy/light mode) */
+            --pri-hover: #16308a;
+            --pri-dk: #16308a;   /* shared .btn-primary:hover reads --pri-dk */
+            --pri-light: rgba(30, 64, 175, 0.1);
+            --on-pri: #ffffff; /* white text on blue fill in easy/light mode */
+            --text: #111827;
+            --text-muted: #374151; /* AAA compliant muted text on light */
+            --border: #d1d5db;
+            
+            --card-padding: 30px;
+            --title-size: 22px;
+            --desc-size: 15px;
+            --btn-size: 15px;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            transition: all 0.25s ease;
+        }
+
+        .container { padding-top: 80px; 
+            width: 100%;
+            max-width: 1100px;
+            box-sizing: border-box;
+        }
+
+        /* Top Bar */
+        .top-utility-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .system-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #34d399; /* AAA compliant green on dark */
+        }
+
+        .status-pulse {
+            width: 8px;
+            height: 8px;
+            background-color: #34d399;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 6px #34d399;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        .accessibility-toggle {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .accessibility-toggle:hover {
+            border-color: var(--pri);
+            background: var(--pri-light);
+        }
+
+        /* Header block */
+        .main-header {
+            text-align: center;
+            margin-bottom: 40px;
+            margin-top: 12px;
+        }
+
+        .main-header h1 {
+            font-size: 34px;
+            font-weight: 700;
+            margin: 0 0 12px 0;
+            color: var(--text);
+            letter-spacing: -0.01em;
+        }
+
+        .main-header p {
+            color: var(--text-muted);
+            font-size: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Role Sections Wrapper */
+        .role-section {
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+        }
+
+        .section-header i {
+            color: var(--pri);
+            font-size: 20px;
+            opacity: 0.8;
+        }
+
+        .section-header h2 {
+            font-size: 18px;
+            margin: 0;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        /* Grid Layout */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        /* Accessible Card Design */
+        .card {
+            background: var(--sur);
+            border-radius: 12px;
+            padding: var(--card-padding);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            position: relative;
+        }
+
+        .card:hover {
+            border-color: var(--pri);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--pri-light);
+            color: var(--pri);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            border: 1px solid rgba(30, 64, 175, 0.15);
+        }
+
+        .card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .card-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-right: 2px;
+        }
+
+        .card-title {
+            font-size: var(--title-size);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .port-badge {
+            background: rgba(139, 146, 182, 0.08);
+            border: 1px solid rgba(139, 146, 182, 0.12);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-family: monospace;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .card-desc {
+            font-size: var(--desc-size);
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .card-action-btn {
+            align-self: flex-start;
+            background: transparent;
+            color: var(--pri);
+            border: 1px solid var(--pri);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: var(--btn-size);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            transition: all 0.2s;
+        }
+
+        .card-action-btn:hover {
+            background: var(--pri);
+            color: #000000;
+        }
+
+        .card-action-btn:focus-visible {
+            outline: 2px solid var(--pri);
+            outline-offset: 3px;
+        }
+
+        /* Help Box Banner */
+        .help-banner {
+            background: rgba(139, 146, 182, 0.03);
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .help-banner h3 {
+            margin: 0;
+            font-size: 16px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .help-banner p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        html[data-accessibility="easy"] .help-banner p {
+            font-size: 16px;
+        }
+
+        .chip.active {
+            background: var(--pri) !important;
+            color: #000000 !important;
+            border-color: var(--pri) !important;
+        }
+
+        /* Card action buttons: keep labels on one line; if they can't fit
+           side-by-side they wrap to stack (cleaner than mid-phrase wrapping). */
+        .cards-grid .btn-primary,
+        .cards-grid .btn-secondary {
+            white-space: nowrap;
+        }
+
+        @media (max-width: 600px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            .card {
+                flex-direction: column;
+            }
+        }
+
+        /* ── Fixes for the dark hub skin ──────────────────────────────
+           design_system.css forces `.material-icons { color:#000 !important }`
+           (and a light/dark theme-scoped override at specificity 0,2,0). The
+           hub's palette is hard-coded dark regardless of data-t, so those black
+           icons were invisible. Match that specificity for BOTH data-t states
+           and inherit the surrounding color — restoring icons while keeping
+           each context's intended color (gold card icons, muted header icons). */
+        html[data-t="light"] .material-icons,
+        html[data-t="dark"] .material-icons,
+        html[data-t="light"] .material-icons-outlined,
+        html[data-t="dark"] .material-icons-outlined,
+        .material-icons,
+        .material-icons-outlined {
+            color: inherit !important;
+        }
+
+        /* The SDC logo is a light-background mark (dark text). design_system.css
+           applies `filter: brightness(0)` to it under html[data-t="light"]
+           (specificity 0,2,2), which blackens both the artwork AND the chip on
+           the dark hub. Match that specificity for both data-t states, kill the
+           filter, and sit the logo on a small light chip so it stays legible. */
+        html[data-t="light"] .global-header .brand img,
+        html[data-t="dark"]  .global-header .brand img,
+        .global-header .brand img {
+            filter: none !important;
+            background: #ffffff;
+            padding: 5px 9px;
+            border-radius: 8px;
+            box-sizing: content-box;
+        }
+
+        /* The hub is a single, vertically-scrolling page — not the fixed-height
+           app shell design_system.css assumes. Its .app-layout pins height to
+           100vh (line 953 uses !important) and clips overflow, cutting the page
+           off after the first sections. Let it grow and scroll instead. */
+        .app-layout {
+            height: auto !important;
+            min-height: 100vh;
+            overflow: visible;
+        }
+
+        /* design_system.css hides header.main-header:not(.global-header) to kill
+           legacy topbars; that also hides the hub's own title block. Restore it. */
+        body header.main-header:not(.global-header) {
+            display: block !important;
+        }
+    </style>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+</head>
+<body>
+<div class="app-layout">
+<header class="global-header md-top-app-bar">
+<div class="brand" style="display: flex; align-items: center; gap: 12px;">
+<img alt="SDC Certifications" src="sdc_full_logo.png" style="height: 32px;"/>
+<span style="font-weight: 600; font-size: 16px;">SDC Platform</span>
+</div>
+<!-- Header actions (notifications, theme toggle, profile dropdown) removed from the hub. -->
+  </header>
+<div class="container">
+<!-- Utility Top Bar -->
+<div class="top-utility-bar">
+<div class="system-status">
+<span class="status-pulse"></span>
+<span>All Systems Operational</span>
+</div>
+<div style="display:flex; align-items:center; gap:12px;">
+<div id="demo-mode-toggle" title="Switch the whole suite between populated Live data and a fresh Day Zero (first-run) state" style="display:inline-flex; align-items:center; gap:4px; background:rgba(139,146,182,0.08); border:1px solid var(--border); border-radius:9999px; padding:3px 4px 3px 10px;">
+<span style="font-size:10px; font-weight:700; color:var(--text-muted); letter-spacing:.06em;">DEMO</span>
+<button class="dm-opt" data-mode="live" onclick="setDemoMode('live')" style="border:none; background:transparent; color:var(--text-muted); font-size:12px; font-weight:700; padding:5px 12px; border-radius:9999px; cursor:pointer; transition:all .15s;">Live</button>
+<button class="dm-opt" data-mode="dayzero" onclick="setDemoMode('dayzero')" style="border:none; background:transparent; color:var(--text-muted); font-size:12px; font-weight:700; padding:5px 12px; border-radius:9999px; cursor:pointer; transition:all .15s;">Day Zero</button>
+</div>
+<button class="accessibility-toggle" onclick="toggleEasyMode()">
+<i class="material-icons">contrast</i>
+<span id="toggle-btn-txt">Easy Mode</span>
+</button>
+</div>
+</div>
+<!-- Main Header -->
+<header class="main-header">
+<h1>SecureProctor Central Hub</h1>
+<p>Welcome. Please choose your portal by clicking the button corresponding to your role.</p>
+</header>
+<!-- Search & Filter Controls -->
+<div class="filters-card" style="background: var(--sur); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.02); margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between;">
+<div class="search-wrapper" style="position: relative; flex: 1; max-width: 400px; display: flex; align-items: center;">
+<i class="material-icons" style="position: absolute; left: 14px; color: var(--text-muted); font-size: 16px;">search</i>
+<input aria-label="Search portals, features, or routes..." class="search-input" id="search-bar" oninput="filterHubCards()" placeholder="Search portals, features, or routes..." style="width: 100%; background: rgba(139, 146, 182, 0.03); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px 12px 42px; font-size: 14px; color: var(--text); transition: border-color 0.2s;" type="text"/>
+</div>
+<div class="tabs-container" id="hub-filters">
+<button class="tab-btn active" onclick="filterHubCategory('all', this)">All Portals</button>
+<button class="tab-btn" onclick="filterHubCategory('student', this)">Student</button>
+<button class="tab-btn" onclick="filterHubCategory('proctor', this)">Proctor</button>
+<button class="tab-btn" onclick="filterHubCategory('admin', this)">Admin</button>
+<button class="tab-btn" onclick="filterHubCategory('support', this)">Reference &amp; Support</button>
+</div>
+</div>
+<!-- SECTION 2: SDC Admin -->
+<section class="role-section">
+<div class="section-header">
+<i class="material-icons">stars</i>
+<h2>SDC Admin</h2>
+</div>
+<div class="cards-grid">
+<div class="card">
+<div class="card-icon"><i class="material-icons">stars</i></div>
+<div class="card-content">
+<div class="card-title-row">
+<h3 class="card-title">SDC Admin</h3>
+<span class="port-badge">Port 3005</span>
+</div>
+<p class="card-desc">Track system procurement POs, manage accounts, and verify global financial metrics.</p>
+<div style="display: flex; gap: 12px; flex-wrap: wrap;">
+<a class="btn-primary" href="super_admin_3005.html/" style="flex:1; justify-content:center; height:40px; padding:0 12px; max-width:280px;" target="_blank">
+<span>Launch SDC Admin Console</span>
+<i class="material-icons" style="font-size: 14px;">chevron_right</i>
+</a>
+<button class="btn-secondary" onclick="openUserInfoModal('SDC Admin', 'Global IT Administrator &amp; Finance Auditor', 'Track Procurement POs → Audit Global Accounts → Authorize Accruals')" style="flex:1; justify-content:center; height:40px; padding:0 12px; max-width:280px;">
+<span>View Persona &amp; Journey</span>
+<i class="material-icons" style="font-size: 14px;">badge</i>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 3: For Managers & Administrators -->
+<section class="role-section">
+<div class="section-header">
+<i class="material-icons">tune</i>
+<h2>For Managers &amp; Administrators</h2>
+</div>
+<div class="cards-grid">
+<div class="card">
+<div class="card-icon"><i class="material-icons">domain</i></div>
+<div class="card-content">
+<div class="card-title-row">
+<h3 class="card-title">Organization admin</h3>
+<span class="port-badge">Port 3009</span>
+</div>
+<p class="card-desc">Review high school or corporate departments, assign voucher pools, and setup keys.</p>
+<div style="display: flex; gap: 12px; flex-wrap: wrap;">
+<a class="btn-primary" href="admin_portal.html" style="flex:1; justify-content:center; height:40px; padding:0 12px; max-width:280px;" target="_blank">
+<span>Launch Organization Admin</span>
+<i class="material-icons" style="font-size: 14px;">chevron_right</i>
+</a>
+<button class="btn-secondary" onclick="openUserInfoModal('Organization admin', 'University Dean &amp; Corporate Training Director', 'Setup Departments → Distribute Voucher Keys → Review Proctor Shifts')" style="flex:1; justify-content:center; height:40px; padding:0 12px; max-width:280px;">
+<span>View Persona &amp; Journey</span>
+<i class="material-icons" style="font-size: 14px;">badge</i>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 4: For Proctors -->
+<section class="role-section">
+<div class="section-header">
+<i class="material-icons">admin_panel_settings</i>
+<h2>For Proctors</h2>
+</div>
+<div class="cards-grid">
+<div class="card">
+<div class="card-icon"><i class="material-icons">groups</i></div>
+<div class="card-content">
+<div class="card-title-row">
+<h3 class="card-title">In Class Proctor</h3>
+<span class="port-badge">Port 3002</span>
+</div>
+<p class="card-desc">Oversee onsite student seats, coordinate layouts, and mark in-class attendance.</p>
+<div style="display: flex; gap: 12px; flex-wrap: wrap;">
+<a class="btn-primary" href="v3.html" style="flex:1; justify-content:center; height:40px; padding:0 12px; max-width:280px;" target="_blank">
+<span>Launch In Class Proctor</span>
+<i class="material-icons" style="font-size: 14px;">chevron_right</i>
+</a>
+<button class="btn-secondary" onclick="openUserInfoModal('In Class Proctor', 'Onsite Lab Instructor &amp; Physical Exam Invigilator', 'Check-in Candidates → Coordinate Lab Seats → Unlock Offline Tests')" style="flex:1; justify-content:center; height:40px; padding:0 12px; max-width:280px;">
+<span>View Persona &amp; Journey</span>
+<i class="material-icons" style="font-size: 14px;">badge</i>
+</button>
+</div>
+</div>
+</div>
+<div class="card">
+<div class="card-icon"><i class="material-icons">hub</i></div>
+<div class="card-content">
+<div class="card-title-row">
+<h3 class="card-title">online proctor</h3>
+<span class="port-badge">Port 3001</span>
+</div>
+<p class="card-desc">Configure proctor schedules, manage calendars, and review surveillance logs.</p>
+<div style="display: flex; gap: 12px; flex-wrap: wrap;">
+<a class="btn-primary" href="secure_exam.html" style="flex:1; justify-content:center; height:40px; padding:0 12px; max-width:280px;" target="_blank">
+<span>Launch online proctor</span>
+<i class="material-icons" style="font-size: 14px;">chevron_right</i>
+</a>
+<button class="btn-secondary" onclick="openUserInfoModal('online proctor', 'Remote Exam Supervisor &amp; Invigilator', 'Schedule Sessions → View Live Webcams → Act on AI Fraud Alerts')" style="flex:1; justify-content:center; height:40px; padding:0 12px; max-width:280px;">
+<span>View Persona &amp; Journey</span>
+<i class="material-icons" style="font-size: 14px;">badge</i>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 5: For Students -->
+<section class="role-section">
+<div class="section-header">
+<i class="material-icons">school</i>
+<h2>For Students</h2>
+</div>
+<div class="cards-grid">
+<div aria-label="Student Login Portal" class="card" role="region">
+<div aria-hidden="true" class="card-icon"><i class="material-icons">edit_note</i></div>
+<div class="card-content">
+<div class="card-title-row">
+<h3 class="card-title">Student Login</h3>
+<span aria-label="Port number" class="port-badge">Port 3003</span>
+</div>
+<p class="card-desc">Log in with your credentials, run identity verification, and take your exam.</p>
+<div style="display: flex; gap: 12px; flex-wrap: wrap;">
+<a aria-label="Student Login (opens in a new tab)" class="btn-primary" href="candidate.html" style="flex:1; justify-content:center; height:40px; padding:0 12px; max-width:280px;" target="_blank">
+<span>Launch Student Portal</span>
+<i class="material-icons" style="font-size: 14px;">chevron_right</i>
+</a>
+<button class="btn-secondary" onclick="openUserInfoModal('Student Login', 'Academic Candidate &amp; Exam Test-Taker', 'Run Hardware Self-Checks → Face Match verification → Take Secure Exam')" style="flex:1; justify-content:center; height:40px; padding:0 12px; max-width:280px;">
+<span>View Persona &amp; Journey</span>
+<i class="material-icons" style="font-size: 14px;">badge</i>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 6: Reference & Support -->
+<section class="role-section">
+<div class="section-header">
+<i class="material-icons">info</i>
+<h2>Reference &amp; Support</h2>
+</div>
+<div class="cards-grid">
+<div class="card">
+<div class="card-icon"><i class="material-icons">language</i></div>
+<div class="card-content">
+<div class="card-title-row">
+<h3 class="card-title">SDC website</h3>
+<span class="port-badge">Port 3010</span>
+</div>
+<p class="card-desc">The public quote estimator landing page for B2B contract onboarding signups.</p>
+<a class="btn-primary" href="landing_page.html" style="height:40px; padding:0 20px; max-width:280px; align-self:flex-start;" target="_blank">
+<span>SDC website</span>
+<i class="material-icons" style="font-size: 14px;">chevron_right</i>
+</a>
+</div>
+</div>
+<div class="card">
+<div class="card-icon"><i class="material-icons">email</i></div>
+<div class="card-content">
+<div class="card-title-row">
+<h3 class="card-title">system emails</h3>
+<span class="port-badge">Port 3011</span>
+</div>
+<p class="card-desc">Preview layouts and sender/receiver definitions for system-triggered emails.</p>
+<a class="btn-primary" href="automated_emails.html" style="height:40px; padding:0 20px; max-width:280px; align-self:flex-start;" target="_blank">
+<span>system emails</span>
+<i class="material-icons" style="font-size: 14px;">chevron_right</i>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- Global Components Flow Lifecycle -->
+<div class="doc-container" style="background: var(--sur); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-top: 30px; margin-bottom: 20px;">
+<h2 style="font-size: 18px; margin: 0 0 16px 0; font-weight: 600; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
+<i class="material-icons" style="color:var(--pri);">account_tree</i>
+                Global Ecosystem Components Flow
+            </h2>
+<p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px; line-height: 1.5;">
+                Follow the chronological lifecycle of a candidate and proctor node across the unified Data Proctor ecosystem. Click any component step to open its view.
+            </p>
+<div id="global-flow-list" style="display: flex; flex-direction: column; gap: 12px;">
+<!-- Flow Node 4 (Learning Materials Component) -->
+<a href="learning_material.html" onmouseout="this.style.background='rgba(139,146,182,0.02)';" onmouseover="this.style.background='rgba(30, 64, 175,0.05)';" style="display: flex; align-items: center; gap: 16px; padding: 16px 18px; background: rgba(139, 146, 182, 0.02); border: 1px solid var(--pri); border-radius: 8px; text-decoration: none; color: inherit; transition: all 0.2s;" target="_blank">
+<div style="width: 28px; height: 28px; border-radius: 50%; background: var(--pri); color: var(--on-pri); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0;">4</div>
+<div style="flex: 1;">
+<div style="font-weight: 700; font-size: 14px; color: var(--pri);">Learning Materials</div>
+<div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Self-paced candidate preparation, interactive training, slide notes, and semantic RAG AI help desk.</div>
+</div>
+<span class="port-badge" style="border-color: var(--pri); color: var(--pri);">Port 3001</span>
+</a>
+</div>
+</div>
+</div>
+<script>
+        // ── Demo Mode: LIVE ↔ DAY ZERO (drives every portal via ?mode on the links) ──
+        function setDemoMode(mode) {
+            try { localStorage.setItem("sdc_demo_mode", mode); } catch (e) {}
+            document.querySelectorAll("#demo-mode-toggle .dm-opt").forEach(function (b) {
+                var on = b.getAttribute("data-mode") === mode;
+                b.style.background = on ? "var(--pri)" : "transparent";
+                b.style.color = on ? "var(--on-pri)" : "var(--text-muted)";
+                b.classList.toggle("active", on);
+            });
+            document.querySelectorAll('a[href^="http://localhost"]').forEach(function (a) {
+                var base = a.getAttribute("href").split("?")[0];
+                a.setAttribute("href", mode === "dayzero" ? base + "?mode=dayzero" : base);
+            });
+        }
+        setDemoMode((function () { try { return localStorage.getItem("sdc_demo_mode") || "live"; } catch (e) { return "live"; } })());
+
+        // Check and apply accessibility preference on load
+        let accessibilityMode = localStorage.getItem("sp_accessibility") || "normal";
+        document.documentElement.setAttribute("data-accessibility", accessibilityMode);
+        updateToggleButtonText();
+
+        function toggleEasyMode() {
+            accessibilityMode = (accessibilityMode === "normal") ? "easy" : "normal";
+            document.documentElement.setAttribute("data-accessibility", accessibilityMode);
+            localStorage.setItem("sp_accessibility", accessibilityMode);
+            updateToggleButtonText();
+        }
+
+        function updateToggleButtonText() {
+            const btnTxt = document.getElementById("toggle-btn-txt");
+            if (btnTxt) {
+                if (accessibilityMode === "easy") {
+                    btnTxt.textContent = "Standard Mode";
+                } else {
+                    btnTxt.textContent = "Easy Mode";
+                }
+            }
+        }
+
+        let activeCategory = "all";
+
+        function filterHubCategory(category, element) {
+            activeCategory = category;
+            
+            // Toggle active class on chips
+            document.querySelectorAll('#hub-filters .tab-btn').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            element.classList.add('active');
+            
+            applyFilters();
+        }
+
+        function filterHubCards() {
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const query = document.getElementById('search-bar').value.toLowerCase();
+            const sections = document.querySelectorAll('.role-section');
+            
+            sections.forEach(section => {
+                let sectionVisible = false;
+                const cards = section.querySelectorAll('.card');
+                
+                cards.forEach(card => {
+                    const title = card.querySelector('.card-title').textContent.toLowerCase();
+                    const desc = card.querySelector('.card-desc').textContent.toLowerCase();
+                    const matchesSearch = title.includes(query) || desc.includes(query);
+                    
+                    let matchesCategory = false;
+                    const sectionHeading = section.querySelector('h2').textContent.toLowerCase();
+                    
+                    if (activeCategory === 'all') {
+                        matchesCategory = true;
+                    } else if (activeCategory === 'student' && sectionHeading.includes('student')) {
+                        matchesCategory = true;
+                    } else if (activeCategory === 'proctor' && sectionHeading.includes('proctor')) {
+                        matchesCategory = true;
+                    } else if (activeCategory === 'admin' && sectionHeading.includes('admin')) {
+                        matchesCategory = true;
+                    } else if (activeCategory === 'support' && sectionHeading.includes('reference')) {
+                        matchesCategory = true;
+                    }
+                    
+                    if (matchesSearch && matchesCategory) {
+                        card.style.display = 'flex';
+                        sectionVisible = true;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                if (sectionVisible) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+        }
+    </script>
+<!-- User Persona & Journey Modal -->
+<div id="user-info-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; align-items:center; justify-content:center; backdrop-filter: blur(4px);">
+<div style="background:var(--sur); border:1px solid var(--border); border-radius:12px; width:90%; max-width:500px; padding:24px; position:relative; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+<button onclick="closeUserInfoModal()" style="position:absolute; top:16px; right:16px; background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:18px;">
+<i class="material-icons">close</i>
+</button>
+<h3 id="modal-portal-title" style="margin:0 0 16px 0; color:var(--pri); font-size:20px; font-weight:700;"></h3>
+<div style="margin-bottom:16px;">
+<h4 style="margin:0 0 4px 0; color:var(--text); font-size:14px; text-transform:uppercase; letter-spacing:0.05em; font-weight:600;">User Persona</h4>
+<p id="modal-persona" style="margin:0; color:var(--text-muted); font-size:14px; line-height:1.5;"></p>
+</div>
+<div>
+<h4 style="margin:0 0 4px 0; color:var(--text); font-size:14px; text-transform:uppercase; letter-spacing:0.05em; font-weight:600;">User Journey</h4>
+<p id="modal-journey" style="margin:0; color:var(--text-muted); font-size:14px; line-height:1.5;"></p>
+</div>
+</div>
+</div>
+<script>
+    function openUserInfoModal(title, persona, journey) {
+        document.getElementById('modal-portal-title').textContent = title;
+        document.getElementById('modal-persona').innerHTML = persona;
+        document.getElementById('modal-journey').innerHTML = journey;
+        document.getElementById('user-info-modal').style.display = 'flex';
+    }
+    function closeUserInfoModal() {
+        document.getElementById('user-info-modal').style.display = 'none';
+    }
+    document.getElementById('user-info-modal').addEventListener('click', function(e) {
+        if(e.target === this) {
+            closeUserInfoModal();
+        }
+    });
+    </script>
+<script src="global_nav.js"></script>
+</div>
+</body>
+</html>

@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="offline_mock_api.js"></script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzAwMCIvPjxnIGZpbGw9IiNmZmYiPjxjaXJjbGUgY3g9IjExIiBjeT0iMTMiIHI9IjQuMyIvPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTAuOCIgcj0iNSIvPjxjaXJjbGUgY3g9IjIxIiBjeT0iMTMiIHI9IjQuMyIvPjxyZWN0IHg9IjguOCIgeT0iMTMiIHdpZHRoPSIxNC40IiBoZWlnaHQ9IjciLz48cmVjdCB4PSI5LjIiIHk9IjE5LjUiIHdpZHRoPSIxMy42IiBoZWlnaHQ9IjUuOCIgcng9IjEuMyIvPjwvZz48ZyBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMC43Ij48bGluZSB4MT0iMTYiIHkxPSIxNC41IiB4Mj0iMTYiIHkyPSIxOSIvPjxsaW5lIHgxPSIxMi40IiB5MT0iMTQuOCIgeDI9IjEyLjQiIHkyPSIxOSIvPjxsaW5lIHgxPSIxOS42IiB5MT0iMTQuOCIgeDI9IjE5LjYiIHkyPSIxOSIvPjwvZz48L3N2Zz4=">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated System Emails | Data Proctor</title>
+        <link rel="stylesheet" href="design_system.css">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #09090b;
+            --bg-glass: rgba(24, 24, 27, 0.6);
+            --border-glass: rgba(255, 255, 255, 0.1);
+            --primary: #1e40af;
+            --secondary: #16308a;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --email-bg: #ffffff;
+            --email-text: #111113;
+            --email-border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .bg-mesh {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 80% 20%, rgba(30, 64, 175, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 20% 80%, rgba(230, 157, 0, 0.06) 0%, transparent 40%);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            font-weight: 300;
+        }
+
+        /* Accordion Styles */
+        .accordion {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .accordion-item {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            transition: border-color 0.3s;
+        }
+
+        .accordion-item:hover {
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+
+        .accordion-header {
+            padding: 24px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .acc-title-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .acc-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .acc-title i {
+            color: var(--primary);
+        }
+
+        .acc-trigger {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .acc-icon {
+            font-size: 20px;
+            color: var(--text-secondary);
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-item.active .acc-icon {
+            transform: rotate(180deg);
+            color: var(--primary);
+        }
+
+        /* Expanded Content */
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .accordion-content {
+            padding: 0 24px 24px 24px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            margin-top: 12px;
+            padding-top: 24px;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+            background: rgba(0,0,0,0.3);
+            padding: 16px;
+            border-radius: var(--radius-md);
+        }
+
+        .meta-box {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .meta-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            font-weight: 700;
+        }
+
+        .meta-val {
+            font-size: 14px;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        /* Email Mockup */
+        .email-mockup {
+            background: var(--email-bg);
+            border-radius: var(--radius-md);
+            color: var(--email-text);
+            overflow: hidden;
+            border: 1px solid var(--email-border);
+            margin-top: 24px;
+        }
+
+        .email-header {
+            background: #f8fafc;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--email-border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .email-logo {
+            font-weight: 800;
+            color: #334155;
+            font-size: 18px;
+        }
+
+        .email-logo i {
+            color: var(--primary);
+        }
+
+        .email-body {
+            padding: 32px 24px;
+        }
+
+        .email-body h2 {
+            font-size: 20px;
+            margin-bottom: 16px;
+            color: #0f172a;
+        }
+
+        .email-body p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #475569;
+            margin-bottom: 16px;
+        }
+
+        .email-context-box {
+            background: #f1f5f9;
+            border-left: 4px solid var(--primary);
+            padding: 16px;
+            margin: 24px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 14px;
+            color: #334155;
+        }
+
+        .email-cta {
+            display: inline-block;
+            background: var(--primary);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+
+        .email-footer {
+            padding: 24px;
+            background: #f8fafc;
+            border-top: 1px solid var(--email-border);
+            font-size: 12px;
+            color: #475569;
+            text-align: center;
+        }
+        
+        .back-nav {
+            margin-bottom: 24px;
+        }
+        
+        .btn-back {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-glass);
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .btn-back:hover {
+            color: #fff;
+            background: var(--border-glass);
+        }
+
+            .email-group-title {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 13px; font-weight: 800; letter-spacing: 0.08em;
+            text-transform: uppercase; margin: 30px 4px 14px;
+            padding-bottom: 8px; border-bottom: 1px solid;
+        }
+        .email-group-title:first-of-type { margin-top: 0; }
+        .email-group-title .material-icons { font-size: 20px; }
+        .email-group-count {
+            margin-left: auto; font-size: 11px; font-weight: 700;
+            color: #6b6b6b; background: rgba(0,0,0,0.06);
+            border-radius: 9999px; padding: 3px 11px; letter-spacing: 0.02em;
+        }
+    </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+<body>
+
+    <div class="bg-mesh"></div>
+
+    <div class="container">
+        <div class="back-nav">
+            <a href="index.html" class="btn-back"><i class="material-icons">arrow_back</i> Back to Hub</a>
+        </div>
+        
+        <div class="header">
+            <h1>Automated System Emails</h1>
+            <p>Directory of all automated communications generated by the platform in Auto Mode.</p>
+        </div>
+
+        <div class="accordion" id="emailAccordion">
+
+            <!-- ===== GROUP: Candidate Lifecycle ===== -->
+            <div class="email-group-title" style="color:#146c2e; border-bottom-color:#146c2e33;"><i class="material-icons">person</i> Candidate Lifecycle<span class="email-group-count">9 emails</span></div>
+            <!-- Candidate flow: Learning Material Voucher Redeemed -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="acc-title-group">
+                        <div class="acc-title"><i class="material-icons" style="color:#146c2e;">redeem</i> Learning Material Voucher Redeemed</div>
+                        <div class="acc-trigger">Sent to the candidate when a proctor approves a learning-material voucher redemption (incl. pre-login requests).</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down acc-icon"></i>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="meta-grid">
+                            <div class="meta-box"><span class="meta-label">Sender</span><span class="meta-val">system@secureproctor.ai</span></div>
+                            <div class="meta-box"><span class="meta-label">Receiver</span><span class="meta-val">Candidate</span></div>
+                            <div class="meta-box"><span class="meta-label">Context</span><span class="meta-val">Voucher Redemption</span></div>
+                        </div>
+                        <div class="email-mockup">
+                            <div class="email-header" style="border-top: 4px solid #146c2e;"><div class="email-logo"><i class="material-icons">shield</i> Data Proctor</div></div>
+                            <div class="email-body">
+                                <h2>Your learning material is unlocked ✓</h2>
+                                <p>Good news — your proctor has approved your voucher. Your learning material is now available in your candidate portal.</p>
+                                <div class="email-context-box" style="border-color: #146c2e; background: #e9f6ee;">
+                                    <strong>Voucher:</strong> LM-2026-7F3A<br>
+                                    <strong>Status:</strong> Redeemed · Active
+                                </div>
+                                <a href="index.html?view=learning" class="email-cta" style="background:#146c2e;">Start learning</a>
+                            </div>
+                            <div class="email-footer">You can revisit your material any time from the Learning Materials tab.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Candidate flow: Material + Exam Bundle — Receipt & Access -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="acc-title-group">
+                        <div class="acc-title"><i class="material-icons" style="color:#1e40af;">shopping_bag</i> Material + Exam Bundle — Receipt &amp; Access</div>
+                        <div class="acc-trigger">Sent the moment a candidate buys a material bundle. Contains the receipt, the auto-allocated voucher code, and a one-click activation magic link.</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down acc-icon"></i>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="meta-grid">
+                            <div class="meta-box"><span class="meta-label">Sender</span><span class="meta-val">billing@secureproctor.ai</span></div>
+                            <div class="meta-box"><span class="meta-label">Receiver</span><span class="meta-val">Candidate</span></div>
+                            <div class="meta-box"><span class="meta-label">Context</span><span class="meta-val">Bundle Purchase / Allocation</span></div>
+                        </div>
+                        <div class="email-mockup">
+                            <div class="email-header" style="border-top: 4px solid #1e40af;"><div class="email-logo"><i class="material-icons">shield</i> Data Proctor</div></div>
+                            <div class="email-body">
+                                <h2>Your study material &amp; exam voucher are ready ✓</h2>
+                                <p>Thanks for your purchase. Your learning material is unlocked and an exam voucher has been allocated to your account automatically.</p>
+                                <div class="email-context-box" style="border-color: #1e40af; background: #e7edff;">
+                                    <strong>Material:</strong> Food Protection Manager<br>
+                                    <strong>Voucher:</strong> VCH-B0007 (Internet Proctored)<br>
+                                    <strong>Status:</strong> Activated · Access ready
+                                </div>
+                                <p style="font-size:13px; color:#5d5962;">Bought it yourself? You're already in — just click below. Was this code assigned to you by a school or proctor? The same link activates it on first use.</p>
+                                <a href="candidate.html?activate=VCH-B0007" class="email-cta" style="background:#1e40af;">Open my material</a>
+                            </div>
+                            <div class="email-footer">Keep this code — it's your receipt and your one-tap way back in from any device.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Candidate flow: Voucher Purchased & Delivered (self-purchase) -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="acc-title-group">
+                        <div class="acc-title"><i class="material-icons" style="color:#1e40af;">confirmation_number</i> Voucher Purchased &amp; Delivered</div>
+                        <div class="acc-trigger">Sent to the candidate immediately after they buy their own exam voucher (In-House or Internet-Proctored). Delivers the voucher code and the payment receipt.</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down acc-icon"></i>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="meta-grid">
+                            <div class="meta-box"><span class="meta-label">Sender</span><span class="meta-val">billing@secureproctor.ai</span></div>
+                            <div class="meta-box"><span class="meta-label">Receiver</span><span class="meta-val">Candidate</span></div>
+                            <div class="meta-box"><span class="meta-label">Context</span><span class="meta-val">Voucher Purchase</span></div>
+                        </div>
+                        <div class="email-mockup">
+                            <div class="email-header" style="border-top: 4px solid #1e40af;"><div class="email-logo"><i class="material-icons">shield</i> Data Proctor</div></div>
+                            <div class="email-body">
+                                <h2>Your exam voucher is ready 🎟️</h2>
+                                <p>Thank you for your purchase. Your Manager Exam voucher has been issued to your account. Keep the code below — for an In-House exam, present it to your proctor on exam day.</p>
+                                <div class="email-context-box" style="border-color: #1e40af; background: #e7edff;">
+                                    <strong>Voucher:</strong> VCH-P0001<br>
+                                    <strong>Type:</strong> In-House Proctored &nbsp;·&nbsp; <strong>Amount paid:</strong> $42.00<br>
+                                    <strong>Status:</strong> Assigned to you ✓
+                                </div>
+                                <a href="index.html" class="email-cta" style="background:#1e40af;">View my voucher</a>
+                            </div>
+                            <div class="email-footer">This is your official receipt. In-House vouchers can be upgraded to Internet-Proctored anytime before your exam.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Candidate flow: Exam Voucher Redeemed (in-house proctor, exam day) -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="acc-title-group">
+                        <div class="acc-title"><i class="material-icons" style="color:#146c2e;">how_to_reg</i> Exam Voucher Redeemed</div>
+                        <div class="acc-trigger">Sent to the candidate when the on-site proctor redeems their In-House exam voucher on exam day — the exam is now released.</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down acc-icon"></i>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="meta-grid">
+                            <div class="meta-box"><span class="meta-label">Sender</span><span class="meta-val">system@secureproctor.ai</span></div>
+                            <div class="meta-box"><span class="meta-label">Receiver</span><span class="meta-val">Candidate</span></div>
+                            <div class="meta-box"><span class="meta-label">Context</span><span class="meta-val">Voucher Redemption</span></div>
+                        </div>
+                        <div class="email-mockup">
+                            <div class="email-header" style="border-top: 4px solid #146c2e;"><div class="email-logo"><i class="material-icons">shield</i> Data Proctor</div></div>
+                            <div class="email-body">
+                                <h2>Your voucher is redeemed — exam released ✓</h2>
+                                <p>Your proctor has verified and entered your voucher for today's session. You're all set to begin the exam.</p>
+                                <div class="email-context-box" style="border-color: #146c2e; background: #e9f6ee;">
+                                    <strong>Voucher:</strong> VCH-P0001<br>
+                                    <strong>Session:</strong> sess_004 &nbsp;·&nbsp; <strong>Status:</strong> Redeemed
+                                </div>
+                                <a href="index.html" class="email-cta" style="background:#146c2e;">Go to my exam</a>
+                            </div>
+                            <div class="email-footer">If you did not attend this session, contact your proctor immediately.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Candidate flow: Voucher Upgraded to Internet-Proctored -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="acc-title-group">
+                        <div class="acc-title"><i class="material-icons" style="color:#6750a4;">computer</i> Voucher Upgraded to Internet-Proctored</div>
+                        <div class="acc-trigger">Sent when a candidate upgrades their In-House voucher to Internet-Proctored ($25) — e.g. they missed the scheduled session or want to test from home. The exam becomes available online, self-service.</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down acc-icon"></i>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="meta-grid">
+                            <div class="meta-box"><span class="meta-label">Sender</span><span class="meta-val">billing@secureproctor.ai</span></div>
+                            <div class="meta-box"><span class="meta-label">Receiver</span><span class="meta-val">Candidate</span></div>
+                            <div class="meta-box"><span class="meta-label">Context</span><span class="meta-val">Voucher Upgrade</span></div>
+                        </div>
+                        <div class="email-mockup">
+                            <div class="email-header" style="border-top: 4px solid #6750a4;"><div class="email-logo"><i class="material-icons">shield</i> Data Proctor</div></div>
+                            <div class="email-body">
+                                <h2>Upgrade complete — take your exam online 💻</h2>
+                                <p>Your voucher is now Internet-Proctored. You can run the system check and start your AI-proctored exam immediately — no scheduled session required.</p>
+                                <div class="email-context-box" style="border-color: #6750a4; background: #f3effa;">
+                                    <strong>Voucher:</strong> VCH-P0001<br>
+                                    <strong>Upgraded to:</strong> Internet-Proctored &nbsp;·&nbsp; <strong>Upgrade fee:</strong> $25.00<br>
+                                    <strong>Status:</strong> Ready to start ✓
+                                </div>
+                                <a href="candidate.html" class="email-cta" style="background:#6750a4;">Start my online exam</a>
+                            </div>
+                            <div class="email-footer">Make sure your webcam, microphone, and internet connection pass the pre-exam diagnostics.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Candidate flow: Exam Payment Receipt -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="acc-title-group">
+                        <div class="acc-title"><i class="material-icons" style="color:#1e40af;">receipt_long</i> Exam Payment Receipt</div>
+                        <div class="acc-trigger">Sent immediately after a candidate pays their online (Internet-Proctored) exam fee — including pre-payment.</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down acc-icon"></i>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="meta-grid">
+                            <div class="meta-box"><span class="meta-label">Sender</span><span class="meta-val">billing@secureproctor.ai</span></div>
+                            <div class="meta-box"><span class="meta-label">Receiver</span><span class="meta-val">Candidate</span></div>
+                            <div class="meta-box"><span class="meta-label">Context</span><span class="meta-val">Exam Payment</span></div>
+                        </div>
+                        <div class="email-mockup">
+                            <div class="email-header" style="border-top: 4px solid #1e40af;"><div class="email-logo"><i class="material-icons">shield</i> Data Proctor</div></div>
+                            <div class="email-body">
+                                <h2>Payment received — your exam is unlocked</h2>
+                                <p>Thank you. Your online exam booking is confirmed. Your proctor will unlock the exam at the scheduled time.</p>
+                                <div class="email-context-box" style="border-color: #1e40af; background: #e7edff;">
+                                    <strong>Exam:</strong> Food Protection Manager Certification<br>
+                                    <strong>Amount paid:</strong> $75.00 &nbsp;·&nbsp; <strong>Status:</strong> Paid ✓
+                                </div>
+                                <a href="index.html" class="email-cta" style="background:#1e40af;">View my booking</a>
+                            </div>
+                            <div class="email-footer">This is your official receipt. Keep it for your records.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Candidate flow: Exam Reminder (T-24h) -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="acc-title-group">
+                        <div class="acc-title"><i class="material-icons" style="color:#00639b;">alarm</i> Exam Reminder (24h before)</div>
+                        <div class="acc-trigger">Sent 24 hours before a scheduled exam so the candidate can prepare and run diagnostics.</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down acc-icon"></i>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="meta-grid">
+                            <div class="meta-box"><span class="meta-label">Sender</span><span class="meta-val">system@secureproctor.ai</span></div>
+                            <div class="meta-box"><span class="meta-label">Receiver</span><span class="meta-val">Candidate</span></div>
+                            <div class="meta-box"><span class="meta-label">Context</span><span class="meta-val">Exam Scheduling</span></div>
+                        </div>
+                        <div class="email-mockup">
+                            <div class="email-header" style="border-top: 4px solid #00639b;"><div class="email-logo"><i class="material-icons">shield</i> Data Proctor</div></div>
+                            <div class="email-body">
+                                <h2>Your exam is tomorrow</h2>
+                                <p>This is a reminder for your upcoming Internet-Proctored exam. Please run "Test My Computer" beforehand and have your photo ID ready.</p>
+                                <div class="email-context-box" style="border-color: #00639b; background: #e0f2fe;">
+                                    <strong>Exam:</strong> Food Protection Manager Certification<br>
+                                    <strong>When:</strong> Jun 21, 2026 · 2:00 PM
+                                </div>
+                                <a href="secure_exam.html" class="email-cta" style="background:#00639b;">Run system check</a>
+                            </div>
+                            <div class="email-footer">Need to reschedule? Contact your proctor before the exam window.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Candidate flow: Exam Unlocked / Ready -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="acc-title-group">
+                        <div class="acc-title"><i class="material-icons" style="color:#146c2e;">lock_open</i> Exam Unlocked — Ready to Start</div>
+                        <div class="acc-trigger">Sent when the proctor unlocks the exam at the scheduled time (requires payment to be complete).</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down acc-icon"></i>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="meta-grid">
+                            <div class="meta-box"><span class="meta-label">Sender</span><span class="meta-val">system@secureproctor.ai</span></div>
+                            <div class="meta-box"><span class="meta-label">Receiver</span><span class="meta-val">Candidate</span></div>
+                            <div class="meta-box"><span class="meta-label">Context</span><span class="meta-val">Exam Launch</span></div>
+                        </div>
+                        <div class="email-mockup">
+                            <div class="email-header" style="border-top: 4px solid #146c2e;"><div class="email-logo"><i class="material-icons">shield</i> Data Proctor</div></div>
+                            <div class="email-body">
+                                <h2>Your exam is now live 🎉</h2>
+                                <p>Your proctor has unlocked your exam. You can begin now from your candidate dashboard. Good luck!</p>
+                                <div class="email-context-box" style="border-color: #146c2e; background: #e9f6ee;">
+                                    <strong>Exam:</strong> Food Protection Manager Certification<br>
+                                    <strong>Status:</strong> Ready to start
+                                </div>
+                                <a href="index.html" class="email-cta" style="background:#146c2e;">Start exam</a>
+                            </div>
+                            <div class="email-footer">Your session is monitored. Make sure you are in a quiet, well-lit room.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email 4 -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="acc-title-group">
+                        <div class="acc-title"><i class="material-icons" style="color:#1e40af;">workspace_premium</i> Candidate Certification Awarded</div>
+                        <div class="acc-trigger">Triggered automatically when a candidate submits an exam and is cleared by the AI/Proctor.</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down acc-icon"></i>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="meta-grid">
+                            <div class="meta-box">
+                                <span class="meta-label">Sender</span>
+                                <span class="meta-val">certifications@sdc.org</span>
+                            </div>
+                            <div class="meta-box">
+                                <span class="meta-label">Receiver</span>
+                                <span class="meta-val">Candidate (B2C or B2B)</span>
+                            </div>
+                            <div class="meta-box">
+                                <span class="meta-label">Context</span>
+                                <span class="meta-val">Post-Exam Delivery</span>
+                            </div>
+                        </div>
+
+                        <div class="email-mockup">
+                            <div class="email-header">
+                                <div class="email-logo"><i class="material-icons" style="color:#1e40af;">workspace_premium</i> SDC Certifications</div>
+                            </div>
+                            <div class="email-body">
+                                <h2>Congratulations! You are Certified.</h2>
+                                <p>Dear Alex Johnson,</p>
+                                <p>Your exam session has been fully reviewed and verified. We are thrilled to inform you that you have successfully passed!</p>
+                                
+                                <div class="email-context-box" style="border-color: #1e40af; background: #e7edff;">
+                                    <strong>Certification:</strong> Food Handling & Sanitation<br>
+                                    <strong>Score:</strong> 94%<br>
+                                    <strong>Credential ID:</strong> SDC-FH-2026-993<br>
+                                    <strong>Valid Until:</strong> June 17, 2029
+                                </div>
+                                
+                                <p>You can download a PDF of your certificate or add it directly to your LinkedIn profile.</p>
+                                <a href="#" class="email-cta" style="background:#1e40af; color:#ffffff;">Download Certificate</a>
+                            </div>
+                            <div class="email-footer">
+                                SDC Certifications | Proudly proctored by Data Proctor AI
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ===== GROUP: Organization & Billing (B2B) ===== -->
+            <div class="email-group-title" style="color:#00639b; border-bottom-color:#00639b33;"><i class="material-icons">corporate_fare</i> Organization & Billing (B2B)<span class="email-group-count">5 emails</span></div>
+            <!-- Email 0.1 (New Trigger 1) -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="acc-title-group">
+                        <div class="acc-title"><i class="material-icons" style="color:#6750a4;">auto_fix_high</i> Registration Approved (Magic Link)</div>
+                        <div class="acc-trigger">Triggered automatically when an Organization Registration is approved by an SDC Admin.</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down acc-icon"></i>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="meta-grid">
+                            <div class="meta-box">
+                                <span class="meta-label">Sender</span>
+                                <span class="meta-val">system@secureproctor.ai</span>
+                            </div>
+                            <div class="meta-box">
+                                <span class="meta-label">Receiver</span>
+                                <span class="meta-val">Organization Primary Contact</span>
+                            </div>
+                            <div class="meta-box">
+                                <span class="meta-label">Context</span>
+                                <span class="meta-val">Account Onboarding</span>
+                            </div>
+                        </div>
+
+                        <div class="email-mockup">
+                            <div class="email-header" style="border-top: 4px solid #6750a4;">
+                                <div class="email-logo"><i class="material-icons">shield</i> Data Proctor</div>
+                            </div>
+                            <div class="email-body">
+                                <h2>Welcome to the Data Proctor Network!</h2>
+                                <p>Your organization's application has been successfully reviewed and approved by our team.</p>
+                                
+                                <div class="email-context-box" style="border-color: #6750a4; background: #f3edf7;">
+                                    <strong>Organization:</strong> Acme Culinary Academy<br>
+                                    <strong>Access Level:</strong> Organization Administrator
+                                </div>
+                                
+                                <p>You can access your Organization Portal immediately without needing a password. Click the magic link below to authenticate securely.</p>
+                                <a href="index.html" class="email-cta" style="background:#6750a4;">Sign In via Magic Link</a>
+                            </div>
+                            <div class="email-footer">
+                                This link expires in 24 hours. Do not forward this email.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email 0.2 (New Trigger 2) -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="acc-title-group">
+                        <div class="acc-title"><i class="material-icons" style="color:#14b8a6;">description</i> Quote Approved & Purchase Order</div>
+                        <div class="acc-trigger">Triggered automatically when a Quote Request is approved by an SDC Admin.</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down acc-icon"></i>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="meta-grid">
+                            <div class="meta-box">
+                                <span class="meta-label">Sender</span>
+                                <span class="meta-val">billing@secureproctor.ai</span>
+                            </div>
+                            <div class="meta-box">
+                                <span class="meta-label">Receiver</span>
+                                <span class="meta-val">Organization Billing Contact</span>
+                            </div>
+                            <div class="meta-box">
+                                <span class="meta-label">Context</span>
+                                <span class="meta-val">B2B Purchase</span>
+                            </div>
+                        </div>
+
+                        <div class="email-mockup">
+                            <div class="email-header" style="border-top: 4px solid #0f766e;">
+                                <div class="email-logo"><i class="material-icons">shield</i> Data Proctor Billing</div>
+                            </div>
+                            <div class="email-body">
+                                <h2>Your Purchase Order is Ready for Review</h2>
+                                <p>Good news! We have processed your quote request and generated your official Purchase Order.</p>
+                                
+                                <div class="email-context-box" style="border-color: #0f766e; background: #f0fdfa;">
+                                    <strong>PO Number:</strong> PO-2026-889<br>
+                                    <strong>Learning Material:</strong> Professional Chef Certification<br>
+                                    <strong>Quantity:</strong> 50 Vouchers<br>
+                                    <strong>Estimated Total:</strong> $39,500.00
+                                </div>
+                                
+                                <p>To finalize your purchase and unlock your vouchers, please log in to your portal and digitally sign the attached PO, or upload your own external PO document.</p>
+                                <a href="index.html" class="email-cta" style="background:#0f766e;">Review & Sign Purchase Order</a>
+                            </div>
+                            <div class="email-footer">
+                                SDC Certifications Financial Operations
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email 0.2b (Learning Materials PO) -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="acc-title-group">
+                        <div class="acc-title"><i class="material-icons" style="color:#00639b;">menu_book</i> Learning Materials Purchase Order</div>
+                        <div class="acc-trigger">Triggered automatically when a Learning Material Quote is approved by an SDC Admin.</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down acc-icon"></i>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="meta-grid">
+                            <div class="meta-box">
+                                <span class="meta-label">Sender</span>
+                                <span class="meta-val">billing@sdc.org</span>
+                            </div>
+                            <div class="meta-box">
+                                <span class="meta-label">Receiver</span>
+                                <span class="meta-val">Organization Billing Contact</span>
+                            </div>
+                            <div class="meta-box">
+                                <span class="meta-label">Context</span>
+                                <span class="meta-val">B2B Material Purchase</span>
+                            </div>
+                        </div>
+
+                        <div class="email-mockup">
+                            <div class="email-header" style="border-top: 4px solid #00639b;">
+                                <div class="email-logo"><i class="material-icons">shield</i> SDC Materials & Billing</div>
+                            </div>
+                            <div class="email-body">
+                                <h2>Your Learning Materials PO is Ready</h2>
+                                <p>We have processed your request for Learning Materials and generated your official Purchase Order.</p>
+                                
+                                <div class="email-context-box" style="border-color: #00639b; background: #e0f2fe;">
+                                    <strong>PO Number:</strong> PO-LM-2026-102<br>
+                                    <strong>Items:</strong> <br>
+                                    - 50x Introduction to Culinary Arts Management<br>
+                                    - 25x Food Safety & Sanitation Masterclass<br>
+                                    <strong>Estimated Total:</strong> $8,125.00
+                                </div>
+                                
+                                <p>To finalize your purchase and unlock digital access codes or trigger physical shipment, please log in to your portal and digitally sign the attached PO.</p>
+                                <a href="index.html" class="email-cta" style="background:#00639b;">Review & Sign Purchase Order</a>
+                            </div>
+                            <div class="email-footer">
+                                SDC Certifications Financial Operations
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email 0.3 (New Trigger 3) -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="acc-title-group">
+                        <div class="acc-title"><i class="material-icons" style="color:#1e40af;">help</i> Action Required: Clarification Needed</div>
+                        <div class="acc-trigger">Triggered when an SDC Admin clicks "Request Clarification" on a flagged application.</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down acc-icon"></i>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="meta-grid">
+                            <div class="meta-box">
+                                <span class="meta-label">Sender</span>
+                                <span class="meta-val">compliance@secureproctor.ai</span>
+                            </div>
+                            <div class="meta-box">
+                                <span class="meta-label">Receiver</span>
+                                <span class="meta-val">Applicant Email</span>
+                            </div>
+                            <div class="meta-box">
+                                <span class="meta-label">Context</span>
+                                <span class="meta-val">Security & Verification</span>
+                            </div>
+                        </div>
+
+                        <div class="email-mockup">
+                            <div class="email-header" style="border-top: 4px solid #1e40af;">
+                                <div class="email-logo"><i class="material-icons">shield</i> Data Proctor Compliance</div>
+                            </div>
+                            <div class="email-body">
+                                <h2>Clarification Needed on Your Application</h2>
+                                <p>Thank you for your interest in joining the SDC Network. Our team is currently reviewing your application, but we noticed a discrepancy that requires your attention.</p>
+                                
+                                <div class="email-context-box" style="border-color: #1e40af; background: #e7edff;">
+                                    <strong>Flag Reason:</strong> Domain Mismatch<br>
+                                    <strong>Details:</strong> The email address provided does not match the claimed company web domain.
+                                </div>
+                                
+                                <p>Please reply directly to this email with official documentation or a brief explanation verifying your affiliation with the organization. Once received, we will expedite your approval.</p>
+                                <a href="mailto:compliance@secureproctor.ai" class="email-cta" style="background:#1e40af; color:#ffffff;">Reply to Compliance Team</a>
+                            </div>
+                            <div class="email-footer">
+                                SDC Certifications Security & Compliance
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Email 3 -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="acc-title-group">
+                        <div class="acc-title"><i class="material-icons" style="color:#10b981;">receipt_long</i> B2B Purchase Invoice</div>
+                        <div class="acc-trigger">Triggered when a Super Admin approves a PO request from a B2B Organization.</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down acc-icon"></i>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="meta-grid">
+                            <div class="meta-box">
+                                <span class="meta-label">Sender</span>
+                                <span class="meta-val">billing@secureproctor.ai</span>
+                            </div>
+                            <div class="meta-box">
+                                <span class="meta-label">Receiver</span>
+                                <span class="meta-val">Organization Billing Contact</span>
+                            </div>
+                            <div class="meta-box">
+                                <span class="meta-label">Context</span>
+                                <span class="meta-val">Financial Ledger / Clearance</span>
+                            </div>
+                        </div>
+
+                        <div class="email-mockup">
+                            <div class="email-header" style="border-top: 4px solid #047857;">
+                                <div class="email-logo"><i class="material-icons">shield</i> Data Proctor Billing</div>
+                            </div>
+                            <div class="email-body">
+                                <h2>Your Invoice is Ready</h2>
+                                <p>Hello Taj Cafe Billing Team,</p>
+                                <p>Your recent Purchase Request has been approved by the Super Admin. Your voucher assignments will be released to your account upon payment clearance.</p>
+                                
+                                <div class="email-context-box" style="border-color: #047857; background: #ecfdf5;">
+                                    <strong>Invoice #:</strong> INV-2026-104<br>
+                                    <strong>Items:</strong> 100x Restaurant Manager Vouchers<br>
+                                    <strong>Total Amount:</strong> $12,320.00 (Includes 12% Volume Discount)<br>
+                                    <strong>Due Date:</strong> Net 30
+                                </div>
+                                
+                                <p>You can pay securely online via Credit Card or view instructions for Wire Transfer/Check below.</p>
+                                <a href="super_admin_3005.html" class="email-cta" style="background:#047857;">Pay Invoice Online</a>
+                            </div>
+                            <div class="email-footer">
+                                SDC Certifications Financials | Questions? Contact support@secureproctor.ai
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== GROUP: Proctor & Security ===== -->
+            <div class="email-group-title" style="color:#ef4444; border-bottom-color:#ef444433;"><i class="material-icons">shield</i> Proctor & Security<span class="email-group-count">2 emails</span></div>
+            <!-- Email 1 -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="acc-title-group">
+                        <div class="acc-title"><i class="material-icons">person_add</i> Welcome & Account Setup</div>
+                        <div class="acc-trigger">Triggered automatically when a Super Admin creates a new Proctor Agent account.</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down acc-icon"></i>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="meta-grid">
+                            <div class="meta-box">
+                                <span class="meta-label">Sender</span>
+                                <span class="meta-val">system@secureproctor.ai</span>
+                            </div>
+                            <div class="meta-box">
+                                <span class="meta-label">Receiver</span>
+                                <span class="meta-val">New Proctor Agent</span>
+                            </div>
+                            <div class="meta-box">
+                                <span class="meta-label">Context</span>
+                                <span class="meta-val">Account Onboarding</span>
+                            </div>
+                        </div>
+
+            <!-- Email 2 -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="acc-title-group">
+                        <div class="acc-title"><i class="material-icons" style="color:#ef4444;">warning</i> Critical AI Violation Alert</div>
+                        <div class="acc-trigger">Triggered when the AI detects a high-confidence cheating attempt (e.g., secondary person in frame).</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down acc-icon"></i>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="meta-grid">
+                            <div class="meta-box">
+                                <span class="meta-label">Sender</span>
+                                <span class="meta-val">alerts@secureproctor.ai</span>
+                            </div>
+                            <div class="meta-box">
+                                <span class="meta-label">Receiver</span>
+                                <span class="meta-val">Active Proctor / Supervisor</span>
+                            </div>
+                            <div class="meta-box">
+                                <span class="meta-label">Context</span>
+                                <span class="meta-val">Exam Integrity Fault</span>
+                            </div>
+                        </div>
+
+                        <div class="email-mockup">
+                            <div class="email-header" style="border-top: 4px solid #dc2626;">
+                                <div class="email-logo"><i class="material-icons">shield</i> Data Proctor Alerts</div>
+                            </div>
+                            <div class="email-body">
+                                <h2>Critical Violation Detected: Session #8829</h2>
+                                <p>Our AI Monitoring engine has flagged a high-priority incident requiring immediate human review.</p>
+                                
+                                <div class="email-context-box" style="border-color: #dc2626; background: #fef2f2;">
+                                    <strong>Violation Type:</strong> Multiple Faces Detected<br>
+                                    <strong>Candidate:</strong> John Smith (ID: JS-992)<br>
+                                    <strong>Exam:</strong> Professional Chef Certification<br>
+                                    <strong>Confidence Score:</strong> 98.4%
+                                </div>
+                                
+                                <p>The candidate's exam has been paused automatically. Please review the footage snippet and determine the final ruling.</p>
+                                <a href="index.html" class="email-cta" style="background:#dc2626;">Review Incident Feed</a>
+                            </div>
+                            <div class="email-footer">
+                                Data Proctor Integrity Operations | Incident ID: INC-0029
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- ===== GROUP: Account & Email ===== -->
+            <div class="email-group-title" style="color:#14b8a6; border-bottom-color:#14b8a633;"><i class="material-icons">alternate_email</i> Account &amp; Email<span class="email-group-count">2 emails</span></div>
+
+            <!-- Account flow: Approve Your Linked Email Addresses -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="acc-title-group">
+                        <div class="acc-title"><i class="material-icons" style="color:#14b8a6;">mark_email_read</i> Approve Your Linked Email Addresses</div>
+                        <div class="acc-trigger">Sent when a candidate adds a secondary email in their profile. Asks them to confirm both addresses belong to them and are tied to their voucher code.</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down acc-icon"></i>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="meta-grid">
+                            <div class="meta-box"><span class="meta-label">Sender</span><span class="meta-val">verify@secureproctor.ai</span></div>
+                            <div class="meta-box"><span class="meta-label">Receiver</span><span class="meta-val">Candidate (secondary email)</span></div>
+                            <div class="meta-box"><span class="meta-label">Context</span><span class="meta-val">Email Association Approval</span></div>
+                        </div>
+                        <div class="email-mockup">
+                            <div class="email-header" style="border-top: 4px solid #14b8a6;"><div class="email-logo"><i class="material-icons">shield</i> Data Proctor</div></div>
+                            <div class="email-body">
+                                <h2>Confirm your linked email addresses</h2>
+                                <p>A secondary email was added to your account. To keep your account secure, please confirm that both addresses below belong to you. Once approved, either address can be used to access your exam and materials.</p>
+                                <div class="email-context-box" style="border-color: #14b8a6; background: #effbf9;">
+                                    <strong>Primary email:</strong> alex.scott@sdc.edu<br>
+                                    <strong>Secondary email:</strong> alex.scott.alt@gmail.com<br>
+                                    <strong>Voucher code:</strong> VCH-A1001<br>
+                                    <strong>Status:</strong> Pending your approval
+                                </div>
+                                <p>By clicking below you agree that both email addresses are associated with voucher VCH-A1001.</p>
+                                <a href="candidate.html?action=approve-emails&amp;code=VCH-A1001" class="email-cta" style="background:#14b8a6;">I Agree — link my emails</a>
+                            </div>
+                            <div class="email-footer">If you didn't add this email, ignore this message and the association won't be made. This link expires in 24 hours.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account flow: Email Addresses Linked -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="acc-title-group">
+                        <div class="acc-title"><i class="material-icons" style="color:#10b981;">check_circle</i> Email Addresses Linked ✓</div>
+                        <div class="acc-trigger">Confirmation sent to both addresses once the candidate approves the dual-email association.</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down acc-icon"></i>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="meta-grid">
+                            <div class="meta-box"><span class="meta-label">Sender</span><span class="meta-val">verify@secureproctor.ai</span></div>
+                            <div class="meta-box"><span class="meta-label">Receiver</span><span class="meta-val">Both email addresses</span></div>
+                            <div class="meta-box"><span class="meta-label">Context</span><span class="meta-val">Email Association Confirmed</span></div>
+                        </div>
+                        <div class="email-mockup">
+                            <div class="email-header" style="border-top: 4px solid #10b981;"><div class="email-logo"><i class="material-icons">shield</i> Data Proctor</div></div>
+                            <div class="email-body">
+                                <h2>Your email addresses are now linked ✓</h2>
+                                <p>Thanks for confirming. Both email addresses are now associated with your account and your exam voucher. You can sign in or receive notifications at either address.</p>
+                                <div class="email-context-box" style="border-color: #10b981; background: #ecfdf5;">
+                                    <strong>Primary email:</strong> alex.scott@sdc.edu<br>
+                                    <strong>Secondary email:</strong> alex.scott.alt@gmail.com<br>
+                                    <strong>Voucher code:</strong> VCH-A1001<br>
+                                    <strong>Status:</strong> Active
+                                </div>
+                                <a href="candidate.html" class="email-cta" style="background:#10b981;">Go to my dashboard</a>
+                            </div>
+                            <div class="email-footer">To unlink an address later, update your details in the Profile tab of your candidate portal.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function toggleAccordion(header) {
+            const item = header.parentElement;
+            const body = item.querySelector('.accordion-body');
+            
+            // Close others
+            const allItems = document.querySelectorAll('.accordion-item');
+            allItems.forEach(i => {
+                if (i !== item) {
+                    i.classList.remove('active');
+                    i.querySelector('.accordion-body').style.maxHeight = null;
+                }
+            });
+
+            // Toggle current
+            item.classList.toggle('active');
+            if (item.classList.contains('active')) {
+                // adding a generous max height
+                body.style.maxHeight = body.scrollHeight + 500 + "px";
+            } else {
+                body.style.maxHeight = null;
+            }
+        }
+    </script>
+</body>
+</html>
