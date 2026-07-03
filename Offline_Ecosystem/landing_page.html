@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <script src="offline_mock_api.js"></script>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzAwMCIvPjxnIGZpbGw9IiNmZmYiPjxjaXJjbGUgY3g9IjExIiBjeT0iMTMiIHI9IjQuMyIvPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTAuOCIgcj0iNSIvPjxjaXJjbGUgY3g9IjIxIiBjeT0iMTMiIHI9IjQuMyIvPjxyZWN0IHg9IjguOCIgeT0iMTMiIHdpZHRoPSIxNC40IiBoZWlnaHQ9IjciLz48cmVjdCB4PSI5LjIiIHk9IjE5LjUiIHdpZHRoPSIxMy42IiBoZWlnaHQ9IjUuOCIgcng9IjEuMyIvPjwvZz48ZyBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMC43Ij48bGluZSB4MT0iMTYiIHkxPSIxNC41IiB4Mj0iMTYiIHkyPSIxOSIvPjxsaW5lIHgxPSIxMi40IiB5MT0iMTQuOCIgeDI9IjEyLjQiIHkyPSIxOSIvPjxsaW5lIHgxPSIxOS42IiB5MT0iMTQuOCIgeDI9IjE5LjYiIHkyPSIxOSIvPjwvZz48L3N2Zz4="/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Data Proctor | Zero Day Flow</title>
+<link href="design_system.css" rel="stylesheet"/>
+<link href="landing.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+</head>
+<body>
+<!-- Animated Background -->
+<div class="bg-mesh"></div>
+<!-- Header -->
+<header>
+<div class="logo" onclick="showHome()" style="cursor: pointer;">
+<img alt="SDC Logo" onerror="this.onerror=null; this.src='sdc_full_logo.png';" src="sdc_hat_logo.png" style="height:24px; filter: brightness(10);"/>
+<span style="margin-left: 8px;">Data Proctor</span>
+</div>
+<div class="nav-links">
+<a class="nav-link" href="#" onclick="showCatalog()">Purchase Learning Material</a>
+<div class="cart-btn" onclick="toggleCartDrawer()">
+<i class="material-icons">shopping_cart</i>
+<div class="cart-badge" id="cartBadge">0</div>
+</div>
+<button class="btn-secondary" onclick="openOnboardingModal('quote')">Get Quote</button>
+<button class="btn-primary" onclick="openOnboardingModal('buy')">Buy Vouchers</button>
+</div>
+</header>
+<div id="home-section">
+<!-- Hero Section -->
+<section class="hero">
+<h1>Trust at Scale. Unified Proctoring Ecosystem.</h1>
+<p>Seamlessly bridge the gap between administrators managing large-scale certification governance and proctors ensuring the highest standards of exam integrity. One platform, dual perspectives.</p>
+</section>
+<!-- Roles Section -->
+<section class="roles-section">
+<!-- Admin Card -->
+<div class="role-card" onclick="window.location.href='super_admin_3005.html'" style="cursor: pointer;">
+<div class="role-icon"><i class="material-icons">admin_panel_settings</i></div>
+<h2>Super Admin</h2>
+<p>Full governance command center. Manage organizational clients, orchestrate volume pricing, and track financial clearances globally.</p>
+<ul class="role-features">
+<li><i class="material-icons">check</i> Manage Organizational onboarding and lifecycles</li>
+<li><i class="material-icons">check</i> Approve B2B Purchase Requests and POs</li>
+<li><i class="material-icons">check</i> Monitor Global Financial Ledger &amp; Revenue</li>
+<li><i class="material-icons">check</i> Real-time AI Support Triage</li>
+</ul>
+<button class="btn-secondary" onclick="window.location.href='super_admin_3005.html'" style="width: 100%; margin-top: 16px;">Sign up as Admin</button>
+</div>
+<!-- Proctor Card -->
+<div class="role-card">
+<div class="role-icon"><i class="material-icons">videocam</i></div>
+<h2>Proctor Agent</h2>
+<p>Operational integrity command center. Conduct live exams, verify user identities, and flag suspicious activities in real-time.</p>
+<ul class="role-features">
+<li><i class="material-icons">check</i> Real-time multi-candidate video monitoring</li>
+<li><i class="material-icons">check</i> AI-assisted anomaly and cheating detection</li>
+<li><i class="material-icons">check</i> Secure credential verification workflows</li>
+<li><i class="material-icons">check</i> Session recording and audit generation</li>
+</ul>
+<button class="btn-secondary" onclick="window.location.href='admin_portal.html'" style="width: 100%; margin-top: 16px;">Sign up as Proctor</button>
+</div>
+</section>
+</div>
+<!-- Catalog Section -->
+<section class="catalog-section" id="catalog-section">
+<div class="catalog-header">
+<h2>Learning Materials Catalog</h2>
+<p>Comprehensive resources to build your team's expertise.</p>
+</div>
+<div class="catalog-grid" id="catalog-grid">
+<!-- Populated via JS -->
+</div>
+</section>
+<!-- Cart Drawer -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCartDrawer()"></div>
+<div class="cart-drawer" id="cartDrawer">
+<div class="cart-header">
+<h3>Your Quote Summary</h3>
+<button class="action-btn" onclick="toggleCartDrawer()"><i class="material-icons">close</i></button>
+</div>
+<div class="cart-body" id="cartBody">
+<!-- Populated via JS -->
+</div>
+<div class="cart-footer">
+<div class="cart-summary">
+<span>Estimated Total</span>
+<span id="cartTotalDisplay" style="color: var(--primary);">$0</span>
+</div>
+<button class="btn-primary" onclick="proceedToCheckout()" style="width: 100%;">Proceed to Request Quote</button>
+</div>
+</div>
+<!-- Unified Onboarding Modal -->
+<div class="modal-overlay" id="onboardingModal">
+<div class="modal" id="onboardingFormContainer">
+<div class="modal-header">
+<h3 id="onboardingTitle">Register Organization</h3>
+<button class="action-btn" onclick="closeOnboardingModal()"><i class="material-icons">close</i></button>
+</div>
+<div class="modal-body">
+<div class="form-group">
+<label for="onboardOrgName">Organization Name</label>
+<input class="form-control" id="onboardOrgName" placeholder="e.g. Acme Culinary Academy" type="text"/>
+</div>
+<div class="form-group">
+<label for="onboardDomain">Company Web Domain</label>
+<input class="form-control" id="onboardDomain" placeholder="e.g. acme.com" type="text"/>
+</div>
+<div class="form-group" id="emailGroup">
+<label for="onboardEmail">Work Email Address</label>
+<input class="form-control" id="onboardEmail" placeholder="e.g. admin@acmeculinary.com" type="email"/>
+<div id="emailError" style="display:none; color:var(--status-error); font-size:12px; margin-top:4px;"><i class="material-icons">warning</i> Please use an official organizational email address.</div>
+</div>
+<div id="quoteDynamicSection" style="display:none; margin-top:24px; padding-top:24px; border-top:1px solid var(--border-glass);">
+<div id="simpleQuoteSection">
+<div class="form-group">
+<label for="voucherSelect">Select Certification Learning Material</label>
+<select class="form-control" id="voucherSelect" onchange="calculateQuote()">
+<!-- Options populated via JS -->
+</select>
+</div>
+<div class="form-group">
+<label for="voucherQty">Quantity Required</label>
+<input class="form-control" id="voucherQty" min="1" oninput="calculateQuote()" type="number" value="1"/>
+</div>
+<div class="quote-result">
+<div class="quote-label">Estimated Total</div>
+<div class="quote-total" id="quoteTotal">$0</div>
+</div>
+</div>
+<div id="checkoutOrderSummary" style="display:none;">
+<!-- JS populated -->
+</div>
+<!-- Buy-now card payment (mirrors org-admin "Pay Now") -->
+<div id="buyPaymentSection" style="display:none; margin-top:20px; padding-top:20px; border-top:1px solid var(--border-glass);">
+<div style="font-size:14px; font-weight:700; margin-bottom:12px; color:var(--text-primary);">Payment Details</div>
+<div class="form-group">
+<label for="buyCardName">Cardholder Name</label>
+<input class="form-control" id="buyCardName" placeholder="Name on card" type="text"/>
+</div>
+<div class="form-group">
+<label for="buyCardNumber">Card Number</label>
+<input class="form-control" id="buyCardNumber" inputmode="numeric" placeholder="4242 4242 4242 4242" type="text"/>
+</div>
+<div style="display:flex; gap:12px;">
+<div class="form-group" style="flex:1;">
+<label for="buyCardExp">Expiry</label>
+<input class="form-control" id="buyCardExp" placeholder="MM/YY" type="text"/>
+</div>
+<div class="form-group" style="flex:1;">
+<label for="buyCardCvc">CVC</label>
+<input class="form-control" id="buyCardCvc" inputmode="numeric" placeholder="123" type="text"/>
+</div>
+</div>
+<div style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-muted); margin-top:4px;">
+<i class="material-icons" style="font-size:16px;">lock</i>
+<span>Secured payment · vouchers are issued instantly and emailed to you.</span>
+</div>
+</div>
+</div>
+<button class="btn-primary" id="onboardSubmitBtn" onclick="submitOnboarding()" style="width: 100%; margin-top: 24px;">Submit</button>
+</div>
+</div>
+<!-- Feedback State Container (Hidden by default) -->
+<div class="modal" id="onboardingFeedbackContainer" style="display:none; text-align:center; padding:48px 24px;">
+<div id="feedbackIcon" style="font-size: 48px; margin-bottom: 16px;"></div>
+<h3 id="feedbackTitle" style="margin-bottom: 12px; font-size:20px;"></h3>
+<p id="feedbackText" style="color:var(--text-muted); font-size:16px; margin-bottom: 24px;"></p>
+<div id="feedbackCodes" style="display:none; text-align:left; margin:0 auto 24px; max-width:420px;"></div>
+<button class="btn-secondary" id="feedbackActionBtn" onclick="returnToForm()" style="display:none; margin:0 auto;">Go Back</button>
+<button class="btn-primary" id="feedbackCloseBtn" onclick="closeOnboardingModal()" style="margin:0 auto;">Close</button>
+</div>
+</div>
+<!-- Video Modal -->
+<div class="modal-overlay" id="videoModalOverlay" onclick="closeVideoModal()">
+<div class="modal" id="videoModal" onclick="event.stopPropagation()" style="padding: 0; max-width: 800px; width: 90%; overflow: hidden;">
+<div class="modal-header" style="padding: 16px; border-bottom: 1px solid var(--border-glass); margin-bottom: 0;">
+<h3 style="font-size: 16px; margin: 0;">Video Trailer</h3>
+<button class="action-btn" onclick="closeVideoModal()"><i class="material-icons">close</i></button>
+</div>
+<div class="video-container">
+<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" frameborder="0" id="trailerIframe" src=""></iframe>
+</div>
+</div>
+</div>
+<script src="landing.js"></script>
+</body>
+</html>

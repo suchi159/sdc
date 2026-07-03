@@ -2,22 +2,23 @@
 
 <html data-t="light" lang="en">
 <head>
-<meta content="default-src * data: blob: 'unsafe-inline'; script-src * 'unsafe-inline'; connect-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src *; style-src * 'unsafe-inline';" http-equiv="Content-Security-Policy"/>
+<meta content="default-src * data: blob: 'unsafe-inline'; script-src * 'unsafe-inline' ; connect-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src *; style-src * 'unsafe-inline';" http-equiv="Content-Security-Policy"/>
 <meta charset="utf-8"/>
-<link href="data:," rel="icon"/>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzAwMCIvPjxnIGZpbGw9IiNmZmYiPjxjaXJjbGUgY3g9IjExIiBjeT0iMTMiIHI9IjQuMyIvPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTAuOCIgcj0iNSIvPjxjaXJjbGUgY3g9IjIxIiBjeT0iMTMiIHI9IjQuMyIvPjxyZWN0IHg9IjguOCIgeT0iMTMiIHdpZHRoPSIxNC40IiBoZWlnaHQ9IjciLz48cmVjdCB4PSI5LjIiIHk9IjE5LjUiIHdpZHRoPSIxMy42IiBoZWlnaHQ9IjUuOCIgcng9IjEuMyIvPjwvZz48ZyBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMC43Ij48bGluZSB4MT0iMTYiIHkxPSIxNC41IiB4Mj0iMTYiIHkyPSIxOSIvPjxsaW5lIHgxPSIxMi40IiB5MT0iMTQuOCIgeDI9IjEyLjQiIHkyPSIxOSIvPjxsaW5lIHgxPSIxOS42IiB5MT0iMTQuOCIgeDI9IjE5LjYiIHkyPSIxOSIvPjwvZz48L3N2Zz4="/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <meta content="SecureProctor AI - High-fidelity industry-leading AI-driven exam proctoring control center. Manage exams, monitor incidents, track analytics, and handle schedules in light and dark modes." name="description"/>
 <title>SecureProctor AI - Next-Gen Exam Proctoring Control Center</title>
 <!-- Font and Icon Resources -->
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="design_system.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
 <!-- Apache ECharts CDN -->
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <!-- Styling Stylesheet -->
 <link href="index.css" rel="stylesheet"/>
-</head>
+</link></head>
 <body>
 <!-- ==================== AUTHENTICATION VIEW ==================== -->
 <div class="view-panel active" id="auth-view">
@@ -57,7 +58,7 @@
 </div>
 <div class="auth-options">
 <label class="checkbox-label">
-<input checked="" type="checkbox"/>
+<input checked="" id="remember-me" name="remember-me" type="checkbox"/>
 <span>Keep me signed in for 30 days</span>
 </label>
 </div>
@@ -75,6 +76,7 @@
 <span>Google Workspace</span>
 </button>
 </div>
+<p class="auth-signup" style="text-align:center; margin-top:20px; font-size:14px; color:var(--on-sur-var);">New to SecureProctor? <a class="auth-link" href="proctor_auth.html" style="font-weight:600;">Sign up as a proctor</a></p>
 </div>
 <!-- MFA Verification Card -->
 <div class="auth-card hidden" id="mfa-card">
@@ -93,14 +95,14 @@
 </div>
 <form id="mfa-form" onsubmit="handleMfaVerify(event)">
 <div class="inp-group">
-<label class="inp-label">6-Digit Verification Code</label>
+<label class="inp-label" for="input-3d5df170">6-Digit Verification Code</label>
 <div class="mfa-input-container">
-<input autofocus="" class="mfa-digit" data-index="1" maxlength="1" pattern="[0-9]" required="" type="text"/>
-<input class="mfa-digit" data-index="2" maxlength="1" pattern="[0-9]" required="" type="text"/>
-<input class="mfa-digit" data-index="3" maxlength="1" pattern="[0-9]" required="" type="text"/>
-<input class="mfa-digit" data-index="4" maxlength="1" pattern="[0-9]" required="" type="text"/>
-<input class="mfa-digit" data-index="5" maxlength="1" pattern="[0-9]" required="" type="text"/>
-<input class="mfa-digit" data-index="6" maxlength="1" pattern="[0-9]" required="" type="text"/>
+<input autofocus="" class="mfa-digit" data-index="1" id="input-3d5df170" maxlength="1" pattern="[0-9]" required="" type="text"/>
+<input class="mfa-digit" data-index="2" name="mfa-digit-2" maxlength="1" pattern="[0-9]" required="" type="text"/>
+<input class="mfa-digit" data-index="3" name="mfa-digit-3" maxlength="1" pattern="[0-9]" required="" type="text"/>
+<input class="mfa-digit" data-index="4" name="mfa-digit-4" maxlength="1" pattern="[0-9]" required="" type="text"/>
+<input class="mfa-digit" data-index="5" name="mfa-digit-5" maxlength="1" pattern="[0-9]" required="" type="text"/>
+<input class="mfa-digit" data-index="6" name="mfa-digit-6" maxlength="1" pattern="[0-9]" required="" type="text"/>
 </div>
 <div class="inp-err hidden" id="mfa-error">
 <i class="material-icons">warning</i> Invalid code. Please try again.
@@ -298,7 +300,8 @@
 <div class="view-panel" id="main-view">
 <div class="app-layout">
 <!-- ==================== LEFT SIDEBAR ==================== -->
-<aside class="sidebar" id="app-sidebar">
+<div class="app-body">
+<aside class="sidebar md-navigation-drawer" id="app-sidebar">
 <div class="brand">
 <div class="badge">SP</div>
 <div>
@@ -318,7 +321,7 @@
 </button>
 <button class="nav-item active" data-target="calendar-panel" id="nav-calendar">
 <i class="material-icons">calendar_today</i>
-<span>Sessions &amp; Scheduling</span>
+<span>Classes &amp; Scheduling</span>
 </button>
 <button class="nav-item" data-target="candidates-panel" id="nav-candidates">
 <i class="material-icons">people_outline</i>
@@ -364,7 +367,7 @@
 </div>
 </aside>
 <!-- ==================== MAIN CONTENT AREA ==================== -->
-<main class="main-content">
+<main class="main-content md-main-content">
 <!-- ==================== TOP NAVIGATION HEADER ==================== -->
 <header class="hdr">
 <div class="hdr-left">
@@ -373,7 +376,7 @@
 </button>
 <div class="search-bar">
 <i class="material-icons search-icon">search</i>
-<input aria-label="Search proctor panel" placeholder="Search candidate, exam, or alert ID..." type="text"/>
+<input aria-label="Search proctor panel" id="global-search" name="global-search" placeholder="Search candidate, exam, or alert ID..." type="text"/>
 </div>
 </div>
 <div class="hdr-right">
@@ -511,9 +514,9 @@
 <div style="background: var(--sur); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; justify-content: space-between; position: relative;">
 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
 <span style="font-size: 12px; font-weight: 700; color: var(--out); text-transform: uppercase; letter-spacing: 0.05em;">Active
-                    Sessions</span>
+                    Classes</span>
 <div style="display: flex; align-items: center; gap: 4px;">
-<i class="material-icons-outlined" onclick="pushToast('Active Sessions', 'Total number of live proctored candidate feeds currently active.', 'info')" style="font-size: 16px; color: var(--out); cursor: pointer;">help_outline</i>
+<i class="material-icons-outlined" onclick="pushToast('Active Classes', 'Total number of live proctored candidate feeds currently active.', 'info')" style="font-size: 16px; color: var(--out); cursor: pointer;">help_outline</i>
 <i class="material-icons-outlined" style="font-size: 16px; color: var(--pri);">groups</i>
 </div>
 </div>
@@ -529,7 +532,7 @@
 <span style="font-size: 12px; font-weight: 700; color: var(--out); text-transform: uppercase; letter-spacing: 0.05em;">Total
                     Candidates</span>
 <div style="display: flex; align-items: center; gap: 4px;">
-<i class="material-icons-outlined" onclick="pushToast('Total Candidates', 'Overall candidate volume across all roster rosters.', 'info')" style="font-size: 16px; color: var(--out); cursor: pointer;">help_outline</i>
+<i class="material-icons-outlined" onclick="pushToast('Total Candidates', 'Overall candidate volume across all rosters.', 'info')" style="font-size: 16px; color: var(--out); cursor: pointer;">help_outline</i>
 <i class="material-icons-outlined" style="font-size: 16px; color: var(--pri);">people</i>
 </div>
 </div>
@@ -543,9 +546,9 @@
 <div style="background: var(--sur); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; justify-content: space-between; position: relative;">
 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
 <span style="font-size: 12px; font-weight: 700; color: var(--out); text-transform: uppercase; letter-spacing: 0.05em;">Total
-                    Sessions Taken</span>
+                    Classes Taken</span>
 <div style="display: flex; align-items: center; gap: 4px;">
-<i class="material-icons-outlined" onclick="pushToast('Total Sessions Taken', 'Total historical exam sessions completed.', 'info')" style="font-size: 16px; color: var(--out); cursor: pointer;">help_outline</i>
+<i class="material-icons-outlined" onclick="pushToast('Total Classes Taken', 'Total historical exam classes completed.', 'info')" style="font-size: 16px; color: var(--out); cursor: pointer;">help_outline</i>
 <i class="material-icons-outlined" style="font-size: 16px; color: var(--pri);">assignment</i>
 </div>
 </div>
@@ -609,7 +612,7 @@
 </div>
 </div>
 </div>
-<!-- Right Column: Stack vertically: Upcoming Classes, Cohort Shifts -->
+<!-- Right Column: Stack vertically: Upcoming Classes, Class Shifts -->
 <div style="display: flex; flex-direction: column; gap: 20px;">
 <!-- Card 1: Upcoming Classes -->
 <div style="background: var(--sur); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px; box-shadow: var(--shadow-sm);">
@@ -639,12 +642,12 @@
 </div>
 </div>
 </div>
-<!-- Card 2: Cohort Shifts -->
+<!-- Card 2: Class Shifts -->
 <div style="background: var(--sur); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px; box-shadow: var(--shadow-sm);">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 8px;">
 <h3 style="margin: 0; font-size: 14px; font-weight: 700; color: var(--on-sur); display: flex; align-items: center; gap: 6px;">
 <i class="material-icons" style="color: var(--pri); font-size: 18px;">people</i>
-                      Cohort Shifts
+                      Class Shifts
                     </h3>
 <button class="mdbtn btn-text" onclick="changePanel('calendar-panel')" style="font-size: 10px; padding: 2px 6px;">Manage Shifts</button>
 </div>
@@ -652,14 +655,14 @@
 <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--md-bg); border-radius: 8px; border: 1px solid rgba(0,0,0,0.02); font-size: 12px;">
 <div>
 <div style="font-weight: 700; color: var(--on-sur);">Database Systems V</div>
-<div style="font-size: 10px; color: var(--out); margin-top: 2px;">10:00 - 12:00 | Cohort A</div>
+<div style="font-size: 10px; color: var(--out); margin-top: 2px;">10:00 - 12:00 | Class A</div>
 </div>
 <span style="background: rgba(0,99,155,0.1); color: var(--inf); padding: 2px 8px; border-radius: 100px; font-size: 9px; font-weight: 700; text-transform: uppercase;">Assigned</span>
 </div>
 <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--md-bg); border-radius: 8px; border: 1px solid rgba(0,0,0,0.02); font-size: 12px;">
 <div>
 <div style="font-weight: 700; color: var(--on-sur);">Intro to Macroeconomics</div>
-<div style="font-size: 10px; color: var(--out); margin-top: 2px;">14:00 - 15:30 | Cohort B</div>
+<div style="font-size: 10px; color: var(--out); margin-top: 2px;">14:00 - 15:30 | Class B</div>
 </div>
 <span style="background: rgba(0,99,155,0.1); color: var(--inf); padding: 2px 8px; border-radius: 100px; font-size: 9px; font-weight: 700; text-transform: uppercase;">Assigned</span>
 </div>
@@ -755,7 +758,7 @@
 <!-- Snoozed Alerts registry log -->
 <div class="kpi-card" style="margin-top: 24px; padding: 20px;">
 <h3 class="chart-title" style="display: flex; align-items: center; gap: 6px; margin: 0;">
-<i class="material-icons" style="color: var(--pri);">schedule</i> Recently Silenced &amp; Snoozed Alerts Log
+<i class="material-icons" style="color: var(--pri);">schedule</i> Recently Snoozed Alerts Log
               </h3>
 <p class="chart-subtitle" style="margin: 4px 0 12px 0;">Active candidate alert warning overlays
                 temporarily snoozed to allow candidate self-correction.</p>
@@ -805,7 +808,7 @@
 </div>
 </div>
 <div class="inp-group" style="margin-top: 12px;">
-<label class="inp-label">Export Data Formats</label>
+<div class="inp-label label-text">Export Data Formats</div>
 <div class="chip-row">
 <button class="chip selected" onclick="setExportFormat('pdf', this)" type="button"><i class="material-icons">picture_as_pdf</i> PDF Digest</button>
 <button class="chip" onclick="setExportFormat('csv', this)" type="button"><i class="material-icons">description</i> CSV Dataset</button>
@@ -848,7 +851,7 @@
 <div class="panel-section active" id="calendar-panel" style="display: block;">
 <div class="view-header">
 <div>
-<h1 class="view-title">Sessions &amp; Scheduling</h1>
+<h1 class="view-title">Classes &amp; Scheduling</h1>
 <p class="view-subtitle">Manage examination monitoring schedules and view upcoming proctoring shifts.
                 </p>
 </div>
@@ -861,7 +864,7 @@
 <div style="display: flex; justify-content: space-between; align-items: center;">
 <div>
 <h2 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--on-sur);">Classes</h2>
-<p style="margin: 4px 0 0; font-size: 11px; color: var(--out);">All proctoring sessions — past and
+<p style="margin: 4px 0 0; font-size: 11px; color: var(--out);">All proctoring classes — past and
                         present.</p>
 </div>
 <!-- Segmented filters -->
@@ -875,7 +878,7 @@
 <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 11px;">
 <thead>
 <tr style="background: var(--sur-var); color: var(--out); font-weight: 700; border-bottom: 1px solid var(--out-var); text-transform: uppercase; font-family: 'JetBrains Mono';">
-<th style="padding: 12px 16px;">Session</th>
+<th style="padding: 12px 16px;">Class</th>
 <th style="padding: 12px 16px;">Status</th>
 <th style="padding: 12px 16px;">Started</th>
 <th style="padding: 12px 16px;">Incidents</th>
@@ -919,7 +922,7 @@
 <!-- Quick Actions -->
 <div style="display: flex; gap: 8px; justify-content: space-between; border-top: 1px solid var(--out-var); padding-top: 12px; margin-top: 8px;">
 <button class="mdbtn btn-tonal" onclick="openQuickActionModal('session')" style="font-size: 10px; min-height: 28px; flex: 1; padding: 4px 6px;">
-<i class="material-icons" style="font-size: 12px;">add</i> <span>Schedule Session</span>
+<i class="material-icons" style="font-size: 12px;">add</i> <span>Schedule Class</span>
 </button>
 <button class="mdbtn btn-tonal" onclick="openQuickActionModal('shift')" style="font-size: 10px; min-height: 28px; flex: 1; padding: 4px 6px;">
 <i class="material-icons" style="font-size: 12px;">more_time</i> <span>Add Shift</span>
@@ -1409,7 +1412,7 @@
 </div>
 <!-- Quick Action: Warn Preset Dispatcher -->
 <div class="inp-group">
-<label class="inp-label" style="font-weight: 700; font-size: 11px;">1. Dispatch Preset Direct Warning
+<label class="inp-label" for="custom-warning-text" style="font-weight: 700; font-size: 11px;">1. Dispatch Preset Direct Warning
           Warning</label>
 <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 6px;">
 <button class="mdbtn btn-tonal" onclick="dispatchSupervisorWarning('Gaze Violation detected. Please keep eyes aligned with exam center window.')" style="justify-content: start; font-size: 11px; text-align: left; min-height: 32px; padding: 4px 12px; width: 100%;">
@@ -1425,14 +1428,14 @@
             full-screen"
           </button>
 <div style="display: flex; gap: 8px; margin-top: 4px; align-items: center; width: 100%;">
-<input class="inp" id="custom-warning-text" placeholder="Type a custom warning message to student..." style="font-size: 11px; flex-grow: 1; min-height: 32px; padding: 4px 10px;" type="text"/>
+<input class="inp" id="custom-warning-text" placeholder="Type a custom warning message to candidate..." style="font-size: 11px; flex-grow: 1; min-height: 32px; padding: 4px 10px;" type="text"/>
 <button class="mdbtn btn-filled" onclick="dispatchCustomWarning()" style="min-height: 32px; padding: 0 16px; font-size: 11px; flex-shrink: 0;">Send</button>
 </div>
 </div>
 </div>
 <!-- Quick Action: Manage feed states -->
 <div class="inp-group">
-<label class="inp-label" style="font-weight: 700; font-size: 11px;">2. Direct Session Controls</label>
+<div class="inp-label label-text" style="font-weight: 700; font-size: 11px;">2. Direct Session Controls</div>
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; width: 100%;">
 <button class="mdbtn btn-outlined" id="supervisor-pause-btn" onclick="toggleSupervisorPause()" style="min-height: 32px; font-size: 11px; display: inline-flex; align-items: center; justify-content: center; gap: 4px;">
 <i class="material-icons" style="font-size: 16px;">pause</i> Pause Exam
@@ -1444,7 +1447,7 @@
 </div>
 <!-- Quick Action: Support Contacts -->
 <div class="inp-group">
-<label class="inp-label" style="font-weight: 700; font-size: 11px;">3. Support Escalation Channels</label>
+<div class="inp-label label-text" style="font-weight: 700; font-size: 11px;">3. Support Escalation Channels</div>
 <div style="display: flex; gap: 8px; margin-top: 6px; width: 100%;">
 <button class="mdbtn btn-tonal" onclick="pushToast('Support Alerted', 'Paging Technical Staff to Candidate Room.', 'info')" style="flex: 1; font-size: 11px; min-height: 32px; display: inline-flex; align-items: center; justify-content: center; gap: 4px;">
 <i class="material-icons" style="font-size: 16px;">build</i> IT Support
@@ -1479,7 +1482,7 @@
 </div>
 <div id="modal-shift-session-group" style="margin-top: 12px;">
 <div class="inp-group">
-<label class="inp-label" for="modal-shift-exam">Exam / Cohort Assignment</label>
+<label class="inp-label" for="modal-shift-exam">Exam / Class Assignment</label>
 <select class="inp" id="modal-shift-exam" style="width: 100%; border: 1px solid var(--out-var); background: var(--md-bg); border-radius: 10px; padding: 10px; font-size: 12px; color: var(--on-sur); font-weight: 500;">
 <option value="CS101 Midterm">Introduction to Computer Science (CS101)</option>
 <option value="ECON202 Final">Advanced Macroeconomics (ECON202)</option>
@@ -1520,5 +1523,6 @@
 </div>
 <!-- Main JavaScript File -->
 <script src="index.js"></script>
+</div>
 </body>
 </html>

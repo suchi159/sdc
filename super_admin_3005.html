@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="demo_mode.js"></script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzAwMCIvPjxnIGZpbGw9IiNmZmYiPjxjaXJjbGUgY3g9IjExIiBjeT0iMTMiIHI9IjQuMyIvPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTAuOCIgcj0iNSIvPjxjaXJjbGUgY3g9IjIxIiBjeT0iMTMiIHI9IjQuMyIvPjxyZWN0IHg9IjguOCIgeT0iMTMiIHdpZHRoPSIxNC40IiBoZWlnaHQ9IjciLz48cmVjdCB4PSI5LjIiIHk9IjE5LjUiIHdpZHRoPSIxMy42IiBoZWlnaHQ9IjUuOCIgcng9IjEuMyIvPjwvZz48ZyBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMC43Ij48bGluZSB4MT0iMTYiIHkxPSIxNC41IiB4Mj0iMTYiIHkyPSIxOSIvPjxsaW5lIHgxPSIxMi40IiB5MT0iMTQuOCIgeDI9IjEyLjQiIHkyPSIxOSIvPjxsaW5lIHgxPSIxOS42IiB5MT0iMTQuOCIgeDI9IjE5LjYiIHkyPSIxOSIvPjwvZz48L3N2Zz4="/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin — SDC Certifications</title>
+    <meta name="description" content="SDC Certifications Super Admin command center for organization governance, voucher management, and payment clearance.">
+        <link rel="stylesheet" href="design_system.css">
+<link rel="stylesheet" href="super_admin_3005.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
+</head>
+<body>
+
+  <div class="app-layout">
+<header class="global-header md-top-app-bar">
+    <div class="brand" style="display: flex; align-items: center; gap: 12px;">
+      <img src="sdc_full_logo.png" alt="SDC Certifications" style="height: 32px;">
+      <span style="font-weight: 600; font-size: 16px;">SDC Platform</span>
+    </div>
+    
+    <div class="header-actions">
+      <button class="header-btn" title="Notifications">
+        <i class="material-icons">notifications</i>
+      </button>
+      <button class="header-btn" id="globalThemeToggle" title="Toggle Dark/Light Mode">
+        <i class="material-icons">dark_mode</i>
+      </button>
+      <div class="profile-dropdown-container">
+        <button class="profile-trigger" id="profileDropdownBtn" style="display: flex; align-items: center; gap: 12px; background: transparent; border: none; cursor: pointer; text-align: left; padding: 4px; border-radius: 8px;">
+          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+          <div style="display: flex; flex-direction: column;">
+            <span class="name" style="font-size: 14px; font-weight: 600; color: var(--on-sur, var(--text-primary));">Dr. Sarah Jenkins</span>
+            <span class="email" style="font-size: 11px; color: var(--on-sur-var, var(--text-secondary));">s.jenkins@sdc.edu</span>
+          </div>
+          <i class="material-icons" style="color: var(--on-sur-var, var(--text-secondary));">arrow_drop_down</i>
+        </button>
+        <div class="dropdown-menu" id="profileDropdown">
+          <button class="dropdown-item">
+            <i class="material-icons">switch_account</i>
+            Switch Account
+          </button>
+          <button class="dropdown-item">
+            <i class="material-icons">person_add</i>
+            Add New Account
+          </button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item" style="color: #ef4444;" onclick="handleLogout()">
+            <i class="material-icons">logout</i>
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    <!-- Auth Gate Overlay -->
+    <div id="sa-login-overlay" style="position:fixed; inset:0; z-index:9999; background:var(--bg); display:flex; overflow-y:auto; padding:24px;">
+        <div style="width:100%; max-width:420px; margin:auto; padding:40px; background:var(--surface); border-radius:16px; border:1px solid var(--border); box-shadow:0 24px 48px rgba(0,0,0,0.12);">
+            <div style="text-align:center; margin-bottom:32px;">
+                
+                <h1 style="font-size:24px; font-weight:700; color:var(--text-primary); margin-bottom:8px;">Super Admin</h1>
+                <p style="font-size:14px; color:var(--text-secondary);">Sign in to the command center</p>
+            </div>
+            <form id="sa-login-form" onsubmit="handleSALogin(event)" novalidate>
+                <div style="margin-bottom:16px;">
+                    <label for="sa-login-email" style="display:block; font-size:14px; font-weight:600; color:var(--text-secondary); margin-bottom: 4px;">
+                        <i class="material-icons" style="font-size:14px; vertical-align:middle; margin-right:4px;">mail</i>Email Address
+                    </label>
+                    <input type="email" id="sa-login-email" placeholder="superadmin@sdc.com" value="s.jenkins@sdc.edu" required style="width:100%; padding:12px 16px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--surface); color:var(--text-primary); font-size:14px; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--pri)'" onblur="this.style.borderColor='var(--border)'">
+                </div>
+                <div style="margin-bottom:24px;">
+                    <label for="sa-login-pass" style="display:block; font-size:14px; font-weight:600; color:var(--text-secondary); margin-bottom: 4px;">
+                        <i class="material-icons" style="font-size:14px; vertical-align:middle; margin-right:4px;">lock</i>Password
+                    </label>
+                    <input type="password" id="sa-login-pass" placeholder="••••••••" value="admin" required style="width:100%; padding:12px 16px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--surface); color:var(--text-primary); font-size:14px; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--pri)'" onblur="this.style.borderColor='var(--border)'">
+                    <div style="text-align:right; margin-top:8px;">
+                        <a href="#" onclick="saForgotPassword(event)" style="font-size:13px; font-weight:600; color:var(--pri-text); text-decoration:none;">Forgot password?</a>
+                    </div>
+                </div>
+                <div id="sa-login-error" style="display:none; color:var(--err); font-size:14px; margin-bottom:16px; padding:12px 12px; background:rgba(179,38,30,0.08); border-radius:var(--radius-sm); border:1px solid rgba(179,38,30,0.2);">
+                    <i class="material-icons" style="font-size:14px; vertical-align:middle; margin-right:4px;">error</i>
+                    <span id="sa-login-error-text">Invalid credentials</span>
+                </div>
+                <button type="submit" class="btn-primary" style="width:100%; height:48px; font-size:16px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:8px;">
+                    <i class="material-icons" style="font-size:18px;">login</i> Sign In
+                </button>
+            </form>
+            <p style="text-align:center; font-size:14px; color:var(--text-secondary); margin-top:20px;">
+                Need an account? <a href="#" onclick="saRequestAccess(event)" style="font-weight:600; color:var(--pri-text); text-decoration:none;">Request access</a>
+            </p>
+            <p style="text-align:center; font-size:12px; color:var(--text-tertiary); margin-top:16px;">Hint: any email + password "admin" works for demo</p>
+        </div>
+    </div>
+
+    <script>
+    function saForgotPassword(e) {
+        if (e) e.preventDefault();
+        const email = (document.getElementById('sa-login-email') || {}).value;
+        const msg = email && email.trim()
+            ? 'Password reset link sent to ' + email.trim()
+            : 'Enter your email above, then click Forgot password.';
+        if (typeof showToast === 'function') showToast(msg, 'info'); else alert(msg);
+    }
+    function saRequestAccess(e) {
+        if (e) e.preventDefault();
+        const msg = 'Access requests are reviewed by the platform owner. We’ll email you once approved.';
+        if (typeof showToast === 'function') showToast(msg, 'info'); else alert(msg);
+    }
+    function handleSALogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('sa-login-email').value.trim();
+        const pass = document.getElementById('sa-login-pass').value;
+        const errorEl = document.getElementById('sa-login-error');
+
+        if (!email || !pass) {
+            errorEl.style.display = 'block';
+            document.getElementById('sa-login-error-text').textContent = 'Please fill in all fields.';
+            return;
+        }
+        if (pass !== 'admin') {
+            errorEl.style.display = 'block';
+            document.getElementById('sa-login-error-text').textContent = 'Invalid credentials. Try password: admin';
+            return;
+        }
+        // Success — hide overlay with animation
+        const overlay = document.getElementById('sa-login-overlay');
+        overlay.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        overlay.style.opacity = '0';
+        overlay.style.transform = 'scale(1.02)';
+        setTimeout(() => { overlay.style.display = 'none'; }, 400);
+    }
+    </script>
+
+    <!-- Sidebar -->
+    <div class="app-body">
+<aside class="sidebar md-navigation-drawer" id="mainSidebar">
+        
+
+        <nav class="nav-section">
+            <div class="nav-label">COMMAND CENTER</div>
+            <a href="#" class="nav-item active" data-target="action-required">
+                <span class="nav-icon"><i class="material-icons">notifications</i></span>
+                Action Required
+                <span class="badge" id="nav-badge-action-required" style="margin-left:auto; background:var(--err); color:white; border:none; padding:2px 8px; font-size:11px; border-radius:12px;">0</span>
+            </a>
+            <a href="#" class="nav-item" data-target="organizations">
+                <span class="nav-icon"><i class="material-icons">business</i></span>
+                Organizations
+            </a>
+            <a href="#" class="nav-item" data-target="vouchers">
+                <span class="nav-icon"><i class="material-icons">confirmation_number</i></span>
+                Voucher Pricing
+            </a>
+            <a href="#" class="nav-item" data-target="voucher-management">
+                <span class="nav-icon"><i class="material-icons">layers</i></span>
+                Purchase Requests
+            </a>
+            <a href="#" class="nav-item" data-target="credentials">
+                <span class="nav-icon"><i class="material-icons">workspace_premium</i></span>
+                Exam Assessment Management
+            </a>
+            <a href="#" class="nav-item" data-target="financials">
+                <span class="nav-icon"><i class="material-icons">request_quote</i></span>
+                Financial Ledger
+            </a>
+
+            <div class="nav-label" style="margin-top:20px;">AUDIT</div>
+            <a href="#" class="nav-item" data-target="email-log">
+                <span class="nav-icon"><i class="material-icons">mark_email_read</i></span>
+                Email Audit Log
+            </a>
+        </nav>
+
+        
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content md-main-content">
+        <!-- Top Bar -->
+        <header class="topbar">
+            <div class="topbar-left" id="global-alert-ticker">
+                <i class="material-icons ticker-icon">warning</i>
+                <span class="ticker-text" id="ticker-content"></span>
+            </div>
+            <div class="topbar-right">
+                <button class="topbar-action-btn" onclick="toggleDrawer('supportDrawer')" id="btn-support-queue">
+                    <i class="material-icons">support_agent</i>
+                    <span class="topbar-action-label">Support</span>
+                    <span class="action-badge" id="support-badge">3</span>
+                </button>
+                <button class="topbar-action-btn" onclick="toggleDrawer('clearanceDrawer')" id="btn-clearance">
+                    <i class="material-icons">request_quote</i>
+                    <span class="topbar-action-label">Clearance</span>
+                    <span class="action-badge warning" id="clearance-badge">2</span>
+                </button>
+                <button class="topbar-action-btn" onclick="toggleDrawer('transfersDrawer')" id="btn-transfers">
+                    <i class="material-icons">swap_horiz</i>
+                    <span class="topbar-action-label">Transfers</span>
+                    <span class="action-badge warning" id="transfers-badge" style="display:none;">0</span>
+                </button>
+                <div class="topbar-divider"></div>
+                <div class="topbar-profile" onclick="toggleProfileDropdown(event)">
+                    <div class="topbar-avatar">SA</div>
+                    <i class="material-icons" style="font-size: 11px; color: var(--text-tertiary);">expand_more</i>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <a href="#" class="dropdown-item text-danger" onclick="alert('Signed out')">
+                            <i class="material-icons">logout</i> Sign out
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Pages -->
+        <div class="page-content">
+
+            <!-- ═══════════════════════════════════════════ -->
+            <!-- ACTION REQUIRED                            -->
+            <!-- ═══════════════════════════════════════════ -->
+            <section id="action-required" class="section-page active">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Action Required</h1>
+                        <p class="page-subtitle">Review pending approvals and requests requiring your attention.</p>
+                    </div>
+                </div>
+
+                <style>
+                  #action-required .ar-toolbar{display:flex;flex-wrap:wrap;gap:24px;align-items:center;margin-bottom:18px;}
+                  #action-required .ar-fg{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+                  #action-required .ar-fg-label{font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;}
+                  #action-required .ar-chip{display:inline-flex;align-items:center;justify-content:center;height:34px;min-height:34px;min-width:64px;padding:0 16px;border-radius:9999px;border:1px solid var(--border-color);background:transparent;color:var(--text-secondary);font-size:13px;font-weight:600;line-height:1;cursor:pointer;transition:all .15s;}
+                  #action-required .ar-chip:hover{border-color:var(--pri);color:var(--text-primary);}
+                  #action-required .ar-chip.active{background:var(--pri);border-color:var(--pri);color:var(--on-pri);}
+                  #action-required .ar-table{width:100%;border-collapse:collapse;}
+                  #action-required .ar-table th{text-align:left;padding:14px 18px;border-bottom:2px solid var(--border-color);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-secondary);}
+                  #action-required .ar-table td{padding:14px 18px;border-bottom:1px solid var(--border-light);font-size:14px;vertical-align:middle;}
+                  #action-required .ar-table tbody tr.ar-row{cursor:pointer;transition:background .15s;}
+                  #action-required .ar-table tbody tr.ar-row:hover{background:var(--surface-bg);}
+                  #action-required .ar-table tbody tr.ar-row-open{background:var(--surface-bg);}
+                  #action-required .ar-table tbody tr.ar-row-open td{border-bottom-color:transparent;}
+                  #action-required .ar-accordion-row td{padding:0;border-bottom:1px solid var(--border-light);}
+                  #action-required .ar-accordion-body{overflow:hidden;animation:ar-accordion-open .22s ease;}
+                  @keyframes ar-accordion-open{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+                  #action-required .ar-name{font-weight:600;color:var(--text-primary);}
+                  #action-required .ar-sub{font-size:12px;color:var(--text-tertiary);margin-top:2px;}
+                  #action-required .ar-type-badge{display:inline-block;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:600;background:rgba(99,102,241,.1);color:#4338ca;white-space:nowrap;}
+                  #action-required .ar-medium{display:inline-block;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:600;background:var(--surface-bg);color:var(--text-secondary);border:1px solid var(--border-light);white-space:nowrap;}
+                  /* Dark theme: lift badge text to ≥7:1 (AAA) against the dark surface. */
+                  html[data-t="dark"] #action-required .ar-type-badge,
+                  html[data-theme="dark"] #action-required .ar-type-badge{background:rgba(175,198,250,.14);color:#c7d3f7;}
+                </style>
+
+                <!-- Filter toolbar -->
+                <div class="ar-toolbar">
+                    <div class="ar-fg">
+                        <span class="ar-fg-label">Type</span>
+                        <button class="ar-chip active" data-dim="type" data-val="ALL" onclick="setActionFilter('type','ALL',this)">All</button>
+                        <button class="ar-chip" data-dim="type" data-val="org" onclick="setActionFilter('type','org',this)">Registration</button>
+                        <button class="ar-chip" data-dim="type" data-val="purchase" onclick="setActionFilter('type','purchase',this)">Voucher Purchase</button>
+                    </div>
+                </div>
+
+                <!-- Pending requests table -->
+                <div style="background:var(--surface-light);border-radius:12px;border:1px solid var(--border-color);overflow:hidden;">
+                    <table class="ar-table">
+                        <thead>
+                            <tr>
+                                <th>Request</th>
+                                <th>Type</th>
+                                <th>Request Medium</th>
+                                <th>Submitted</th>
+                                <th style="text-align:right;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ar-table-body"><!-- Injected via JS --></tbody>
+                    </table>
+                </div>
+
+            </section>
+
+            <!-- ═══════════════════════════════════════════ -->
+            <!-- ORGANIZATIONS (Main Canvas / Ledger)       -->
+            <!-- ═══════════════════════════════════════════ -->
+            <section id="organizations" class="section-page">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Organizations</h1>
+                        <p class="page-subtitle">Onboard, govern, and manage all client accounts.</p>
+                    </div>
+                    <button class="btn-primary" onclick="createOrganization()">
+                        <i class="material-icons">add</i> Add Organization
+                    </button>
+                </div>
+
+                <!-- Filter Cards -->
+                <div class="stats-row" id="org-stats-filters">
+                    <div class="stat-card filter-card active" id="filter-card-all" onclick="filterByStatus('ALL')">
+                        <div class="stat-icon blue"><i class="material-icons">business</i></div>
+                        <div class="stat-value" id="stat-all-count">11</div>
+                        <div class="stat-label">All</div>
+                        <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 4px;">Total registered platforms</div>
+                    </div>
+                    <div class="stat-card filter-card" id="filter-card-active" onclick="filterByStatus('ACTIVE')">
+                        <div class="stat-icon green"><i class="material-icons">check_circle</i></div>
+                        <div class="stat-value" id="stat-active-count">0</div>
+                        <div class="stat-label">Active</div>
+                        <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 4px;">Fully onboarded & active</div>
+                    </div>
+                    <div class="stat-card filter-card" id="filter-card-trial" onclick="filterByStatus('TRIAL')">
+                        <div class="stat-icon amber"><i class="material-icons">science</i></div>
+                        <div class="stat-value" id="stat-trial-count">11</div>
+                        <div class="stat-label">Trial</div>
+                        <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 4px;">Currently evaluating platform</div>
+                    </div>
+                    <div class="stat-card filter-card" id="filter-card-pending" onclick="filterByStatus('PENDING')">
+                        <div class="stat-icon purple"><i class="material-icons">hourglass_top</i></div>
+                        <div class="stat-value" id="stat-pending-count">0</div>
+                        <div class="stat-label">Pending</div>
+                        <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 4px;">Awaiting verification</div>
+                    </div>
+                    <div class="stat-card filter-card" id="filter-card-suspended" onclick="filterByStatus('SUSPENDED')">
+                        <div class="stat-icon red"><i class="material-icons">block</i></div>
+                        <div class="stat-value" id="stat-suspended-count">0</div>
+                        <div class="stat-label">Deactivated</div>
+                        <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 4px;">Access revoked / deactivated</div>
+                    </div>
+                </div>
+
+                <!-- Search -->
+                <div class="search-bar">
+                    <i class="material-icons search-bar-icon">search</i>
+                    <input type="text" class="search-input" placeholder="Search by name or email…" id="orgSearchInput" oninput="handleOrgSearch()">
+                </div>
+
+                <!-- Org Table -->
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Organization</th>
+                                <th>Account Status</th>
+                                <th>Discount</th>
+                                <th>Email</th>
+                                <th style="text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="organizations-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Org Details Sub-Page (Profile) -->
+            <section id="org-details" class="section-page">
+                <div class="details-topbar">
+                    <button class="btn-back" onclick="showSection('organizations')">
+                        <i class="material-icons">arrow_back</i> Back
+                    </button>
+                    <div class="details-header-card">
+                        <div class="org-hero">
+                            <div class="org-avatar-large"><i class="material-icons">business</i></div>
+                            <div class="org-hero-info">
+                                <h2 class="org-hero-title" id="profile-org-name">Organization</h2>
+                                <p class="org-hero-subtitle"><span id="profile-org-slug">@slug</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card" style="margin-top: 24px;">
+                    <h3 class="form-card-title">Profile Overview</h3>
+                    <div style="display: flex; gap: 40px; margin-top: 16px;">
+                        <div>
+                            <div style="font-size: 11px; color: var(--text-tertiary); text-transform: uppercase;">Primary Email</div>
+                            <div id="profile-org-email" style="font-weight: 500; margin-top: 4px;">org@email.com</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; color: var(--text-tertiary); text-transform: uppercase;">Account Status</div>
+                            <div id="profile-org-status" style="margin-top: 4px;">ACTIVE</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; color: var(--text-tertiary); text-transform: uppercase;">Discount</div>
+                            <div id="profile-org-discount" style="font-weight: 500; margin-top: 4px;">0%</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; color: var(--text-tertiary); text-transform: uppercase;">Date Joined</div>
+                            <div style="font-weight: 500; margin-top: 4px;">June 2026</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════════════════════════════════════════ -->
+            <!-- VOUCHERS & PRICING (DASHBOARD REDESIGN)    -->
+            <!-- ═══════════════════════════════════════════ -->
+            <section id="vouchers" class="section-page">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Voucher Pricing</h1>
+                        <p class="page-subtitle">Manage catalog pricing for vouchers.</p>
+                    </div>
+                    <button class="btn-primary" id="main-add-voucher-btn" onclick="openActiveVoucherModal()">
+                        <i class="material-icons">add</i> <span id="add-voucher-btn-text">Add Voucher</span>
+                    </button>
+                </div>
+
+                <div class="table-card" id="tab-content-individual">
+                    <table>
+                        <thead><tr><th>Label</th><th>Base Price</th><th style="text-align:right;">Actions</th></tr></thead>
+                        <tbody id="vouchers-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ═══════════════════════════════════════════ -->
+            <!-- VOUCHER MANAGEMENT                          -->
+            <!-- ═══════════════════════════════════════════ -->
+            <section id="voucher-management" class="section-page">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Purchase Requests</h1>
+                        <p class="page-subtitle">Review incoming voucher purchase requests from the application and the public website.</p>
+                    </div>
+                </div>
+
+                <!-- Financial Metric Row -->
+                <div class="stats-row" style="margin-bottom: 24px;">
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="material-icons">payments</i></div>
+                        <div class="stat-value" id="metric-revenue">$0</div>
+                        <div class="stat-label">Total Revenue (MTD)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon amber"><i class="material-icons">receipt_long</i></div>
+                        <div class="stat-value" id="metric-pending-sales">0</div>
+                        <div class="stat-label">Action Required (Sales)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><i class="material-icons">confirmation_number</i></div>
+                        <div class="stat-value" id="metric-unclaimed">450</div>
+                        <div class="stat-label">Unclaimed Vouchers</div>
+                    </div>
+                </div>
+
+                <!-- Filter toolbar -->
+                <div class="pr-toolbar">
+                    <div class="pr-segment">
+                        <button class="pr-seg-btn active" id="pr-seg-action" onclick="setPurchaseView('action')">Action Required</button>
+                        <button class="pr-seg-btn" id="pr-seg-all" onclick="setPurchaseView('all')">All Requests</button>
+                    </div>
+                    <div class="search-bar pr-search">
+                        <i class="material-icons search-bar-icon">search</i>
+                        <input type="text" class="search-input" id="prSearchInput" placeholder="Search by organization, cost, payment, date, status…" oninput="prFilterChanged()">
+                    </div>
+                    <select class="form-control pr-filter" id="prSourceFilter" onchange="prFilterChanged()">
+                        <option value="ALL">All Sources</option>
+                        <option value="Application">Application</option>
+                        <option value="Website">Website</option>
+                    </select>
+                    <select class="form-control pr-filter" id="prStatusFilter" onchange="prFilterChanged()">
+                        <option value="ALL">All Statuses</option>
+                        <option value="PENDING">Pending</option>
+                        <option value="APPROVED">Approved</option>
+                        <option value="REJECTED">Rejected</option>
+                        <option value="RESOLVED">Paid / Processing</option>
+                    </select>
+                </div>
+
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Organization / Requester</th>
+                                <th>Source</th>
+                                <th>Details</th>
+                                <th>Qty</th>
+                                <th>Payment</th>
+                                <th>Cost</th>
+                                <th>Status</th>
+                                <th style="text-align:right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="requests-tbody"></tbody>
+                    </table>
+                    <div class="table-footer">
+                        <span class="total-items" id="requests-total">0 items</span>
+                        <div class="pr-pagination" id="requests-pagination"></div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ═══════════════════════════════════════════ -->
+            <!-- ═══════════════════════════════════════════ -->
+            <!-- EXAM ASSESSMENT MANAGEMENT                       -->
+            <!-- ═══════════════════════════════════════════ -->
+            <section id="credentials" class="section-page">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Exam Assessment Management</h1>
+                        <p class="page-subtitle">Map exams to certifications and define issuance policies.</p>
+                    </div>
+                    <button class="btn-primary" onclick="openCredentialModal()">
+                        <i class="material-icons">add</i> Add Exam Assessment
+                    </button>
+                </div>
+
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Certification</th>
+                                <th>Code</th>
+                                <th>Provider</th>
+                                <th>Validity</th>
+                                <th>Status</th>
+                                <th style="text-align:right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="credentials-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ═══════════════════════════════════════════ -->
+            <!-- EMAIL AUDIT LOG                            -->
+            <!-- ═══════════════════════════════════════════ -->
+            <section id="email-log" class="section-page">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Email Audit Log</h1>
+                        <p class="page-subtitle">Track all outbound automated communications.</p>
+                    </div>
+                    <button class="btn-secondary" onclick="renderEmailLog()"><i class="material-icons">refresh</i> Refresh</button>
+                </div>
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Type</th>
+                                <th>Recipient</th>
+                                <th>Subject</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="email-log-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ═══════════════════════════════════════════ -->
+            <!-- FINANCIALS & PAYMENTS (LEDGER)             -->
+            <!-- ═══════════════════════════════════════════ -->
+            <section id="financials" class="section-page">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Financial Ledger</h1>
+                        <p class="page-subtitle">Global inventory of all B2B and B2C payments.</p>
+                    </div>
+                </div>
+
+                <div class="stats-row" style="margin-bottom: 24px;">
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="material-icons">payments</i></div>
+                        <div class="stat-value" id="ledger-cleared-rev">$0</div>
+                        <div class="stat-label">Total Cleared Revenue</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon amber"><i class="material-icons">schedule</i></div>
+                        <div class="stat-value" id="ledger-pending-rev">$0</div>
+                        <div class="stat-label">Pending Collection</div>
+                    </div>
+                </div>
+
+                <div class="tabs-container">
+                    <button class="tab-btn active" onclick="switchLedgerTab('all')" id="ledger-tab-all">All Transactions</button>
+                    <button class="tab-btn" onclick="switchLedgerTab('cleared')" id="ledger-tab-cleared">Cleared Payments</button>
+                    <button class="tab-btn" onclick="switchLedgerTab('pending')" id="ledger-tab-pending">Pending Collection</button>
+                </div>
+
+                <div class="table-card">
+                    <table>
+                        <thead id="financials-thead">
+                            <tr>
+                                <th>Date</th>
+                                <th>Source</th>
+                                <th>Client / Email</th>
+                                <th>Details</th>
+                                <th>Method</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="financials-tbody"></tbody>
+                    </table>
+                    <div class="table-footer">
+                        <span class="total-items" id="financials-total">0 items</span>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- DRAWERS                                            -->
+    <!-- ═══════════════════════════════════════════════════ -->
+
+    <!-- Drawer Overlay -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="closeAllDrawers()"></div>
+
+    <!-- Support Queue Drawer -->
+    <div class="side-drawer right-drawer" id="supportDrawer">
+        <div class="drawer-header">
+            <h2 class="drawer-title"><i class="material-icons">support_agent</i> Support Queue</h2>
+            <button class="drawer-close" onclick="toggleDrawer('supportDrawer')"><i class="material-icons">close</i></button>
+        </div>
+        <div class="drawer-content" id="ai-support-list"></div>
+    </div>
+
+    <!-- Financial Clearance Drawer -->
+    <div class="side-drawer right-drawer" id="clearanceDrawer">
+        <div class="drawer-header">
+            <h2 class="drawer-title"><i class="material-icons">request_quote</i> Payment Clearance</h2>
+            <button class="drawer-close" onclick="toggleDrawer('clearanceDrawer')"><i class="material-icons">close</i></button>
+        </div>
+        <div class="drawer-content" id="financial-clearance-list"></div>
+    </div>
+
+    <!-- Ownership Transfers Drawer -->
+    <div class="side-drawer right-drawer" id="transfersDrawer">
+        <div class="drawer-header">
+            <h2 class="drawer-title"><i class="material-icons">swap_horiz</i> Pending Transfers</h2>
+            <button class="drawer-close" onclick="toggleDrawer('transfersDrawer')"><i class="material-icons">close</i></button>
+        </div>
+        <div class="drawer-content" id="transfers-list"></div>
+    </div>
+
+    <!-- Smart Approval Drawer (Sales) -->
+    <div class="side-drawer right-drawer" id="smartApprovalDrawer">
+        <div class="drawer-header">
+            <h2 class="drawer-title"><i class="material-icons">receipt_long</i> Review Sales Order</h2>
+            <button class="drawer-close" onclick="toggleDrawer('smartApprovalDrawer')"><i class="material-icons">close</i></button>
+        </div>
+        <div class="drawer-content" style="padding: 24px;">
+            <div id="smart-approval-content">
+                <!-- Content injected dynamically -->
+            </div>
+            
+            <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border);">
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label for="smartOverrideDiscount">Discount Override (%)</label>
+                    <input type="number" class="form-control" id="smartOverrideDiscount" value="0" min="0" max="100" onchange="recalculateSmartTotal()">
+                </div>
+                <div style="background: var(--surface-hover); padding: 16px; border-radius: var(--radius-md); margin-bottom: 24px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:14px;">
+                        <span>Subtotal:</span> <span id="smartSubtotal" style="font-weight:600;">$0</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:14px; color:var(--suc-text);">
+                        <span>Discount Applied:</span> <span id="smartDiscountText" style="font-weight:600;">-$0</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:16px; font-weight:700; border-top:1px solid var(--border); padding-top:8px; margin-top:8px;">
+                        <span>Final Total:</span> <span id="smartFinalTotal">$0</span>
+                    </div>
+                </div>
+                <button class="btn-submit" id="btn-confirm-smart-approval" onclick="confirmSmartApproval()">Authorize & Dispatch Invoice</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Organization Profile Drawer -->
+    <div class="side-drawer right-drawer" id="orgProfileDrawer">
+        <div class="drawer-header" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; width: 100%;">
+                <h2 class="drawer-title" id="orgProfileTitle"><i class="material-icons">business</i> Org Name</h2>
+                <button class="drawer-close" onclick="toggleDrawer('orgProfileDrawer')"><i class="material-icons">close</i></button>
+            </div>
+            <div style="font-size: 14px; color: var(--text-secondary);" id="orgProfileEmail">org@email.com</div>
+        </div>
+        
+        <div class="tabs-container" style="padding: 0 24px;">
+            <button class="tab-btn active" onclick="switchOrgProfileTab('members')" id="org-tab-members">Members (3)</button>
+            <button class="tab-btn" onclick="switchOrgProfileTab('invoices')" id="org-tab-invoices">Invoices & Ledger</button>
+        </div>
+
+        <div class="drawer-content" style="padding: 24px; padding-top: 12px; overflow-y: auto;">
+            <!-- Members Tab -->
+            <div id="org-content-members">
+                <!-- Injected via JS -->
+            </div>
+
+            <!-- Invoices Tab -->
+            <div id="org-content-invoices" style="display: none;">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+
+        <!-- Account controls (Section 2c) -->
+        <div style="margin-top:auto; padding:16px 24px; border-top:1px solid var(--border); display:flex; gap:12px;">
+            <button class="btn-primary" id="profile-edit-btn" onclick="editProfileOrg()" style="flex:1;">
+                <i class="material-icons">edit</i> Save Changes
+            </button>
+            <button class="btn-danger-outline" id="profile-deactivate-btn" onclick="deactivateProfileOrg()" style="flex:1;">
+                <i class="material-icons">block</i> Deactivate Account
+            </button>
+        </div>
+    </div>
+
+    <!-- Edit Organization Drawer -->
+    <div class="side-drawer right-drawer" id="editOrgDrawer">
+        <div class="drawer-header">
+            <h2 class="drawer-title"><i class="material-icons">edit_note</i> <span id="editOrgTitleText">Edit Organization</span></h2>
+            <button class="drawer-close" onclick="toggleDrawer('editOrgDrawer')"><i class="material-icons">close</i></button>
+        </div>
+        <div class="drawer-content" style="padding: 24px; overflow-y: auto;">
+            <div class="form-group" style="display: flex; gap: 12px;">
+                <div style="flex: 1;">
+                    <label for="drawer-org-firstname">First Name</label>
+                    <input type="text" class="form-control" id="drawer-org-firstname">
+                </div>
+                <div style="flex: 1;">
+                    <label for="drawer-org-lastname">Last Name</label>
+                    <input type="text" class="form-control" id="drawer-org-lastname">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="drawer-org-displayname">Organization Name</label>
+                <input type="text" class="form-control" id="drawer-org-displayname">
+            </div>
+            <div class="form-group">
+                <label for="drawer-org-name">Legal Business Name</label>
+                <input type="text" class="form-control" id="drawer-org-name">
+            </div>
+            <div class="form-group">
+                <label for="drawer-org-domain">Domain Name</label>
+                <input type="text" class="form-control" id="drawer-org-domain" placeholder="e.g. example.com">
+            </div>
+            <div class="form-group" id="drawer-org-email-group">
+                <label for="drawer-org-email">Email (associated with domain)</label>
+                <input type="email" class="form-control" id="drawer-org-email">
+            </div>
+            <div class="form-group" id="drawer-org-status-group">
+                <label for="drawer-org-status">Account Status</label>
+                <select class="form-control" id="drawer-org-status">
+                    <option value="PENDING">PENDING</option>
+                    <option value="TRIAL">TRIAL</option>
+                    <option value="ACTIVE">ACTIVE</option>
+                    <option value="SUSPENDED">DEACTIVATED</option>
+                </select>
+            </div>
+            <div class="form-group" id="drawer-org-discount-group">
+                <label style="display:flex; align-items:center; justify-content:space-between; margin:0;">
+                    <span>Discount Offer</span>
+                    <label class="sa-switch" title="Enable or disable this organization's discount">
+                        <input type="checkbox" id="drawer-org-discount-enabled" onchange="toggleOrgDiscountInput()">
+                        <span class="sa-switch-track"><span class="sa-switch-thumb"></span></span>
+                    </label>
+                </label>
+                <div style="position:relative; margin-top:10px;">
+                    <input type="number" class="form-control" id="drawer-org-discount-pct" min="0" max="100" step="1" placeholder="e.g. 10" style="padding-right:32px;">
+                    <span style="position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--text-tertiary); font-size:14px; pointer-events:none;">%</span>
+                </div>
+                <div style="font-size:12px; color:var(--text-tertiary); margin-top:6px;" id="drawer-org-discount-hint">
+                    Percentage applied to this organization's voucher purchases.
+                </div>
+            </div>
+            <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-top: 16px;">
+                <input type="checkbox" id="drawer-org-verified" style="width: 16px; height: 16px;">
+                <label for="drawer-org-verified" style="margin: 0;">Verified by System</label>
+            </div>
+            
+            <div id="drawer-suspend-info" style="display: none; background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); padding: 12px; border-radius: 8px; margin-top: 16px; margin-bottom: 16px;">
+                <div style="color: var(--err); font-weight: 600; font-size: 14px;"><i class="material-icons">warning</i> Deactivated Account</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;" id="drawer-suspend-reason-text">Reason: Breach of Terms</div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border);">
+                <button class="btn-primary" id="btn-save-org" onclick="saveDrawerOrganization()" style="width: 100%;">Save Changes</button>
+                <button class="btn-secondary" id="btn-reactivate-org" onclick="reactivateOrganization()" style="width: 100%; display: none;">Reactivate Account</button>
+                <button class="btn-danger-outline" id="btn-suspend-org" onclick="triggerSuspendFromDrawer()" style="width: 100%;">Deactivate Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Discount Code Modal -->
+    <div id="discountCodeModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:3000; align-items:center; justify-content:center;">
+        <div style="background:var(--surface-light); border:1px solid var(--border-color); border-radius:12px; width:90%; max-width:460px; max-height:90vh; overflow-y:auto; box-shadow:0 24px 64px rgba(0,0,0,0.25);">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:20px 24px; border-bottom:1px solid var(--border-color);">
+                <h3 style="font-size:18px; font-weight:600;">Add Discount Code</h3>
+                <button class="drawer-close" onclick="closeDiscountCodeModal()"><i class="material-icons">close</i></button>
+            </div>
+            <div style="padding:24px;">
+                <div class="form-group">
+                    <label for="dc-code">Coupon Code</label>
+                    <input type="text" class="form-control" id="dc-code" placeholder="e.g. WELCOME10" style="text-transform:uppercase;">
+                </div>
+                <div class="form-group">
+                    <label for="dc-discount">Discount (%)</label>
+                    <input type="number" class="form-control" id="dc-discount" min="1" max="100" value="10">
+                </div>
+                <div class="form-group">
+                    <label>Validity</label>
+                    <div style="display:flex; gap:20px; margin-top:6px;">
+                        <label style="display:flex; align-items:center; gap:6px; font-weight:400; cursor:pointer;">
+                            <input type="radio" name="dc-validity" value="one-time" checked onchange="toggleDcValidity()"> One-time use
+                        </label>
+                        <label style="display:flex; align-items:center; gap:6px; font-weight:400; cursor:pointer;">
+                            <input type="radio" name="dc-validity" value="range" onchange="toggleDcValidity()"> Start &amp; end date
+                        </label>
+                    </div>
+                </div>
+                <div id="dc-date-range" style="display:none; gap:12px;">
+                    <div class="form-group" style="flex:1;">
+                        <label for="dc-start">Start Date</label>
+                        <input type="date" class="form-control" id="dc-start">
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label for="dc-end">End Date</label>
+                        <input type="date" class="form-control" id="dc-end">
+                    </div>
+                </div>
+                <div id="dc-error" style="display:none; color:var(--err); font-size:12px; margin-bottom:10px;"></div>
+                <div style="display:flex; gap:12px; margin-top:8px;">
+                    <button class="btn-secondary" onclick="closeDiscountCodeModal()" style="flex:1;">Cancel</button>
+                    <button class="btn-primary" onclick="saveDiscountCode()" style="flex:1;">Create Code</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- MODALS                                             -->
+    <!-- ═══════════════════════════════════════════════════ -->
+
+    <!-- Add Voucher Modal -->
+    <div class="modal-overlay" id="addVoucherModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Voucher</h2>
+                <button class="modal-close" onclick="closeModal('addVoucherModal')"><i class="material-icons">close</i></button>
+            </div>
+            <div class="modal-body">
+                <form id="addVoucherForm" onsubmit="handleAddVoucher(event)">
+                    <input type="hidden" id="voucherIndex">
+                    <div class="form-group">
+                        <label for="voucherCert">Voucher Label</label>
+                        <select class="form-control" required id="voucherCert">
+                            <!-- Populated dynamically via JS from credentials -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="voucherPrice">Base Price ($)</label>
+                        <input type="number" class="form-control" required id="voucherPrice" min="1" placeholder="100">
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 16px;">
+                        <button type="button" class="btn-danger-outline" id="btn-delete-voucher" style="display:none;" onclick="initiateDelete('voucher')"><i class="material-icons">delete</i> Delete</button>
+                        <button type="submit" class="btn-primary" style="margin-left:auto;">Save Voucher</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Package Modal -->
+    <div class="modal-overlay" id="addPackageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Discount Rule</h2>
+                <button class="modal-close" onclick="closeModal('addPackageModal')"><i class="material-icons">close</i></button>
+            </div>
+            <div class="modal-body">
+                <form id="addPackageForm" onsubmit="handleAddDiscount(event)">
+                    <input type="hidden" id="discountIndex">
+                    <div class="form-group">
+                        <label for="discountName">Rule Name</label>
+                        <input type="text" class="form-control" required id="discountName" placeholder="e.g. Bulk Volume Discount">
+                    </div>
+                    <div class="form-group">
+                        <label for="discountCondition">Condition</label>
+                        <select class="form-control" id="discountCondition">
+                            <option value=">50 units">Volume > 50 units</option>
+                            <option value=">100 units">Volume > 100 units</option>
+                            <option value="partnership">Partnership Agreement</option>
+                            <option value="renewal">Annual Renewal</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="discountPercent">Discount (%)</label>
+                        <input type="number" class="form-control" required id="discountPercent" min="1" max="50" placeholder="5">
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 16px;">
+                        <button type="button" class="btn-danger-outline" id="btn-delete-package" style="display:none;" onclick="initiateDelete('discount')"><i class="material-icons">delete</i> Delete</button>
+                        <button type="submit" class="btn-primary" style="margin-left:auto;">Save Tier</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Credential Modal -->
+    <div class="modal-overlay" id="credentialModal">
+        <div class="modal-content dark-modal" style="max-width: 560px;">
+            <div class="modal-header">
+                <h2 class="modal-title" style="color: #fff;">Exam Assessment Management</h2>
+                <button class="modal-close" onclick="closeModal('credentialModal')"><i class="material-icons">close</i></button>
+            </div>
+            <div class="modal-body" style="padding: 24px;">
+                <form id="credentialForm" onsubmit="handleSaveCredential(event)">
+                    <input type="hidden" id="credIndex">
+                    <div class="form-row">
+                        <div class="form-group"><label class="dark-label" for="credName">Name</label><input type="text" class="form-control dark-input" id="credName" required></div>
+                        <div class="form-group"><label class="dark-label" for="credCode">Code</label><input type="text" class="form-control dark-input" id="credCode" required></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label class="dark-label" for="credExamCode">Exam Code</label><input type="text" class="form-control dark-input" id="credExamCode" required></div>
+                        <div class="form-group"><label class="dark-label" for="credTestId">Test ID</label><input type="text" class="form-control dark-input" id="credTestId"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="dark-label" for="credProvider">Provider</label>
+                            <select class="form-control dark-input" id="credProvider"><option>Assess AI</option><option>Pearson VUE</option><option>Prometric</option></select>
+                        </div>
+                        <div class="form-group"><label class="dark-label" for="credValidity">Validity (months)</label><input type="number" class="form-control dark-input" id="credValidity" required></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="dark-label" for="credCategory">Category</label>
+                            <select class="form-control dark-input" id="credCategory"><option>Management</option><option>Operations</option><option>Safety</option><option>Culinary</option></select>
+                        </div>
+                        <div class="form-group"><label class="dark-label" for="credScore">Passing Score (%)</label><input type="number" class="form-control dark-input" id="credScore" required></div>
+                    </div>
+                    <div class="form-group"><label class="dark-label" for="credDescription">Description</label><textarea class="form-control dark-input" id="credDescription" rows="2"></textarea></div>
+                    <div class="form-row" style="align-items: center;">
+                        <div class="form-group"><label class="dark-label" for="credCeu">CEU Credits</label><input type="number" class="form-control dark-input" id="credCeu"></div>
+                        <div class="form-group">
+                            <label class="dark-label" for="credRenewal">Renewal</label>
+                            <select class="form-control dark-input" id="credRenewal"><option>Yes</option><option>No</option></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="dark-label" style="margin-bottom: 4px;">Badge Color</div>
+                        <div style="display: flex; gap: 12px;">
+                            <button type="button" class="color-swatch active" style="background:#1f2937;" onclick="selectColor(this)"></button>
+                            <button type="button" class="color-swatch" style="background:#d97706;" onclick="selectColor(this)"></button>
+                            <button type="button" class="color-swatch" style="background:#059669;" onclick="selectColor(this)"></button>
+                            <button type="button" class="color-swatch" style="background:#2563eb;" onclick="selectColor(this)"></button>
+                            <button type="button" class="color-swatch" style="background:#dc2626;" onclick="selectColor(this)"></button>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; margin: 20px 0;">
+                        <div class="status-toggle-wrapper dark-toggle" id="credEnabledToggle" onclick="toggleCredEnabled()">
+                            <i class="material-icons toggle-icon">toggle_on</i>
+                            <span class="toggle-text">Enabled</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 20px;">
+                        <button type="button" class="btn-danger-outline" id="btn-delete-credential" style="display:none;" onclick="initiateDelete('credential')"><i class="material-icons">delete</i> Delete</button>
+                        <div style="display: flex; gap: 12px; margin-left: auto;">
+                            <button type="button" class="btn-dark-cancel" onclick="closeModal('credentialModal')">Cancel</button>
+                            <button type="submit" class="btn-primary" style="margin:0;"><i class="material-icons">save</i> Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Suspend Modal -->
+    <div class="modal-overlay" id="suspendOrgModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" style="color: var(--err);">Deactivate Organization</h2>
+                <button class="modal-close" onclick="closeModal('suspendOrgModal')"><i class="material-icons">close</i></button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 16px; color: var(--text-secondary); line-height: 1.6;">This will <strong>instantly invalidate</strong> all unredeemed vouchers and force an active logout for all users under this organization.</p>
+                <div class="form-group">
+                    <label for="suspendReason">Reason <span style="color: var(--err);">*</span></label>
+                    <select class="form-control" id="suspendReason">
+                        <option>Breach of Terms</option>
+                        <option>Non-Payment</option>
+                        <option>Security Investigation</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                    <button class="btn-secondary" onclick="closeModal('suspendOrgModal')">Cancel</button>
+                    <button class="btn-primary" style="background: var(--err);" onclick="confirmSuspendOrg()">Confirm Deactivation</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generic Delete Reason Modal -->
+    <div class="modal-overlay" id="deleteReasonModal">
+        <div class="modal-content" style="max-width: 400px; padding: 24px;">
+            <h2 style="font-size: 16px; font-weight: 600; color: var(--err); margin-bottom: 8px;"><i class="material-icons">warning</i> Confirm Deletion</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">Please provide a reason for deleting this item. This action cannot be undone.</p>
+            <div class="form-group">
+                <input type="text" class="form-control" id="deleteReasonInput" placeholder="Reason for deletion..." autocomplete="off">
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
+                <button class="btn-secondary" onclick="closeModal('deleteReasonModal')">Cancel</button>
+                <button class="btn-primary" style="background: var(--err); color: var(--text-primary); border: none;" onclick="confirmDeleteWithReason()">Confirm Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request Clarification Modal -->
+    <div class="modal-overlay" id="clarificationModal">
+        <div class="modal-content" style="max-width: 460px;">
+            <div class="modal-header">
+                <h2 class="modal-title"><i class="material-symbols-outlined" style="vertical-align:middle;color:var(--wrn);">unknown_document</i> Request Clarification</h2>
+                <button class="modal-close" onclick="closeModal('clarificationModal')"><i class="material-icons">close</i></button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
+                    Tell <strong id="clarify-recipient">the requester</strong> what's missing. Your notes are included in the
+                    "Clarification Needed" email sent to them.
+                </p>
+                <div class="form-group">
+                    <label for="clarify-notes">Missing details / notes</label>
+                    <textarea class="form-control" id="clarify-notes" rows="4" placeholder="e.g. Please attach a valid purchase order document and confirm the billing contact."></textarea>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:16px;">
+                    <button class="btn-secondary" onclick="closeModal('clarificationModal')">Cancel</button>
+                    <button class="btn-primary" onclick="confirmClarification()">Send Email</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request Detail Modal (resolved requests) -->
+    <div class="modal-overlay" id="requestDetailModal">
+        <div class="modal-content" style="max-width: 480px;">
+            <div class="modal-header">
+                <h2 class="modal-title"><i class="material-icons" style="vertical-align:middle;">receipt_long</i> Request Details</h2>
+                <button class="modal-close" onclick="closeModal('requestDetailModal')"><i class="material-icons">close</i></button>
+            </div>
+            <div class="modal-body" id="request-detail-body"><!-- injected --></div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="super_admin_3005.js"></script>
+    <script src="global_nav.js"></script>
+</div>
+</div>
+</body>
+</html>

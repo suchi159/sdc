@@ -52,5 +52,5 @@ def build_standalone(html_file, css_file, js_file, output_file):
         f.write(html)
     print(f"Built {output_file}")
 
-build_standalone("candidate.html", "candidate.css", "candidate.js", "/Users/suchi/Desktop/Standalone_Student_Portal.html")
-build_standalone("index.html", "index.css", "index.js", "/Users/suchi/Desktop/Standalone_Proctor_Dashboard.html")
+build_standalone("candidate.html", "candidate.css", "candidate.js", "/Users/suchi/Downloads/candidate-portal.html")
+build_standalone("index.html", "index.css", "index.js", "/Users/suchi/Downloads/Standalone_Proctor_Dashboard.html")

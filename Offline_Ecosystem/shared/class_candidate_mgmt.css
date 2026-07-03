@@ -1,0 +1,128 @@
+/* ==========================================================================
+ * Shared Class & Candidate Management styles
+ * --------------------------------------------------------------------------
+ * Fills the CSS gaps so the markup emitted by class_candidate_mgmt.js (CCM)
+ * renders identically on both classroom-proctor.html and admin_portal.html.
+ *
+ * The org portal (admin_portal.css / design_system.css) already defines the
+ * component classes (.card, .badge, .badge-*, .btn-primary/secondary/danger,
+ * .data-table, .switch, .font-mono, .flex-between) and the --border-* /
+ * --text-* tokens. It is MISSING the brand/surface/status alias variables and
+ * a base `.btn {}` layout rule that the in-class app relies on. Values below
+ * mirror the in-class app's light theme so the two surfaces look the same.
+ *
+ * On classroom-proctor.html this file is linked BEFORE the page's own inline
+ * <style>, so the page's theme-adaptive definitions win and override these
+ * (keeping dark-mode intact). On admin_portal.html it is linked AFTER the
+ * page styles, so these fill the gaps.
+ * ========================================================================== */
+:root {
+  --brand-primary: #f9ad00;
+  --brand-hover: #7a4e00;
+  --brand-active: #fff8e6;
+
+  --surface-color: #ffffff;
+  --bg-color: #f8f9fa;
+  --hover-bg: rgba(0, 0, 0, 0.03);
+
+  --status-success: #146c2e;
+  --status-success-bg: rgba(20, 108, 46, 0.15);
+  --status-success-ct: #ffffff;
+  --status-warning: #7d5700;
+  --status-warning-bg: rgba(125, 87, 0, 0.15);
+  --status-warning-ct: #ffffff;
+  --status-error: #b3261e;
+  --status-error-bg: rgba(179, 38, 30, 0.15);
+  --status-error-ct: #ffffff;
+  --status-info: #00639b;
+  --status-info-bg: rgba(0, 99, 155, 0.15);
+
+  --err-ct: #ffffff;
+  --wrn-ct: #ffffff;
+  --inf: #00639b;
+
+  --font-mono: 'Roboto Mono', monospace;
+}
+
+/* Dark mode: the status tokens above are tone-40 colors meant for white
+   backgrounds. Used as text (Pass/Fail, "not assigned") on a dark surface they
+   read dark-on-dark, so lift them to tone-80 + translucent tints. On
+   classroom-proctor.html the page's own inline theme styles still win (this
+   file is linked first), so this only takes effect on admin_portal.html. */
+[data-t="dark"], [data-theme="dark"] {
+  --status-success: #7ee2a8;
+  --status-success-bg: rgba(126, 226, 168, 0.16);
+  --status-warning: #f7bf50;
+  --status-warning-bg: rgba(247, 191, 80, 0.18);
+  --status-error: #ff8a80;
+  --status-error-bg: rgba(255, 138, 128, 0.16);
+  --status-info: #96ccff;
+  --status-info-bg: rgba(150, 204, 255, 0.18);
+}
+
+/* Base button layout (org defines .btn-primary/secondary/danger but no base) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+/* Filter chips emitted by CCM use `.badge` / `.badge badge-info`; ensure they
+   read as clickable pills regardless of host base styles. */
+#session-filters .badge,
+#candidate-filters .badge {
+  cursor: pointer;
+}
+
+/* ==========================================================================
+ * Candidate Directory accordion
+ * The directory candidate table renders as expandable rows: a clickable header
+ * row (name / class / Start Exam) and a hidden detail row holding the full
+ * exam configuration. Shared by both the org portal and the proctor dashboard.
+ * ========================================================================== */
+.cand-acc-head:hover {
+  background: var(--surface-hover, var(--brand-active, rgba(127, 127, 127, 0.06)));
+}
+.cand-acc-chevron {
+  font-size: 20px;
+  color: var(--text-secondary, var(--on-sur-var));
+  transition: transform 0.2s ease;
+}
+.cand-acc-head.cand-acc-open {
+  background: var(--brand-active, rgba(127, 127, 127, 0.08));
+}
+.cand-acc-head.cand-acc-open .cand-acc-chevron {
+  transform: rotate(180deg);
+}
+.cand-acc-panel {
+  padding: 20px 24px;
+  background: var(--bg-color, var(--surface-hover, rgba(127, 127, 127, 0.04)));
+  border-top: 1px solid var(--border-color, var(--border));
+}
+.cand-cfg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px 24px;
+  align-items: start;
+}
+.cand-cfg-lbl {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-secondary, var(--on-sur-var));
+}
+.cand-cfg-ctl {
+  margin-top: 4px;
+  width: 100%;
+  max-width: 220px;
+}

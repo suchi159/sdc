@@ -1,0 +1,1988 @@
+<!DOCTYPE html>
+
+<html data-t="light" lang="en">
+<head>
+    <script src="offline_mock_api.js"></script>
+    <script src="demo_mode.js"></script>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzAwMCIvPjxnIGZpbGw9IiNmZmYiPjxjaXJjbGUgY3g9IjExIiBjeT0iMTMiIHI9IjQuMyIvPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTAuOCIgcj0iNSIvPjxjaXJjbGUgY3g9IjIxIiBjeT0iMTMiIHI9IjQuMyIvPjxyZWN0IHg9IjguOCIgeT0iMTMiIHdpZHRoPSIxNC40IiBoZWlnaHQ9IjciLz48cmVjdCB4PSI5LjIiIHk9IjE5LjUiIHdpZHRoPSIxMy42IiBoZWlnaHQ9IjUuOCIgcng9IjEuMyIvPjwvZz48ZyBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMC43Ij48bGluZSB4MT0iMTYiIHkxPSIxNC41IiB4Mj0iMTYiIHkyPSIxOSIvPjxsaW5lIHgxPSIxMi40IiB5MT0iMTQuOCIgeDI9IjEyLjQiIHkyPSIxOSIvPjxsaW5lIHgxPSIxOS42IiB5MT0iMTQuOCIgeDI9IjE5LjYiIHkyPSIxOSIvPjwvZz48L3N2Zz4="/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<meta content="SDC Candidate Learning Platform" name="description"/>
+<meta content="default-src * data: blob: 'unsafe-inline'; script-src * 'unsafe-inline' ; connect-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src *; style-src * 'unsafe-inline';" http-equiv="Content-Security-Policy"/>
+<title>Candidate Portal</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="design_system.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;family=JetBrains+Mono:wght@400;600;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="candidate.css?v=2.7.0" rel="stylesheet"/>
+</link></link></head>
+<body>
+<div class="app-layout">
+<header class="global-header md-top-app-bar">
+<div class="brand" style="display: flex; align-items: center; gap: 12px;">
+<img alt="SDC Certifications" src="sdc_full_logo.png" style="height: 32px;"/>
+<span style="font-weight: 600; font-size: 16px;">SDC Platform</span>
+</div>
+<div class="header-actions">
+<button class="header-btn" title="Notifications">
+<i class="material-icons">notifications</i>
+</button>
+<button class="header-btn" id="globalThemeToggle" title="Toggle Dark/Light Mode">
+<i class="material-icons">dark_mode</i>
+</button>
+<div class="profile-dropdown-container">
+<button class="profile-trigger" id="profileDropdownBtn" style="display: flex; align-items: center; gap: 12px; background: transparent; border: none; cursor: pointer; text-align: left; padding: 4px; border-radius: 8px;">
+          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+          <div style="display: flex; flex-direction: column;">
+            <span class="name" style="font-size: 14px; font-weight: 600; color: var(--on-sur, var(--text-primary));">Alex Scott</span>
+            <span class="email" style="font-size: 11px; color: var(--on-sur-var, var(--text-secondary));">alex.scott@sdc.edu</span>
+          </div>
+          <i class="material-icons" style="color: var(--on-sur-var, var(--text-secondary));">arrow_drop_down</i>
+        </button>
+<div class="dropdown-menu" id="profileDropdown">
+          <button class="dropdown-item">
+            <i class="material-icons">switch_account</i>
+            Switch Account
+          </button>
+          <button class="dropdown-item">
+            <i class="material-icons">person_add</i>
+            Add New Account
+          </button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item" style="color: #ef4444;" onclick="handleLogout()">
+            <i class="material-icons">logout</i>
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+<!-- 1. AUTH & EXAM ANCHOR -->
+<main class="view-panel active" id="cand-auth-view" role="main" style="padding-bottom: 0">
+<div class="auth-bg">
+<div class="card anchor-card">
+<img alt="SDC Hat Logo" onerror="this.onerror=null; this.src=SDC_LOGO_B64;" src="sdc_hat_logo.png" style="
+              width: 80px;
+              height: auto;
+              margin: 0 auto 24px;
+              display: block;
+            "/>
+<div id="login-step">
+<h1 class="anchor-title" id="login-main-title">Candidate Login</h1>
+<p class="anchor-subtitle">Access your learning portal.</p>
+<div class="login-tabs" role="tablist" aria-label="Sign-in method">
+  <button type="button" id="tab-email-login" class="login-tab active" role="tab" aria-selected="true" onclick="switchLoginTab('email')"><i class="material-icons" aria-hidden="true">mail</i> Sign in with Email</button>
+  <button type="button" id="tab-voucher-login" class="login-tab" role="tab" aria-selected="false" onclick="switchLoginTab('voucher')"><i class="material-icons" aria-hidden="true">redeem</i> Sign in with Voucher</button>
+</div>
+
+<!-- Email Login Form -->
+<form id="login-form" novalidate="" onsubmit="handleLogin(event)">
+<div class="inp-group">
+<label class="inp-label" for="login-email">Email Address</label>
+<div class="inp-wrapper">
+<i aria-hidden="true" class="material-icons inp-icon">mail</i>
+<input aria-describedby="email-error" class="inp" id="login-email" placeholder="Email address" required="" type="email" value="alex.scott@sdc.edu"/>
+</div>
+<span class="form-error" id="email-error" role="alert">Please enter a valid email.</span>
+</div>
+<div class="inp-group">
+<label class="inp-label" for="login-pass">Password</label>
+<div class="inp-wrapper">
+<i aria-hidden="true" class="material-icons inp-icon">lock</i>
+<input aria-describedby="pass-error" class="inp" id="login-pass" placeholder="••••••••" required="" type="password" value="candidate123"/>
+</div>
+<span class="form-error" id="pass-error" role="alert">Password is required.</span>
+</div>
+<div style="text-align:right; margin:-6px 0 14px;">
+<a class="btn-text" href="#" onclick="handleForgotPassword(event)" style="font-size:13px; font-weight:600; display:inline;">Forgot password?</a>
+</div>
+<!-- Optional: candidate already holds a voucher code -->
+<div class="inp-group" style="margin-bottom:14px;">
+<a class="btn-text" href="#" id="login-voucher-toggle" onclick="toggleLoginVoucher(event)" style="font-size:13px; font-weight:600; display:inline-flex; align-items:center; gap:4px;"><i aria-hidden="true" class="material-icons" style="font-size:18px;">redeem</i> I already have a voucher code</a>
+<div id="login-voucher-panel" style="display:none; margin-top:10px;">
+<label class="inp-label" for="login-voucher-code">Voucher Code</label>
+<div class="inp-wrapper">
+<i aria-hidden="true" class="material-icons inp-icon">vpn_key</i>
+<input aria-describedby="login-voucher-error" autocomplete="off" class="inp" id="login-voucher-code" placeholder="e.g. LM-123 or EXAM-456" type="text"/>
+</div>
+<span class="form-error" id="login-voucher-error" role="alert" style="display:none; color:var(--status-error); margin-top:4px;"></span>
+<p style="font-size:12px; color:var(--on-sur-var); margin-top:6px; line-height:1.45;">We'll verify it and apply it to your exam automatically once you sign in.</p>
+</div>
+</div>
+<button class="btn-primary" id="login-btn" style="width: 100%" type="submit">
+<span>Sign In</span>
+<i aria-hidden="true" class="material-icons">arrow_forward</i>
+</button>
+<p style="text-align:center; margin-top:18px; font-size:14px; color:var(--on-sur-var, var(--text-secondary));">
+New candidate? <a class="btn-text" href="#" onclick="showSignupStep(event)" style="font-weight:600; display:inline;">Create an account</a>
+</p>
+</form>
+
+<!-- Voucher Login Form -->
+<form id="voucher-login-form" novalidate="" onsubmit="handleUnifiedVoucherLogin(event)" style="display:none;">
+<p style="font-size:13px; color:var(--on-sur-var); margin-bottom:16px; line-height:1.5;">
+  Enter your voucher code to automatically unlock your learning material or access your exam.
+</p>
+<div class="inp-group">
+<label class="inp-label" for="unified-voucher-code">Voucher Code</label>
+<div class="inp-wrapper">
+<i aria-hidden="true" class="material-icons inp-icon">vpn_key</i>
+<input aria-describedby="voucher-error" class="inp" id="unified-voucher-code" placeholder="e.g. LM-123 or EXAM-456" required="" type="text"/>
+</div>
+<span class="form-error" id="voucher-error" role="alert" style="display:none; color:var(--status-error); margin-top:4px;">Please enter a valid voucher code.</span>
+</div>
+<button class="btn-primary" id="voucher-login-btn" style="width: 100%; margin-top:12px;" type="submit">
+<span>Continue</span>
+<i aria-hidden="true" class="material-icons">arrow_forward</i>
+</button>
+</form>
+</div>
+<!-- Create Account step -->
+<div id="signup-step" style="display:none;">
+<h1 class="anchor-title">Create your account</h1>
+<p class="anchor-subtitle">Start your food safety training journey.</p>
+<form id="signup-form" novalidate="" onsubmit="handleSignupSubmit(event)">
+<div class="inp-group">
+<label class="inp-label" for="signup-name">Full Name</label>
+<div class="inp-wrapper">
+<i aria-hidden="true" class="material-icons inp-icon">person</i>
+<input class="inp" id="signup-name" placeholder="Your full name" required="" type="text"/>
+</div>
+<span class="form-error" id="signup-name-error" role="alert">Please enter your name.</span>
+</div>
+<div class="inp-group">
+<label class="inp-label" for="signup-email">Email Address</label>
+<div class="inp-wrapper">
+<i aria-hidden="true" class="material-icons inp-icon">mail</i>
+<input class="inp" id="signup-email" placeholder="Email address" required="" type="email"/>
+</div>
+<span class="form-error" id="signup-email-error" role="alert">Please enter a valid email.</span>
+</div>
+<div class="inp-group">
+<label class="inp-label" for="signup-pass">Password</label>
+<div class="inp-wrapper">
+<i aria-hidden="true" class="material-icons inp-icon">lock</i>
+<input class="inp" id="signup-pass" placeholder="Create a password" required="" type="password"/>
+</div>
+<span class="form-error" id="signup-pass-error" role="alert">Password must be at least 4 characters.</span>
+</div>
+<!-- Optional: link a voucher to the new account -->
+<div class="inp-group" style="margin-bottom:14px;">
+<a class="btn-text" href="#" id="signup-voucher-toggle" onclick="toggleSignupVoucher(event)" style="font-size:13px; font-weight:600; display:inline-flex; align-items:center; gap:4px;"><i aria-hidden="true" class="material-icons" style="font-size:18px;">redeem</i> Add a voucher code</a>
+<div id="signup-voucher-panel" style="display:none; margin-top:10px;">
+<label class="inp-label" for="signup-voucher-code">Voucher Code</label>
+<div class="inp-wrapper">
+<i aria-hidden="true" class="material-icons inp-icon">vpn_key</i>
+<input autocomplete="off" class="inp" id="signup-voucher-code" placeholder="e.g. LM-123 or EXAM-456" type="text"/>
+</div>
+<p style="font-size:12px; color:var(--on-sur-var); margin-top:6px; line-height:1.45;">We'll add this voucher to your new account and unlock your material or exam automatically.</p>
+</div>
+</div>
+<button class="btn-primary" id="signup-btn" style="width: 100%" type="submit">
+<span>Create Account</span>
+<i aria-hidden="true" class="material-icons">arrow_forward</i>
+</button>
+<p style="text-align:center; margin-top:18px; font-size:14px; color:var(--on-sur-var, var(--text-secondary));">
+Already have an account? <a class="btn-text" href="#" onclick="showLoginStep(event)" style="font-weight:600; display:inline;">Sign in</a>
+</p>
+</form>
+</div>
+</div>
+</main>
+<!-- 2. DASHBOARD -->
+<main class="view-panel" id="cand-home" tabindex="-1">
+<div class="content-container dash-container">
+<!-- Dashboard Greeting -->
+<div class="dash-greeting">
+<div>
+<h1 class="dash-greeting-title" id="dash-greeting-title">Welcome back! 👋</h1>
+<p class="dash-greeting-sub">Here is your food safety training overview. Keep up the great work!</p>
+</div>
+<p class="dash-time-pill" id="time-spent-display">Time spent today: 0h 0m 0s</p>
+</div>
+<div class="dash-bento">
+<section class="dash-bento-main">
+<!-- Your exams -->
+<h2 class="dash-section-title">Your exams</h2>
+<div class="dash-exam-stack">
+<!-- Start Exam Card -->
+<div class="card exam-scheduler-card" id="exam-scheduler-container" style="margin-bottom: 0;">
+<div class="scheduler-top-row">
+<div class="scheduler-info-block">
+<div class="scheduler-icon-wrapper">
+<i class="material-icons">event_available</i>
+</div>
+<div class="scheduler-text-details">
+<div class="scheduler-label">Upcoming Certification Exam</div>
+<h2 class="scheduler-title">Food Protection Manager Certification</h2>
+<div class="scheduler-date-subtext">
+<i class="material-icons">schedule</i>
+<span>Scheduled Date: </span>
+<span id="dash-date-display">Aug 15, 2026</span>
+</div>
+</div>
+</div>
+<!-- Countdown Pill Badge -->
+<div class="scheduler-countdown-badge">
+<i class="material-icons">hourglass_empty</i>
+<span aria-live="polite" id="dash-countdown">80 Days</span>
+<span class="scheduler-countdown-sub">Remaining</span>
+</div>
+</div>
+<!-- Status strip: proctoring type / payment / exam status badges -->
+<div class="exam-status-strip" id="exam-status-strip" style="display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 0;"></div>
+<!-- CTA Action Row -->
+<div class="scheduler-action-row">
+<div class="scheduler-help-text">
+<i class="material-icons" id="exam-help-icon">info_outline</i>
+<span id="exam-help-text">Exam launches automatically when unlocked by your proctor.</span>
+</div>
+<button class="btn-primary locked-cta-btn" disabled="" id="dash-start-exam-btn" style="background: var(--sur-var); color: var(--on-sur-var); border: 1px solid var(--out-var);">
+<i class="material-icons spin" style="color: var(--pri);">sync</i>
+              Waiting for Proctor...
+            </button>
+</div>
+</div>
+<!-- Second exam: in-class sitting (static; not driven by renderExamCard) -->
+<div class="card exam-scheduler-card" id="exam-scheduler-container-2" style="margin-bottom: 0;">
+<div class="scheduler-top-row">
+<div class="scheduler-info-block">
+<div class="scheduler-icon-wrapper">
+<i class="material-icons">meeting_room</i>
+</div>
+<div class="scheduler-text-details">
+<div class="scheduler-label">Upcoming In-Class Exam</div>
+<h2 class="scheduler-title">Food Protection Manager (In-Class)</h2>
+<div class="scheduler-date-subtext">
+<i class="material-icons">schedule</i>
+<span>Scheduled Date: </span>
+<span>Jul 3, 2026</span>
+</div>
+</div>
+</div>
+<!-- Countdown Pill Badge -->
+<div class="scheduler-countdown-badge">
+<i class="material-icons">hourglass_empty</i>
+<span>Jul 3</span>
+<span class="scheduler-countdown-sub">Starts</span>
+</div>
+</div>
+<!-- Status strip: static badges for the in-class sitting -->
+<div class="exam-status-strip" style="display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 0;">
+<span class="sp-badge" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:9999px;font-size:12px;font-weight:700;letter-spacing:.02em;background:rgba(0,99,155,0.12);color:#00639b;"><i class="material-icons" style="font-size:14px;">meeting_room</i>In-Class</span>
+<span class="sp-badge" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:9999px;font-size:12px;font-weight:700;letter-spacing:.02em;background:rgba(125,87,0,0.16);color:#7d5700;"><i class="material-icons" style="font-size:14px;">hourglass_top</i>Awaiting proctor</span>
+</div>
+<!-- CTA Action Row -->
+<div class="scheduler-action-row">
+<div class="scheduler-help-text">
+<i class="material-icons">info_outline</i>
+<span>Your proctor will start this exam at your scheduled in-class session.</span>
+</div>
+<button class="btn-primary locked-cta-btn" disabled="" style="background: var(--sur-var); color: var(--on-sur-var); border: 1px solid var(--out-var);">
+<i class="material-icons spin" style="color: var(--pri);">sync</i>
+              Waiting for Proctor...
+            </button>
+</div>
+</div>
+</div>
+<!-- Voucher Upgrade Option -->
+<div id="voucher-upgrade-container" style="margin-bottom: 32px; display: none;">
+<div class="card" style="padding: 24px; border-left: 4px solid var(--pri); background: #fef8ff;">
+<div style="display: flex; justify-content: space-between; align-items: center;">
+<div>
+<h3 style="margin: 0; color: var(--pri); font-size: 18px;">Upgrade to Internet Proctoring</h3>
+<p style="margin: 4px 0 0 0; font-size: 14px; color: var(--on-sur-var);">
+                Your voucher is currently configured for In-House Proctoring. Upgrade for $25.00 to take the exam online from home.
+              </p>
+</div>
+<button class="btn-primary" onclick="handleVoucherUpgrade()" style="flex-shrink: 0; background: var(--pri);">
+              Upgrade Now
+            </button>
+</div>
+</div>
+</div>
+</section>
+<aside class="dash-bento-side">
+<!-- Your progress -->
+<h2 class="dash-section-title">Your progress</h2>
+<div class="dash-content-grid" style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 14px;
+          ">
+<!-- Progress Ring -->
+<div aria-label="Course Progress Ring" class="card" style="
+              padding: 16px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+            " tabindex="0">
+<h3 style="
+                font-size: 16px;
+                font-weight: 700;
+                width: 100%;
+                text-align: left;
+                margin-bottom: 10px;
+              ">
+            Course Progress
+          </h3>
+<div style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: relative;
+              ">
+<svg aria-hidden="true" style="width: 104px; height: 104px" viewbox="0 0 160 160">
+<circle cx="80" cy="80" r="70" style="stroke: var(--out-var); stroke-width: 14; fill: none"></circle>
+<circle cx="80" cy="80" id="main-prog-ring" r="70" style="
+                    stroke: var(--pri);
+                    stroke-width: 14;
+                    fill: none;
+                    stroke-dasharray: 439.8;
+                    stroke-dashoffset: 439.8;
+                    stroke-linecap: round;
+                    transition: 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+                    transform: rotate(-90deg);
+                    transform-origin: 50% 50%;
+                  "></circle>
+</svg>
+<div style="position: absolute; text-align: center">
+<div id="main-prog-text" style="
+                    font-size: 28px;
+                    font-weight: 800;
+                    color: var(--on-sur);
+                    line-height: 1;
+                  ">
+                0%
+              </div>
+<div style="
+                    font-size: 12px;
+                    color: var(--on-sur-var);
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
+                    margin-top: 4px;
+                  ">
+                Completed
+              </div>
+</div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px">
+<!-- Objective -->
+<div class="card" style="padding: 24px; border-left: 4px solid var(--sec)">
+<div style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 16px;
+                ">
+<h3 style="
+                    font-size: 14px;
+                    font-weight: 700;
+                    color: var(--on-sur-var);
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
+                  ">
+                Today's Objective
+              </h3>
+<div style="
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: #d97706;
+                    background: #fef3c7;
+                    padding: 4px 8px;
+                    border-radius: 12px;
+                  ">
+                2 Day Streak 🔥
+              </div>
+</div>
+<div style="display: flex; align-items: flex-start; gap: 16px">
+<div style="
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    background: #fff8e6;
+                    color: var(--sec);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-shrink: 0;
+                  ">
+<i class="material-icons" style="font-size: 20px">flag</i>
+</div>
+<div>
+<div style="
+                      font-weight: 700;
+                      font-size: 16px;
+                      margin-bottom: 4px;
+                      line-height: 1.4;
+                    ">
+                  Complete Module 01 Audio + 10 questions
+                </div>
+<div style="font-size: 14px; color: var(--on-sur-var)">
+                  Stay on track for your target exam date.
+                </div>
+</div>
+</div>
+</div>
+<!-- Continue Action -->
+<div aria-label="Continue reading The Detailed Guide" class="continue-card card-interactive" onclick="navigateTo('cand-learn')" role="button" style="
+                background: linear-gradient(135deg, var(--pri), #7a4e00);
+                color: var(--text-primary);
+                padding: 16px 24px;
+                border-radius: 16px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border: none;
+                box-shadow: 0 8px 24px rgba(122, 78, 0, 0.2);
+              " tabindex="0">
+<div>
+<span style="
+                    font-size: 12px;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
+                    opacity: 0.8;
+                    margin-bottom: 8px;
+                    display: block;
+                  ">Pick up where you left off</span>
+<h2 style="
+                    font-size: 20px;
+                    font-weight: 800;
+                    line-height: 1.3;
+                    margin: 0;
+                  ">
+                The Detailed Guide: Ch 1
+              </h2>
+</div>
+<div style="
+                  width: 48px;
+                  height: 48px;
+                  border-radius: 50%;
+                  background: rgba(255, 255, 255, 0.2);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  flex-shrink: 0;
+                  backdrop-filter: blur(4px);
+                ">
+<i aria-hidden="true" class="material-icons" style="font-size: 28px; color: white">arrow_forward</i>
+</div>
+</div>
+</div>
+</div>
+</aside>
+</div>
+<!-- Get exam-ready -->
+<h2 class="dash-section-title">Get exam-ready</h2>
+<div class="dash-grid-2 dash-band">
+<!-- Test My Computer Card -->
+<div class="card" style="display: flex; flex-direction: column; justify-content: space-between; border-left: 4px solid var(--sec);">
+<div style="display: flex; gap: 16px; align-items: flex-start;">
+<div style="width: 44px; height: 44px; background: rgba(98, 91, 113, 0.1); color: var(--sec); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; border: 1px solid rgba(98, 91, 113, 0.15);">
+<i class="material-icons">laptop_windows</i>
+</div>
+<div>
+<div style="font-size: 12px; font-weight: 600; color: var(--on-sur-var); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">Pre-Exam Diagnostics</div>
+<h3 style="margin: 0; font-size: 18px; font-weight: 700;">Test My Computer</h3>
+<p style="margin: 8px 0 0 0; font-size: 14px; color: var(--on-sur-var); line-height: 1.5;">
+                Run self-check diagnostics on your webcam, microphone, and internet connection before starting the exam.
+              </p>
+</div>
+</div>
+<div style="margin-top: 16px; display: flex; justify-content: flex-end;">
+<a class="btn-primary" href="secure_exam.html" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none;" target="_blank">
+<span>Test My Computer</span>
+<i class="material-icons" style="font-size: 16px;">arrow_forward</i>
+</a>
+</div>
+</div>
+<!-- Activate access (codes assigned/gifted by a school or proctor) -->
+<div class="card" style="padding:20px 24px; border-left:4px solid var(--pri);">
+<div style="display:flex; gap:16px; align-items:flex-start;">
+<div style="width:44px; height:44px; background:var(--pri-con, #fff8e6); color:var(--pri); border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><i class="material-icons">vpn_key</i></div>
+<div style="flex:1; min-width:0;">
+<h3 style="margin:0; font-size:18px; font-weight:700;">Activate your access</h3>
+<p style="margin:6px 0 12px; font-size:14px; color:var(--on-sur-var); line-height:1.5;">Were you given a voucher code by your school or proctor? Enter it once to open your material and exam voucher. (If you bought it yourself, it's already unlocked — no code needed.)</p>
+<div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+<div class="inp-wrapper" style="flex:1; min-width:200px;"><i aria-hidden="true" class="material-icons inp-icon">confirmation_number</i><input class="inp" id="activate-code-input" placeholder="e.g. VCH-B0007" type="text"/></div>
+<button class="btn-primary" id="activate-code-btn" onclick="activateAccessFromInput()" style="white-space:nowrap;"><i class="material-icons" style="font-size:18px;">lock_open</i> Activate</button>
+</div>
+<div id="activate-access-status" style="margin-top:12px; display:none;"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- 3. LEARN & AI SEARCH (Mature Curriculum) -->
+<main class="view-panel" id="cand-learn" tabindex="-1">
+<div class="content-container">
+<!-- 1. Learning Module Header -->
+<div class="card" style="margin-bottom: 24px; padding: 24px">
+<div style="
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+              flex-wrap: wrap;
+              gap: 16px;
+              margin-bottom: 24px;
+            ">
+<div>
+<h1 style="
+                  font-size: 24px;
+                  font-weight: 800;
+                  margin-bottom: 8px;
+                  line-height: 1.2;
+                ">
+              Food Safety Management Certification
+            </h1>
+<div style="
+                  font-size: 14px;
+                  color: var(--on-sur-var);
+                  font-weight: 500;
+                ">
+              By Chef Dominic Hawkes MCGB &amp; Daniel John Stine
+            </div>
+</div>
+<div style="display: flex; align-items: center; gap: 16px">
+<div style="text-align: right">
+<div id="lm-time-display" style="font-size: 20px; font-weight: 800; color: var(--sec)">
+                0h 0m
+              </div>
+<div style="
+                    font-size: 12px;
+                    color: var(--on-sur-var);
+                    font-weight: 600;
+                  ">
+                Total Hours Read
+              </div>
+</div>
+<!-- Radial Progress Indicator -->
+<div style="position: relative; width: 64px; height: 64px">
+<svg style="width: 100%; height: 100%; transform: rotate(-90deg)" viewbox="0 0 60 60">
+<circle cx="30" cy="30" r="26" style="fill: none; stroke: var(--out-var); stroke-width: 6"></circle>
+<circle cx="30" cy="30" id="lm-prog-ring" r="26" style="
+                      fill: none;
+                      stroke: var(--sec);
+                      stroke-width: 6;
+                      stroke-dasharray: 163.3;
+                      stroke-dashoffset: 163.3;
+                      stroke-linecap: round;
+                      transition: 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+                    "></circle>
+</svg>
+<div id="lm-prog-text" style="
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 14px;
+                    font-weight: 800;
+                    color: var(--sec);
+                  ">
+                0%
+              </div>
+</div>
+</div>
+</div>
+<!-- Standard Search Input -->
+<div class="inp-group" style="margin-top: 24px; margin-bottom: 0;">
+<label class="sr-only" for="lm-search-input">Search learning material</label>
+<div class="inp-wrapper">
+<i aria-hidden="true" class="material-icons inp-icon">search</i>
+<input aria-label="RAG Semantic Search" class="inp" id="lm-search-input" placeholder="Search this learning material (e.g. 'What is the danger zone?')" style="padding-right: 48px;" type="text"/>
+<i class="material-icons" data-tooltip="Retrieval-Augmented Generation" style="position: absolute; right: 14px; color: var(--pri); cursor: pointer;">auto_awesome</i>
+</div>
+</div>
+<p style="
+              font-size: 14px;
+              color: var(--on-sur-var);
+              margin-left: 24px;
+              margin-top: 12px;
+              font-weight: 500;
+            ">
+<i class="material-icons" style="font-size:14px; vertical-align:middle;">info</i> Search only finds content within this specific module.
+        </p>
+</div>
+<!-- 2. Resource Navigation Tabs -->
+<div class="learning-tabs" role="tablist" style="margin-bottom: 24px">
+<button class="l-tab active" onclick="switchLmTab('ebooks')" role="tab">
+          Ebook
+        </button>
+<button class="l-tab" onclick="switchLmTab('videos')" role="tab">
+          Video
+        </button>
+<button class="l-tab" onclick="switchLmTab('podcasts')" role="tab">
+          Podcast
+        </button>
+<button class="l-tab" onclick="switchLmTab('flashcards')" role="tab">
+          Flashcards
+        </button>
+<button class="l-tab" onclick="switchLmTab('practice')" role="tab">
+          Practice Test
+        </button>
+</div>
+<!-- 3. Dynamic Content Card Grid -->
+<div class="lm-grid-container" id="lm-content-grid" style="
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+          ">
+<!-- Rendered by JS -->
+</div>
+</div>
+</main>
+<!-- 4. PRACTICE & FLASHCARDS -->
+<main class="view-panel" id="cand-practice" tabindex="-1">
+<div class="content-container">
+<div class="section-header">
+<h1 class="section-title">
+<i class="material-icons" style="color: var(--pri)">quiz</i>
+          Practice &amp; Readiness
+        </h1>
+</div>
+<div class="grid-2">
+<!-- Mock Exam -->
+<div aria-label="Start Mock Exam 1" class="card card-interactive" onclick="openMockExam()" role="button" tabindex="0">
+<div class="flex-between mb-4">
+<div class="c-icon" style="background: rgba(249, 173, 0, 0.1); color: var(--pri)">
+<i class="material-icons">assignment</i>
+</div>
+<span class="status-badge status-neutral">Adaptive</span>
+</div>
+<h2 style="font-size: 18px; margin-bottom: 8px">
+            Full Mock Exam (90 Questions)
+          </h2>
+<p style="
+                font-size: 14px;
+                color: var(--on-sur-var);
+                margin-bottom: 24px;
+              ">
+            No hints. Locked down simulation matching the actual ACF Manager
+            Exam.
+          </p>
+<div class="flex-between" style="font-size: 14px; font-weight: 600">
+<span><i class="material-icons" style="
+                    font-size: 16px;
+                    vertical-align: bottom;
+                    color: var(--out);
+                  ">timer</i>
+              90 Mins</span>
+<span style="color: var(--sec)">Start Simulation →</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- 6. PROFILE & ACCOUNT SETTINGS -->
+<main class="view-panel" id="cand-profile" tabindex="-1">
+<div class="content-container" style="max-width: 600px; margin: 0 auto;">
+<!-- Profile Header Card -->
+<div class="card mb-4" style="display: flex; align-items: center; gap: 20px; padding: 24px;">
+<div id="profile-avatar-initials" style="width: 68px; height: 68px; border-radius: 50%; background: linear-gradient(135deg, var(--pri), var(--sec)); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 800; flex-shrink: 0; box-shadow: var(--shadow-md);">
+          AS
+        </div>
+<div style="flex: 1;">
+<h1 id="profile-name-display" style="font-size: 20px; font-weight: 800; color: var(--on-sur); margin-bottom: 4px;">Alex Scott</h1>
+<p id="profile-id-display" style="color: var(--on-sur-var); font-family: var(--font-mono); font-size: 12px;">ID: ---</p>
+</div>
+<span class="badge" style="background: var(--suc-container); color: var(--suc); font-size: 12px; padding: 8px 12px;">Active</span>
+</div>
+<!-- Account Settings Card -->
+<div class="card mb-4" style="padding: 24px;">
+<h2 style="font-size: 16px; font-weight: 700; color: var(--on-sur); margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+<i class="material-icons" style="font-size: 20px; color: var(--pri);">manage_accounts</i>
+          Account Settings
+        </h2>
+<!-- Primary Email Field -->
+<div class="inp-group" style="margin-bottom: 16px;">
+<label class="inp-label" for="profile-email" style="font-size: 14px; font-weight: 700;">Primary Email</label>
+<div class="inp-wrapper">
+<i aria-hidden="true" class="material-icons inp-icon">mail</i>
+<input aria-label="Primary Email" class="inp" id="profile-email" placeholder="your@email.com" type="email"/>
+</div>
+</div>
+<!-- Secondary Email Field -->
+<div class="inp-group" style="margin-bottom: 6px;">
+<label class="inp-label" for="profile-email-secondary" style="font-size: 14px; font-weight: 700;">Secondary Email</label>
+<div class="inp-wrapper">
+<i aria-hidden="true" class="material-icons inp-icon">alternate_email</i>
+<input aria-label="Secondary Email" class="inp" id="profile-email-secondary" placeholder="second@email.com" type="email"/>
+</div>
+</div>
+<!-- Secondary email association status + approve action -->
+<div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom: 8px;">
+<span id="profile-secondary-status" class="sp-badge" style="display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:9999px; font-size:12px; font-weight:700;">Not added</span>
+<button id="profile-approve-secondary-btn" onclick="approveSecondaryEmail()" class="btn-text" style="display:none; font-size:13px; font-weight:600; align-items:center; gap:4px;"><i aria-hidden="true" class="material-icons" style="font-size:18px;">verified</i> Approve association</button>
+</div>
+<p id="profile-voucher-line" style="font-size:12px; color:var(--on-sur-var); margin:0 0 16px; line-height:1.45;"></p>
+<!-- New Password Field -->
+<div class="inp-group" style="margin-bottom: 16px;">
+<label class="inp-label" for="profile-new-pass" style="font-size: 14px; font-weight: 700;">New Password</label>
+<div class="inp-wrapper">
+<i aria-hidden="true" class="material-icons inp-icon">lock</i>
+<input aria-label="New Password" class="inp" id="profile-new-pass" placeholder="Enter new password" type="password"/>
+</div>
+</div>
+<!-- Confirm Password Field -->
+<div class="inp-group" style="margin-bottom: 24px;">
+<label class="inp-label" for="profile-confirm-pass" style="font-size: 14px; font-weight: 700;">Confirm Password</label>
+<div class="inp-wrapper">
+<i aria-hidden="true" class="material-icons inp-icon">lock_reset</i>
+<input aria-label="Confirm Password" class="inp" id="profile-confirm-pass" placeholder="Re-enter new password" type="password"/>
+</div>
+</div>
+<!-- Phone Number Field -->
+<div class="inp-group" style="margin-bottom: 16px;">
+<label class="inp-label" for="profile-phone" style="font-size: 14px; font-weight: 700;">Phone Number</label>
+<div class="inp-wrapper">
+<i aria-hidden="true" class="material-icons inp-icon">phone</i>
+<input aria-label="Phone Number" class="inp" id="profile-phone" placeholder="(555) 555-5555" type="tel"/>
+</div>
+</div>
+<!-- Notification Preferences -->
+<div class="inp-group" style="margin-bottom: 24px;">
+<label class="inp-label" for="input-9aed9b96" style="font-size: 14px; font-weight: 700;">Notification Preferences</label>
+<div style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px; padding: 12px; background: var(--sur-var); border-radius: 8px; border: 1px solid var(--out-var);">
+<label style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--on-sur); cursor: pointer; font-weight: 500;">
+<input checked="" id="input-9aed9b96" style="accent-color: var(--pri); width: 16px; height: 16px;" type="checkbox"/> Exam Reminders &amp; Updates (Email)
+            </label>
+<label style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--on-sur); cursor: pointer; font-weight: 500;">
+<input checked="" id="input-c37040c2" style="accent-color: var(--pri); width: 16px; height: 16px;" type="checkbox"/> SMS Alerts (Standard rates apply)
+            </label>
+</div>
+</div>
+<button class="btn-primary" onclick="saveProfileChanges()" style="width: 100%;">
+<i class="material-icons" style="font-size: 18px;">save</i> Save Changes
+        </button>
+</div>
+<!-- Danger Zone -->
+<div class="card mb-4" style="padding: 24px; border: 1px solid var(--err); background: #fffcfc;">
+<h2 style="font-size: 16px; font-weight: 700; color: var(--err); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+<i class="material-icons" style="font-size: 20px;">warning</i>
+          Danger Zone
+        </h2>
+<p style="font-size: 14px; color: var(--on-sur-var); margin-bottom: 16px;">
+          Once you delete your account, there is no going back. Please be certain.
+        </p>
+<button class="btn-secondary" onclick="document.getElementById('delete-modal').classList.add('active')" style="color: var(--err); border-color: var(--err); width: 100%;">
+<i class="material-icons" style="font-size: 18px;">delete_forever</i> Delete Account
+        </button>
+</div>
+</div>
+</main>
+<!-- BOTTOM NAVIGATION -->
+<nav aria-label="Main Navigation" class="bottom-nav hidden" id="main-nav" role="navigation">
+<button aria-current="page" class="nav-item active" data-target="cand-home" tabindex="0">
+<i class="material-icons">dashboard</i><span>Home</span>
+</button>
+<button class="nav-item" data-target="cand-learn" tabindex="0">
+<i class="material-icons">menu_book</i><span>Learning Materials</span>
+</button>
+<button class="nav-item" data-target="cand-practice" tabindex="0">
+<i class="material-icons">quiz</i><span>Practice</span>
+</button>
+<button aria-label="My Certificates" class="nav-item" data-target="cand-certs" tabindex="0">
+<i class="material-icons">workspace_premium</i><span>Certificates</span>
+</button>
+<button class="nav-item" data-target="cand-profile" tabindex="0">
+<i class="material-icons">person</i><span>Profile</span>
+</button>
+
+</nav>
+<!-- ==================== MY CERTIFICATES VIEW ==================== -->
+<main class="view-panel" id="cand-certs" tabindex="-1">
+<div class="content-container">
+<!-- Page Header -->
+<div style="margin-bottom: 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+<div>
+<h1 style="font-size: 28px; font-weight: 800; color: var(--on-sur); margin-bottom: 8px;">My Certificates</h1>
+<p style="font-size: 14px; color: var(--on-sur-var);">Your earned credentials, verified and ready to share.</p>
+</div>
+<span class="badge" style="background: var(--suc-container); color: var(--suc); font-size: 14px; padding: 8px 16px; border-radius: 16px;">
+<i class="material-icons" style="font-size: 16px; vertical-align: middle; margin-right: 4px;">verified</i>1 Active
+        </span>
+</div>
+<!-- Credential Card Grid -->
+<div class="cred-card-grid">
+<!-- CARD 1 -->
+<div aria-label="Food Safety Manager Certificate" class="cred-card" id="cred-card-1" role="article">
+<!-- Mobile triple-dot menu -->
+<button aria-label="Certificate options" class="cred-mobile-menu-btn" onclick="openCredMobileSheet('cred-card-1')">
+<i class="material-icons">more_vert</i>
+</button>
+<!-- Card Body -->
+<div class="cred-card-icon">
+<i class="material-icons" style="font-size: 40px; color: var(--text-primary);">workspace_premium</i>
+</div>
+<div class="cred-card-body">
+<h3 class="cred-card-title">Food Safety Manager</h3>
+<div class="cred-card-ref">SDC-ACF-2026-04827193</div>
+<span class="cred-pass-badge">✓ Pass</span>
+</div>
+<!-- Hover Dock (desktop) -->
+<div aria-label="Quick actions" class="cred-hover-dock" role="toolbar">
+<button aria-label="Copy verification link" class="cred-dock-btn" onclick="credCopyLink(this)" title="Copy Verification Link">
+<i class="material-icons">link</i>
+<span>Copy Link</span>
+</button>
+<button aria-label="Share to LinkedIn" class="cred-dock-btn" onclick="credShareLinkedIn()" style="color: #0077B5;" title="Share to LinkedIn">
+<i class="material-icons" style="color: #0077B5; font-size: 18px;">work</i>
+<span>LinkedIn</span>
+</button>
+<button aria-label="Download PDF certificate" class="cred-dock-btn" onclick="credDownloadPDF(this)" title="Download PDF">
+<i class="material-icons">picture_as_pdf</i>
+<span>Download</span>
+</button>
+<button aria-label="Open Credential Hub" class="cred-dock-btn" onclick="openCredentialHub()" style="color: var(--pri);" title="View Full Hub">
+<i class="material-icons">open_in_new</i>
+<span>View Hub</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Empty state placeholder (shown if no certs) -->
+<div class="cred-empty" id="cred-empty-state" style="display: none;">
+<i class="material-icons" style="font-size: 64px; color: var(--on-sur-var); margin-bottom: 16px;">workspace_premium</i>
+<h3 style="font-size: 18px; font-weight: 700; color: var(--on-sur); margin-bottom: 8px;">No Certificates Yet</h3>
+<p style="color: var(--on-sur-var);">Complete your exam to earn your first credential.</p>
+</div>
+</div>
+</main>
+<!-- ==================== CREDENTIAL DETAIL HUB OVERLAY ==================== -->
+<div aria-label="Credential Hub" aria-modal="true" class="reader-view" id="credential-hub-overlay" role="dialog" style="background: #f4f6fb; overflow-y: auto; display: flex; flex-direction: column;">
+<!-- Hub Header -->
+<div class="reader-header" style="background: #ffffff; border-right: 1px solid var(--border); border-bottom: 3px solid var(--pri); padding: 0 20px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
+<div style="display: flex; align-items: center; gap: 12px;">
+<button aria-label="Back to Certificates" class="action-btn" onclick="closeCredentialHub()">
+<i class="material-icons">arrow_back</i>
+</button>
+<span style="font-weight: 700; font-size: 16px; color: var(--on-sur);">Credential Hub</span>
+</div>
+<span class="badge" style="background: var(--suc-container); color: var(--suc); margin-right: 32px;">Active · Verified</span>
+</div>
+<!-- Hub Body: 2-Column Layout -->
+<div class="cred-hub-body">
+<!-- LEFT COLUMN: Visual Proof Viewport -->
+<div class="cred-hub-left">
+<!-- 3-way toggle -->
+<div aria-label="Credential View Selector" class="cred-seg-toggle" role="tablist">
+<button aria-selected="true" class="cred-seg-btn active" id="seg-tab-cert" onclick="switchCredView('certificate', this)" role="tab">Certificate</button>
+<button aria-selected="false" class="cred-seg-btn" id="seg-tab-badge" onclick="switchCredView('badge', this)" role="tab">Digital Badge</button>
+<button aria-selected="false" class="cred-seg-btn" id="seg-tab-web" onclick="switchCredView('web', this)" role="tab">Web Preview</button>
+</div>
+<!-- Viewer Window -->
+<div class="cred-viewer-window" id="cred-viewer-window">
+<!-- Certificate View -->
+<div class="cred-view-pane active" id="cred-view-certificate">
+<div class="cred-cert-frame">
+<div class="cred-cert-inner">
+<div class="cred-cert-top-row">
+<div class="cred-cert-logo-area">
+<img alt="SDC Logo" onerror="this.onerror=null; this.src=SDC_LOGO_B64;" src="sdc_hat_logo.png" style="height: 36px;"/>
+<div>
+<div style="font-weight: 800; font-size: 14px; color: #5c3a00;">SDC Certifications</div>
+<div style="font-size: 11px; color: #7a4e00; font-weight: 600;">ACF Manager Exam</div>
+</div>
+</div>
+<div style="text-align: right; font-size: 11px; color: #7a4e00; font-weight: 600; line-height: 1.6;">
+<div>AMERICAN CULINARY</div><div>FEDERATION</div>
+</div>
+</div>
+<div class="cred-cert-divider"></div>
+<div style="text-align: center; font-size: 11px; color: #7a4e00; font-weight: 700; letter-spacing: 0.1em; margin-bottom: 4px;">THIS IS TO CERTIFY THAT</div>
+<div style="text-align: center; font-family: Georgia, serif; font-size: 32px; font-weight: 700; color: #5c3a00; margin: 4px 0;">Daniel R. Stine</div>
+<div class="cred-cert-divider"></div>
+<div style="text-align: center; font-size: 11px; color: #555; line-height: 1.6; margin: 12px 0;">has successfully completed the requirements of the</div>
+<div style="text-align: center; font-weight: 800; font-size: 16px; color: #5c3a00; line-height: 1.4;">American Culinary Federation<br/>Food Safety Manager Certification Exam</div>
+<div style="font-size: 11px; color: #777; text-align: center; margin: 12px 0; line-height: 1.5;">Administered by SDC Certifications in cooperation with the American Culinary Federation, and accredited by ANSI.</div>
+<div class="cred-cert-footer">
+<div>
+<div style="font-size: 11px; color: #7a4e00; font-weight: 700;">CERTIFICATE NUMBER</div>
+<div style="font-size: 11px; font-weight: 800; color: #5c3a00; font-family: monospace;">SDC-ACF-2026-04827193</div>
+</div>
+<div style="text-align: center;">
+<div class="cred-cert-seal">✓</div>
+<div style="font-size: 11px; color: #7a4e00; font-weight: 700;">CERTIFIED</div>
+</div>
+<div style="text-align: right;">
+<div style="font-size: 11px; color: #7a4e00; font-weight: 700;">DATE OF EXPIRATION</div>
+<div style="font-size: 11px; font-weight: 800; color: #5c3a00;">April 14, 2031</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Digital Badge View -->
+<div class="cred-view-pane" id="cred-view-badge" style="display: none;">
+<div class="cred-badge-frame">
+<div class="cred-badge-bg">
+<div class="cred-badge-watermark">SDC CERTIFICATIONS ACF MANAGER EXAM AUTHENTIC</div>
+<div class="cred-badge-shield">
+<div class="cred-badge-header-row">
+<img alt="SDC Logo" onerror="this.onerror=null; this.src=SDC_LOGO_B64;" src="sdc_hat_logo.png" style="height: 28px; filter: brightness(10);"/>
+<div style="color: var(--text-primary); font-size: 11px; font-weight: 700; line-height: 1.3; text-align: right;">SDC Certifications<br/><em>ACF Manager Exam</em></div>
+</div>
+<div style="color: rgba(255,255,255,0.8); font-size: 11px; letter-spacing: 0.1em; font-weight: 700; text-align: center; margin-top: 20px;">AMERICAN CULINARY FEDERATION</div>
+<div style="color: var(--text-primary); font-size: 20px; font-weight: 800; text-align: center; line-height: 1.3; margin: 8px 0; font-style: italic;">Food Safety Manager<br/>Certification Exam</div>
+<div style="color: rgba(255,255,255,0.8); font-size: 11px; letter-spacing: 0.12em; font-weight: 700; text-align: center;">CERTIFIED PROFESSIONAL</div>
+<div class="cred-badge-seal-circle">
+<i class="material-icons" style="font-size: 28px; color: var(--text-primary);">restaurant</i>
+<div style="font-size: 11px; color: var(--text-primary); font-weight: 700; letter-spacing: 0.05em;">ACF</div>
+</div>
+</div>
+<div class="cred-badge-ribbon">
+<div style="font-size: 11px; color: var(--text-primary); font-weight: 700; letter-spacing: 0.1em; text-align: center;">AWARDED TO</div>
+<div style="font-size: 18px; font-style: italic; font-weight: 800; color: var(--text-primary); text-align: center; font-family: Georgia, serif;">Daniel R. Stine</div>
+</div>
+<div style="display: flex; justify-content: space-between; padding: 8px 16px; font-size: 11px; color: rgba(255,255,255,0.6);">
+<span>SDC-ACF-2026-04827193</span><span>EXP April 14, 2031</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Web Preview View -->
+<div class="cred-view-pane" id="cred-view-web" style="display: none;">
+<div class="cred-web-preview-frame">
+<div class="cred-web-header">
+<img alt="SDC Logo" onerror="this.onerror=null; this.src=SDC_LOGO_B64;" src="sdc_hat_logo.png" style="height: 24px; filter: brightness(10);"/>
+<div style="color: var(--text-primary);">
+<div style="font-size: 11px; font-weight: 600;">SDC CERTIFICATIONS</div>
+<div style="font-size: 11px; opacity: 0.7;"><em>American Culinary Federation</em></div>
+</div>
+</div>
+<div class="cred-web-profile">
+<div style="font-size: 11px; color: rgba(255,255,255,0.7); letter-spacing: 0.1em; text-transform: uppercase;">AMERICAN CULINARY FEDERATION</div>
+<div style="font-size: 11px; color: rgba(255,255,255,0.7);">FOOD SAFETY MANAGER CERTIFICATION EXAM</div>
+<div style="font-size: 22px; font-weight: 800; color: var(--text-primary); font-family: Georgia, serif; margin: 8px 0;">Daniel R. Stine</div>
+<div style="display: flex; gap: 16px; margin-top: 8px;">
+<div><div style="font-size: 11px; color: rgba(255,255,255,0.6);">EXPIRES</div><div style="font-size: 14px; font-weight: 700; color: var(--text-primary);">April 14, 2031</div></div>
+<div><div style="font-size: 11px; color: rgba(255,255,255,0.6);">STATUS</div><div style="font-size: 14px; font-weight: 700; color: #7ed07e;">● ACTIVE</div></div>
+</div>
+</div>
+<div class="cred-web-body">
+<div style="font-size: 11px; color: var(--on-sur-var); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px;">CERTIFICATE NUMBER</div>
+<div style="font-size: 11px; font-weight: 800; font-family: monospace; color: var(--on-sur); margin-bottom: 12px;">SDC-ACF-2026-04827193</div>
+<div style="display: flex; gap: 12px; margin-bottom: 12px;">
+<div><div style="font-size: 11px; color: var(--on-sur-var); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">EXAM FORM</div><div style="font-size: 11px; font-weight: 700; color: var(--on-sur);">ACFM-2026-A</div></div>
+<div><div style="font-size: 11px; color: var(--on-sur-var); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">DATE OF EXAM</div><div style="font-size: 11px; font-weight: 700; color: var(--on-sur);">April 14, 2026</div></div>
+</div>
+<div style="display: flex; align-items: center; gap: 16px;">
+<!-- QR Code mock -->
+<div style="width: 72px; height: 72px; border: 2px solid var(--out-var); border-radius: 4px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; padding: 8px; background: white;">
+<div style="grid-column: 1/4; grid-row: 1/4; background: #000; border-radius: 4px;"></div>
+<div style="grid-column: 5/8; grid-row: 1/4; background: #000; border-radius: 4px;"></div>
+<div style="grid-column: 1/4; grid-row: 5/8; background: #000; border-radius: 4px;"></div>
+<div style="grid-column: 5; grid-row: 4; background: #000;"></div>
+<div style="grid-column: 6; grid-row: 5; background: #000;"></div>
+<div style="grid-column: 7; grid-row: 6; background: #000;"></div>
+<div style="grid-column: 5; grid-row: 7; background: #000;"></div>
+</div>
+<div>
+<div style="font-size: 11px; color: var(--on-sur-var); font-weight: 700; text-align: center; text-transform: uppercase;">SCAN TO VERIFY</div>
+<div class="cred-web-seal">
+<i class="material-icons" style="font-size: 20px; color: var(--text-primary);">check_circle</i>
+<div style="font-size: 8px; color: var(--text-primary); font-weight: 700;">ACF</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Verification Link -->
+<div class="cred-verify-bar">
+<span class="cred-verify-url" id="cred-verify-url">https://verify.sdccertifications.com/SDC-ACF-2026-04827193</span>
+<button aria-label="Copy verification link" class="cred-copy-btn" onclick="credCopyVerifyLink(this)">
+<i class="material-icons" style="font-size: 16px;">content_copy</i> Copy
+          </button>
+</div>
+</div>
+<!-- RIGHT COLUMN: Executive Utilities Panel -->
+<div class="cred-hub-right">
+<!-- Status Box -->
+<div class="cred-status-box">
+<div class="cred-status-item"><span class="cred-status-label">Score</span><span class="cred-status-value" style="color: var(--suc);">100%</span></div>
+<div class="cred-status-divider"></div>
+<div class="cred-status-item"><span class="cred-status-label">Issued</span><span class="cred-status-value">May 14, 2026</span></div>
+<div class="cred-status-divider"></div>
+<div class="cred-status-item"><span class="cred-status-label">Expires</span><span class="cred-status-value">May 14, 2031</span></div>
+</div>
+<!-- Action Button Stack -->
+<div class="cred-action-stack">
+<!-- LinkedIn Primary -->
+<button aria-label="Add to LinkedIn" class="cred-linkedin-btn" id="cred-linkedin-btn" onclick="credShareLinkedIn()">
+<svg fill="white" height="18" viewbox="0 0 24 24" width="18"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>
+<span>Add to LinkedIn</span>
+</button>
+<!-- Download PDF -->
+<button aria-label="Download PDF Certificate" class="cred-action-btn" id="cred-dl-pdf-btn" onclick="credDownloadPDF(this)">
+<i class="material-icons">picture_as_pdf</i>
+<span>Download PDF Certificate</span>
+</button>
+<!-- Download Badge -->
+<button aria-label="Download Badge Image" class="cred-action-btn" id="cred-dl-badge-btn" onclick="credDownloadBadge(this)">
+<i class="material-icons">download</i>
+<span>Download High-Res Badge</span>
+</button>
+</div>
+<!-- Wallet Row -->
+<div class="cred-wallet-row">
+<div class="cred-wallet-label">Save to Device</div>
+<div class="cred-wallet-chips">
+<button aria-label="Add to Apple Wallet" class="cred-wallet-chip apple" onclick="credAddAppleWallet()">
+<svg fill="white" height="20" viewbox="0 0 165.521 165.521" width="20"><path d="M150.379 118.024a90.28 90.28 0 0 1-8.924 16.013c-4.695 6.686-8.534 11.313-11.493 13.881-4.59 4.223-9.508 6.383-14.785 6.504-3.785 0-8.353-1.078-13.671-3.262-5.335-2.176-10.235-3.254-14.714-3.254-4.694 0-9.724 1.078-15.091 3.254-5.374 2.184-9.705 3.323-13.019 3.443-5.066.216-10.107-2.005-15.122-6.685-3.218-2.806-7.226-7.596-12.013-14.373-5.155-7.22-9.386-15.596-12.696-25.144-3.539-10.296-5.311-20.269-5.311-29.92 0-11.066 2.392-20.604 7.184-28.58 3.764-6.418 8.768-11.478 15.032-15.184 6.263-3.706 13.03-5.598 20.314-5.72 3.986 0 9.21 1.231 15.697 3.651 6.469 2.427 10.618 3.658 12.43 3.658 1.36 0 5.971-1.439 13.797-4.308 7.393-2.661 13.631-3.763 18.74-3.32 13.846 1.117 24.249 6.578 31.163 16.419-12.383 7.502-18.51 18.012-18.387 31.497.112 10.497 3.923 19.228 11.41 26.158 3.396 3.225 7.192 5.718 11.414 7.483-.915 2.654-1.881 5.195-2.956 7.647zM114.661 3.319c0 8.224-3.004 15.901-8.993 23.006-7.226 8.449-15.965 13.333-25.43 12.565a25.64 25.64 0 0 1-.191-3.134c0-7.891 3.436-16.34 9.537-23.246 3.046-3.498 6.916-6.406 11.607-8.724 4.683-2.285 9.108-3.548 13.268-3.77.122 1.1.202 2.205.202 3.303z"></path></svg>
+<span style="font-size: 11px; font-weight: 700; line-height: 1.2;">Add to<br/><strong style="font-size: 14px;">Apple Wallet</strong></span>
+</button>
+<button aria-label="Add to Google Wallet" class="cred-wallet-chip google" onclick="credAddGoogleWallet()">
+<svg fill="none" height="20" viewbox="0 0 24 24" width="20"><path d="M12 0C5.372 0 0 5.373 0 12s5.372 12 12 12 12-5.373 12-12S18.628 0 12 0z" fill="#4285F4"></path><path d="M12 6.545c1.618 0 2.727.703 3.355 1.29l2.472-2.41C16.345 4.067 14.4 3.272 12 3.272c-3.763 0-7.011 2.181-8.6 5.368l2.883 2.237C7.127 8.4 9.332 6.545 12 6.545z" fill="#EA4335"></path><path d="M23.49 12.273c0-.814-.072-1.6-.208-2.355H12v4.455h6.451c-.278 1.5-1.12 2.773-2.39 3.628l3.668 2.845c2.146-1.979 3.761-4.9 3.761-8.573z" fill="#4285F4"></path><path d="M3.392 14.327A8.617 8.617 0 0 1 3 12a8.645 8.645 0 0 1 .392-2.327L.51 7.437A11.907 11.907 0 0 0 0 12c0 1.64.271 3.218.51 4.563l2.882-2.236z" fill="#FBBC05"></path><path d="M12 20.727c2.392 0 4.4-.791 5.868-2.149l-2.865-2.223a7.237 7.237 0 0 1-3.003.645c-2.668 0-4.873-1.855-5.718-4.327L3.4 14.91C4.989 18.1 8.237 20.727 12 20.727z" fill="#34A853"></path></svg>
+<span style="font-size: 11px; font-weight: 700; color: var(--text-primary); line-height: 1.2;">Add to<br/><strong style="font-size: 14px;">Google Wallet</strong></span>
+</button>
+</div>
+</div>
+<!-- Open Badge JSON-LD Accordion -->
+<div class="cred-accordion" id="cred-jsonld-accordion">
+<div class="cred-accordion-header" onclick="toggleCredAccordion()">
+<div style="display: flex; align-items: center; gap: 8px;">
+<i class="material-icons" style="font-size: 18px; color: var(--on-sur-var);">code</i>
+<span style="font-size: 14px; font-weight: 700; color: var(--on-sur);">Open Badge 2.0 Compliance Schema</span>
+</div>
+<div style="display: flex; align-items: center; gap: 8px;">
+<button aria-label="Copy schema without opening" class="cred-copy-schema-btn" onclick="event.stopPropagation(); credCopySchema(this)">
+<i class="material-icons" style="font-size: 14px;">content_copy</i> Copy Schema
+              </button>
+<i class="material-icons cred-accordion-chevron" style="font-size: 20px; color: var(--on-sur-var); transition: transform 0.3s;">expand_more</i>
+</div>
+</div>
+<div class="cred-accordion-body" id="cred-accordion-body" style="display: none;">
+<pre class="cred-json-block" id="cred-json-content">{
+  "@context": "https://w3id.org/openbadges/v2",
+  "@type": "Assertion",
+  "id": "https://verify.sdccertifications.com/SDC-ACF-2026-04827193",
+  "recipient": {
+    "type": "email",
+    "identity": "sha256$abc123...",
+    "hashed": true
+  },
+  "badge": {
+    "@type": "BadgeClass",
+    "id": "https://sdccertifications.com/badges/food-safety-manager",
+    "name": "Food Safety Manager Certification",
+    "description": "ACF Food Safety Manager Certification issued by SDC Certifications",
+    "image": "https://sdccertifications.com/badges/food-safety-manager.png",
+    "criteria": { "narrative": "Pass the Food Safety Manager Exam with ≥75%" },
+    "issuer": {
+      "@type": "Profile",
+      "id": "https://sdccertifications.com",
+      "name": "SDC Certifications",
+      "url": "https://sdccertifications.com",
+      "email": "support@sdccertifications.com"
+    }
+  },
+  "issuedOn": "2026-05-14T00:00:00Z",
+  "expires": "2031-05-14T00:00:00Z",
+  "verification": { "type": "hosted" }
+}</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- MOBILE BOTTOM SHEET FOR CERT CARD -->
+<div aria-label="Certificate Options" aria-modal="true" class="cred-mobile-sheet-overlay" id="cred-mobile-sheet" onclick="closeCredMobileSheet()" role="dialog">
+<div class="cred-mobile-sheet-panel" onclick="event.stopPropagation()">
+<div class="cred-mobile-sheet-handle"></div>
+<h4 style="font-size: 16px; font-weight: 700; padding: 0 16px 16px; color: var(--on-sur);">Certificate Actions</h4>
+<button class="cred-sheet-item" onclick="credCopyLink(this); closeCredMobileSheet();">
+<i class="material-icons" style="color: var(--pri);">link</i>
+<span>Copy Verification Link</span>
+</button>
+<button class="cred-sheet-item" onclick="credShareLinkedIn(); closeCredMobileSheet();" style="color: #0077B5;">
+<i class="material-icons" style="color: #0077B5; font-size: 20px;">work</i>
+<span>Share to LinkedIn</span>
+</button>
+<button class="cred-sheet-item" onclick="credDownloadPDF(this); closeCredMobileSheet();">
+<i class="material-icons" style="color: var(--err);">picture_as_pdf</i>
+<span>Download PDF</span>
+</button>
+<button class="cred-sheet-item" onclick="openCredentialHub(); closeCredMobileSheet();">
+<i class="material-icons" style="color: var(--sec);">open_in_new</i>
+<span>View Full Credential Hub</span>
+</button>
+</div>
+</div>
+<!-- TOAST NOTIFICATION -->
+<div id="toast-container" style="position: fixed; top: 72px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 12px; pointer-events: none;"></div>
+<!-- ==================== OVERLAYS & MODALS ==================== -->
+<!-- NOTE CRUD MODAL -->
+<div aria-labelledby="modal-title" aria-modal="true" class="modal-overlay" id="note-modal" role="dialog">
+<div class="modal-content">
+<h2 class="mb-4" id="modal-title" style="font-size: 18px">Add Note</h2>
+<div class="inp-group">
+<label class="inp-label" for="note-topic">Topic / Context</label>
+<input class="inp" id="note-topic" placeholder="e.g. Domain 2" tabindex="0" type="text"/>
+</div>
+<div class="inp-group">
+<label class="inp-label" for="note-body">Note Details</label>
+<textarea class="inp" id="note-body" placeholder="Write your note here..." rows="4" tabindex="0"></textarea>
+</div>
+<div class="flex-between mt-4">
+<button class="btn-secondary" onclick="closeNoteModal()" tabindex="0">
+          Cancel
+        </button>
+<button class="btn-primary" onclick="saveNote()" tabindex="0">
+          Save Note
+        </button>
+</div>
+</div>
+</div>
+<!-- READER OVERLAY -->
+<!-- READER OVERLAY -->
+<div aria-label="Document Reader" aria-modal="true" class="reader-view" id="reader-overlay" role="dialog">
+<div class="reader-wrapper">
+<!-- Collapsible Table of Contents Sidebar -->
+<div class="app-body">
+<aside aria-label="Table of Contents" class="toc-sidebar" id="reader-toc-sidebar">
+<div class="toc-header">
+<span class="toc-title">Table of Contents</span>
+<button aria-label="Collapse Table of Contents" class="action-btn" onclick="toggleTOC()">
+<i class="material-icons">chevron_left</i>
+</button>
+</div>
+<ul class="toc-list" id="reader-toc-list">
+<!-- Loaded dynamically -->
+</ul>
+</aside>
+<!-- Main Reading Well -->
+<main class="reading-well">
+<!-- Header -->
+<header class="reader-header">
+<!-- Left CTAs -->
+<div style="flex: 1; display: flex; align-items: center; justify-content: flex-start; gap: 8px">
+<button aria-label="Toggle Table of Contents" class="action-btn" id="toc-toggle-btn" onclick="toggleTOC()">
+<i class="material-icons">menu</i>
+</button>
+</div>
+<!-- Center Title -->
+<div id="reader-title" style="flex: 2; text-align: center; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--on-sur); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            Loading...
+          </div>
+<!-- Right Tools & Exit -->
+<div style="flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 12px">
+<div aria-label="Font Size Controls" style="
+                  display: flex;
+                  background: var(--sur-var);
+                  border-radius: 4px;
+                  padding: 2px;
+                  border: 1px solid var(--out-var);
+                ">
+<button aria-label="Small font (16px)" class="action-btn" onclick="setReaderFontSize(16)" style="width: 28px; height: 28px; font-size: 12px; border-radius: 4px;">A</button>
+<button aria-label="Medium font (20px)" class="action-btn" onclick="setReaderFontSize(20)" style="width: 28px; height: 28px; font-size: 14px; border-radius: 4px;">A</button>
+<button aria-label="Large font (24px)" class="action-btn" onclick="setReaderFontSize(24)" style="width: 28px; height: 28px; font-size: 16px; border-radius: 4px;">A</button>
+</div>
+<button class="btn btn-outlined" onclick="toggleAIDrawer()" style="display: flex; align-items: center; gap: 8px; margin-right: 8px;">
+<i class="material-icons" style="font-size: 18px">assistant</i> Ask AI / Notes
+            </button>
+<button aria-label="Exit Reader" class="action-btn" onclick="closeReader()" style="color: var(--err);">
+<i class="material-icons">close</i>
+</button>
+</div>
+</header>
+<!-- Content Area (Textbook Well) -->
+<div class="reader-content-wrap">
+<article aria-label="Textbook Page Content" class="textbook-canvas" id="reader-pdf" tabindex="0">
+<!-- Loaded dynamically via JS -->
+</article>
+</div>
+<!-- Pagination & Jump Footer -->
+<footer style="
+              background: #ffffff; border-right: 1px solid var(--border);
+              border-top: 1px solid var(--glass-border);
+              padding: 12px 24px;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              z-index: 10;
+            ">
+<div style="display: flex; align-items: center; gap: 8px">
+<button aria-label="Previous Page" class="action-btn" onclick="readerPage(-1)">
+<i class="material-icons">chevron_left</i>
+</button>
+<span id="reader-page-indicator" style="
+                  font-size: 14px;
+                  font-weight: 600;
+                  font-family: var(--font-mono);
+                  color: #fff;
+                ">Pg 1 / 1</span>
+<button aria-label="Next Page" class="action-btn" onclick="readerPage(1)">
+<i class="material-icons">chevron_right</i>
+</button>
+</div>
+<!-- Page Jump Input -->
+<div style="
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 14px;
+                color: var(--on-sur-var);
+              ">
+<label for="page-jump-input">Go to page:</label>
+<input class="neumorphic-input" id="page-jump-input" min="1" onkeydown="
+                  if (event.key === 'Enter')
+                    jumpToReaderPage(parseInt(this.value));
+                " style="width: 60px; padding: 4px 8px; text-align: center; color: #1c1c1c;" type="number"/>
+</div>
+<!-- Progress bar -->
+<div style="width: 200px; display: flex; align-items: center; gap: 8px">
+<div style="
+                  flex: 1;
+                  height: 6px;
+                  background: #e0e0e0;
+                  border-radius: 4px;
+                  overflow: hidden;
+                ">
+<div id="reader-progress-bar" style="
+                    width: 0%;
+                    height: 100%;
+                    background: var(--pri);
+                    transition: width 0.2s ease;
+                  "></div>
+</div>
+<span id="reader-progress-percent" style="
+                  font-size: 11px;
+                  font-weight: 700;
+                  font-family: var(--font-mono);
+                  color: var(--on-sur-var);
+                ">0%</span>
+</div>
+</footer>
+</main>
+<!-- Right-side AI & Notes Sidebar Drawer -->
+<aside aria-label="AI Assistant and Notes" class="ai-drawer collapsed" id="reader-ai-drawer">
+<div class="drawer-header">
+<div style="display: flex; align-items: center; gap: 8px">
+<i class="material-icons" style="color: var(--sec)">assistant</i>
+<span class="drawer-title" id="drawer-mode-title">My Notes</span>
+</div>
+<button aria-label="Close Sidebar" class="action-btn" onclick="toggleAIDrawer(false)">
+<i class="material-icons">close</i>
+</button>
+</div>
+<div class="drawer-body">
+<!-- Toggle Panel Header inside drawer -->
+<div style="
+                display: flex;
+                background: #f0f1f3;
+                padding: 4px;
+                border-radius: 8px;
+                margin-bottom: 8px;
+              ">
+<button class="chip active" id="drawer-tab-notes" onclick="switchDrawerMode('notes')" style="
+                  flex: 1;
+                  border: none;
+                  padding: 8px 0;
+                  font-size: 12px;
+                  font-weight: 700;
+                  text-align: center;
+                  border-radius: 8px;
+                  cursor: pointer;
+                ">
+              My Notes
+            </button>
+<button class="chip" id="drawer-tab-query" onclick="switchDrawerMode('query')" style="
+                  flex: 1;
+                  border: none;
+                  padding: 8px 0;
+                  font-size: 12px;
+                  font-weight: 700;
+                  text-align: center;
+                  border-radius: 8px;
+                  cursor: pointer;
+                ">
+              Ask AI
+            </button>
+</div>
+<!-- Notes Mode Panel -->
+<div id="drawer-panel-notes" style="display: flex; flex-direction: column; gap: 16px; flex: 1">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div class="label-text" style="
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: var(--on-sur-var);
+                  ">Selected Text (context for note):</div>
+<div class="outset-quote" id="note-selection-display" style="max-height: 80px; overflow-y: auto; font-size: 12px">
+                No text selected. Highlight text on the page to attach a note.
+              </div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label for="note-editor" style="
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: var(--on-sur-var);
+                  ">Your Annotation:</label>
+<textarea class="neumorphic-input" id="note-editor" placeholder="Write your thoughts, reminders or formulas here..." style="height: 100px; resize: none; padding: 12px"></textarea>
+</div>
+<button class="btn btn-filled" onclick="saveHighlightNote()" style="
+                  width: 100%;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  gap: 8px;
+                ">
+<i class="material-icons">save</i> Save Note
+            </button>
+<hr style="
+                  border: none;
+                  border-top: 1px solid var(--glass-border);
+                  margin: 8px 0;
+                "/>
+<div style="flex: 1; overflow-y: auto">
+<h4 style="
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: var(--on-sur-var);
+                    margin-bottom: 8px;
+                  ">
+                Saved Notes on this Material
+              </h4>
+<div id="drawer-saved-notes-list" style="display: flex; flex-direction: column; gap: 12px">
+<!-- Loaded dynamically -->
+</div>
+</div>
+</div>
+<!-- Query Mode Panel -->
+<div id="drawer-panel-query" style="
+                display: none;
+                flex-direction: column;
+                gap: 16px;
+                flex: 1;
+                height: 100%;
+              ">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div class="label-text" style="
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: var(--on-sur-var);
+                  ">Selected Passage:</div>
+<div class="outset-quote" id="query-selection-display" style="max-height: 80px; overflow-y: auto; font-size: 12px">
+                No passage selected. Highlight text on the page to ask AI
+                about it.
+              </div>
+</div>
+<div id="chat-history-container" style="
+                  flex: 1;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 12px;
+                  border: 1px solid var(--glass-border);
+                  border-radius: 12px;
+                  padding: 12px;
+                  background: #fbfbfb;
+                  max-height: 220px;
+                  overflow-y: auto;
+                ">
+<div class="chat-bubble ai">
+                Hello! I am your Food Safety study assistant. Highlight any
+                text in the textbook and select "Query" or type your question
+                below. I can help explain key concepts, temperatures, or HACCP
+                steps!
+              </div>
+</div>
+<div style="
+                  display: flex;
+                  gap: 8px;
+                  align-items: center;
+                  margin-top: auto;
+                ">
+<label class="sr-only" for="chat-input">Ask AI a question</label>
+<input class="neumorphic-input" id="chat-input" onkeydown="if (event.key === 'Enter') sendAIChatMessage();" placeholder="Ask AI about this selection..." style="flex: 1" type="text"/>
+<button class="action-btn" onclick="sendAIChatMessage()" style="
+                    background: var(--pri);
+                    color: var(--on-pri);
+                    border-radius: 50%;
+                    width: 36px;
+                    height: 36px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  ">
+<i class="material-icons" style="font-size: 18px">send</i>
+</button>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</div>
+<!-- FLOATING ACTION PILL FOR TEXT SELECTION -->
+<div aria-label="Text Selection Tools" class="floating-pill" id="reader-floating-pill" role="toolbar">
+<button class="pill-btn" onclick="triggerPillAction('highlight')">
+<i class="material-icons">border_color</i>
+      Highlight
+    </button>
+<button class="pill-btn" onclick="triggerPillAction('note')">
+<i class="material-icons">edit_note</i> Note
+    </button>
+<button class="pill-btn" onclick="triggerPillAction('query')">
+<i class="material-icons">assistant</i> Query AI
+    </button>
+</div>
+<!-- VIDEO OVERLAY (YOUTUBE STRUCTURE) -->
+<div aria-label="Video Player" aria-modal="true" class="reader-view" id="video-overlay" role="dialog" style="background: var(--md-bg); color: var(--on-sur); overflow-y: auto;">
+<!-- Top Header -->
+<div class="video-header" style="height: 64px; min-height: 64px; flex-shrink: 0; box-sizing: border-box; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid var(--pri); background: #ffffff; border-right: 1px solid var(--border); position: sticky; top: 0; z-index: 100;">
+<!-- Left CTA (Empty) -->
+<div style="flex: 1; display: flex; justify-content: flex-start; align-items: center;"></div>
+<!-- Center Title -->
+<div style="flex: 2; text-align: center; font-weight: 700; font-size: 16px; color: var(--on-sur); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+        SDC Video Portal
+      </div>
+<!-- Right Exit Button -->
+<div style="flex: 1; display: flex; justify-content: flex-end; align-items: center;">
+<button aria-label="Close Video" class="action-btn" onclick="closeVideo()" style="color: var(--err);" tabindex="0">
+<i class="material-icons">close</i>
+</button>
+</div>
+</div>
+<!-- Youtube Container Split Layout -->
+<div class="youtube-layout-container">
+<!-- Left Panel: Video + Description + Transcript -->
+<div class="youtube-main-panel">
+<!-- Video Viewport -->
+<div class="youtube-player-viewport">
+<div class="yt-mock-bg" id="yt-mock-bg-img" style="position: absolute; inset: 0; background: url('Dashboard.png') center/cover; opacity: 0.35;"></div>
+<!-- Centered Big Play Button -->
+<div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+<button style="width: 72px; height: 72px; border-radius: 50%; background: rgba(0, 0, 0, 0.7); border: 2px solid #fff; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: scale 0.2s;">
+<i class="material-icons" style="font-size: 40px; margin-left: 4px;">play_arrow</i>
+</button>
+</div>
+<!-- Custom Red Playbar -->
+<div style="position: absolute; bottom: 0; left: 0; width: 100%; padding: 16px 20px; background: linear-gradient(transparent, rgba(0,0,0,0.85)); display: flex; align-items: center; gap: 16px; color: var(--text-primary); z-index: 5;">
+<button class="action-btn" style="color: var(--text-primary); background: transparent; border: none; cursor: pointer;">
+<i class="material-icons">play_arrow</i>
+</button>
+<div style="flex: 1; height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 4px; position: relative; cursor: pointer;">
+<div style="width: 45%; height: 100%; background: #ff0000; border-radius: 4px; position: relative;">
+<div style="width: 12px; height: 12px; border-radius: 50%; background: #ff0000; position: absolute; right: -6px; top: -4px;"></div>
+</div>
+</div>
+<span id="yt-time-display" style="font-family: var(--font-mono); font-size: 12px;">04:20 / 15:00</span>
+<button class="action-btn" style="color: var(--text-primary); background: transparent; border: none;"><i class="material-icons">volume_up</i></button>
+<button class="action-btn" style="color: var(--text-primary); background: transparent; border: none;"><i class="material-icons">subtitles</i></button>
+<button class="action-btn" style="color: var(--text-primary); background: transparent; border: none;"><i class="material-icons">settings</i></button>
+<button class="action-btn" style="color: var(--text-primary); background: transparent; border: none;"><i class="material-icons">fullscreen</i></button>
+</div>
+</div>
+<!-- Video Title -->
+<h1 id="active-video-title" style="font-size: 20px; font-weight: 700; color: var(--on-sur); margin: 12px 0 8px 0; line-height: 1.3;">Video Title Loading...</h1>
+<!-- Transcript Box (At the bottom of video) -->
+<div class="youtube-transcript-box">
+<div class="transcript-header">
+<h3 style="font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; color: var(--on-sur); margin: 0;">
+<i class="material-icons" style="color: var(--pri)">description</i>
+              Video Transcript
+            </h3>
+<span style="font-size: 11px; color: var(--on-sur-var); background: var(--sur-var); padding: 4px 8px; border-radius: 4px;">Click timestamp to seek</span>
+</div>
+<div class="transcript-lines-list" id="active-video-transcript">
+<!-- Dynamically populated lines -->
+</div>
+</div>
+</div>
+<!-- Right Panel: Related Videos Sidebar (YouTube Style) -->
+<div class="youtube-sidebar">
+<h3 style="font-size: 16px; font-weight: 700; color: var(--on-sur); margin-bottom: 8px;">Course Modules</h3>
+<div id="youtube-sidebar-list">
+<!-- Dynamically populated with other videos -->
+</div>
+</div>
+</div>
+</div>
+<!-- AUDIO OVERLAY -->
+<div aria-label="Audio Player" aria-modal="true" class="reader-view spotify-audio" id="audio-overlay" role="dialog">
+<div class="spotify-header" style="display: flex; align-items: center; justify-content: space-between; height: 64px; min-height: 64px; flex-shrink: 0; box-sizing: border-box; padding: 0 24px; border-bottom: 3px solid var(--pri);">
+<!-- Left CTA -->
+<div style="flex: 1; display: flex; justify-content: flex-start;"></div>
+<!-- Center Title -->
+<div style="flex: 2; text-align: center; font-size: 12px; font-weight: 700; color: var(--on-sur); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.1em;">
+        PLAYING FROM COURSE
+      </div>
+<!-- Right CTA -->
+<div style="flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
+<button aria-label="Close Audio" class="action-btn" onclick="closeAudio()" style="color: var(--err);" tabindex="0">
+<i class="material-icons">close</i>
+</button>
+</div>
+</div>
+<div class="spotify-main">
+<div class="spotify-art-container">
+<img alt="Course Cover Art" id="audio-cover-art" onerror="this.onerror=null; this.src=SDC_LOGO_B64;" src="course_thumb_food_safety.png"/>
+</div>
+<div class="spotify-track-info">
+<div class="spotify-track-text">
+<h2 id="audio-title">Loading...</h2>
+<p id="audio-author">SDC Expert Series</p>
+</div>
+<button aria-label="Save" class="action-btn spotify-heart">
+<i class="material-icons">favorite_border</i>
+</button>
+</div>
+<div class="spotify-progress-container">
+<div class="spotify-progress-bar">
+<div class="spotify-progress-fill"></div>
+<div class="spotify-progress-thumb"></div>
+</div>
+<div class="spotify-time-row">
+<span>04:20</span><span>28:00</span>
+</div>
+</div>
+<div class="spotify-controls">
+<button aria-label="Shuffle" class="action-btn spotify-secondary-btn">
+<i class="material-icons">shuffle</i>
+</button>
+<button aria-label="Previous" class="action-btn spotify-skip-btn">
+<i class="material-icons">skip_previous</i>
+</button>
+<button aria-label="Play/Pause" class="action-btn spotify-play-btn">
+<i class="material-icons">play_circle_filled</i>
+</button>
+<button aria-label="Next" class="action-btn spotify-skip-btn">
+<i class="material-icons">skip_next</i>
+</button>
+<button aria-label="Repeat" class="action-btn spotify-secondary-btn">
+<i class="material-icons">repeat</i>
+</button>
+</div>
+</div>
+</div>
+<!-- GAMIFIED FLASHCARD OVERLAY -->
+<div aria-label="Flashcard Deck" aria-modal="true" class="reader-view" id="flashcard-overlay" role="dialog" style="background: var(--md-bg)">
+<!-- Header -->
+<div class="reader-header" style="
+          background: #ffffff; border-right: 1px solid var(--border);
+          border-bottom: 3px solid var(--pri);
+          box-shadow: var(--shadow-sm);
+          padding: 0 24px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          height: 64px;
+        ">
+<!-- Left CTA -->
+<div style="flex: 1; display: flex; justify-content: flex-start; align-items: center;"></div>
+<!-- Center Title -->
+<div id="flashcard-title" style="flex: 2; text-align: center; font-weight: 700; font-size: 16px; color: var(--on-sur); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+        Flashcard Challenge
+      </div>
+<!-- Right Exit -->
+<div style="flex: 1; display: flex; justify-content: flex-end; align-items: center;">
+<button aria-label="Close Flashcards" class="action-btn" onclick="closeFlashcards()" style="color: var(--err);" tabindex="0">
+<i class="material-icons">close</i>
+</button>
+</div>
+</div>
+<!-- Active Game Screen (Centered Layout) -->
+<div id="fc-game-screen" style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; height: calc(100% - 64px); background: var(--md-bg); overflow: hidden; padding: 24px;">
+<!-- Fixed Left Toggle Button -->
+<button class="btn btn-outlined" id="fc-drawer-toggle-btn" onclick="toggleFlashcardDrawer()" style="position: absolute; left: 24px; top: 24px; z-index: 101; display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; font-size: 14px; background: #ffffff; border-right: 1px solid var(--border); box-shadow: var(--shadow-sm); border-radius: 8px;">
+<i class="material-icons" id="fc-drawer-icon" style="font-size: 18px;">menu_open</i> <span id="fc-drawer-text">Answers</span>
+</button>
+<!-- Flashcard Left Drawer -->
+<div id="fc-left-drawer" style="position: absolute; left: -320px; top: 0; bottom: 0; width: 320px; background: #ffffff; border-right: 1px solid var(--border); z-index: 100; transition: left 0.3s ease; border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; box-shadow: var(--shadow-lg); padding-top: 80px;">
+<div style="padding: 16px; flex: 1; overflow-y: auto;">
+<div>
+<div class="label-text" style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--on-sur-var); margin-bottom: 4px; display: block;">History</div>
+<!-- History Area -->
+<div id="fc-history-area" style="display: flex; flex-direction: column; gap: 12px; padding-bottom: 24px;">
+<!-- Dynamically populated history items -->
+</div>
+</div>
+</div>
+</div>
+<!-- Sleek Integrated Header for Score & Progress -->
+<div style="display: flex; flex-direction: column; width: 100%; max-width: 500px; margin-bottom: 24px; gap: 12px; z-index: 10;">
+<!-- Control Bar -->
+<div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+<!-- Difficulty Segmented Control -->
+<div class="fc-segment-control" style="display: flex; background: #ffffff; border-right: 1px solid var(--border); padding: 4px; border-radius: 8px; border: 1px solid var(--glass-border); width: 100%; justify-content: space-between;">
+<button class="fc-segment-btn active" data-mode="adaptive" onclick="setFlashcardMode('adaptive')">Adaptive</button>
+<button class="fc-segment-btn" data-mode="low" onclick="setFlashcardMode('low')">Low</button>
+<button class="fc-segment-btn" data-mode="moderate" onclick="setFlashcardMode('moderate')">Moderate</button>
+<button class="fc-segment-btn" data-mode="difficult" onclick="setFlashcardMode('difficult')">Difficult</button>
+</div>
+</div>
+<!-- Score & Tracker Bar -->
+<div style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 12px 20px; background: #ffffff; border-right: 1px solid var(--border); border: 1px solid var(--glass-border); border-radius: 12px;">
+<div style="font-weight: 700; color: var(--on-sur-var);">Score: <span id="fc-score" style="color: var(--pri);">0</span> / <span id="fc-total">0</span></div>
+<div id="fc-tracker" style="font-family: var(--font-mono); font-size: 14px; font-weight: 600; color: var(--on-sur-var);">Card 1 of 20</div>
+</div>
+</div>
+<!-- Main Area (Card) -->
+<div class="fc-main-area" id="fc-main-card-area" style="width: 100%; max-width: 500px; display: flex; flex-direction: column; align-items: center; padding: 0;">
+<div class="flashcard-container" style="width: 100%; max-width: 500px; margin-bottom: 32px">
+<div aria-label="Flip Flashcard" class="flashcard" id="fc-deck-card" onclick="flipGamifiedCard()" role="button" tabindex="0">
+<div class="flashcard-face flashcard-front" style="padding: 40px; display: flex; flex-direction: column; justify-content: center; background: #ffffff; border-right: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow-md);">
+<span class="fc-label" style="margin-bottom: 16px; color: var(--on-sur); font-weight: 700; text-transform: uppercase;">Question</span>
+<div class="fc-text" id="fc-deck-q" style="font-size: 24px; text-align: center; color: var(--on-sur);">
+                Question loading...
+              </div>
+<div style="margin-top: auto; font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--on-sur); text-align: center; padding-top: 24px;">
+<i class="material-icons" style="font-size: 16px; vertical-align: middle">touch_app</i> Tap to flip
+              </div>
+</div>
+<div class="flashcard-face flashcard-back" style="padding: 40px; display: flex; flex-direction: column; justify-content: center; background: var(--pri-con); border-radius: 16px; box-shadow: var(--shadow-md);">
+<span class="fc-label" style="margin-bottom: 16px; color: #1c1c1c; font-weight: 700; text-transform: uppercase;">Answer</span>
+<div class="fc-text" id="fc-deck-a" style="font-size: 28px; text-align: center; font-weight: 700; color: #1c1c1c;">
+                Answer loading...
+              </div>
+</div>
+</div>
+</div>
+<div class="fc-controls" id="fc-gamified-controls" style="display: none; gap: 16px; width: 100%; max-width: 500px; justify-content: center;">
+<button class="btn-secondary fc-wrong-btn" onclick="scoreCard(false)">
+<i class="material-icons">close</i> Got it Wrong
+          </button>
+<button class="mdbtn btn-primary fc-right-btn" onclick="scoreCard(true)">
+<i class="material-icons">check</i> Got it Right
+          </button>
+</div>
+<div id="fc-complete-msg" style="display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 500px; padding: 32px; background: #ffffff; border-right: 1px solid var(--border); border-radius: 16px; border: 1px solid var(--glass-border);">
+<i class="material-icons" style="font-size: 64px; color: var(--suc); margin-bottom: 16px;">emoji_events</i>
+<h2>Deck Complete!</h2>
+<p style="color: var(--on-sur-var); margin-bottom: 24px;">Great job testing your knowledge.</p>
+<button class="mdbtn btn-primary" onclick="resetFlashcards()" style="color: #1c1c1c;">Play Again</button>
+</div>
+</div>
+</div>
+</div>
+<!-- MOCK EXAM LOCKDOWN -->
+<!-- MOCK EXAM LOCKDOWN -->
+<div aria-label="Exam Simulation" aria-modal="true" class="mock-env" id="mock-exam-env" role="dialog">
+<div class="mock-header">
+<div style="font-weight: 700; display: flex; align-items: center; gap: 8px; font-size: 18px">
+<i class="material-icons" style="color: var(--pri)">assignment</i> Mock Exam Simulation
+      </div>
+<div aria-live="polite" style="
+            font-family: var(--font-mono);
+            font-weight: 800;
+            font-size: 20px;
+            color: var(--err);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          ">
+<i class="material-icons">timer</i>
+<span id="mock-timer">90:00</span>
+</div>
+<div style="display: flex; align-items: center; gap: 12px">
+<button class="btn-secondary" id="mock-top-exit" onclick="exitMock()" style="border-color: var(--out-var); color: var(--on-sur); font-weight: 600" tabindex="0">
+          Exit Exam
+        </button>
+<button class="btn-primary" id="mock-top-submit" onclick="submitMock()" style="background: var(--pri); color: var(--on-pri); font-weight: 600" tabindex="0">
+          Submit Exam
+        </button>
+</div>
+</div>
+<div class="mock-body">
+<div class="mock-layout-container">
+<!-- Sidebar Navigation Panel -->
+<div class="mock-sidebar">
+<div aria-label="Toggle Question Grid" class="mock-sidebar-header" onclick="toggleMockGrid()" role="button" style="cursor: pointer;" tabindex="0">
+<div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+<span class="mock-sidebar-title">Question Grid</span>
+<i class="material-icons" id="mock-grid-icon">expand_more</i>
+</div>
+<div class="mock-sidebar-stats">
+<span class="stat-badge answered-badge" id="stats-answered">Answered: 0/90</span>
+<span class="stat-badge flagged-badge" id="stats-flagged">Flagged: 0/90</span>
+</div>
+</div>
+<div class="mock-grid" id="mock-question-grid" style="display: none;">
+<!-- Dynamically populated with 90 buttons -->
+</div>
+<button class="btn-primary submit-test-btn" id="sidebar-submit-btn" onclick="submitMock()" style="background: var(--pri); color: var(--on-pri); width: 100%; font-weight: 600; font-size: 14px; padding: 12px; display: none;">
+            Submit Exam
+          </button>
+</div>
+<!-- Main Question Panel -->
+<div class="mock-main-content">
+<div class="mock-content" id="mock-focus-trap" tabindex="0">
+<div class="mock-q-header">
+<span id="mock-q-meta" style="color: var(--out); font-family: var(--font-mono); font-weight: 600; font-size: 14px;">
+                Question 1 of 90
+              </span>
+<button class="btn-secondary flag-btn" id="mock-flag-btn" onclick="toggleFlagCurrentQuestion()" style="padding: 8px 12px; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+<i class="material-icons" style="font-size: 16px;">flag</i>
+<span id="mock-flag-btn-text">Flag Question</span>
+</button>
+</div>
+<div aria-live="polite" id="mock-q-text" style="
+                  font-size: 20px;
+                  font-weight: 600;
+                  margin-bottom: 30px;
+                  line-height: 1.5;
+                  color: var(--on-sur);
+                ">
+              Loading...
+            </div>
+<div aria-labelledby="mock-q-text" id="mock-q-options" role="radiogroup"></div>
+</div>
+<div class="mock-footer">
+<div id="mock-score-live" style="font-weight: 600; font-family: var(--font-mono); color: var(--on-sur)">
+              Your Score: 0 of 90
+            </div>
+<div class="mock-copyright">Copyright 2026 SDC Certifications</div>
+<div style="display: flex; align-items: center; gap: 16px">
+<button class="btn-secondary" id="mock-prev-btn" onclick="navMock(-1)" style="padding: 12px 24px; font-size: 16px; border-color: var(--out-var); color: var(--on-sur); font-weight: 600;" tabindex="0">
+                PREVIOUS
+              </button>
+<button class="btn-primary" id="mock-next-btn" onclick="navMock(1)" style="
+                    background: var(--pri);
+                    color: var(--on-pri);
+                    padding: 12px 32px;
+                    font-size: 16px;
+                    font-weight: 600;
+                  " tabindex="0">
+                NEXT
+              </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ==================== PAYMENT MODAL ==================== -->
+<div aria-labelledby="payment-modal-title" aria-modal="true" class="modal-overlay" id="payment-modal" role="dialog">
+<div class="modal-content" style="max-width: 480px; text-align: left;">
+<h2 id="payment-modal-title" style="font-size: 20px; font-weight: 800; margin-bottom: 8px;">Upgrade to Remote Proctoring</h2>
+<p style="color: var(--on-sur-var); font-size: 14px; margin-bottom: 24px;">Upgrade your In-Classroom voucher to an Internet Proctored voucher. The $25.00 fee is billed directly to you.</p>
+<div style="background: #f4f6fb; padding: 16px; border-radius: 8px; margin-bottom: 24px; border: 1px solid var(--out-var);">
+<div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 600; font-size: 14px;">
+<span>Remote Proctoring Upgrade</span>
+<span>$25.00</span>
+</div>
+<div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 18px; color: var(--on-sur);">
+<span>Total Due</span>
+<span>$25.00</span>
+</div>
+</div>
+<div class="inp-group">
+<label class="inp-label" for="input-43755476" style="font-weight: 700; font-size: 14px;">Name on Card</label>
+<div class="inp-wrapper">
+<input aria-label="e.g. Jane Doe" class="inp" id="input-43755476" placeholder="e.g. Jane Doe" type="text"/>
+</div>
+</div>
+<div class="inp-group">
+<label class="inp-label" for="input-7f6db558" style="font-weight: 700; font-size: 14px;">Card Number</label>
+<div class="inp-wrapper">
+<i aria-hidden="true" class="material-icons inp-icon">credit_card</i>
+<input aria-label="•••• •••• •••• ••••" class="inp" id="input-7f6db558" placeholder="•••• •••• •••• ••••" type="text"/>
+</div>
+</div>
+<div style="display: flex; gap: 16px;">
+<div class="inp-group" style="flex: 1;">
+<label class="inp-label" for="input-1a4e70b5" style="font-weight: 700; font-size: 14px;">Expiry</label>
+<div class="inp-wrapper">
+<input aria-label="MM/YY" class="inp" id="input-1a4e70b5" placeholder="MM/YY" type="text"/>
+</div>
+</div>
+<div class="inp-group" style="flex: 1;">
+<label class="inp-label" for="input-1fc65fd2" style="font-weight: 700; font-size: 14px;">CVC</label>
+<div class="inp-wrapper">
+<input aria-label="123" class="inp" id="input-1fc65fd2" placeholder="123" type="text"/>
+</div>
+</div>
+</div>
+<div style="display: flex; gap: 12px; margin-top: 24px;">
+<button class="btn-secondary" onclick="document.getElementById('payment-modal').classList.remove('active','open')" style="flex: 1; border-color: var(--out); color: var(--on-sur-var); max-width:280px;">Cancel</button>
+<button class="btn-primary" id="pay-upgrade-btn" onclick="processVoucherPayment()" style="flex: 2; background: var(--pri); max-width:280px;">
+<i class="material-icons" style="font-size: 18px;">lock</i> Pay $25.00
+        </button>
+</div>
+</div>
+</div>
+<!-- ==================== EXAM PAYMENT MODAL (mock) ==================== -->
+<div aria-labelledby="exam-pay-title" aria-modal="true" class="modal-overlay" id="exam-payment-modal" role="dialog">
+<div class="modal-content" style="max-width: 480px; text-align: left;">
+<h2 id="exam-pay-title" style="font-size: 20px; font-weight: 800; margin-bottom: 8px;">Pay for your online exam</h2>
+<p style="color: var(--on-sur-var); font-size: 14px; margin-bottom: 24px;">Complete payment to unlock your Internet-Proctored exam booking. A receipt is emailed to you immediately.</p>
+<div style="background: #fff8e6; padding: 16px; border-radius: 8px; margin-bottom: 24px; border: 1px solid var(--pri);">
+<div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 600; font-size: 14px;">
+<span id="exam-pay-line">Online Proctored Exam</span>
+<span id="exam-pay-fee1">$75.00</span>
+</div>
+<div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 18px; color: var(--on-sur);">
+<span>Total Due</span>
+<span id="exam-pay-fee2">$75.00</span>
+</div>
+</div>
+<div class="inp-group">
+<label class="inp-label" for="input-1e605964" style="font-weight: 700; font-size: 14px;">Name on Card</label>
+<div class="inp-wrapper"><input aria-label="e.g. Daniel Stine" class="inp" id="input-1e605964" placeholder="e.g. Daniel Stine" type="text"/></div>
+</div>
+<div class="inp-group">
+<label class="inp-label" for="input-827d9aee" style="font-weight: 700; font-size: 14px;">Card Number</label>
+<div class="inp-wrapper"><i aria-hidden="true" class="material-icons inp-icon">credit_card</i><input aria-label="•••• •••• •••• ••••" class="inp" id="input-827d9aee" placeholder="•••• •••• •••• ••••" type="text"/></div>
+</div>
+<div style="display: flex; gap: 16px;">
+<div class="inp-group" style="flex: 1;"><label class="inp-label" for="input-cffa73ab" style="font-weight: 700; font-size: 14px;">Expiry</label><div class="inp-wrapper"><input aria-label="MM/YY" class="inp" id="input-cffa73ab" placeholder="MM/YY" type="text"/></div></div>
+<div class="inp-group" style="flex: 1;"><label class="inp-label" for="input-45823a00" style="font-weight: 700; font-size: 14px;">CVC</label><div class="inp-wrapper"><input aria-label="123" class="inp" id="input-45823a00" placeholder="123" type="text"/></div></div>
+</div>
+<div style="display: flex; gap: 12px; margin-top: 24px;">
+<button class="btn-secondary" onclick="document.getElementById('exam-payment-modal').classList.remove('active','open')" style="flex: 1; max-width:280px;">Cancel</button>
+<button class="btn-primary" id="exam-pay-btn" onclick="confirmExamPayment()" style="flex: 2; max-width:280px;">
+<i class="material-icons" style="font-size: 18px;">lock</i> <span id="exam-pay-btn-label">Pay $75.00</span>
+</button>
+</div>
+</div>
+</div>
+<!-- ==================== CLASS ENROLMENT MODAL (student self-enrol) ==================== -->
+<div aria-labelledby="enrol-title" aria-modal="true" class="modal-overlay" id="class-enrol-modal" role="dialog">
+<div class="modal-content" style="max-width: 480px; text-align: left;">
+<h2 id="enrol-title" style="font-size: 20px; font-weight: 800; margin-bottom: 8px;">Enrol in a Class</h2>
+<p style="color: var(--on-sur-var); font-size: 14px; margin-bottom: 20px;">Choose a class to enrol in. If the class runs online and you are the payer, you'll pay the exam fee before it unlocks.</p>
+<div class="inp-group">
+<label class="inp-label" for="enrol-class-select" style="font-weight:700; font-size:14px;">Available Classes</label>
+<div class="inp-wrapper"><select class="inp" id="enrol-class-select" onchange="renderEnrolSummary()"></select></div>
+</div>
+<div id="enrol-summary" style="background:#f4f6fb; border:1px solid var(--out-var); border-radius:8px; padding:16px; margin:8px 0 20px; font-size:13px; color:var(--on-sur);"></div>
+<div style="display:flex; gap:12px;">
+<button class="btn-secondary" onclick="document.getElementById('class-enrol-modal').classList.remove('active','open')" style="flex:1; max-width:280px;">Cancel</button>
+<button class="btn-primary" id="enrol-confirm-btn" onclick="confirmClassEnrol()" style="flex:2; max-width:280px;"><span id="enrol-confirm-label">Enrol</span></button>
+</div>
+</div>
+</div>
+<!-- ==================== VOUCHER PURCHASE MODAL (mock) ==================== -->
+<div aria-labelledby="vp-title" aria-modal="true" class="modal-overlay" id="voucher-purchase-modal" role="dialog">
+<div class="modal-content" style="max-width: 480px; text-align: left;">
+<h2 id="vp-title" style="font-size: 20px; font-weight: 800; margin-bottom: 8px;">Buy your exam voucher</h2>
+<p style="color: var(--on-sur-var); font-size: 14px; margin-bottom: 24px;" id="vp-desc">Complete payment to receive your voucher. A receipt and voucher code are emailed to you immediately.</p>
+<div style="background: #f4f6fb; padding: 16px; border-radius: 8px; margin-bottom: 24px; border: 1px solid var(--out-var);">
+<div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 600; font-size: 14px;">
+<span id="vp-line">In-House Proctored Voucher</span><span id="vp-fee1">$42.00</span></div>
+<div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 18px; color: var(--on-sur);">
+<span>Total Due</span><span id="vp-fee2">$42.00</span></div>
+</div>
+<div class="inp-group">
+<label class="inp-label" for="vp-name" style="font-weight: 700; font-size: 14px;">Name on Card</label>
+<div class="inp-wrapper"><input aria-label="e.g. Jane Doe" class="inp" id="vp-name" placeholder="e.g. Jane Doe" type="text"/></div>
+</div>
+<div class="inp-group">
+<label class="inp-label" for="vp-card" style="font-weight: 700; font-size: 14px;">Card Number</label>
+<div class="inp-wrapper"><i aria-hidden="true" class="material-icons inp-icon">credit_card</i><input aria-label="•••• •••• •••• ••••" class="inp" id="vp-card" placeholder="•••• •••• •••• ••••" type="text"/></div>
+</div>
+<div style="display: flex; gap: 16px;">
+<div class="inp-group" style="flex: 1;"><label class="inp-label" for="vp-exp" style="font-weight: 700; font-size: 14px;">Expiry</label><div class="inp-wrapper"><input aria-label="MM/YY" class="inp" id="vp-exp" placeholder="MM/YY" type="text"/></div></div>
+<div class="inp-group" style="flex: 1;"><label class="inp-label" for="vp-cvc" style="font-weight: 700; font-size: 14px;">CVC</label><div class="inp-wrapper"><input aria-label="123" class="inp" id="vp-cvc" placeholder="123" type="text"/></div></div>
+</div>
+<div style="display: flex; gap: 12px; margin-top: 24px;">
+<button class="btn-secondary" onclick="document.getElementById('voucher-purchase-modal').classList.remove('active','open')" style="flex: 1; max-width:280px;">Cancel</button>
+<button class="btn-primary" id="vp-pay-btn" onclick="confirmVoucherPurchase()" style="flex: 2; max-width:280px;">
+<i class="material-icons" style="font-size: 18px;">lock</i> <span id="vp-btn-label">Pay $42.00</span>
+</button>
+</div>
+</div>
+</div>
+<!-- ==================== BUNDLE PURCHASE MODAL ==================== -->
+<div aria-labelledby="bp-title" aria-modal="true" class="modal-overlay" id="bundle-purchase-modal" role="dialog">
+<div class="modal-content" style="max-width: 480px; text-align: left;">
+<h2 id="bp-title" style="font-size: 20px; font-weight: 800; margin-bottom: 8px;">Buy material + exam bundle</h2>
+<p id="bp-desc" style="color: var(--on-sur-var); font-size: 14px; margin-bottom: 20px;">One purchase unlocks your study material and allocates your exam voucher. Access is ready instantly — a receipt and voucher code are emailed to you.</p>
+<div style="background: #f4f6fb; padding: 16px; border-radius: 8px; margin-bottom: 24px; border: 1px solid var(--out-var);">
+<div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:14px;"><span id="bp-mat-line">Study material</span><span id="bp-mat-fee">$0.00</span></div>
+<div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:14px;"><span id="bp-exam-line">Exam voucher</span><span id="bp-exam-fee">$0.00</span></div>
+<div style="display:flex; justify-content:space-between; font-weight:800; font-size:18px; color:var(--on-sur); border-top:1px solid var(--out-var); padding-top:8px;"><span>Total Due</span><span id="bp-total">$0.00</span></div>
+</div>
+<div class="inp-group">
+<label class="inp-label" for="bp-name" style="font-weight: 700; font-size: 14px;">Name on Card</label>
+<div class="inp-wrapper"><input aria-label="e.g. Jane Doe" class="inp" id="bp-name" placeholder="e.g. Jane Doe" type="text"/></div>
+</div>
+<div class="inp-group">
+<label class="inp-label" for="bp-card" style="font-weight: 700; font-size: 14px;">Card Number</label>
+<div class="inp-wrapper"><i aria-hidden="true" class="material-icons inp-icon">credit_card</i><input aria-label="•••• •••• •••• ••••" class="inp" id="bp-card" placeholder="•••• •••• •••• ••••" type="text"/></div>
+</div>
+<div style="display: flex; gap: 12px; margin-top: 24px;">
+<button class="btn-secondary" onclick="document.getElementById('bundle-purchase-modal').classList.remove('active','open')" style="flex: 1; max-width:280px;">Cancel</button>
+<button class="btn-primary" id="bp-pay-btn" onclick="confirmBundlePurchase()" style="flex: 2; max-width:280px;">
+<i class="material-icons" style="font-size: 18px;">lock</i> <span id="bp-btn-label">Pay</span>
+</button>
+</div>
+</div>
+</div>
+<!-- ==================== DELETE MODAL ==================== -->
+<div aria-labelledby="delete-modal-title" aria-modal="true" class="modal-overlay" id="delete-modal" role="dialog">
+<div class="modal-content" style="max-width: 480px; text-align: left;">
+<h2 id="delete-modal-title" style="font-size: 20px; font-weight: 800; margin-bottom: 8px; color: var(--err);">Delete Account</h2>
+<p style="color: var(--on-sur-var); font-size: 14px; margin-bottom: 24px;">Are you sure you want to delete your account? This action cannot be undone.</p>
+<div class="inp-group">
+<label class="inp-label" for="delete-reason-input" style="font-weight: 700; font-size: 14px;">Reason for deletion <span style="color:var(--err)">*</span></label>
+<div class="inp-wrapper">
+<textarea aria-label="Please tell us why you are leaving..." class="inp" id="delete-reason-input" placeholder="Please tell us why you are leaving..." rows="3" style="resize: vertical; min-height: 80px;"></textarea>
+</div>
+</div>
+<div style="display: flex; gap: 12px; margin-top: 24px;">
+<button class="btn-secondary" onclick="document.getElementById('delete-modal').classList.remove('active')" style="flex: 1; border-color: var(--out); color: var(--on-sur-var); max-width:280px;">Cancel</button>
+<button class="btn-primary" id="confirm-delete-btn" onclick="executeAccountDeletion()" style="flex: 2; background: var(--err); color: var(--err-ct, #fff); max-width:280px;">
+<i class="material-icons" style="font-size: 18px;">delete_forever</i> Confirm Delete
+        </button>
+</div>
+</div>
+</div>
+<script src="candidate.js?v=2.10.0"></script>
+<script src="global_nav.js"></script>
+</div></div>
+</div>
+
+<script>
+function switchLoginTab(mode) {
+  const emailForm = document.getElementById('login-form');
+  const voucherForm = document.getElementById('voucher-login-form');
+  const emailTab = document.getElementById('tab-email-login');
+  const voucherTab = document.getElementById('tab-voucher-login');
+  
+  const isEmail = mode === 'email';
+  emailForm.style.display = isEmail ? 'block' : 'none';
+  voucherForm.style.display = isEmail ? 'none' : 'block';
+
+  emailTab.classList.toggle('active', isEmail);
+  voucherTab.classList.toggle('active', !isEmail);
+  emailTab.setAttribute('aria-selected', isEmail ? 'true' : 'false');
+  voucherTab.setAttribute('aria-selected', isEmail ? 'false' : 'true');
+}
+
+function handleUnifiedVoucherLogin(e) {
+  e.preventDefault();
+  const code = document.getElementById('unified-voucher-code').value.trim();
+  const errorEl = document.getElementById('voucher-error');
+  if (!code) {
+    errorEl.style.display = 'block';
+    errorEl.innerText = 'Please enter a valid voucher code.';
+    return;
+  }
+  errorEl.style.display = 'none';
+  
+  // Smart Routing Mock Logic
+  if (code.toUpperCase().startsWith('LM-')) {
+    // Show a success message for learning material
+    alert('Learning Material Voucher detected! Redirecting to Learning Hub...');
+    // In actual implementation, we would call the backend and redirect
+  } else {
+    // Assume exam voucher
+    alert('Exam Voucher detected! Booting secure exam environment...');
+    // In actual implementation, redirect to exam flow
+  }
+}
+</script>
+</body>
+
+</html>

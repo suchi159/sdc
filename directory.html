@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en" data-t="light">
+
+<head>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzAwMCIvPjxnIGZpbGw9IiNmZmYiPjxjaXJjbGUgY3g9IjExIiBjeT0iMTMiIHI9IjQuMyIvPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTAuOCIgcj0iNSIvPjxjaXJjbGUgY3g9IjIxIiBjeT0iMTMiIHI9IjQuMyIvPjxyZWN0IHg9IjguOCIgeT0iMTMiIHdpZHRoPSIxNC40IiBoZWlnaHQ9IjciLz48cmVjdCB4PSI5LjIiIHk9IjE5LjUiIHdpZHRoPSIxMy42IiBoZWlnaHQ9IjUuOCIgcng9IjEuMyIvPjwvZz48ZyBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMC43Ij48bGluZSB4MT0iMTYiIHkxPSIxNC41IiB4Mj0iMTYiIHkyPSIxOSIvPjxsaW5lIHgxPSIxMi40IiB5MT0iMTQuOCIgeDI9IjEyLjQiIHkyPSIxOSIvPjxsaW5lIHgxPSIxOS42IiB5MT0iMTQuOCIgeDI9IjE5LjYiIHkyPSIxOSIvPjwvZz48L3N2Zz4="/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SecureProctor AI - Ecosystem Map & Portals Directory. Launch and navigate between candidate, proctor, super admin, and ledger nodes.">
+  <title>Data Proctor - Ecosystem Map & Directory</title>
+
+  <!-- Google Fonts & Material Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link rel="stylesheet" href="design_system.css">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+
+  <style>
+    /* Styling variables derived from Material Design 3 and index.css design tokens */
+    :root {
+      --font: "Outfit", system-ui, -apple-system, sans-serif;
+      --font-mono: "JetBrains Mono", monospace;
+      
+      --pri: #f9ad00;
+      --pri-hover: #e69e00;
+      --pri-light: rgba(249, 173, 0, 0.1);
+      
+      --bg: #f8f9fa;
+      --sur: #ffffff;
+      --sur-hov: #f1f3f5;
+      
+      --text: #1c1b1f;
+      --text-muted: #5d5962;
+      --border: rgba(0, 0, 0, 0.08);
+      --shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+      --glass-border: rgba(0, 0, 0, 0.05);
+
+      /* Categorization Badge Colors */
+      --badge-admin: #00639b;
+      --badge-admin-bg: #e1f5fe;
+      --badge-proctor: #7d5700;
+      --badge-proctor-bg: #fff8e1;
+      --badge-candidate: #146c2e;
+      --badge-candidate-bg: #e8f5e9;
+      --badge-system: #625b71;
+      --badge-system-bg: #f3e5f5;
+    }
+
+    html[data-t="dark"] {
+      --bg: #0d0d0e;
+      --sur: #1c1b1f;
+      --sur-hov: #2b2930;
+      
+      --text: #e6e1e5;
+      --text-muted: #a7a3b0;
+      --border: rgba(255, 255, 255, 0.08);
+      --shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+      --glass-border: rgba(255, 255, 255, 0.08);
+
+      --badge-admin-bg: rgba(0, 99, 155, 0.2);
+      --badge-proctor-bg: rgba(125, 87, 0, 0.2);
+      --badge-candidate-bg: rgba(20, 108, 46, 0.2);
+      --badge-system-bg: rgba(98, 91, 113, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font);
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* Background Mesh Overlay */
+    .bg-mesh {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at 10% 20%, rgba(249, 173, 0, 0.05) 0%, transparent 40%),
+                  radial-gradient(circle at 90% 80%, rgba(249, 173, 0, 0.03) 0%, transparent 40%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Header Styling */
+    header {
+      background: var(--sur);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-badge {
+      width: 38px;
+      height: 38px;
+      background: var(--pri);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      font-weight: 800;
+      font-size: 16px;
+    }
+
+    .logo-text h1 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .logo-text span {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    .btn-primary {
+      background: var(--pri);
+      color: #000;
+    }
+
+    .btn-primary:hover {
+      background: var(--pri-hover);
+      box-shadow: 0 4px 12px rgba(249, 173, 0, 0.2);
+    }
+
+    .btn-outlined {
+      border-color: var(--border);
+      background: transparent;
+      color: var(--text);
+    }
+
+    .btn-outlined:hover {
+      background: var(--sur-hov);
+      border-color: var(--text-muted);
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .icon-btn:hover {
+      background: var(--sur-hov);
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+
+    .page-title-section {
+      margin-bottom: 32px;
+    }
+
+    .page-title-section h2 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .page-title-section p {
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    /* Filters Box */
+    .filters-card {
+      background: var(--sur);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    @media (min-width: 768px) {
+      .filters-card {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .search-wrapper {
+      position: relative;
+      flex: 1;
+      max-width: 400px;
+    }
+
+    .search-wrapper i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 18px;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px 10px 42px;
+      font-size: 14px;
+      color: var(--text);
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--pri);
+      outline: none;
+    }
+
+    .chips-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chip:hover {
+      background: var(--sur-hov);
+    }
+
+    .chip.active {
+      background: var(--pri);
+      color: #000;
+      border-color: var(--pri);
+    }
+
+    /* Table Styling */
+    .table-container {
+      background: var(--sur);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      background: var(--sur-hov);
+      padding: 16px 20px;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(249, 173, 0, 0.015);
+    }
+
+    /* Cell Components */
+    .module-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .module-name {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .module-badge {
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge-admin { background: var(--badge-admin-bg); color: var(--badge-admin); }
+    .badge-proctor { background: var(--badge-proctor-bg); color: var(--badge-proctor); }
+    .badge-candidate { background: var(--badge-candidate-bg); color: var(--badge-candidate); }
+    .badge-system { background: var(--badge-system-bg); color: var(--badge-system); }
+
+    .link-cell {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--pri);
+      font-weight: 600;
+    }
+
+    .description-cell {
+      max-width: 280px;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .features-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .features-list li {
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+    }
+
+    .features-list li i {
+      font-size: 14px;
+      color: var(--pri);
+    }
+
+    .btn-launch {
+      padding: 8px 14px;
+      font-size: 12px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      background: var(--pri-light);
+      color: var(--pri);
+      border: 1px solid var(--pri);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-launch:hover {
+      background: var(--pri);
+      color: #000;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+      
+      thead {
+        display: none;
+      }
+      
+      tr {
+        border-bottom: 2px solid var(--border);
+        padding: 16px;
+      }
+      
+      td {
+        border-bottom: none;
+        padding: 8px 0;
+      }
+      
+      .description-cell {
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-mesh"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="logo-container">
+      <div class="logo-badge">SP</div>
+      <div class="logo-text">
+        <h1>SecureProctor AI</h1>
+        <span>Unified Ecosystem Directory</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="index.html" class="btn btn-outlined">
+        <i class="material-icons-outlined" style="font-size: 16px;">dashboard</i>
+        <span>Admin Dashboard</span>
+      </a>
+      <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Toggle Theme">
+        <i class="material-icons-outlined" id="theme-icon">dark_mode</i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main View -->
+  <main>
+    <div class="page-title-section">
+      <h2>Ecosystem Portals Directory</h2>
+      <p>Locate, verify, and launch all modules, dashboards, and transaction screens in the Data Proctor platform from this centralized catalog.</p>
+    </div>
+
+    <!-- Filters & Search -->
+    <div class="filters-card">
+      <div class="search-wrapper">
+        <i class="material-icons-outlined">search</i>
+        <input type="text" class="search-input" id="search-bar" placeholder="Search modules, features, or routes..." oninput="filterTable()">
+      </div>
+      <div class="chips-row">
+        <button class="chip active" onclick="filterCategory('all', this)">All Nodes</button>
+        <button class="chip" onclick="filterCategory('admin', this)">Admin</button>
+        <button class="chip" onclick="filterCategory('proctor', this)">Proctor</button>
+        <button class="chip" onclick="filterCategory('candidate', this)">Candidate</button>
+        <button class="chip" onclick="filterCategory('system', this)">System / Financial</button>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Module Name & Role</th>
+            <th>Local Link & Port</th>
+            <th>Operational Description</th>
+            <th>Key Embedded Features</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="directory-tbody">
+          <!-- Row 1 -->
+          <tr data-category="admin">
+            <td>
+              <div class="module-cell">
+                <span class="module-name">Central Hub Dashboard</span>
+                <span class="module-badge badge-admin">Admin</span>
+              </div>
+            </td>
+            <td class="link-cell">secure_exam.html</td>
+            <td>
+              <div class="description-cell">Master administrative directory and operation status dashboard.</div>
+            </td>
+            <td>
+              <ul class="features-list">
+                <li><i class="material-icons-outlined">check</i> Real-time surveillance grid feeds</li>
+                <li><i class="material-icons-outlined">check</i> Master Platform Quick Links</li>
+                <li><i class="material-icons-outlined">check</i> Interactive charts & clock</li>
+              </ul>
+            </td>
+            <td>
+              <a href="secure_exam.html" target="_blank" class="btn-launch">
+                <span>Launch</span>
+                <i class="material-icons-outlined" style="font-size: 14px;">open_in_new</i>
+              </a>
+            </td>
+          </tr>
+
+          <!-- Row 2 -->
+          <tr data-category="admin">
+            <td>
+              <div class="module-cell">
+                <span class="module-name">Super Admin Portal</span>
+                <span class="module-badge badge-admin">Admin</span>
+              </div>
+            </td>
+            <td class="link-cell">super_admin_3005.html/</td>
+            <td>
+              <div class="description-cell">Governance, system audits, and high-level corporate configurations.</div>
+            </td>
+            <td>
+              <ul class="features-list">
+                <li><i class="material-icons-outlined">check</i> Corporate clients onboarding & logs</li>
+                <li><i class="material-icons-outlined">check</i> Financial transaction & ledger reports</li>
+                <li><i class="material-icons-outlined">check</i> Procurement request validations</li>
+              </ul>
+            </td>
+            <td>
+              <a href="super_admin_3005.html/" target="_blank" class="btn-launch">
+                <span>Launch</span>
+                <i class="material-icons-outlined" style="font-size: 14px;">open_in_new</i>
+              </a>
+            </td>
+          </tr>
+
+          <!-- Row 3 -->
+          <tr data-category="system">
+            <td>
+              <div class="module-cell">
+                <span class="module-name">Zero Day Landing Page</span>
+                <span class="module-badge badge-system">System</span>
+              </div>
+            </td>
+            <td class="link-cell">landing_page.html</td>
+            <td>
+              <div class="description-cell">Public-facing onboarding gateway with automated pricing estimator quotes.</div>
+            </td>
+            <td>
+              <ul class="features-list">
+                <li><i class="material-icons-outlined">check</i> Dynamic pricing calculators</li>
+                <li><i class="material-icons-outlined">check</i> Business role demonstrations</li>
+                <li><i class="material-icons-outlined">check</i> Client contact & registration forms</li>
+              </ul>
+            </td>
+            <td>
+              <a href="landing_page.html" target="_blank" class="btn-launch">
+                <span>Launch</span>
+                <i class="material-icons-outlined" style="font-size: 14px;">open_in_new</i>
+              </a>
+            </td>
+          </tr>
+
+          <!-- Row 4 -->
+          <tr data-category="system">
+            <td>
+              <div class="module-cell">
+                <span class="module-name">Automated Emails System</span>
+                <span class="module-badge badge-system">System</span>
+              </div>
+            </td>
+            <td class="link-cell">automated_emails.html</td>
+            <td>
+              <div class="description-cell">Visual catalog of system-triggered emails and notification templates.</div>
+            </td>
+            <td>
+              <ul class="features-list">
+                <li><i class="material-icons-outlined">check</i> Collapsible email accordion cards</li>
+                <li><i class="material-icons-outlined">check</i> Sender, receiver & trigger metadata</li>
+                <li><i class="material-icons-outlined">check</i> Embedded pixel-perfect HTML previews</li>
+              </ul>
+            </td>
+            <td>
+              <a href="automated_emails.html" target="_blank" class="btn-launch">
+                <span>Launch</span>
+                <i class="material-icons-outlined" style="font-size: 14px;">open_in_new</i>
+              </a>
+            </td>
+          </tr>
+
+          <!-- Row 5 -->
+          <tr data-category="candidate">
+            <td>
+              <div class="module-cell">
+                <span class="module-name">Learning Materials</span>
+                <span class="module-badge badge-candidate">Candidate</span>
+              </div>
+            </td>
+            <td class="link-cell">learning_material.html</td>
+            <td>
+              <div class="description-cell">Candidate knowledge base and preparation guides.</div>
+            </td>
+            <td>
+              <ul class="features-list">
+                <li><i class="material-icons-outlined">check</i> Preparation checklists & FAQs</li>
+                <li><i class="material-icons-outlined">check</i> Hardware configuration documentation</li>
+                <li><i class="material-icons-outlined">check</i> Search navigation filters</li>
+              </ul>
+            </td>
+            <td>
+              <a href="learning_material.html" target="_blank" class="btn-launch">
+                <span>Launch</span>
+                <i class="material-icons-outlined" style="font-size: 14px;">open_in_new</i>
+              </a>
+            </td>
+          </tr>
+
+          <!-- Row 6 -->
+          <tr data-category="proctor">
+            <td>
+              <div class="module-cell">
+                <span class="module-name">In-Class Proctoring</span>
+                <span class="module-badge badge-proctor">Proctor</span>
+              </div>
+            </td>
+            <td class="link-cell">classroom-proctor.html</td>
+            <td>
+              <div class="description-cell">Administrative interface for onsite proctors overseeing classrooms.</div>
+            </td>
+            <td>
+              <ul class="features-list">
+                <li><i class="material-icons-outlined">check</i> Classroom seating configurations</li>
+                <li><i class="material-icons-outlined">check</i> Live attendance checkers</li>
+                <li><i class="material-icons-outlined">check</i> Offline proctoring verification logs</li>
+              </ul>
+            </td>
+            <td>
+              <a href="classroom-proctor.html" target="_blank" class="btn-launch">
+                <span>Launch</span>
+                <i class="material-icons-outlined" style="font-size: 14px;">open_in_new</i>
+              </a>
+            </td>
+          </tr>
+
+          <!-- Row 7 -->
+          <tr data-category="proctor">
+            <td>
+              <div class="module-cell">
+                <span class="module-name">Online Proctoring Portal</span>
+                <span class="module-badge badge-proctor">Proctor</span>
+              </div>
+            </td>
+            <td class="link-cell">online_proctor.html</td>
+            <td>
+              <div class="description-cell">Remote webcam and audio surveillance proctor console.</div>
+            </td>
+            <td>
+              <ul class="features-list">
+                <li><i class="material-icons-outlined">check</i> Multi-candidate webcam views</li>
+                <li><i class="material-icons-outlined">check</i> Active flags, warnings & risk indexes</li>
+                <li><i class="material-icons-outlined">check</i> Identity verification checks</li>
+              </ul>
+            </td>
+            <td>
+              <a href="online_proctor.html" target="_blank" class="btn-launch">
+                <span>Launch</span>
+                <i class="material-icons-outlined" style="font-size: 14px;">open_in_new</i>
+              </a>
+            </td>
+          </tr>
+
+          <!-- Row 8 -->
+          <tr data-category="proctor">
+            <td>
+              <div class="module-cell">
+                <span class="module-name">Proctor Training & Certs</span>
+                <span class="module-badge badge-proctor">Proctor</span>
+              </div>
+            </td>
+            <td class="link-cell">online_training.html</td>
+            <td>
+              <div class="description-cell">Onboarding courses and certifications for trainee proctors.</div>
+            </td>
+            <td>
+              <ul class="features-list">
+                <li><i class="material-icons-outlined">check</i> Training video course player</li>
+                <li><i class="material-icons-outlined">check</i> Validation quizzes with instant grading</li>
+                <li><i class="material-icons-outlined">check</i> XP metrics and ranking leaderboards</li>
+              </ul>
+            </td>
+            <td>
+              <a href="online_training.html" target="_blank" class="btn-launch">
+                <span>Launch</span>
+                <i class="material-icons-outlined" style="font-size: 14px;">open_in_new</i>
+              </a>
+            </td>
+          </tr>
+
+          <!-- Row 9 -->
+          <tr data-category="candidate">
+            <td>
+              <div class="module-cell">
+                <span class="module-name">Student Login</span>
+                <span class="module-badge badge-candidate">Candidate</span>
+              </div>
+            </td>
+            <td class="link-cell">index.html</td>
+            <td>
+              <div class="description-cell">Secure assessment center screen for candidate exam takers.</div>
+            </td>
+            <td>
+              <ul class="features-list">
+                <li><i class="material-icons-outlined">check</i> Real-time AI behavior sensors</li>
+                <li><i class="material-icons-outlined">check</i> Dynamic quiz navigation & clock</li>
+                <li><i class="material-icons-outlined">check</i> Instant proctor help support chat</li>
+              </ul>
+            </td>
+            <td>
+              <a href="index.html" target="_blank" class="btn-launch">
+                <span>Launch</span>
+                <i class="material-icons-outlined" style="font-size: 14px;">open_in_new</i>
+              </a>
+            </td>
+          </tr>
+
+          <!-- Row 10 -->
+          <tr data-category="system">
+            <td>
+              <div class="module-cell">
+                <span class="module-name">Voucher & Payment Ledger</span>
+                <span class="module-badge badge-system">System</span>
+              </div>
+            </td>
+            <td class="link-cell">index.html/</td>
+            <td>
+              <div class="description-cell">Balance accounting, payments, and credit balance trackers.</div>
+            </td>
+            <td>
+              <ul class="features-list">
+                <li><i class="material-icons-outlined">check</i> Cleared and pending payment grids</li>
+                <li><i class="material-icons-outlined">check</i> Voucher purchase & upgrades</li>
+                <li><i class="material-icons-outlined">check</i> Organization discount applications</li>
+              </ul>
+            </td>
+            <td>
+              <a href="index.html/" target="_blank" class="btn-launch">
+                <span>Launch</span>
+                <i class="material-icons-outlined" style="font-size: 14px;">open_in_new</i>
+              </a>
+            </td>
+          </tr>
+
+          <!-- Row 11 -->
+          <tr data-category="candidate">
+            <td>
+              <div class="module-cell">
+                <span class="module-name">Secure Exam Browser Mock</span>
+                <span class="module-badge badge-candidate">Candidate</span>
+              </div>
+            </td>
+            <td class="link-cell">secure_exam.html</td>
+            <td>
+              <div class="description-cell">Identity confirmation checks and pre-exam diagnostic steps.</div>
+            </td>
+            <td>
+              <ul class="features-list">
+                <li><i class="material-icons-outlined">check</i> Hardware diagnostic checklists</li>
+                <li><i class="material-icons-outlined">check</i> Mock browser window lock warning</li>
+                <li><i class="material-icons-outlined">check</i> Identity verification checklist</li>
+              </ul>
+            </td>
+            <td>
+              <a href="secure_exam.html" target="_blank" class="btn-launch">
+                <span>Launch</span>
+                <i class="material-icons-outlined" style="font-size: 14px;">open_in_new</i>
+              </a>
+            </td>
+          </tr>
+
+          <!-- Row 12 -->
+          <tr data-category="admin">
+            <td>
+              <div class="module-cell">
+                <span class="module-name">Organization Admin View</span>
+                <span class="module-badge badge-admin">Admin</span>
+              </div>
+            </td>
+            <td class="link-cell">index.html/</td>
+            <td>
+              <div class="description-cell">B2B client organization configurations.</div>
+            </td>
+            <td>
+              <ul class="features-list">
+                <li><i class="material-icons-outlined">check</i> Manage student cohorts</li>
+                <li><i class="material-icons-outlined">check</i> Bulk voucher procurement forms</li>
+                <li><i class="material-icons-outlined">check</i> Department-level statistics</li>
+              </ul>
+            </td>
+            <td>
+              <a href="index.html/" target="_blank" class="btn-launch">
+                <span>Launch</span>
+                <i class="material-icons-outlined" style="font-size: 14px;">open_in_new</i>
+              </a>
+            </td>
+          </tr>
+
+          <!-- Row 13 -->
+          <tr data-category="admin">
+            <td>
+              <div class="module-cell">
+                <span class="module-name">Main Admin Portal</span>
+                <span class="module-badge badge-admin">Admin</span>
+              </div>
+            </td>
+            <td class="link-cell">admin_portal.html</td>
+            <td>
+              <div class="description-cell">Supervisor schedules and standard operations center.</div>
+            </td>
+            <td>
+              <ul class="features-list">
+                <li><i class="material-icons-outlined">check</i> Exam session schedule manager</li>
+                <li><i class="material-icons-outlined">check</i> Proctor shifts assignments</li>
+                <li><i class="material-icons-outlined">check</i> Compliance log exports</li>
+              </ul>
+            </td>
+            <td>
+              <a href="admin_portal.html" target="_blank" class="btn-launch">
+                <span>Launch</span>
+                <i class="material-icons-outlined" style="font-size: 14px;">open_in_new</i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    // Theme initialization and toggle
+    let theme = localStorage.getItem("proctor_theme") || "light";
+    document.documentElement.setAttribute("data-t", theme);
+    updateThemeIcon();
+
+    function toggleTheme() {
+      theme = theme === "light" ? "dark" : "light";
+      document.documentElement.setAttribute("data-t", theme);
+      localStorage.setItem("proctor_theme", theme);
+      updateThemeIcon();
+    }
+
+    function updateThemeIcon() {
+      const themeIcon = document.getElementById("theme-icon");
+      if (themeIcon) {
+        themeIcon.textContent = theme === "light" ? "dark_mode" : "light_mode";
+      }
+    }
+
+    // Category Filter Chips
+    function filterCategory(category, buttonEl) {
+      // Toggle chips
+      document.querySelectorAll(".chip").forEach(btn => btn.classList.remove("active"));
+      buttonEl.classList.add("active");
+
+      // Apply category filter and search bar query
+      filterTable(category);
+    }
+
+    // Search and Table Filter engine
+    function filterTable(categoryFilter) {
+      const searchVal = document.getElementById("search-bar").value.toLowerCase();
+      const activeCategory = categoryFilter || document.querySelector(".chip.active").textContent.toLowerCase().replace(" nodes", "").replace("system / financial", "system");
+      
+      const rows = document.querySelectorAll("#directory-tbody tr");
+      
+      rows.forEach(row => {
+        const categoryMatch = activeCategory === "all" || row.getAttribute("data-category") === activeCategory;
+        const textContent = row.textContent.toLowerCase();
+        const searchMatch = textContent.includes(searchVal);
+
+        if (categoryMatch && searchMatch) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>

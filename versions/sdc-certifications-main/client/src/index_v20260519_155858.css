@@ -176,7 +176,7 @@
 
   /* ── Smooth theme transition ──────────────────────────────────────
      Applied to every element so background, text, border, and shadow
-     colours animate when the .dark class is toggled on <html>.
+     colors animate when the .dark class is toggled on <html>.
      The transition is intentionally short (220ms) so it feels snappy
      rather than sluggish. SVG fills and strokes are included so icons
      also cross-fade. Excluded: transform, opacity, and filter so that

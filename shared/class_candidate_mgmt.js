@@ -41,7 +41,290 @@ window.CCM = {
   toast(m, t) { if (this.host && this.host.showToast) this.host.showToast(m, t); },
   navigate(viewId) { if (this.host && this.host.showView) this.host.showView(viewId); },
 
+  // ==========================================================================
+  // DATA MODEL HELPERS  (candidate IDs, voucher codes, rule resolution)
+  // ==========================================================================
+  // Auto-generate a human-readable, collision-checked candidate ID. No generator
+  // existed before (CAN-### were hardcoded, RN-#### was random with no shape).
+  genCandidateId() {
+    const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // base32, no ambiguous 0/O/1/I
+    const existing = new Set(this.candidates().map(c => c && c.candidateId).filter(Boolean));
+    for (let attempt = 0; attempt < 50; attempt++) {
+      let s = '';
+      for (let i = 0; i < 4; i++) s += alphabet[Math.floor(Math.random() * alphabet.length)];
+      const id = 'SDC-CAN-' + s;
+      if (!existing.has(id)) return id;
+    }
+    return 'SDC-CAN-' + Date.now().toString(36).toUpperCase().slice(-4);
+  },
+
+  // Generate a voucher code. Prefix encodes the delivery type so the redeem path
+  // can route it: VCH-C#### for in-class (In-House), VCH-O#### for online
+  // (Internet Proctored). Matches the VCH- family already in data/vouchers.json.
+  genVoucherCode(examMode) {
+    const n = Math.floor(1000 + Math.random() * 9000);
+    return (examMode === 'online' ? 'VCH-O' : 'VCH-C') + n;
+  },
+
+  // Resolve the effective exam rules for a candidate: a per-candidate override
+  // wins; otherwise inherit the candidate's class defaults; otherwise the hard
+  // platform default (in-class, no retake, org pays). Standalone candidates
+  // (no sessionId) simply skip the class layer.
+  effectiveRules(candidate) {
+    const cls = candidate && candidate.sessionId
+      ? this.sessions().find(s => s.id === candidate.sessionId)
+      : null;
+    const ov = (candidate && candidate.rules) || {};
+    const pick = (override, classVal, hard) =>
+      (override !== undefined && override !== null) ? override
+        : (classVal !== undefined && classVal !== null) ? classVal
+          : hard;
+    // Class stores allowOnline/allowRetake/onlinePayer; a class never *forces*
+    // online, it only *permits* it — so the class layer for examMode is the
+    // hard 'in-class' default unless the candidate overrides to online.
+    const examMode = pick(ov.examMode, null, 'in-class');
+    const retakeAllowed = pick(ov.retakeAllowed, cls ? !!cls.allowRetake : null, false);
+    const retakeMode = pick(ov.retakeMode, null, 'in-class');
+    const onlinePayer = pick(ov.onlinePayer, cls ? cls.onlinePayer : null, 'organization');
+    return {
+      examMode,
+      onlineAllowed: examMode === 'online' || (cls ? !!cls.allowOnline : false),
+      retakeAllowed,
+      retakeMode,
+      onlinePayer: onlinePayer || 'organization',
+      inheritedFromClass: !!cls
+    };
+  },
+
+  // Where does a candidate's effective value for `field` come from? Returns
+  // 'override' (candidate set it), 'class' (inherited from the class default),
+  // or 'default' (platform hard default). Powers the inheritance badges so an
+  // admin can see WHY a rule is active instead of over-configuring blindly.
+  ruleSource(candidate, field) {
+    const ov = (candidate && candidate.rules) || {};
+    if (ov[field] !== undefined && ov[field] !== null) return 'override';
+    const cls = candidate && candidate.sessionId
+      ? this.sessions().find(s => s.id === candidate.sessionId) : null;
+    const classHas = {
+      retakeAllowed: cls && cls.allowRetake !== undefined && cls.allowRetake !== null,
+      onlinePayer: cls && cls.onlinePayer !== undefined && cls.onlinePayer !== null,
+      // examMode / retakeMode have no class layer — they fall straight to default.
+      examMode: false,
+      retakeMode: false
+    };
+    return classHas[field] ? 'class' : 'default';
+  },
+
+  // Small pill showing the source of a rule value. 'override' also renders a
+  // Reset-to-inherited affordance so the admin can drop back to the class/org value.
+  ruleBadge(candidate, field) {
+    const src = this.ruleSource(candidate, field);
+    const label = src === 'override' ? 'Overridden' : src === 'class' ? 'Class' : 'Org default';
+    const cls = 'cfg-src cfg-src--' + src;
+    const reset = src === 'override'
+      ? ` <a href="#" class="cfg-reset" onclick="event.preventDefault(); event.stopPropagation(); CCM.resetRule('${candidate.id}','${field}')" title="Reset to inherited value">Reset</a>`
+      : '';
+    return `<span class="${cls}" title="Source of this value">${label}</span>${reset}`;
+  },
+
+  // Drop a per-candidate override so the field re-inherits from class/org, then
+  // re-render whichever config surface is currently mounted.
+  resetRule(id, field) {
+    const c = this._cand(id);
+    if (c && c.rules) { delete c.rules[field]; }
+    this.toast('Reset to inherited value.', 'info');
+    // Re-render the directory row config if present; the side-sheet re-renders
+    // via its own hook. Cheapest correct refresh: re-render the visible list.
+    if (document.getElementById('candidates-tbody')) this.renderCandidates(this._lastFilter || 'all');
+    if (this.host && this.host.refreshCandidateSheet) this.host.refreshCandidateSheet(id);
+  },
+
   addCandidate() { if (this.host && this.host.openAddCandidate) this.host.openAddCandidate(this.currentSessionId); },
+
+  // ==========================================================================
+  // ADD-CANDIDATE FORM  (shared markup + submit, host-agnostic)
+  // The host opens its own shell (drawer/modal) and injects this HTML, then a
+  // submit button calls CCM.submitCandidateForm(). One implementation, both
+  // portals. Field ids are prefixed `ccm-ac-` to avoid collisions.
+  // ==========================================================================
+  addCandidateFormHtml(sessionId) {
+    const sid = sessionId || '';
+    const lockClass = !!sid;
+    const classOpts = ['<option value="">None (standalone)</option>']
+      .concat(this.sessions().map(s =>
+        `<option value="${s.id}" ${s.id === sid ? 'selected' : ''}>${s.name}</option>`)).join('');
+    // Assessment options: class programs + a few common assessments.
+    const programNames = Array.from(new Set(this.sessions().map(s => s.program).filter(Boolean)));
+    const assessments = Array.from(new Set(programNames.concat([
+      'Food Safety Manager', 'ServSafe Food Handler', 'HACCP Certification', 'Professional Chef Certification'
+    ])));
+    const assessmentOpts = assessments.map(a => `<option value="${a}">${a}</option>`).join('');
+    const genId = this.genCandidateId();
+    return `
+      <div class="ccm-form">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" class="form-control" id="ccm-ac-name" placeholder="e.g. Jordan Lee">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" class="form-control" id="ccm-ac-email" placeholder="e.g. jordan@example.com">
+        </div>
+        <div class="form-group">
+          <label>Candidate ID <span style="font-weight:normal; color:var(--text-secondary, var(--on-sur-var));">(auto-generated)</span></label>
+          <input type="text" class="form-control" id="ccm-ac-candidateid" value="${genId}" readonly style="font-family:var(--font-mono, monospace); background:var(--border-light, rgba(127,127,127,.1));">
+        </div>
+        <div class="form-group">
+          <label>Exam / Assessment</label>
+          <select class="form-control" id="ccm-ac-assessment">${assessmentOpts}</select>
+        </div>
+        <div class="form-group">
+          <label>Class</label>
+          <select class="form-control" id="ccm-ac-class" ${lockClass ? 'disabled' : ''}>${classOpts}</select>
+          ${lockClass ? `<input type="hidden" id="ccm-ac-class-locked" value="${sid}">` : ''}
+        </div>
+        <div class="form-group">
+          <label>Accommodations</label>
+          <select class="form-control" id="ccm-ac-accom" onchange="CCM.acToggleAccommodation(this)">
+            <option value="NO">No</option>
+            <option value="YES">Yes</option>
+          </select>
+          <div id="ccm-ac-accom-note-wrap" style="display:none; margin-top:8px;">
+            <label>Explanation <span style="color:var(--status-error,#b3261e);">*</span></label>
+            <textarea class="form-control" id="ccm-ac-accom-note" rows="2" placeholder="Describe the accommodation (e.g. extra time, screen reader)…"></textarea>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Exam Mode</label>
+          <select class="form-control" id="ccm-ac-exammode">
+            <option value="in-class" selected>In-Class (default)</option>
+            <option value="online">Online</option>
+          </select>
+        </div>
+        <!-- Retake is a top-level toggle (independent of the primary exam mode):
+             Allow Retake → if on, Retake Mode → if online, who pays. -->
+        <div class="form-group" style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+          <label style="margin:0;">Allow Retake</label>
+          <label class="switch" style="margin:0;">
+            <input type="checkbox" id="ccm-ac-retake" onchange="CCM.acToggleRetake(this)">
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+        <div id="ccm-ac-retake-opts" style="display:none; border-left:2px solid var(--brand-primary, var(--pri)); padding-left:12px; margin-bottom:16px;">
+          <div class="form-group" id="ccm-ac-retake-mode-wrap">
+            <label>Retake Mode</label>
+            <select class="form-control" id="ccm-ac-retake-mode" onchange="CCM.acToggleRetakePayer(this)">
+              <option value="in-class">In-Class</option>
+              <option value="online">Online</option>
+            </select>
+          </div>
+          <div class="form-group" id="ccm-ac-payer-wrap" style="display:none;">
+            <label>Who pays for the online retake?</label>
+            <div style="display:flex; gap:16px; margin-top:4px;">
+              <label style="display:flex; align-items:center; gap:6px; font-weight:normal;"><input type="radio" name="ccm-ac-payer" value="organization" checked> Organisation</label>
+              <label style="display:flex; align-items:center; gap:6px; font-weight:normal;"><input type="radio" name="ccm-ac-payer" value="student"> Candidate</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group" style="background:var(--brand-active, rgba(127,127,127,.08)); border-radius:8px; padding:12px; font-size:13px; color:var(--text-secondary, var(--on-sur-var));">
+          <i class="material-icons-outlined" style="font-size:16px; vertical-align:middle;">confirmation_number</i>
+          A voucher will be <strong>auto-assigned by the system</strong>. The candidate redeems it at login.
+        </div>
+        <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="CCM.submitCandidateForm(this)">Add Candidate</button>
+      </div>`;
+  },
+
+  acToggleAccommodation(sel) {
+    const wrap = document.getElementById('ccm-ac-accom-note-wrap');
+    if (wrap) wrap.style.display = sel.value === 'YES' ? 'block' : 'none';
+  },
+  // Allow-Retake toggle reveals the retake options (mode → payer cascade).
+  acToggleRetake(cb) {
+    const opts = document.getElementById('ccm-ac-retake-opts');
+    if (opts) opts.style.display = cb.checked ? 'block' : 'none';
+    if (!cb.checked) {
+      const payer = document.getElementById('ccm-ac-payer-wrap');
+      if (payer) payer.style.display = 'none';
+    }
+  },
+  // Online retake → ask who pays; in-class retake → hide the payer choice.
+  acToggleRetakePayer(sel) {
+    const wrap = document.getElementById('ccm-ac-payer-wrap');
+    if (wrap) wrap.style.display = sel.value === 'online' ? 'block' : 'none';
+  },
+
+  submitCandidateForm(btn) {
+    const val = (id) => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+    const name = val('ccm-ac-name') || 'New Candidate';
+    const email = val('ccm-ac-email') || 'candidate@example.com';
+    const candidateId = val('ccm-ac-candidateid') || this.genCandidateId();
+    const examAssessment = val('ccm-ac-assessment');
+    const lockedClass = document.getElementById('ccm-ac-class-locked');
+    const sessionId = lockedClass ? lockedClass.value : val('ccm-ac-class');
+    const accomEnabled = val('ccm-ac-accom') === 'YES';
+    const accomNote = val('ccm-ac-accom-note');
+    if (accomEnabled && !accomNote) { this.toast('Please provide an accommodation explanation.', 'error'); return; }
+
+    const examMode = (document.getElementById('ccm-ac-exammode') || {}).value || 'in-class';
+    // Only persist rule fields the user actually engaged, so unset rules keep
+    // inheriting from the class (the override semantics in effectiveRules).
+    const rules = {};
+    if (examMode === 'online') rules.examMode = 'online';
+    // Retake is independent of the primary exam mode: only persist it when the
+    // toggle is on (off = inherit the class default).
+    const retakeOn = !!(document.getElementById('ccm-ac-retake') || {}).checked;
+    if (retakeOn) {
+      rules.retakeAllowed = true;
+      const retakeMode = (document.getElementById('ccm-ac-retake-mode') || {}).value || 'in-class';
+      rules.retakeMode = retakeMode;
+      if (retakeMode === 'online') {
+        const payerEl = document.querySelector('input[name="ccm-ac-payer"]:checked');
+        rules.onlinePayer = payerEl ? payerEl.value : 'organization';
+      }
+    }
+
+    const voucherCode = this.genVoucherCode(examMode);
+    const cand = {
+      id: 'c' + Date.now(),
+      candidateId,
+      name, email, examAssessment,
+      sessionId: sessionId || undefined,
+      accommodation: { enabled: accomEnabled, note: accomEnabled ? accomNote : '' },
+      rules,
+      voucherCode,
+      voucherStatus: 'assigned',
+      examStatus: 'enrolled',
+      learningProgress: 0
+    };
+
+    // Persist the system-assigned voucher to the backend so the candidate can
+    // redeem/activate it at login (only while unused). Fire-and-forget; guarded
+    // for static/file:// contexts where there's no API.
+    this._persistAssignedVoucher(cand);
+
+    if (this.host && this.host.commitCandidate) this.host.commitCandidate(cand);
+    else { this.candidates().unshift(cand); this.renderCandidates('all'); }
+    this.toast(`Candidate added · ID ${candidateId} · voucher ${voucherCode} assigned.`, 'success');
+  },
+
+  _persistAssignedVoucher(cand) {
+    try {
+      if (typeof fetch !== 'function' || !/^https?:$/.test(location.protocol)) return;
+      const eff = this.effectiveRules(cand);
+      fetch('/api/vouchers/assign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          voucherId: cand.voucherCode,
+          candidateId: cand.candidateId,
+          candidateName: cand.name,
+          examAssessment: cand.examAssessment,
+          sessionId: cand.sessionId || null,
+          type: eff.examMode === 'online' ? 'Internet Proctored' : 'In-House'
+        })
+      }).catch(() => {});
+    } catch (e) { /* no-op in non-browser/static contexts */ }
+  },
   addClass() { if (this.host && this.host.openAddClass) this.host.openAddClass(); },
   manageCandidate(id) {
     if (this.host && this.host.manageCandidate) this.host.manageCandidate(id);
@@ -51,19 +334,59 @@ window.CCM = {
     if (this.host && this.host.deepDive) this.host.deepDive(id, name, className, progress);
     else this.toast('Opening learning details…', 'info');
   },
-  examModeChange(el) {
-    if (this.host && this.host.examModeChange) this.host.examModeChange(el);
-    else if (el && el.value === 'Online') this.toast('Online exam mode selected for this candidate.', 'info');
-  },
-  accommodationChange(el, id) {
-    if (this.host && this.host.accommodationChange) { this.host.accommodationChange(el, id); return; }
-    if (el && el.value === 'YES') {
-      const reason = prompt('Please provide an explanation for the accommodation:');
-      if (reason) this.toast('Accommodation reason saved for candidate.', 'success');
-      else el.value = 'NO';
-    } else {
-      this.toast('Accommodation removed.', 'info');
+  // Find a candidate by id (helper for the persisted session-detail controls).
+  _cand(id) { return this.candidates().find(c => c.id === id); },
+
+  // Persist a per-candidate exam-mode override from the session-detail table.
+  examModeChange(el, id) {
+    const c = id && this._cand(id);
+    if (c) {
+      c.rules = c.rules || {};
+      c.rules.examMode = el.value; // 'in-class' | 'online'
+      this.toast(el.value === 'online' ? 'Exam mode set to Online (override).' : 'Exam mode set to In-Class (override).', 'success');
+      return;
     }
+    if (this.host && this.host.examModeChange) this.host.examModeChange(el);
+  },
+  // Toggle accommodation on/off from a Yes/No select. No browser prompt() — the
+  // explanation is captured by an inline note field (accommodationNote) that this
+  // reveals. Note id convention: `${scope}-accom-note-${id}` where scope is the
+  // select's data-note-target, defaulting to the directory field.
+  accommodationChange(el, id) {
+    const c = id && this._cand(id);
+    if (!c) { if (this.host && this.host.accommodationChange) this.host.accommodationChange(el, id); return; }
+    c.accommodation = c.accommodation || { enabled: false, note: '' };
+    const on = el && el.value === 'YES';
+    c.accommodation.enabled = on;
+    if (!on) c.accommodation.note = '';
+    const noteEl = document.getElementById((el && el.getAttribute('data-note')) || ('dir-accom-note-' + id));
+    if (noteEl) {
+      noteEl.style.display = on ? 'block' : 'none';
+      if (on) { noteEl.value = c.accommodation.note || ''; noteEl.focus(); }
+    }
+    this.toast(on ? 'Accommodation enabled — add an explanation.' : 'Accommodation removed.', on ? 'success' : 'info');
+  },
+  // Persist the inline accommodation explanation.
+  accommodationNote(el, id) {
+    const c = id && this._cand(id);
+    if (!c) return;
+    c.accommodation = c.accommodation || { enabled: true, note: '' };
+    c.accommodation.note = (el.value || '').trim();
+    c.accommodation.enabled = true;
+    if (c.accommodation.note) this.toast('Accommodation note saved.', 'success');
+  },
+  // Persist retake on/off; enable/disable the paired retake-mode select.
+  retakeToggle(cb, id) {
+    const c = id && this._cand(id);
+    const modeSel = document.getElementById('retake-mode-' + id);
+    if (c) { c.rules = c.rules || {}; c.rules.retakeAllowed = !!cb.checked; }
+    if (modeSel) modeSel.disabled = !cb.checked;
+    this.toast(cb.checked ? 'Retake enabled (override).' : 'Retake disabled (override).', cb.checked ? 'success' : 'info');
+  },
+  // Persist the retake mode override.
+  retakeModeChange(el, id) {
+    const c = id && this._cand(id);
+    if (c) { c.rules = c.rules || {}; c.rules.retakeMode = el.value; }
   },
   assignVoucher(id) {
     if (this.host && this.host.assignVoucher) this.host.assignVoucher(id);
@@ -94,23 +417,65 @@ window.CCM = {
   // CANDIDATES
   // ==========================================================================
   filterCandidates(status) {
-    document.querySelectorAll('#candidate-filters .badge').forEach(b => {
-      b.className = 'badge';
-      b.style.background = 'var(--border-light)';
-      b.style.color = 'var(--text-secondary)';
-      if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(`'${status}'`)) {
-        b.className = 'badge badge-info';
-        b.style.background = '';
-        b.style.color = '';
+    const wrap = document.getElementById('candidate-filters');
+    if (wrap) {
+      // Preferred: modern segmented filter chips (data-filter + .active).
+      const chips = wrap.querySelectorAll('.filter-chip');
+      if (chips.length) {
+        chips.forEach(b => b.classList.toggle('active', b.getAttribute('data-filter') === status));
+      } else {
+        // Legacy fallback: badge-style buttons toggled via onclick payload.
+        wrap.querySelectorAll('.badge').forEach(b => {
+          const isActive = (b.getAttribute('onclick') || '').includes(`'${status}'`);
+          b.className = isActive ? 'badge badge-info' : 'badge';
+          b.style.background = isActive ? '' : 'var(--border-light)';
+          b.style.color = isActive ? '' : 'var(--text-secondary)';
+        });
       }
-    });
+    }
     this.renderCandidates(status);
   },
 
+  // Refresh the count pills shown inside the directory filter chips.
+  updateCandidateCounts() {
+    const all = this.candidates();
+    const completed = all.filter(c => c.examStatus === 'completed').length;
+    const active = all.filter(c => c.examStatus === 'in_progress').length;
+    const counts = { all: all.length, completed, in_progress: active, enrolled: all.length - completed - active };
+    document.querySelectorAll('#candidate-filters .filter-chip').forEach(chip => {
+      const cc = chip.querySelector('.chip-count');
+      if (cc) cc.textContent = counts[chip.getAttribute('data-filter')] ?? 0;
+    });
+  },
+
+  // On-brand avatar: real photo when present, otherwise tinted initials.
+  candAvatar(c) {
+    const photo = c.photo && !/placeholder/i.test(c.photo) ? c.photo : '';
+    if (photo) return `<img class="cand-avatar" src="${photo}" alt="">`;
+    const initials = (c.name || '?').trim().split(/\s+/).map(p => p[0] || '').slice(0, 2).join('').toUpperCase();
+    return `<span class="cand-avatar cand-avatar--initials">${initials}</span>`;
+  },
+
   renderCandidates(filter) {
+    this._lastFilter = filter || 'all';
     let filtered = this.candidates();
     if (filter && filter !== 'all') filtered = filtered.filter(c => c.examStatus === filter);
+    // Apply the free-text search (name / email / candidateId / class) if present.
+    const q = (this._searchText || '').trim().toLowerCase();
+    if (q) {
+      filtered = filtered.filter(c => {
+        const cls = c.sessionId ? this.sessions().find(s => s.id === c.sessionId) : null;
+        return [c.name, c.email, c.candidateId, c.rollNo, cls && cls.name]
+          .filter(Boolean).some(v => String(v).toLowerCase().includes(q));
+      });
+    }
     this.renderCandidatesList(filtered);
+  },
+
+  // Wired to the Candidate Directory search input.
+  searchCandidates(text) {
+    this._searchText = text || '';
+    this.renderCandidates(this._lastFilter || 'all');
   },
 
   renderCandidatesList(filtered) {
@@ -118,27 +483,31 @@ window.CCM = {
     if (!tbody) return;
 
     if (filtered.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:32px; color:var(--text-secondary);">No candidates match this filter.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:32px; color:var(--text-secondary);">No candidates match this filter.</td></tr>`;
       this.updateBulkActions();
       return;
     }
 
     tbody.innerHTML = filtered.map(c => {
       let statusBadge = '';
-      if (c.examStatus === 'completed') statusBadge = `<span class="badge badge-success">Completed</span>`;
-      else if (c.examStatus === 'in_progress') statusBadge = `<span class="badge badge-warning">Active</span>`;
-      else statusBadge = `<span class="badge badge-info">Enrolled</span>`;
+      if (c.examStatus === 'completed') statusBadge = `<span class="cand-pill cand-pill--completed">Completed</span>`;
+      else if (c.examStatus === 'in_progress') statusBadge = `<span class="cand-pill cand-pill--active">Active</span>`;
+      else statusBadge = `<span class="cand-pill cand-pill--enrolled">Enrolled</span>`;
 
       const vStatus = (c.voucherStatus || '').toLowerCase();
       const isUnassigned = vStatus === 'not_assigned' || vStatus === 'unassigned' || vStatus === '';
       const isPending = vStatus === 'pending' || vStatus === 'assigned';
       const isActivated = vStatus === 'activated' || vStatus === 'redeemed';
 
+      // Read-only status + a Redeem link CTA (opens the voucher-code popup),
+      // matching the in-class proctor candidate list.
+      const redeemLink = `<a href="#" class="ccm-redeem-link" onclick="event.stopPropagation(); event.preventDefault(); CCM.redeemVoucher('${c.id}')" style="color:var(--brand-primary); font-weight:600; font-size:12px; text-decoration:none; white-space:nowrap;">Redeem</a>`;
+
       let voucherHtml = '';
       if (isUnassigned) {
-        voucherHtml = `<span style="color:var(--status-warning); font-size:12px; font-weight:600;"><i class="material-icons-outlined" style="font-size:14px; vertical-align:middle;">warning</i> not assigned</span>`;
+        voucherHtml = `<div style="display:flex; align-items:center; gap:8px;"><span style="color:var(--status-warning); font-size:12px; font-weight:600;" title="Read-only status"><i class="material-icons-outlined" style="font-size:14px; vertical-align:middle;">warning</i> not assigned</span>${redeemLink}</div>`;
       } else if (isPending) {
-        voucherHtml = `<div style="display:flex; align-items:center; gap:8px;"><span class="font-mono" style="background:var(--border-light); padding:4px 8px; border-radius:4px; font-size:12px;">${c.voucherCode || 'PENDING'}</span><span class="badge badge-warning">Pending</span></div>`;
+        voucherHtml = `<div style="display:flex; align-items:center; gap:8px;"><span class="font-mono" style="background:var(--border-light); padding:4px 8px; border-radius:4px; font-size:12px;">${c.voucherCode || 'PENDING'}</span><span class="badge badge-warning" title="Read-only status">Pending</span>${redeemLink}</div>`;
       } else if (isActivated) {
         voucherHtml = `<div style="display:flex; align-items:center; gap:8px;"><span class="font-mono" style="background:var(--border-light); padding:4px 8px; border-radius:4px; font-size:12px;">${c.voucherCode || 'REDEEMED'}</span><span class="badge badge-success">Activated</span></div>`;
       } else {
@@ -152,28 +521,150 @@ window.CCM = {
         examResult = passed ? '<span style="color:var(--status-success); font-weight:600;">Pass</span>' : '<span style="color:var(--status-error); font-weight:600;">Fail</span>';
       }
 
+      // Class the candidate is enrolled in (collapsed header) + Start Exam CTA.
+      const cls = c.sessionId ? this.sessions().find(s => s.id === c.sessionId) : null;
+      const className = cls ? cls.name : 'Unassigned';
+      const canStart = !!cls;
+      // A completed exam can't be (re)started from here — surface the result instead.
+      const isCompleted = c.examStatus === 'completed';
+      const startExamBtn = isCompleted
+        ? `<button class="btn btn-secondary" style="padding:4px 12px; font-size:12px; display:inline-flex; align-items:center; gap:6px;" onclick="event.stopPropagation(); CCM.manageCandidate('${c.id}')"><i class="material-icons" style="font-size:16px;">visibility</i> View Result</button>`
+        : `<button class="btn btn-primary" style="padding:4px 12px; font-size:12px; display:inline-flex; align-items:center; gap:6px;${canStart ? '' : ' opacity:.5; cursor:not-allowed;'}" ${canStart ? `onclick="event.stopPropagation(); CCM.confirmStartExam('${cls.id}')"` : 'disabled title="Assign this candidate to a class first"'}><i class="material-icons" style="font-size:16px;">play_circle_filled</i> Start Exam</button>`;
+
+      // Effective (class-default + candidate-override) rules for the inline config.
+      const eff = this.effectiveRules(c);
+      if (!c.accommodation) c.accommodation = { enabled: false, note: '' };
+      const accomValue = c.accommodation.enabled ? 'YES' : 'NO';
+      const payerVisible = eff.retakeAllowed && eff.retakeMode === 'online';
+
+      const detailHtml = `
+        <div class="cand-cfg-head"><i class="material-icons">tune</i><span>Exam Configuration</span></div>
+        <div class="cand-cfg-grid">
+          <div class="cand-cfg">
+            <label class="cand-cfg-lbl">Exam Mode ${this.ruleBadge(c, 'examMode')}</label>
+            <select class="form-control cand-cfg-ctl" onchange="CCM.examModeChange(this, '${c.id}')">
+              <option value="in-class" ${eff.examMode === 'in-class' ? 'selected' : ''}>In-Class</option>
+              <option value="online" ${eff.examMode === 'online' ? 'selected' : ''}>Online</option>
+            </select>
+          </div>
+          <div class="cand-cfg">
+            <label class="cand-cfg-lbl">Allow Retake ${this.ruleBadge(c, 'retakeAllowed')}</label>
+            <label class="switch" style="margin-top:4px;">
+              <input type="checkbox" id="dir-retake-${c.id}" ${eff.retakeAllowed ? 'checked' : ''} onchange="CCM.dirRetakeToggle(this,'${c.id}')">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+          <div class="cand-cfg">
+            <label class="cand-cfg-lbl">Retake Mode ${this.ruleBadge(c, 'retakeMode')}</label>
+            <select id="dir-retake-mode-${c.id}" class="form-control cand-cfg-ctl" ${eff.retakeAllowed ? '' : 'disabled'} onchange="CCM.retakeModeChange(this,'${c.id}'); CCM.acDirPayerSync('${c.id}')">
+              <option value="in-class" ${eff.retakeMode === 'in-class' ? 'selected' : ''}>In-Class</option>
+              <option value="online" ${eff.retakeMode === 'online' ? 'selected' : ''}>Online</option>
+            </select>
+          </div>
+          <div class="cand-cfg" id="dir-payer-wrap-${c.id}" style="display:${payerVisible ? 'block' : 'none'};">
+            <label class="cand-cfg-lbl">Who pays for online retake? ${this.ruleBadge(c, 'onlinePayer')}</label>
+            <select id="dir-payer-${c.id}" class="form-control cand-cfg-ctl" onchange="CCM.payerChange('${c.id}', this.value)">
+              <option value="organization" ${eff.onlinePayer === 'organization' ? 'selected' : ''}>Organisation</option>
+              <option value="student" ${eff.onlinePayer === 'student' ? 'selected' : ''}>Candidate</option>
+            </select>
+          </div>
+          <div class="cand-cfg">
+            <label class="cand-cfg-lbl">Voucher</label>
+            <div style="margin-top:4px;">${voucherHtml}</div>
+          </div>
+          <div class="cand-cfg">
+            <label class="cand-cfg-lbl">Accommodation</label>
+            <select class="form-control cand-cfg-ctl" data-note="dir-accom-note-${c.id}" onchange="CCM.accommodationChange(this, '${c.id}')">
+              <option value="NO" ${accomValue === 'NO' ? 'selected' : ''}>No</option>
+              <option value="YES" ${accomValue === 'YES' ? 'selected' : ''}>Yes</option>
+            </select>
+            <textarea id="dir-accom-note-${c.id}" class="form-control" rows="2" placeholder="Explain the accommodation (e.g. extra 30 minutes)…" style="margin-top:8px; display:${c.accommodation.enabled ? 'block' : 'none'};" onchange="CCM.accommodationNote(this,'${c.id}')">${(c.accommodation.note || '').replace(/</g, '&lt;')}</textarea>
+          </div>
+          <div class="cand-cfg">
+            <label class="cand-cfg-lbl">ID Verified</label>
+            <label class="switch" style="margin-top:4px;">
+              <input type="checkbox" class="physical-id-check" data-cand-id="${c.id}" onchange="if(this.checked){CCM.toast('ID Verified','success');}">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+          <div class="cand-cfg">
+            <label class="cand-cfg-lbl">Exam Status / Result</label>
+            <div style="margin-top:6px; display:flex; align-items:center; gap:8px;">${statusBadge} ${examResult}</div>
+          </div>
+        </div>`;
+
       return `
-        <tr>
-          <td><input type="checkbox" class="cand-checkbox" onchange="CCM.updateBulkActions()"></td>
+        <tr class="cand-acc-head" onclick="CCM.toggleCandidateRow(this)" style="cursor:pointer;">
+          <td style="width:40px; text-align:center;"><i class="material-icons cand-acc-chevron">expand_more</i></td>
+          <td style="width:40px;" onclick="event.stopPropagation();"><input type="checkbox" class="cand-checkbox" onchange="CCM.updateBulkActions()"></td>
           <td>
             <div style="display:flex; align-items:center; gap:12px;">
-              <img src="${c.photo || 'https://via.placeholder.com/150'}" style="width:32px; height:32px; border-radius:50%; object-fit:cover;">
+              ${this.candAvatar(c)}
               <div>
                 <div style="font-weight:600; font-size:14px;">${c.name}</div>
                 <div style="font-size:12px; color:var(--text-secondary);">${c.email}</div>
               </div>
             </div>
           </td>
-          <td class="font-mono" style="font-size:13px; color:var(--text-secondary);">${c.rollNo || c.id}</td>
-          <td>${voucherHtml}</td>
-          <td>${statusBadge}</td>
-          <td>${examResult}</td>
-          <td><button class="btn btn-secondary" style="padding:4px 12px; font-size:12px;" onclick="CCM.manageCandidate('${c.id}')">Manage</button></td>
+          <td>
+            <div style="font-weight:500; font-size:13px;">${className}</div>
+            <div style="margin-top:4px;">${statusBadge}</div>
+          </td>
+          <td style="text-align:right;" onclick="event.stopPropagation();">
+            <div style="display:flex; gap:8px; justify-content:flex-end; align-items:center;">
+              ${startExamBtn}
+              <button class="btn btn-secondary" style="padding:4px 12px; font-size:12px;" onclick="CCM.manageCandidate('${c.id}')">Manage</button>
+            </div>
+          </td>
+        </tr>
+        <tr class="cand-acc-detail" style="display:none;">
+          <td colspan="5" style="padding:0;">
+            <div class="cand-acc-panel">${detailHtml}</div>
+          </td>
         </tr>
       `;
     }).join('');
 
     this.updateBulkActions();
+    this.updateCandidateCounts();
+  },
+
+  // Expand/collapse a candidate accordion row (header → detail sibling).
+  toggleCandidateRow(row) {
+    const detail = row.nextElementSibling;
+    if (!detail || !detail.classList.contains('cand-acc-detail')) return;
+    const open = detail.style.display === 'none' || !detail.style.display;
+    detail.style.display = open ? 'table-row' : 'none';
+    row.classList.toggle('cand-acc-open', open);
+  },
+
+  // Persist the online-retake payer override from the directory accordion.
+  payerChange(id, val) {
+    const c = id && this._cand(id);
+    if (c) { c.rules = c.rules || {}; c.rules.onlinePayer = val; }
+    this.toast('Retake payer updated.', 'success');
+  },
+
+  // Directory-scoped retake toggle (own select id to avoid colliding with the
+  // session-detail table's `retake-mode-${id}`). Persists + syncs the cascade.
+  dirRetakeToggle(cb, id) {
+    const c = id && this._cand(id);
+    if (c) { c.rules = c.rules || {}; c.rules.retakeAllowed = !!cb.checked; }
+    const modeSel = document.getElementById('dir-retake-mode-' + id);
+    if (modeSel) modeSel.disabled = !cb.checked;
+    this.acDirPayerSync(id);
+    this.toast(cb.checked ? 'Retake enabled (override).' : 'Retake disabled (override).', cb.checked ? 'success' : 'info');
+  },
+
+  // Show the payer choice only when retake is on AND the retake mode is online.
+  acDirPayerSync(id) {
+    const cb = document.getElementById('dir-retake-' + id);
+    const modeSel = document.getElementById('dir-retake-mode-' + id);
+    const wrap = document.getElementById('dir-payer-wrap-' + id);
+    if (!wrap) return;
+    const on = cb && cb.checked;
+    const online = modeSel && modeSel.value === 'online';
+    wrap.style.display = (on && online) ? 'block' : 'none';
   },
 
   toggleAllCandidates(e) {
@@ -362,6 +853,15 @@ window.CCM = {
   // ==========================================================================
   // SESSION DETAIL (per-class drill-down)
   // ==========================================================================
+  // Candidates shown for a class: prefer real membership (candidate.sessionId),
+  // fall back to the legacy slice-by-count for seed data that predates sessionId.
+  sessionCandidates(session) {
+    if (!session) return [];
+    const owned = this.candidates().filter(c => c.sessionId === session.id);
+    if (owned.length) return owned;
+    return this.candidates().slice(0, session.candidateCount || 4);
+  },
+
   openSessionDetail(id) {
     const session = this.sessions().find(s => s.id === id);
     if (!session) return;
@@ -381,7 +881,7 @@ window.CCM = {
 
     // Count candidates in this class with no voucher yet — drives the bulk
     // "Remind all unassigned" button (and lets us hide it when everyone's set).
-    const sdCands = this.candidates().slice(0, session.candidateCount || 4);
+    const sdCands = this.sessionCandidates(session);
     const unassignedCount = sdCands.filter(c => {
       const v = (c.voucherStatus || '').toLowerCase();
       return v !== 'redeemed' && v !== 'activated' && v !== 'assigned' && v !== 'pending';
@@ -454,7 +954,7 @@ window.CCM = {
   renderSessionDetailCandidates() {
     const session = this.sessions().find(s => s.id === this.currentSessionId);
     if (!session) return;
-    const cands = this.candidates().slice(0, session.candidateCount || 4);
+    const cands = this.sessionCandidates(session);
     const thead = document.getElementById('sd-candidates-thead');
     const tbody = document.getElementById('sd-candidates-tbody');
     if (!thead || !tbody) return;
@@ -486,15 +986,18 @@ window.CCM = {
         if (isRedeemed) {
           vBadge = `<div style="display:flex; align-items:center; gap:8px;">${codeChip}<span class="badge badge-success">Redeemed</span></div>`;
         } else if (isAssigned) {
-          vBadge = `<div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">${codeChip}<span class="badge badge-warning">Assigned</span>`
-            + (gateOpen ? `<button class="btn btn-primary" style="padding:3px 8px; font-size:11px;" onclick="event.stopPropagation(); CCM.redeemVoucher('${c.id}')">Redeem</button>`
+          // Redeem is a link CTA; Replace stays a small secondary button.
+          vBadge = `<div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">${codeChip}<span class="badge badge-warning">Assigned</span>`
+            + (gateOpen ? `<a href="#" class="ccm-redeem-link" onclick="event.stopPropagation(); event.preventDefault(); CCM.redeemVoucher('${c.id}')" style="color:var(--brand-primary); font-weight:600; font-size:12px; text-decoration:none;">Redeem</a>`
                         + `<button class="btn btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="event.stopPropagation(); CCM.replaceVoucher('${c.id}')">Replace</button>` : '')
             + `</div>`;
         } else {
+          // Unassigned + gate open: offer Assign (from pool) and a Redeem link
+          // (candidate-purchased code).
           vBadge = gateOpen
-            ? `<div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">`
-              + `<button class="btn btn-primary" style="padding:3px 8px; font-size:11px;" onclick="event.stopPropagation(); CCM.assignVoucher('${c.id}')">Assign</button>`
-              + `<button class="btn btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="event.stopPropagation(); CCM.redeemVoucher('${c.id}')">Redeem</button>`
+            ? `<div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">`
+              + `<button class="btn btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="event.stopPropagation(); CCM.assignVoucher('${c.id}')">Assign</button>`
+              + `<a href="#" class="ccm-redeem-link" onclick="event.stopPropagation(); event.preventDefault(); CCM.redeemVoucher('${c.id}')" style="color:var(--brand-primary); font-weight:600; font-size:12px; text-decoration:none;">Redeem</a>`
               + `</div>`
             : `<span style="color:var(--status-warning); font-size:12px; font-weight:600;"><i class="material-icons-outlined" style="font-size:14px; vertical-align:middle;">warning</i> not assigned</span>`;
         }
@@ -502,9 +1005,13 @@ window.CCM = {
         const progVal = (session.status === 'draft' || session.status === 'upcoming') ? 0 : (c.learningProgress || 0);
         const progBar = `<div style="display:flex; align-items:center; gap:8px;"><span style="font-size:12px; font-weight:600;">${progVal}%</span><div style="flex:1; height:6px; background:var(--border-light); border-radius:3px; overflow:hidden;"><div style="width:${progVal}%; height:100%; background:var(--brand-primary);"></div></div></div>`;
 
-        const accomValue = (idx === 0) ? 'YES' : 'NO';
+        // Effective (class-default + candidate-override) rules + persisted accommodation.
+        const eff = this.effectiveRules(c);
+        if (!c.accommodation) c.accommodation = { enabled: false, note: '' };
+        const accomValue = c.accommodation.enabled ? 'YES' : 'NO';
+        const accomTitle = c.accommodation.enabled && c.accommodation.note ? ` title="${(c.accommodation.note||'').replace(/"/g,'&quot;')}"` : '';
         const accomHtml = `
-          <select style="padding:6px; border-radius:4px; border:1px solid var(--border-color); font-size:12px; background:var(--bg-color);" onclick="event.stopPropagation();" onchange="CCM.accommodationChange(this, '${c.id}')">
+          <select${accomTitle} style="padding:6px; border-radius:4px; border:1px solid var(--border-color); font-size:12px; background:var(--bg-color);" onclick="event.stopPropagation();" onchange="CCM.accommodationChange(this, '${c.id}')">
             <option value="NO" ${accomValue === 'NO' ? 'selected' : ''}>NO</option>
             <option value="YES" ${accomValue === 'YES' ? 'selected' : ''}>YES</option>
           </select>`;
@@ -533,21 +1040,21 @@ window.CCM = {
           <td style="min-width:100px;">${progBar}</td>
           <td>${accomHtml}</td>
           <td>
-            <select style="padding:4px; border-radius:4px; border:1px solid var(--border-color); font-size:11px; background:var(--bg-color);" onclick="event.stopPropagation();" onchange="CCM.examModeChange(this)">
-              <option value="In-Class" selected>In-Class</option>
-              <option value="Online">Online</option>
+            <select style="padding:4px; border-radius:4px; border:1px solid var(--border-color); font-size:11px; background:var(--bg-color);" onclick="event.stopPropagation();" onchange="CCM.examModeChange(this, '${c.id}')" title="${eff.inheritedFromClass && !(c.rules&&c.rules.examMode) ? 'Inherited from class default' : 'Per-candidate override'}">
+              <option value="in-class" ${eff.examMode === 'in-class' ? 'selected' : ''}>In-Class</option>
+              <option value="online" ${eff.examMode === 'online' ? 'selected' : ''}>Online</option>
             </select>
           </td>
           <td>
             <label class="switch" style="transform:scale(0.85); transform-origin:left center; margin:0;" onclick="event.stopPropagation()">
-              <input type="checkbox" onchange="if(this.checked) { CCM.toast('Retake Enabled', 'success'); document.getElementById('retake-mode-${c.id}').disabled=false; } else { document.getElementById('retake-mode-${c.id}').disabled=true; }">
+              <input type="checkbox" ${eff.retakeAllowed ? 'checked' : ''} onchange="CCM.retakeToggle(this, '${c.id}')">
               <span class="switch-slider"></span>
             </label>
           </td>
           <td>
-            <select id="retake-mode-${c.id}" disabled style="padding:4px; border-radius:4px; border:1px solid var(--border-color); font-size:11px; background:var(--bg-color);" onclick="event.stopPropagation();" onchange="CCM.examModeChange(this)">
-              <option value="In-Class" selected>In-Class</option>
-              <option value="Online">Online</option>
+            <select id="retake-mode-${c.id}" ${eff.retakeAllowed ? '' : 'disabled'} style="padding:4px; border-radius:4px; border:1px solid var(--border-color); font-size:11px; background:var(--bg-color);" onclick="event.stopPropagation();" onchange="CCM.retakeModeChange(this, '${c.id}')">
+              <option value="in-class" ${eff.retakeMode === 'in-class' ? 'selected' : ''}>In-Class</option>
+              <option value="online" ${eff.retakeMode === 'online' ? 'selected' : ''}>Online</option>
             </select>
           </td>
           <td style="text-align:center;">

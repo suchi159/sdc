@@ -1,0 +1,87 @@
+/* ==========================================================================
+ * Proctor (port 3001 / index.html) theming + gap-fillers for the shared
+ * Class & Candidate Management module (CCM).
+ *
+ * Load order in index.html: design_system.css → index.css → shared/
+ * class_candidate_mgmt.css → THIS FILE (last, so it wins).
+ *
+ * CCM markup is authored against generic tokens (--brand-primary,
+ * --surface-color, --status-*) and component classes (.badge-*, .flex-between,
+ * .font-mono, .form-group). The shared CSS supplies GOLD brand defaults (for the
+ * candidate/org accent). The proctor is the BLUE admin accent, so we remap the
+ * CCM tokens onto the proctor's theme-adaptive blue tokens — scoped to .ccm-scope
+ * so the rest of the page is untouched. Component classes the proctor lacks are
+ * defined globally (they reference proctor tokens directly, so no conflict).
+ * ========================================================================== */
+
+/* Token remap — scoped to CCM panels + the add-candidate modal. References the
+   proctor's own tokens (--pri/--sur/--suc…), which are theme-adaptive, so this
+   stays correct in light AND dark mode. */
+.ccm-scope {
+  --brand-primary: var(--pri);
+  --brand-hover: var(--pri-dk, var(--pri));
+  --brand-active: var(--pri-con, rgba(30, 64, 175, 0.12));
+  --surface-color: var(--sur);
+  --bg-color: var(--sur-var, var(--md-bg));
+  --hover-bg: rgba(127, 127, 127, 0.08);
+  --text-primary: var(--on-sur);
+  --text-secondary: var(--on-sur-var);
+  --text-tertiary: var(--out);
+  --border-color: var(--out-var);
+  --border-light: rgba(127, 127, 127, 0.16);
+  --status-success: var(--suc);
+  --status-success-bg: rgba(20, 108, 46, 0.12);
+  --status-warning: var(--wrn);
+  --status-warning-bg: rgba(125, 87, 0, 0.12);
+  --status-error: var(--err);
+  --status-error-bg: rgba(179, 38, 30, 0.10);
+  --status-info: var(--inf, #00639b);
+  --status-info-bg: rgba(0, 99, 155, 0.12);
+  --err-ct: #fff;
+  --wrn-ct: #fff;
+}
+
+/* ---- Badge variants (proctor has no generic .badge color modifiers) ---- */
+.badge-success { background: var(--suc); color: #fff; }
+.badge-warning { background: var(--wrn); color: #fff; }
+.badge-error   { background: var(--err); color: #fff; }
+.badge-info    { background: var(--inf, #00639b); color: #fff; }
+[data-t="dark"] .badge-success { background: rgba(126, 226, 168, 0.16); color: #7ee2a8; }
+[data-t="dark"] .badge-warning { background: rgba(247, 191, 80, 0.18); color: #f7bf50; }
+[data-t="dark"] .badge-error   { background: rgba(255, 138, 128, 0.16); color: #ff8a80; }
+[data-t="dark"] .badge-info    { background: rgba(150, 204, 255, 0.18); color: #96ccff; }
+
+/* ---- Layout / utility helpers used by CCM markup ---- */
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.font-mono { font-family: var(--font-mono, 'JetBrains Mono', monospace); }
+.text-secondary { color: var(--on-sur-var); }
+.mb-4 { margin-bottom: 16px; }
+.mt-4 { margin-top: 16px; }
+
+/* ---- Form field wrapper for the shared Add-Candidate form ---- */
+.ccm-scope .form-group { margin-bottom: 16px; }
+.ccm-scope .form-group > label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--on-sur); }
+.ccm-scope .form-control {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--out-var);
+  border-radius: 8px;
+  background: var(--md-bg, var(--sur));
+  color: var(--on-sur);
+  font-size: 14px;
+  font-family: inherit;
+}
+.ccm-scope .form-control:focus { outline: none; border-color: var(--pri); }
+
+/* ---- .icon-button alias (proctor markup uses .icon-btn) ---- */
+.icon-button {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 8px; border: none;
+  background: transparent; color: var(--on-sur-var); cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.icon-button:hover { background: rgba(127, 127, 127, 0.12); color: var(--on-sur); }
+
+/* ---- .btn-danger (CCM uses it; proctor defines primary/secondary only) ---- */
+.btn-danger { background: var(--err); color: #fff; border: none; }
+.btn-danger:hover { filter: brightness(0.95); }

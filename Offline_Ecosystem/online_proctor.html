@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+
+<html data-t="light" lang="en">
+<head>
+    <script src="offline_mock_api.js"></script>
+    <script src="demo_mode.js"></script>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzAwMCIvPjxnIGZpbGw9IiNmZmYiPjxjaXJjbGUgY3g9IjExIiBjeT0iMTMiIHI9IjQuMyIvPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTAuOCIgcj0iNSIvPjxjaXJjbGUgY3g9IjIxIiBjeT0iMTMiIHI9IjQuMyIvPjxyZWN0IHg9IjguOCIgeT0iMTMiIHdpZHRoPSIxNC40IiBoZWlnaHQ9IjciLz48cmVjdCB4PSI5LjIiIHk9IjE5LjUiIHdpZHRoPSIxMy42IiBoZWlnaHQ9IjUuOCIgcng9IjEuMyIvPjwvZz48ZyBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMC43Ij48bGluZSB4MT0iMTYiIHkxPSIxNC41IiB4Mj0iMTYiIHkyPSIxOSIvPjxsaW5lIHgxPSIxMi40IiB5MT0iMTQuOCIgeDI9IjEyLjQiIHkyPSIxOSIvPjxsaW5lIHgxPSIxOS42IiB5MT0iMTQuOCIgeDI9IjE5LjYiIHkyPSIxOSIvPjwvZz48L3N2Zz4="/>
+<meta content="default-src * data: blob: 'unsafe-inline'; script-src * 'unsafe-inline' ; connect-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src *; style-src * 'unsafe-inline';" http-equiv="Content-Security-Policy"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="SecureProctor AI — AI-Proctored Examination Platform. Monitor exams, manage candidates, review incidents, and track earnings." name="description"/>
+<title>SecureProctor AI — Proctor Dashboard</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="design_system.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="online_proctor.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="app-layout">
+<header class="global-header md-top-app-bar">
+<div class="brand" style="display: flex; align-items: center; gap: 12px;">
+<img alt="SDC Certifications" src="sdc_full_logo.png" style="height: 32px;"/>
+<span style="font-weight: 600; font-size: 16px;">SDC Platform</span>
+</div>
+<div class="header-actions">
+<button class="header-btn" title="Notifications">
+<i class="material-icons">notifications</i>
+</button>
+<button class="header-btn" id="globalThemeToggle" title="Toggle Dark/Light Mode">
+<i class="material-icons">dark_mode</i>
+</button>
+<div class="profile-dropdown-container">
+<button class="profile-trigger" id="profileDropdownBtn" style="display: flex; align-items: center; gap: 12px; background: transparent; border: none; cursor: pointer; text-align: left; padding: 4px; border-radius: 8px;">
+          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+          <div style="display: flex; flex-direction: column;">
+            <span class="name" style="font-size: 14px; font-weight: 600; color: var(--on-sur, var(--text-primary));">Dr. Sarah Jenkins</span>
+            <span class="email" style="font-size: 11px; color: var(--on-sur-var, var(--text-secondary));">s.jenkins@sdc.edu</span>
+          </div>
+          <i class="material-icons" style="color: var(--on-sur-var, var(--text-secondary));">arrow_drop_down</i>
+        </button>
+<div class="dropdown-menu" id="profileDropdown">
+          <div class="dropdown-header">
+            <div class="name">Dr. Sarah Jenkins</div>
+            <div class="email">s.jenkins@sdc.edu</div>
+          </div>
+          <div class="dropdown-label">Switch account</div>
+          <button class="dropdown-item account-switch-item" onclick="v3SwitchAccount(this)" data-name="Michael Chang" data-email="michael.chang@secureproctor.ai" data-avatar="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80">
+            <img class="dd-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80" alt="">
+            <span class="dd-acct"><span class="account-name">Michael Chang</span><span class="account-email">michael.chang@secureproctor.ai</span></span>
+          </button>
+          <button class="dropdown-item account-switch-item" onclick="v3SwitchAccount(this)" data-name="Emily Rodriguez" data-email="emily.rodriguez@secureproctor.ai" data-avatar="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80">
+            <img class="dd-avatar" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80" alt="">
+            <span class="dd-acct"><span class="account-name">Emily Rodriguez</span><span class="account-email">emily.rodriguez@secureproctor.ai</span></span>
+          </button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item" onclick="document.getElementById('profileDropdown').classList.remove('show');">
+            <i class="material-icons">person_add</i>
+            Add new account
+          </button>
+          <button class="dropdown-item" style="color: #ef4444;" onclick="handleLogout()">
+            <i class="material-icons">logout</i>
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+<!-- ==================== LOGIN VIEW ==================== -->
+<div class="view-panel active" id="auth-view">
+<div class="auth-card-wrapper">
+<div class="auth-bg-shapes">
+<div class="shape shape-1"></div>
+<div class="shape shape-2"></div>
+</div>
+<!-- Login Card -->
+<div class="auth-card" id="login-card">
+<div class="auth-brand">
+<div class="auth-badge">SP</div>
+<div>
+<div class="auth-brand-txt">SecureProctor <span class="ai-pill">AI</span></div>
+<div class="auth-brand-sub">Proctor Dashboard</div>
+</div>
+</div>
+<h1 class="auth-title">Welcome Back</h1>
+<p class="auth-subtitle">Sign in to access your proctor dashboard.</p>
+<form id="login-form" onsubmit="handleLogin(event)">
+<div class="inp-group">
+<label class="inp-label" for="login-email">Work Email</label>
+<div class="inp-wrapper">
+<i class="material-icons inp-icon">email_outline</i>
+<input class="inp" id="login-email" placeholder="proctor@university.edu" required="" type="email" value="sarah.jenkins@secureproctor.ai"/>
+</div>
+</div>
+<div class="inp-group">
+<label class="inp-label" for="login-password">Password</label>
+<div class="inp-wrapper">
+<i class="material-icons inp-icon">lock_outline</i>
+<input class="inp" id="login-password" placeholder="••••••••••••" required="" type="password" value="training123"/>
+</div>
+</div>
+<div class="auth-options">
+<label class="checkbox-label"><input checked="" id="input-2bc4ad45" type="checkbox"/> Remember me</label>
+<a class="auth-link" href="#" onclick="showForgotPassword(event)">Forgot password?</a>
+</div>
+<div class="inp-err" id="login-error" style="display:none; margin-bottom:12px;">
+<i class="material-icons" style="font-size:14px;">error</i>
+<span id="login-error-text"></span>
+</div>
+<button class="mdbtn btn-filled auth-btn" id="login-submit-btn" type="submit">
+<span>Sign In</span>
+<i class="material-icons">arrow_forward</i>
+</button>
+</form>
+<p class="auth-signup" style="text-align:center; margin-top:20px; font-size:14px; color:var(--on-sur-var);">
+New to SecureProctor? <a class="auth-link" href="/proctor_auth.html" style="font-weight:600;">Sign up as a proctor</a>
+</p>
+</div>
+<!-- Forgot Password Card -->
+<div class="auth-card hidden" id="forgot-card">
+<button class="icon-btn back-btn" onclick="showLoginCard()"><i class="material-icons">arrow_back</i></button>
+<div class="auth-brand">
+<div class="auth-badge">SP</div>
+<div>
+<div class="auth-brand-txt">SecureProctor <span class="ai-pill">AI</span></div>
+<div class="auth-brand-sub">Password Recovery</div>
+</div>
+</div>
+<h1 class="auth-title">Reset Password</h1>
+<p class="auth-subtitle">Enter your email and we'll send a verification code.</p>
+<form onsubmit="handleForgotPassword(event)">
+<div class="inp-group">
+<label class="inp-label" for="forgot-email">Work Email</label>
+<div class="inp-wrapper">
+<i class="material-icons inp-icon">email_outline</i>
+<input class="inp" id="forgot-email" placeholder="proctor@university.edu" required="" type="email"/>
+</div>
+</div>
+<button class="mdbtn btn-filled auth-btn" type="submit">
+<span>Send Reset Code</span>
+<i class="material-icons">send</i>
+</button>
+</form>
+</div>
+</div>
+</div>
+<!-- ==================== TRAINING GATE VIEW ==================== -->
+<div class="view-panel" id="training-gate-view">
+<div class="training-gate-container">
+<div class="training-gate-card">
+<div class="training-gate-icon">
+<i class="material-icons">school</i>
+</div>
+<h1 class="training-gate-title">Redirecting to Training...</h1>
+<p class="training-gate-desc">You must complete the Proctor Training Center before accessing live monitoring tools. If you are not redirected automatically, please click the button below.</p>
+<button class="btn-primary" onclick="window.location.href='/online_training.html'">
+<i class="material-icons">school</i>
+<span>Go to Training Center</span>
+</button>
+</div>
+</div>
+</div>
+<!-- ==================== ACCOUNT BLOCKED VIEW ==================== -->
+<div class="view-panel" id="blocked-view">
+<div class="blocked-container">
+<div class="blocked-card">
+<div class="blocked-icon">
+<i class="material-icons">block</i>
+</div>
+<h1 class="blocked-title">Account Deactivated</h1>
+<p class="blocked-desc">Your account is currently <strong id="blocked-status-text">deactivated</strong>. You cannot access the proctor dashboard at this time.</p>
+<p class="blocked-hint">If you believe this is an error, please contact your organization administrator.</p>
+<button class="btn-secondary" onclick="window.location.href='mailto:admin@secureproctor.ai'">
+<i class="material-icons">email</i>
+<span>Contact Admin</span>
+</button>
+<button class="btn-secondary" onclick="handleLogout()" style="margin-top:8px;">
+<i class="material-icons">logout</i>
+<span>Sign Out</span>
+</button>
+</div>
+</div>
+</div>
+<!-- ==================== MAIN APP LAYOUT ==================== -->
+<div class="view-panel" id="main-view">
+<div class="app-layout">
+<!-- ==================== LEFT SIDEBAR ==================== -->
+<div class="app-body">
+<aside class="sidebar md-navigation-drawer" id="app-sidebar">
+<nav class="sidebar-nav">
+<button class="nav-item active" data-view="dashboard" id="nav-dashboard">
+<i class="material-icons">dashboard</i>
+<span>Dashboard</span>
+</button>
+<button class="nav-item" data-view="monitoring" id="nav-monitoring">
+<i class="material-icons">videocam</i>
+<span>Exam Monitoring</span>
+</button>
+<button class="nav-item" data-view="sessions" id="nav-sessions">
+<i class="material-icons">event</i>
+<span>Classes</span>
+</button>
+<button class="nav-item" data-view="candidates" id="nav-candidates">
+<i class="material-icons">people</i>
+<span>Candidates</span>
+</button>
+<button class="nav-item" data-view="incidents" id="nav-incidents">
+<i class="material-icons">gavel</i>
+<span>Incident Hub</span>
+<span class="nav-badge" id="incident-badge" style="display:none;">0</span>
+</button>
+<button class="nav-item" data-view="reports" id="nav-reports">
+<i class="material-icons">bar_chart</i>
+<span>Reports &amp; Analytics</span>
+</button>
+<button class="nav-item" data-view="earnings" id="nav-earnings">
+<i class="material-icons">account_balance_wallet</i>
+<span>Earnings &amp; Payments</span>
+</button>
+<button class="nav-item" data-view="settings" id="nav-settings">
+<i class="material-icons">settings</i>
+<span>Settings</span>
+</button>
+</nav>
+<!-- Sidebar Footer: portal switcher (Organization ⇄ Proctor) + sign out -->
+<div class="sidebar-portalbar" style="margin-top:auto; padding:16px; border-top:1px solid var(--out-var); display:flex; flex-direction:column; gap:12px;">
+<div class="portal-switch" aria-label="Switch portal">
+<a class="portal-switch-opt" href="admin_portal.html">Organization</a>
+<a class="portal-switch-opt active" href="online_proctor.html" aria-current="page">Proctor</a>
+</div>
+<button class="action-btn" title="Sign out" onclick="handleLogout()" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%;"><i class="material-icons">logout</i> <span style="font-size:13px;">Sign Out</span></button>
+</div>
+</aside>
+
+<!-- ==================== VIEW PANELS CONTAINER ==================== -->
+<div class="view-container">
+<!-- ==================== DASHBOARD PANEL ==================== -->
+<div class="panel-section active" id="dashboard-panel">
+<div class="view-header">
+<div>
+<h1 class="view-title">Dashboard</h1>
+<p class="view-subtitle">Overview of your proctoring activity and key metrics.</p>
+</div>
+<button class="btn-primary" onclick="navigateTo('monitoring')">
+<i class="material-icons">videocam</i>
+<span>Join Monitoring</span>
+</button>
+</div>
+<!-- KPI Stat Cards -->
+<div class="kpi-grid" id="dashboard-kpi-grid">
+<!-- Injected by JS -->
+</div>
+<!-- Dashboard Widgets Row -->
+<div class="dash-widgets-row">
+<!-- Active Sessions Widget -->
+<div class="dash-widget" id="dash-active-sessions">
+<div class="dash-widget-header">
+<h3><i class="material-icons">sensors</i> Active Classes</h3>
+<button class="btn-secondary" onclick="navigateTo('monitoring')">View all</button>
+</div>
+<div class="dash-widget-body" id="dash-active-sessions-body">
+<!-- Injected by JS -->
+</div>
+</div>
+<!-- Upcoming Classes Widget -->
+<div class="dash-widget" id="dash-upcoming-sessions">
+<div class="dash-widget-header">
+<h3><i class="material-icons">event</i> Upcoming Classes</h3>
+<button class="btn-secondary" onclick="navigateTo('sessions')">View all</button>
+</div>
+<div class="dash-widget-body" id="dash-upcoming-sessions-body">
+<!-- Injected by JS -->
+</div>
+</div>
+</div>
+<!-- Second Row -->
+<div class="dash-widgets-row">
+<!-- Pending Incidents Widget -->
+<div class="dash-widget" id="dash-pending-incidents">
+<div class="dash-widget-header">
+<h3><i class="material-icons">warning_amber</i> Pending Incidents</h3>
+<button class="btn-secondary" onclick="navigateTo('incidents')">Review all</button>
+</div>
+<div class="dash-widget-body" id="dash-pending-incidents-body">
+<!-- Injected by JS -->
+</div>
+</div>
+<!-- Voucher Summary Widget -->
+<div class="dash-widget" id="dash-voucher-summary">
+<div class="dash-widget-header">
+<h3><i class="material-icons">confirmation_number</i> Voucher Summary</h3>
+</div>
+<div class="dash-widget-body" id="dash-voucher-summary-body">
+<!-- Injected by JS -->
+</div>
+</div>
+</div>
+</div>
+<!-- ==================== EXAM MONITORING PANEL ==================== -->
+<div class="panel-section" id="monitoring-panel">
+<div class="view-header">
+<div>
+<h1 class="view-title">Exam Monitoring</h1>
+<p class="view-subtitle" id="monitoring-subtitle">Live monitoring of active exam classes.</p>
+</div>
+</div>
+<!-- Session Selector -->
+<div class="monitoring-session-bar" id="monitoring-session-bar">
+<!-- Injected by JS -->
+</div>
+<!-- Candidate Monitoring Table -->
+<div class="monitoring-layout">
+<div class="monitoring-table-container">
+<div class="table-controls">
+<div class="table-search">
+<i class="material-icons">search</i>
+<input aria-label="Search candidates..." id="monitor-search" oninput="filterMonitorCandidates()" placeholder="Search candidates..." type="text"/>
+</div>
+<div class="chip-row" id="monitor-risk-filters">
+<button class="chip selected" data-filter="all" onclick="setMonitorFilter('all')">All</button>
+<button class="chip" data-filter="red" onclick="setMonitorFilter('red')">
+<span class="risk-dot risk-red"></span> High Risk
+                  </button>
+<button class="chip" data-filter="amber" onclick="setMonitorFilter('amber')">
+<span class="risk-dot risk-amber"></span> Medium
+                  </button>
+<button class="chip" data-filter="green" onclick="setMonitorFilter('green')">
+<span class="risk-dot risk-green"></span> Clear
+                  </button>
+</div>
+</div>
+<div>
+<table id="monitor-table">
+<thead>
+<tr>
+<th>Candidate</th>
+<th>Roll No</th>
+<th>Progress</th>
+<th>Time Left</th>
+<th>Warnings</th>
+<th>AI Risk</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="monitor-table-body"><tr style="animation: fadeSlideUp 0.4s ease forwards; opacity: 0; animation-delay: 0s;"><td><div class="skeleton-row" style="border:none; padding:0;"><div class="skeleton skeleton-avatar"></div><div style="flex:1"><div class="skeleton skeleton-text short" style="margin:0;"></div></div></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td></tr><tr style="animation: fadeSlideUp 0.4s ease forwards; opacity: 0; animation-delay: 0.05s;"><td><div class="skeleton-row" style="border:none; padding:0;"><div class="skeleton skeleton-avatar"></div><div style="flex:1"><div class="skeleton skeleton-text short" style="margin:0;"></div></div></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td></tr><tr style="animation: fadeSlideUp 0.4s ease forwards; opacity: 0; animation-delay: 0.1s;"><td><div class="skeleton-row" style="border:none; padding:0;"><div class="skeleton skeleton-avatar"></div><div style="flex:1"><div class="skeleton skeleton-text short" style="margin:0;"></div></div></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td></tr><tr style="animation: fadeSlideUp 0.4s ease forwards; opacity: 0; animation-delay: 0.15000000000000002s;"><td><div class="skeleton-row" style="border:none; padding:0;"><div class="skeleton skeleton-avatar"></div><div style="flex:1"><div class="skeleton skeleton-text short" style="margin:0;"></div></div></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td></tr><tr style="animation: fadeSlideUp 0.4s ease forwards; opacity: 0; animation-delay: 0.2s;"><td><div class="skeleton-row" style="border:none; padding:0;"><div class="skeleton skeleton-avatar"></div><div style="flex:1"><div class="skeleton skeleton-text short" style="margin:0;"></div></div></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td></tr><tr style="animation: fadeSlideUp 0.4s ease forwards; opacity: 0; animation-delay: 0.25s;"><td><div class="skeleton-row" style="border:none; padding:0;"><div class="skeleton skeleton-avatar"></div><div style="flex:1"><div class="skeleton skeleton-text short" style="margin:0;"></div></div></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td><td><div class="skeleton skeleton-text"></div></td></tr></tbody>
+</table>
+</div>
+</div>
+<!-- AI Alert Side Panel -->
+<div class="ai-alert-panel" id="ai-alert-panel">
+<div class="ai-alert-header">
+<h3><i class="material-icons">smart_toy</i> AI Alerts</h3>
+<span class="ai-alert-count" id="ai-alert-count">0</span>
+</div>
+<div class="ai-alert-feed" id="ai-alert-feed"><div style="padding:20px;text-align:center;color:var(--on-sur-var);"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text short"></div></div></div>
+</div>
+</div>
+</div>
+<!-- ==================== SESSIONS PANEL ==================== -->
+<div class="panel-section" id="sessions-panel">
+<div class="view-header">
+<div>
+<h1 class="view-title">Classes</h1>
+<p class="view-subtitle">Manage your classes.</p>
+</div>
+<button class="btn-primary" onclick="showCreateSessionModal()">
+<i class="material-icons">add</i>
+<span>Add Class</span>
+</button>
+</div>
+<div class="chip-row" id="session-status-filters" style="margin-bottom:20px;">
+<button class="chip selected" data-filter="all" onclick="setSessionFilter('all')">All</button>
+<button class="chip" data-filter="live" onclick="setSessionFilter('live')">
+<span class="status-dot dot-live"></span> Live
+            </button>
+<button class="chip" data-filter="upcoming" onclick="setSessionFilter('upcoming')">
+<span class="status-dot dot-upcoming"></span> Upcoming
+            </button>
+<button class="chip" data-filter="draft" onclick="setSessionFilter('draft')">
+<span class="status-dot dot-draft"></span> Draft
+            </button>
+<button class="chip" data-filter="completed" onclick="setSessionFilter('completed')">
+<span class="status-dot dot-completed"></span> Completed
+            </button>
+</div>
+<div class="sessions-grid" id="sessions-grid">
+<!-- Injected by JS -->
+</div>
+</div>
+<!-- ==================== SESSION DETAILS PANEL ==================== -->
+<div class="panel-section" id="session-details-panel">
+<div class="view-header">
+<div>
+<button class="btn-secondary" onclick="navigateTo('sessions')" style="padding:0; margin-bottom:8px; display:flex; align-items:center; gap:4px; color:var(--on-sur-var);">
+<i class="material-icons" style="font-size:16px;">arrow_back</i> Back to Classes
+              </button>
+<h1 class="view-title" id="sd-title">Class Details</h1>
+<p class="view-subtitle" id="sd-subtitle">...</p>
+</div>
+<div style="display:flex; gap:12px;">
+<button class="btn-secondary" id="sd-edit-btn" onclick="showEditSessionModal(STATE.currentSessionId)">
+<i class="material-icons">edit</i> Edit
+              </button>
+<button class="btn-primary" id="sd-action-btn" onclick="toggleSessionState()">
+<i class="material-icons">play_arrow</i> Start Exam
+              </button>
+</div>
+</div>
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:16px;">
+<div style="display:flex; gap:12px;">
+<button class="btn-secondary" onclick="bulkMessageCandidates()"><i class="material-icons">chat</i> Message All</button>
+<button class="btn-secondary" onclick="exportCandidateList()"><i class="material-icons">download</i> Export List</button>
+<button class="btn-secondary" onclick="allocateVouchers()"><i class="material-icons">local_activity</i> Assign Vouchers</button>
+<button class="btn-secondary" onclick="remindAllUnassigned()"><i class="material-icons">notifications_active</i> Remind Unassigned</button>
+<button class="btn-secondary" onclick="showAddCandidateModal(STATE.currentSessionId)"><i class="material-icons">person_add</i> Add Candidates</button>
+</div>
+<div class="table-search">
+<i class="material-icons">search</i>
+<input aria-label="Search candidates..." id="sd-search" oninput="renderSessionCandidates()" placeholder="Search candidates..." type="text"/>
+</div>
+</div>
+<table class="data-table">
+<thead>
+<tr>
+<th style="width:40px;"><input aria-label="input field" id="sd-select-all" onclick="toggleSelectAllSD()" type="checkbox"/></th>
+<th>Candidate</th>
+<th>Roll No</th>
+<th>Voucher Code</th>
+<th>Status</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="sd-candidates-tbody">
+<!-- Injected by JS -->
+</tbody>
+</table>
+</div>
+</div>
+<!-- ==================== CANDIDATES PANEL ==================== -->
+<div class="panel-section" id="candidates-panel">
+<div class="view-header">
+<div>
+<h1 class="view-title">Candidates</h1>
+<p class="view-subtitle">View and manage all enrolled candidates.</p>
+</div>
+<button class="btn-primary" onclick="showCreateCandidateModal('')">
+<i class="material-icons">person_add</i>
+<span>Add Candidate</span>
+</button>
+</div>
+<div class="table-controls" style="margin-bottom:20px;">
+<div class="table-search">
+<i class="material-icons">search</i>
+<input aria-label="Search by name, email, or roll no..." id="candidates-search" oninput="filterCandidates()" placeholder="Search by name, email, or roll no..." type="text"/>
+</div>
+<div class="chip-row" id="candidates-status-filters">
+<button class="chip selected" data-filter="all" onclick="setCandidateFilter('all')">All</button>
+<button class="chip" data-filter="in_progress" onclick="setCandidateFilter('in_progress')">In Progress</button>
+<button class="chip" data-filter="exam_scheduled" onclick="setCandidateFilter('exam_scheduled')">Scheduled</button>
+<button class="chip" data-filter="completed" onclick="setCandidateFilter('completed')">Completed</button>
+<button class="chip" data-filter="enrolled" onclick="setCandidateFilter('enrolled')">Enrolled</button>
+</div>
+</div>
+<table class="data-table">
+<thead>
+<tr>
+<th>Candidate</th>
+<th>Roll No</th>
+<th>Learning Material</th>
+<th>Class</th>
+<th>Status</th>
+<th>Voucher</th>
+<th>Warnings</th>
+</tr>
+</thead>
+<tbody id="candidates-table-body">
+<!-- Injected by JS -->
+</tbody>
+</table>
+</div>
+
+<!-- ==================== INCIDENT HUB PANEL ==================== -->
+<div class="panel-section" id="incidents-panel">
+<div class="view-header">
+<div>
+<h1 class="view-title">Incident Hub</h1>
+<p class="view-subtitle">Review AI flags, manual reports, retake requests, and malpractice cases.</p>
+</div>
+</div>
+<div class="tabs-container" id="incident-tabs">
+<button class="tab-btn active" data-tab="aiflags" onclick="setIncidentTab('aiflags')">
+<i class="material-icons">smart_toy</i>
+<span>AI Flags</span>
+<span class="tab-count" id="tab-count-aiflags">0</span>
+</button>
+<button class="tab-btn" data-tab="flagged" onclick="setIncidentTab('flagged')">
+<i class="material-icons">flag</i>
+<span>Flagged Cases</span>
+<span class="tab-count" id="tab-count-flagged">0</span>
+</button>
+<button class="tab-btn" data-tab="retakes" onclick="setIncidentTab('retakes')">
+<i class="material-icons">replay</i>
+<span>Retake Requests</span>
+<span class="tab-count" id="tab-count-retakes">0</span>
+</button>
+<button class="tab-btn" data-tab="malpractice" onclick="setIncidentTab('malpractice')">
+<i class="material-icons">report</i>
+<span>Malpractice</span>
+<span class="tab-count" id="tab-count-malpractice">0</span>
+</button>
+</div>
+<div class="incident-content" id="incident-content">
+<!-- Injected by JS -->
+</div>
+</div>
+<!-- ==================== REPORTS & ANALYTICS PANEL ==================== -->
+<div class="panel-section" id="reports-panel">
+<div class="view-header">
+<div>
+<h1 class="view-title">Reports &amp; Analytics</h1>
+<p class="view-subtitle">Performance metrics, AI analysis, and session reports.</p>
+</div>
+</div>
+<!-- Reports KPI -->
+<div class="kpi-grid" id="reports-kpi-grid">
+<!-- Injected by JS -->
+</div>
+<div class="dash-widgets-row">
+<div class="dash-widget">
+<div class="dash-widget-header">
+<h3><i class="material-icons">smart_toy</i> AI Flag Accuracy</h3>
+</div>
+<div class="dash-widget-body" id="reports-ai-stats">
+<!-- Injected by JS -->
+</div>
+</div>
+<div class="dash-widget">
+<div class="dash-widget-header">
+<h3><i class="material-icons">replay</i> Retake Summary</h3>
+</div>
+<div class="dash-widget-body" id="reports-retake-stats">
+<!-- Injected by JS -->
+</div>
+</div>
+</div>
+<div class="dash-widget" style="margin-top:20px;">
+<div class="dash-widget-header">
+<h3><i class="material-icons">list</i> Class Breakdown</h3>
+</div>
+<div class="dash-widget-body">
+<table class="data-table">
+<thead>
+<tr>
+<th>Class</th>
+<th>Status</th>
+<th>Date</th>
+<th>Candidates</th>
+<th>Vouchers Used</th>
+<th>Incidents</th>
+</tr>
+</thead>
+<tbody id="reports-session-breakdown">
+<!-- Injected by JS -->
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- ==================== EARNINGS & PAYMENTS PANEL ==================== -->
+<div class="panel-section" id="earnings-panel">
+<div class="view-header">
+<div>
+<h1 class="view-title">Earnings &amp; Payments</h1>
+<p class="view-subtitle">Track your session earnings and payout history.</p>
+</div>
+</div>
+<!-- Earnings KPI -->
+<div class="kpi-grid" id="earnings-kpi-grid">
+<!-- Injected by JS -->
+</div>
+<div class="dash-widgets-row">
+<div class="dash-widget" style="flex:2;">
+<div class="dash-widget-header">
+<h3><i class="material-icons">receipt_long</i> Session Earnings</h3>
+</div>
+<div class="dash-widget-body">
+<table class="data-table">
+<thead>
+<tr>
+<th>Session</th>
+<th>Date</th>
+<th>Duration</th>
+<th>Rate</th>
+<th>Amount</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody id="earnings-sessions-body">
+<!-- Injected by JS -->
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="dash-widget" style="flex:1;">
+<div class="dash-widget-header">
+<h3><i class="material-icons">payments</i> Payout History</h3>
+</div>
+<div class="dash-widget-body" id="earnings-payouts-body">
+<!-- Injected by JS -->
+</div>
+</div>
+</div>
+
+<!-- ==================== SETTINGS PANEL ==================== -->
+<div class="panel-section" id="settings-panel">
+<div class="view-header">
+<div>
+<h1 class="view-title">Settings</h1>
+<p class="view-subtitle">Manage your profile, security, and notification preferences.</p>
+</div>
+</div>
+<div class="settings-container">
+<!-- Profile Section -->
+<div class="settings-section">
+<h3>Profile</h3>
+<div class="settings-card">
+<div class="profile-avatar-setup">
+<div class="avatar-preview-container">
+<img alt="Avatar" id="settings-avatar" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&amp;auto=format&amp;fit=crop&amp;q=80"/>
+</div>
+<div class="avatar-info">
+<h3 id="settings-name">Dr. Sarah Jenkins</h3>
+<p id="settings-email">sarah.jenkins@secureproctor.ai</p>
+<p id="settings-org" style="font-size:12px; color:var(--on-sur-var);">SecureProctor AI</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Proctor Code Section (in-class certification) -->
+<div class="settings-section" id="settings-pcode-section">
+<h3>SDC Proctor ID</h3>
+<div class="settings-card">
+<div class="preference-item">
+<div class="pref-desc">
+<h4>SDC Proctor ID</h4>
+<p id="settings-pcode-number" style="font-family:var(--font-mono);">—</p>
+</div>
+<div class="bdg" id="settings-pcode-badge" style="background:rgba(20,108,46,0.1); color:var(--suc); border:1px solid rgba(20,108,46,0.2);">
+<i class="material-icons" style="font-size:14px;">verified</i> <span id="settings-pcode-status">Active</span>
+</div>
+</div>
+<div class="preference-item" style="margin-top:16px;">
+<div class="pref-desc">
+<h4>Certificate Course</h4>
+<p id="settings-pcode-course">—</p>
+</div>
+</div>
+<div class="preference-item" style="margin-top:16px;">
+<div class="pref-desc">
+<h4>Validity</h4>
+<p><span id="settings-pcode-issued">—</span> → <strong id="settings-pcode-expiry">—</strong> <span id="settings-pcode-daysleft" style="color:var(--on-sur-var);"></span></p>
+</div>
+<div style="display:flex; gap:8px;">
+<button class="btn-secondary" onclick="renewProctorCode()">
+<i class="material-icons">autorenew</i>
+<span>Renew Code</span>
+</button>
+<button class="btn-secondary" onclick="deactivateProctorCode()" style="color:var(--err); border-color:var(--err);">
+<i class="material-icons">block</i>
+<span>Deactivate</span>
+</button>
+</div>
+</div>
+<p style="font-size:12px; color:var(--on-sur-var); margin-top:8px;">This code certifies you to proctor the selected certificate course for in-class examinations. Keep it safe.</p>
+</div>
+</div>
+<!-- Proctor License Section (F4) -->
+<div class="settings-section">
+<h3>Proctor License</h3>
+<div class="settings-card">
+<div class="preference-item">
+<div class="pref-desc">
+<h4>License Number</h4>
+<p id="settings-license-number" style="font-family:var(--font-mono);">—</p>
+</div>
+<div class="bdg" id="settings-license-badge" style="background:rgba(20,108,46,0.1); color:var(--suc); border:1px solid rgba(20,108,46,0.2);">
+<i class="material-icons" style="font-size:14px;">verified</i> <span id="settings-license-status">Active</span>
+</div>
+</div>
+<div class="preference-item" style="margin-top:16px;">
+<div class="pref-desc">
+<h4>Validity</h4>
+<p><span id="settings-license-issued">—</span> → <strong id="settings-license-expiry">—</strong> <span id="settings-license-daysleft" style="color:var(--on-sur-var);"></span></p>
+</div>
+<button class="btn-secondary" onclick="goToLicenseRenewal()">
+<i class="material-icons">autorenew</i>
+<span>Renew License</span>
+</button>
+</div>
+<p style="font-size:12px; color:var(--on-sur-var); margin-top:8px;">Renewal requires watching the training video, answering 12 FAQs and agreeing to the terms &amp; conditions.</p>
+</div>
+</div>
+<!-- Delegated Admin Rights Section (F7) -->
+<div class="settings-section">
+<h3>Delegated Admin Rights</h3>
+<div class="settings-card">
+<p style="font-size:12px; color:var(--on-sur-var); margin:0 0 12px 0;">Granted by <strong id="settings-rights-grantedby">your organization admin</strong>. These are read-only here and managed by the organization admin.</p>
+<div id="settings-permissions-list"></div>
+</div>
+</div>
+<!-- Security Section -->
+<div class="settings-section">
+<h3>Security</h3>
+<div class="settings-card">
+<div class="preference-item">
+<div class="pref-desc">
+<h4>Change Password</h4>
+<p>Update your account password.</p>
+</div>
+<button class="btn-secondary" onclick="showChangePasswordModal()">
+<i class="material-icons">lock</i>
+<span>Change</span>
+</button>
+</div>
+<div class="preference-item" style="margin-top:16px;">
+<div class="pref-desc">
+<h4>Two-Factor Authentication</h4>
+<p>Add an extra layer of security to your account.</p>
+</div>
+<label class="switch">
+<input id="settings-2fa-toggle" onchange="toggle2FA()" type="checkbox"/>
+<span class="switch-slider"></span>
+</label>
+</div>
+</div>
+</div>
+<!-- Notifications Section -->
+<div class="settings-section">
+<h3>Notifications</h3>
+<div class="settings-card">
+<div class="preference-item">
+<div class="pref-desc"><h4>New Incidents</h4><p>Get notified when new incidents are raised.</p></div>
+<label class="switch"><input checked="" id="notif-incident" onchange="updateNotifPref('newIncident', this.checked)" type="checkbox"/><span class="switch-slider"></span></label>
+</div>
+<div class="preference-item" style="margin-top:12px;">
+<div class="pref-desc"><h4>Retake Requests</h4><p>Alerts when candidates request exam retakes.</p></div>
+<label class="switch"><input checked="" id="notif-retake" onchange="updateNotifPref('retakeRequest', this.checked)" type="checkbox"/><span class="switch-slider"></span></label>
+</div>
+<div class="preference-item" style="margin-top:12px;">
+<div class="pref-desc"><h4>Voucher Updates</h4><p>Notifications about voucher assignments and usage.</p></div>
+<label class="switch"><input checked="" id="notif-voucher" onchange="updateNotifPref('voucherUpdate', this.checked)" type="checkbox"/><span class="switch-slider"></span></label>
+</div>
+<div class="preference-item" style="margin-top:12px;">
+<div class="pref-desc"><h4>Exam Starting</h4><p>Alert when a scheduled exam begins.</p></div>
+<label class="switch"><input checked="" id="notif-exam" onchange="updateNotifPref('examStarting', this.checked)" type="checkbox"/><span class="switch-slider"></span></label>
+</div>
+<div class="preference-item" style="margin-top:12px;">
+<div class="pref-desc"><h4>AI Flag Alerts</h4><p>Real-time AI detection alerts during exams.</p></div>
+<label class="switch"><input checked="" id="notif-ai" onchange="updateNotifPref('aiFlag', this.checked)" type="checkbox"/><span class="switch-slider"></span></label>
+</div>
+</div>
+</div>
+<!-- Appearance Section -->
+<div class="settings-section">
+<h3>Appearance</h3>
+<div class="settings-card">
+<div class="preference-item">
+<div class="pref-desc">
+<h4>Dark Mode</h4>
+<p>Toggle between light and dark theme.</p>
+</div>
+<label class="switch">
+<input id="settings-theme-toggle" onchange="toggleTheme()" type="checkbox"/>
+<span class="switch-slider"></span>
+</label>
+</div>
+</div>
+</div>
+<!-- Payment Method -->
+<div class="settings-section">
+<h3>Payment Method</h3>
+<div class="settings-card">
+<div class="preference-item">
+<div class="pref-desc">
+<h4 id="settings-bank-name">Chase Bank</h4>
+<p>Account ending in <strong id="settings-account-ending">****4829</strong></p>
+</div>
+<div class="bdg" style="background:rgba(20,108,46,0.1); color:var(--suc); border:1px solid rgba(20,108,46,0.2);">
+<i class="material-icons" style="font-size:14px;">verified</i> Verified
+                  </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><!-- /.app-layout -->
+</div><!-- /#main-view -->
+
+<!-- ==================== TOAST CONTAINER ==================== -->
+<div class="toast-container" id="toast-container"></div>
+<!-- ==================== MODAL OVERLAY ==================== -->
+<div class="modal-overlay hidden" id="modal-overlay" onclick="closeModal()">
+<div class="modal-card" id="modal-card" onclick="event.stopPropagation()">
+<div class="modal-header" id="modal-header"></div>
+<div class="modal-body" id="modal-body"></div>
+<div class="modal-footer" id="modal-footer"></div>
+</div>
+</div>
+<script src="online_proctor.js"></script>
+<script src="global_nav.js"></script>
+</div>
+</div>
+</body>
+</html>

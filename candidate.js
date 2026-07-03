@@ -11,13 +11,8 @@ let CANDIDATE_STATE = {
   learningProgress: 0,
   theme: "light",
   flowMode: "candidate",
-  notes: [
-    {
-      id: 1,
-      topic: "Domain 2",
-      text: "The temperature danger zone for food is between 41°F and 135°F. Remember 4-1-1-3-5.",
-    },
-  ],
+  // Day zero: a freshly-registered candidate has taken no notes yet.
+  notes: [],
 };
 
 // ==========================================================================
@@ -33,12 +28,18 @@ function initTimeTracking() {
 
   function updateDisplay() {
     const timeDisplay = document.getElementById('time-spent-display');
+    const lmTimeDisplay = document.getElementById('lm-time-display');
+    const seconds = timeData[today];
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    const timeString = `${hours}h ${minutes}m ${secs}s`;
+
     if (timeDisplay) {
-      const seconds = timeData[today];
-      const hours = Math.floor(seconds / 3600);
-      const minutes = Math.floor((seconds % 3600) / 60);
-      const secs = seconds % 60;
-      timeDisplay.textContent = `Time spent today: ${hours}h ${minutes}m ${secs}s`;
+      timeDisplay.textContent = `Time spent today: ${timeString}`;
+    }
+    if (lmTimeDisplay) {
+      lmTimeDisplay.textContent = `${hours}h ${minutes}m`;
     }
   }
 
@@ -59,37 +60,66 @@ function initTimeTracking() {
 // INIT & KEYBOARD ACCESSIBILITY
 // ==========================================================================
 window.addEventListener("DOMContentLoaded", () => {
-  const themeToggle = document.querySelector(".theme-toggle");
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('bypass') === 'true') {
+    const mainHeader = document.getElementById("main-header");
+    if (mainHeader) mainHeader.classList.remove("hidden");
+    document.getElementById("main-nav").classList.remove("hidden");
+    navigateTo(urlParams.get('view') === 'learning' ? 'cand-learn' : 'cand-home');
+  }
+
+  // Email "I Agree" link: confirm the dual-email association and land on profile.
+  if (urlParams.get('action') === 'approve-emails') {
+    const p = loadCandProfile();
+    p.secondaryStatus = 'active';
+    saveCandProfile(p);
+    if (typeof spLogEmail === 'function') spLogEmail('Dual Email Association — Confirmed');
+    const mh = document.getElementById("main-header"); if (mh) mh.classList.remove("hidden");
+    const mn = document.getElementById("main-nav"); if (mn) mn.classList.remove("hidden");
+    navigateTo('cand-profile');
+    const code = urlParams.get('code') || candVoucherCode();
+    if (typeof spToast === 'function') spToast(`Your email addresses are now linked to voucher ${code}.`, 'success');
+  }
+
+  // Theme toggles live in several shells (header on #globalThemeToggle, plus any
+  // future .theme-toggle). Bind them all and keep every toggle's icon in sync.
+  const themeToggles = Array.from(
+    document.querySelectorAll(".theme-toggle, #globalThemeToggle")
+  );
+  const syncThemeIcons = () => {
+    const next = CANDIDATE_STATE.theme === "light" ? "dark_mode" : "light_mode";
+    themeToggles.forEach((t) => {
+      const icon = t.querySelector(".material-icons, .material-icons-outlined");
+      if (icon) icon.textContent = next;
+    });
+  };
   if (localStorage.getItem("cand_theme")) {
     CANDIDATE_STATE.theme = localStorage.getItem("cand_theme");
     document.documentElement.setAttribute("data-t", CANDIDATE_STATE.theme);
-    if (themeToggle) {
-      const icon = themeToggle.querySelector(".material-icons");
-      if (icon) icon.textContent = CANDIDATE_STATE.theme === "light" ? "dark_mode" : "light_mode";
-    }
   }
-
-  if (themeToggle) {
-    themeToggle.addEventListener("click", () => {
+  syncThemeIcons();
+  themeToggles.forEach((toggle) => {
+    toggle.addEventListener("click", () => {
       CANDIDATE_STATE.theme = CANDIDATE_STATE.theme === "light" ? "dark" : "light";
       document.documentElement.setAttribute("data-t", CANDIDATE_STATE.theme);
       localStorage.setItem("cand_theme", CANDIDATE_STATE.theme);
-      const icon = themeToggle.querySelector(".material-icons");
-      if (icon) icon.textContent = CANDIDATE_STATE.theme === "light" ? "dark_mode" : "light_mode";
+      syncThemeIcons();
     });
-  }
+  });
 
   // Handle flowMode based on Port
-  if (window.location.port === "3003") {
-    CANDIDATE_STATE.flowMode = "in-class";
-    document.getElementById("login-main-title").textContent =
-      "Login for Student";
-    document.getElementById("header-app-title").textContent = "SDC Certification Learning Material - Culinary Institute";
-  } else if (window.location.port === "3002") {
-    CANDIDATE_STATE.flowMode = "online";
-    document.getElementById("login-main-title").textContent = "Online Exam";
-    document.getElementById("header-app-title").textContent = "Online Portal";
-  } else {
+    const loginMainTitle = document.getElementById("login-main-title");
+    const headerAppTitle = document.getElementById("header-app-title");
+    
+    if (window.location.port === "3003") {
+      CANDIDATE_STATE.flowMode = "in-class";
+      if (loginMainTitle) loginMainTitle.textContent = "Login for Candidate";
+      if (headerAppTitle) headerAppTitle.textContent = "SDC Certification Learning Material - Culinary Institute";
+    } else if (window.location.port === "3002") {
+      CANDIDATE_STATE.flowMode = "online";
+      if (loginMainTitle) loginMainTitle.textContent = "Online Exam";
+      if (headerAppTitle) headerAppTitle.textContent = "Online Portal";
+    } else {
     CANDIDATE_STATE.flowMode = "candidate";
   }
 
@@ -118,6 +148,27 @@ window.addEventListener("DOMContentLoaded", () => {
       if (e.key === "Enter") performAISearch();
     });
   }
+
+  // Escape closes whichever full-screen overlay is open (secondary exit path
+  // alongside each overlay's back/close button).
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    const overlays = [
+      ["credential-hub-overlay", closeCredentialHub],
+      ["reader-overlay", closeReader],
+      ["video-overlay", closeVideo],
+      ["audio-overlay", closeAudio],
+      ["flashcard-overlay", closeFlashcards],
+    ];
+    for (const [id, close] of overlays) {
+      const el = document.getElementById(id);
+      if (el && el.classList.contains("open") && typeof close === "function") {
+        close();
+        e.preventDefault();
+        break;
+      }
+    }
+  });
 
   renderNotes();
   initTimeTracking();
@@ -149,12 +200,165 @@ function navigateTo(viewId) {
   }
 
   if (viewId === "cand-home") updateDashboard();
+  if (viewId === "cand-profile" && typeof renderProfileEmails === "function") renderProfileEmails();
 }
 
 // ==========================================================================
 // PHASE 1: FORM VALIDATION & ANCHOR
 // ==========================================================================
-function handleLogin(e) {
+// New-candidate signup (day zero): create a fresh account and land in the
+// portal with empty progress — no voucher redeemed, no exam booked yet.
+function handleCandidateSignup(e) {
+  if (e) e.preventDefault();
+  CANDIDATE_STATE.learningProgress = 0;
+  CANDIDATE_STATE.notes = [];
+  CANDIDATE_STATE.examDate = new Date(); // so the dashboard renders
+  const mainHeader = document.getElementById("main-header");
+  if (mainHeader) mainHeader.classList.remove("hidden");
+  const mainNav = document.getElementById("main-nav");
+  if (mainNav) mainNav.classList.remove("hidden");
+  navigateTo("cand-home");
+  if (typeof checkVoucherStatus === "function") checkVoucherStatus();
+  if (typeof spToast === "function") spToast("Welcome! Redeem a voucher to start your learning.", "success");
+}
+
+// Toggle between the sign-in and create-account steps on the auth card.
+function showSignupStep(e) {
+  if (e) e.preventDefault();
+  const ls = document.getElementById("login-step");
+  const ss = document.getElementById("signup-step");
+  if (ls) ls.style.display = "none";
+  if (ss) ss.style.display = "block";
+}
+
+function showLoginStep(e) {
+  if (e) e.preventDefault();
+  const ls = document.getElementById("login-step");
+  const ss = document.getElementById("signup-step");
+  if (ss) ss.style.display = "none";
+  if (ls) ls.style.display = "block";
+}
+
+// Reveal/hide the optional voucher-code field on the create-account form.
+function toggleSignupVoucher(e) {
+  if (e) e.preventDefault();
+  const panel = document.getElementById("signup-voucher-panel");
+  const toggle = document.getElementById("signup-voucher-toggle");
+  if (!panel) return;
+  const open = panel.style.display !== "none" && panel.style.display !== "";
+  panel.style.display = open ? "none" : "block";
+  if (toggle) {
+    const icon = open ? "redeem" : "expand_less";
+    toggle.innerHTML = `<i aria-hidden="true" class="material-icons" style="font-size:18px;">${icon}</i> Add a voucher code`;
+  }
+  if (!open) { const inp = document.getElementById("signup-voucher-code"); if (inp) inp.focus(); }
+}
+
+// Create a brand-new candidate account. If a voucher code was added, it's
+// applied to the new account (same effect as redeeming on the login screen),
+// then the candidate lands in the portal.
+async function handleSignupSubmit(e) {
+  if (e) e.preventDefault();
+  const name = document.getElementById("signup-name");
+  const email = document.getElementById("signup-email");
+  const pass = document.getElementById("signup-pass");
+
+  let valid = true;
+  if (name && !name.value.trim()) { name.classList.add("error"); valid = false; } else if (name) { name.classList.remove("error"); }
+  if (email && !email.value.includes("@")) { email.classList.add("error"); valid = false; } else if (email) { email.classList.remove("error"); }
+  if (pass && pass.value.length < 4) { pass.classList.add("error"); valid = false; } else if (pass) { pass.classList.remove("error"); }
+  if (!valid) return;
+
+  // Optional voucher attached to the new account.
+  const vEl = document.getElementById("signup-voucher-code");
+  const vPanel = document.getElementById("signup-voucher-panel");
+  const code = (vPanel && vPanel.style.display !== "none" && vEl) ? vEl.value.trim() : "";
+  let voucherApplied = false;
+  if (code) {
+    try { voucherApplied = await applyLoginVoucher(code); } catch (_) {}
+  }
+
+  // Reflect the new account on the top-bar profile.
+  const trig = document.getElementById("profileDropdownBtn");
+  if (trig) {
+    const n = trig.querySelector(".name"), em = trig.querySelector(".email");
+    if (n && name && name.value.trim()) n.textContent = name.value.trim();
+    if (em && email && email.value.trim()) em.textContent = email.value.trim();
+  }
+
+  // Create the account (mirrors handleCandidateSignup) and enter the portal.
+  CANDIDATE_STATE.learningProgress = 0;
+  CANDIDATE_STATE.notes = [];
+  CANDIDATE_STATE.examDate = new Date();
+  const mainHeader = document.getElementById("main-header");
+  if (mainHeader) mainHeader.classList.remove("hidden");
+  const mainNav = document.getElementById("main-nav");
+  if (mainNav) mainNav.classList.remove("hidden");
+  navigateTo("cand-home");
+  if (typeof checkVoucherStatus === "function") checkVoucherStatus();
+  if (typeof spToast === "function") {
+    spToast(voucherApplied ? "Welcome! Your voucher has been added to your account." : "Welcome! Redeem a voucher to start your learning.", "success");
+  }
+}
+
+function handleForgotPassword(e) {
+  if (e) e.preventDefault();
+  const emailEl = document.getElementById("login-email");
+  const email = emailEl ? emailEl.value.trim() : "";
+  if (!email) {
+    if (emailEl) emailEl.focus();
+    showToast("Enter your email above, then tap Forgot password.");
+    return;
+  }
+  showToast("Password reset link sent to " + email);
+}
+
+// Reveal/hide the optional voucher-code field on the email-login form.
+function toggleLoginVoucher(e) {
+  if (e) e.preventDefault();
+  const panel = document.getElementById("login-voucher-panel");
+  const toggle = document.getElementById("login-voucher-toggle");
+  if (!panel) return;
+  const open = panel.style.display !== "none" && panel.style.display !== "";
+  panel.style.display = open ? "none" : "block";
+  if (toggle) {
+    const icon = open ? "redeem" : "expand_less";
+    toggle.innerHTML = `<i aria-hidden="true" class="material-icons" style="font-size:18px;">${icon}</i> I already have a voucher code`;
+  }
+  if (!open) { const inp = document.getElementById("login-voucher-code"); if (inp) inp.focus(); }
+}
+
+// Verify a voucher entered on the email-login screen and apply it to the
+// candidate's exam — same proctor-flow effect as signing in with a voucher
+// (handleVoucherLogin). Returns true on success, false if it can't be verified.
+async function applyLoginVoucher(code) {
+  try {
+    const res = await fetch(`${SP_API}/api/vouchers/${encodeURIComponent(code)}/activate`, {
+      method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({})
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) return false;
+    const voucher = data.voucher;
+    if (voucher.materialId) spAddOwnedMaterial(voucher.materialId);
+    const isNet = voucher.currentType === "Internet Proctored";
+    Object.assign(spExam, {
+      type: isNet ? "online" : "in-class",
+      examName: voucher.cert || spExam.examName,
+      paymentRequired: false,
+      paymentStatus: isNet ? "paid" : "not_required",
+      proctorUnlocked: isNet,
+      voucherId: voucher.voucherId,
+      voucherType: voucher.currentType
+    });
+    spSaveExam(spExam);
+    return true;
+  } catch (err) {
+    console.error("Login voucher apply failed:", err);
+    return false;
+  }
+}
+
+async function handleLogin(e) {
   e.preventDefault();
   const form = document.getElementById("login-form");
   const email = document.getElementById("login-email");
@@ -177,16 +381,45 @@ function handleLogin(e) {
   if (!valid) return;
 
   const btn = document.getElementById("login-btn");
+  const origBtn = btn.innerHTML;
   btn.innerHTML = `<i class="material-icons spin">sync</i> Authenticating...`;
   btn.disabled = true;
+
+  // Optional voucher code entered at sign-in: verify it and apply it to the
+  // exam (proctor flow) before completing login. Block login if it's invalid.
+  const voucherInp = document.getElementById("login-voucher-code");
+  const voucherErr = document.getElementById("login-voucher-error");
+  const code = voucherInp ? voucherInp.value.trim() : "";
+  let voucherApplied = false;
+  if (code) {
+    if (voucherErr) voucherErr.style.display = "none";
+    voucherApplied = await applyLoginVoucher(code);
+    if (!voucherApplied) {
+      btn.innerHTML = origBtn;
+      btn.disabled = false;
+      if (voucherInp) voucherInp.classList.add("error");
+      if (voucherErr) {
+        voucherErr.style.display = "block";
+        voucherErr.innerText = "We couldn't verify that voucher code. Please check it and try again.";
+      }
+      return;
+    }
+    if (voucherInp) voucherInp.classList.remove("error");
+  }
 
   setTimeout(() => {
     // Bypass onboarding step and go straight to dashboard
     CANDIDATE_STATE.examDate = new Date(); // Set a default date so dashboard renders
-    document.getElementById("main-header").classList.remove("hidden");
+    const mainHeader = document.getElementById("main-header");
+    if (mainHeader) mainHeader.classList.remove("hidden");
     document.getElementById("main-nav").classList.remove("hidden");
 
     navigateTo("cand-home");
+    checkVoucherStatus();
+    if (voucherApplied) {
+      try { renderExamCard(); } catch (err) {}
+      if (typeof spToast === "function") spToast("Voucher applied — your exam is set up and ready.", "success");
+    }
 
     setTimeout(() => {
       animateProgressRing(40);
@@ -205,7 +438,7 @@ function updateDashboard() {
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
   const cd = document.getElementById("dash-countdown");
-  cd.textContent = `${diffDays} Days`;
+  cd.textContent = `${diffDays} ${diffDays === 1 ? 'Day' : 'Days'}`;
   document.getElementById("dash-date-display").textContent =
     CANDIDATE_STATE.examDate.toLocaleDateString();
 
@@ -217,9 +450,10 @@ function updateDashboard() {
 
 function animateProgressRing(percent) {
   CANDIDATE_STATE.learningProgress = percent;
+  
+  // Dashboard Progress
   const circle = document.getElementById("main-prog-ring");
   const text = document.getElementById("main-prog-text");
-
   if (circle && text) {
     const r = circle.r.baseVal.value;
     const circ = r * 2 * Math.PI;
@@ -227,6 +461,97 @@ function animateProgressRing(percent) {
     circle.style.strokeDasharray = circ;
     circle.style.strokeDashoffset = offset;
     text.textContent = `${percent}%`;
+  }
+
+  // Learning Module Progress
+  const lmCircle = document.getElementById("lm-prog-ring");
+  const lmText = document.getElementById("lm-prog-text");
+  if (lmCircle && lmText) {
+    const r = lmCircle.r.baseVal.value;
+    const circ = r * 2 * Math.PI;
+    const offset = circ - (percent / 100) * circ;
+    lmCircle.style.strokeDasharray = circ;
+    lmCircle.style.strokeDashoffset = offset;
+    lmText.textContent = `${percent}%`;
+  }
+}
+
+// ==========================================================================
+// VOUCHER UPGRADE
+// ==========================================================================
+async function checkVoucherStatus() {
+  try {
+    const res = await fetch('/api/vouchers');
+    const vouchers = await res.json();
+    const myVoucher = vouchers.find(v => v.assignedToCandidateId === 'cand_001');
+    
+    if (myVoucher) {
+      if (myVoucher.currentType === 'In-House' && !myVoucher.upgrade.isUpgraded) {
+        document.getElementById('voucher-upgrade-container').style.display = 'block';
+      } else {
+        document.getElementById('voucher-upgrade-container').style.display = 'none';
+        document.querySelector('.scheduler-label').textContent = 'Upcoming Internet Proctored Exam';
+      }
+    }
+  } catch (err) {
+    console.error('Error fetching vouchers:', err);
+  }
+}
+
+async function handleVoucherUpgrade() {
+  document.getElementById('payment-modal').classList.add('active', 'open');
+}
+
+async function processVoucherPayment() {
+  try {
+    const btn = document.getElementById('pay-upgrade-btn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = `<i class="material-icons spin">sync</i> Processing...`;
+    btn.disabled = true;
+
+    // Simulate payment processing delay
+    await new Promise(r => setTimeout(r, 1200));
+
+    // Upgrade the candidate's actual voucher (self-purchased or assigned).
+    const vid = (typeof spExam !== 'undefined' && spExam.voucherId) ? spExam.voucherId : 'VCH-A1001';
+    const res = await fetch(`/api/vouchers/${vid}/upgrade`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fee: 25.00, paidBy: 'Candidate' })
+    });
+
+    if (res.ok) {
+      document.getElementById('payment-modal').classList.remove('active', 'open');
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+
+      // Show success notification (if standard alert is okay, otherwise we can just update UI)
+      alert("Payment successful! Voucher upgraded to Internet Proctored.");
+
+      // Hide the upgrade banner and update the exam status label
+      document.getElementById('voucher-upgrade-container').style.display = 'none';
+      const label = document.querySelector('.scheduler-label');
+      if (label) label.textContent = 'Upcoming Internet Proctored Exam';
+
+      // Update the badge visually
+      const icon = document.querySelector('.scheduler-icon-wrapper .material-icons');
+      if(icon) icon.textContent = 'computer';
+
+      // Upgraded → internet self-service: paid + unlocked so it launches now.
+      if (typeof spExam !== 'undefined') {
+        Object.assign(spExam, { type: 'online', paymentRequired: false, paymentStatus: 'paid', proctorUnlocked: true, voucherType: 'Internet Proctored' });
+        spSaveExam(spExam);
+        try { renderExamCard(); } catch (e) {}
+      }
+    } else {
+      alert("Payment failed. Please check your card details.");
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+    }
+  } catch (err) {
+    console.error('Error processing payment:', err);
+    alert('Network error. Please try again.');
+    document.getElementById('pay-upgrade-btn').disabled = false;
   }
 }
 
@@ -1270,15 +1595,17 @@ function updateMockTimerDisplay() {
 
 function submitMockForce() {
   stopMockTimer();
-  document.getElementById("mock-exam-env").classList.remove("open");
-  showToast("Time expired! Exam submitted automatically.");
-  document.getElementById("cert-placeholder").classList.add("hidden");
-  document.getElementById("cert-earned").classList.remove("hidden");
-  navigateTo("cand-profile");
+  renderMockResult(true);
 }
 
 function openMockExam() {
-  document.getElementById("mock-exam-env").classList.add("open");
+  const env = document.getElementById("mock-exam-env");
+  // The markup nests this dialog inside #reader-overlay, whose `transform`
+  // makes our `position:fixed` resolve against that (off-screen) overlay instead
+  // of the viewport — so the exam never appears. Re-home it to <body> so it fills
+  // the screen. Idempotent: a no-op once it's already a direct child of body.
+  if (env && env.parentElement !== document.body) document.body.appendChild(env);
+  env.classList.add("open");
   curQ = 4; // Reset to the specific screenshot question
   EXAM_Q.forEach((q) => {
     q.sel = null;
@@ -1447,7 +1774,7 @@ function submitMock() {
   const flagged = EXAM_Q.filter((x) => x.flagged).length;
   const remaining = TOTAL_MOCK_Q - answered;
 
-  let summaryMsg = `Are you sure you want to submit your exam?\n\n`;
+  let summaryMsg = `Are you sure you want to submit your practice exam?\n\n`;
   summaryMsg += `• Total Questions: ${TOTAL_MOCK_Q}\n`;
   summaryMsg += `• Answered: ${answered}\n`;
   summaryMsg += `• Flagged: ${flagged}\n`;
@@ -1461,31 +1788,164 @@ function submitMock() {
 
   if (confirm(summaryMsg)) {
     stopMockTimer();
-    document.getElementById("mock-exam-env").classList.remove("open");
-    showToast("Exam Submitted! Certification Unlocked.");
-    document.getElementById("cert-placeholder").classList.add("hidden");
-    document.getElementById("cert-earned").classList.remove("hidden");
-    navigateTo("cand-profile");
+    renderMockResult(false);
   }
 }
 
+// Score the practice attempt: a question is correct when the selected option
+// index matches its answer index (`a`). Returns answered/correct/total/pct.
+function mockScore() {
+  const answered = EXAM_Q.filter((x) => x.sel !== null).length;
+  const correct = EXAM_Q.filter((x) => x.sel !== null && x.sel === x.a).length;
+  const pct = Math.round((correct / TOTAL_MOCK_Q) * 100);
+  return { answered, correct, total: TOTAL_MOCK_Q, pct };
+}
+
+// Show a practice result overlay INSIDE the mock env (a practice mock does not
+// unlock certification — it just reports the score). Rendered as a separate
+// panel so the question DOM stays intact for the next attempt.
+function renderMockResult(timedOut) {
+  const env = document.getElementById("mock-exam-env");
+  if (!env) return;
+  const { answered, correct, total, pct } = mockScore();
+  const passed = pct >= 70;
+  let panel = document.getElementById("mock-result-panel");
+  if (!panel) {
+    panel = document.createElement("div");
+    panel.id = "mock-result-panel";
+    panel.style.cssText =
+      "position:absolute; inset:0; z-index:10; display:flex; align-items:center; justify-content:center; background:var(--sur-main, #fff); padding:24px;";
+    env.appendChild(panel);
+  }
+  const accent = passed ? "var(--suc, #146c2e)" : "var(--pri, #f9ad00)";
+  panel.innerHTML = `
+    <div style="max-width:440px; width:100%; text-align:center;">
+      <div style="width:88px; height:88px; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; background:${accent}1f; color:${accent};">
+        <i class="material-icons" style="font-size:48px;">${passed ? "verified" : "insights"}</i>
+      </div>
+      <h2 style="font-size:24px; font-weight:700; margin-bottom:6px;">${timedOut ? "Time's up — practice submitted" : "Practice complete"}</h2>
+      <p style="color:var(--on-sur-var, #64748b); margin-bottom:24px;">${passed ? "Great work — you're on track for the real exam." : "Keep practising — review the topics you missed."}</p>
+      <div style="display:flex; gap:12px; margin-bottom:28px;">
+        <div style="flex:1; border:1px solid var(--out-var, #e5e7eb); border-radius:12px; padding:16px;">
+          <div style="font-size:28px; font-weight:800; color:${accent};">${pct}%</div>
+          <div style="font-size:12px; color:var(--on-sur-var, #64748b);">Score</div>
+        </div>
+        <div style="flex:1; border:1px solid var(--out-var, #e5e7eb); border-radius:12px; padding:16px;">
+          <div style="font-size:28px; font-weight:800;">${correct}/${total}</div>
+          <div style="font-size:12px; color:var(--on-sur-var, #64748b);">Correct</div>
+        </div>
+        <div style="flex:1; border:1px solid var(--out-var, #e5e7eb); border-radius:12px; padding:16px;">
+          <div style="font-size:28px; font-weight:800;">${answered}</div>
+          <div style="font-size:12px; color:var(--on-sur-var, #64748b);">Answered</div>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="closeMockResult()" style="width:100%; padding:14px; font-size:16px; font-weight:600; background:var(--pri); color:var(--on-pri);">Back to Practice</button>
+    </div>`;
+  panel.style.display = "flex";
+  showToast(timedOut ? "Time expired — practice exam scored." : "Practice exam submitted.");
+}
+
+// Dismiss the result overlay and return to the Practice screen.
+function closeMockResult() {
+  const panel = document.getElementById("mock-result-panel");
+  if (panel) panel.remove();
+  const env = document.getElementById("mock-exam-env");
+  if (env) env.classList.remove("open");
+  navigateTo("cand-practice");
+}
+
 function handleLogout() {
-  if (confirm("Sign out of your account?")) window.location.reload();
+  // Return to a clean login screen (drop any ?bypass=true so the login view shows).
+  // The login fields carry demo credentials in the HTML, so they auto-fill on load.
+  if (confirm("Sign out of your account?")) window.location.href = window.location.pathname;
+}
+
+// ==========================================================================
+// PROFILE: primary + secondary email association (dual-email approval flow)
+// ==========================================================================
+// The candidate can link a secondary email to their account. Both addresses
+// are tied to their exam voucher code, but only after the candidate approves
+// the association — either via the in-portal "Approve" button below, or by
+// opening the "I Agree" link in the approval email (?action=approve-emails).
+const CAND_PROFILE_KEY = 'cand_profile_v1';
+
+function candVoucherCode() {
+  try { return (typeof spExam !== 'undefined' && spExam.voucherId) ? spExam.voucherId : 'VCH-A1001'; }
+  catch (e) { return 'VCH-A1001'; }
+}
+
+function loadCandProfile() {
+  const def = { primaryEmail: 'alex.scott@sdc.edu', secondaryEmail: '', secondaryStatus: 'none' };
+  try { return Object.assign(def, JSON.parse(localStorage.getItem(CAND_PROFILE_KEY) || '{}')); }
+  catch (e) { return def; }
+}
+
+function saveCandProfile(p) { try { localStorage.setItem(CAND_PROFILE_KEY, JSON.stringify(p)); } catch (e) {} }
+
+// Paint the email inputs, association status badge, approve button, voucher line.
+function renderProfileEmails() {
+  const p = loadCandProfile();
+  const primary = document.getElementById('profile-email');
+  const secondary = document.getElementById('profile-email-secondary');
+  const badge = document.getElementById('profile-secondary-status');
+  const approveBtn = document.getElementById('profile-approve-secondary-btn');
+  const vline = document.getElementById('profile-voucher-line');
+  if (primary && !primary.value) primary.value = p.primaryEmail || '';
+  if (secondary) secondary.value = p.secondaryEmail || '';
+  const code = candVoucherCode();
+  if (badge) {
+    let txt = 'Not added', bg = 'rgba(120,120,120,0.12)', fg = '#5d5962', icon = 'remove_circle_outline';
+    if (p.secondaryStatus === 'pending') { txt = 'Pending approval'; bg = 'rgba(125,87,0,0.16)'; fg = '#7d5700'; icon = 'hourglass_top'; }
+    else if (p.secondaryStatus === 'active') { txt = 'Active'; bg = 'rgba(20,108,46,0.12)'; fg = '#146c2e'; icon = 'check_circle'; }
+    badge.style.background = bg; badge.style.color = fg;
+    badge.innerHTML = `<i class="material-icons" style="font-size:14px;">${icon}</i> ${txt}`;
+  }
+  if (approveBtn) approveBtn.style.display = (p.secondaryStatus === 'pending') ? 'inline-flex' : 'none';
+  if (vline) {
+    if (p.secondaryStatus === 'active') vline.textContent = `Both email addresses are linked to voucher ${code}.`;
+    else if (p.secondaryStatus === 'pending') vline.textContent = `Awaiting approval to link both email addresses to voucher ${code}.`;
+    else vline.textContent = `Add a secondary email to link it, with your primary, to voucher ${code}.`;
+  }
+}
+
+// In-portal approval — same effect as clicking "I Agree" in the approval email.
+function approveSecondaryEmail() {
+  const p = loadCandProfile();
+  if (!p.secondaryEmail) return;
+  p.secondaryStatus = 'active';
+  saveCandProfile(p);
+  if (typeof spLogEmail === 'function') spLogEmail('Dual Email Association — Confirmed');
+  renderProfileEmails();
+  showToastNotification(`Both email addresses are now linked to voucher ${candVoucherCode()}.`, 'check_circle');
 }
 
 function saveProfileChanges() {
   const email = document.getElementById("profile-email");
+  const secondary = document.getElementById("profile-email-secondary");
   const newPass = document.getElementById("profile-new-pass");
   const confirmPass = document.getElementById("profile-confirm-pass");
 
   let valid = true;
 
-  // Validate email
+  // Validate primary email
   if (!email.value.includes("@")) {
     email.classList.add("error");
     valid = false;
   } else {
     email.classList.remove("error");
+  }
+
+  // Secondary email is optional; if present it must be valid and distinct.
+  const secVal = secondary ? secondary.value.trim() : "";
+  if (secVal) {
+    if (!secVal.includes("@") || secVal.toLowerCase() === email.value.trim().toLowerCase()) {
+      secondary.classList.add("error");
+      valid = false;
+    } else {
+      secondary.classList.remove("error");
+    }
+  } else if (secondary) {
+    secondary.classList.remove("error");
   }
 
   // Validate password match (only if user typed something)
@@ -1499,10 +1959,57 @@ function saveProfileChanges() {
 
   if (!valid) return;
 
-  // Simulate save
-  showToastNotification("Account settings saved successfully!", "check_circle");
+  // Persist emails + association status.
+  const p = loadCandProfile();
+  const prevSecondary = p.secondaryEmail;
+  p.primaryEmail = email.value.trim();
+  p.secondaryEmail = secVal;
+  if (!secVal) {
+    p.secondaryStatus = 'none';
+  } else if (secVal !== prevSecondary || p.secondaryStatus === 'none') {
+    // A newly added or changed secondary email must be re-approved.
+    p.secondaryStatus = 'pending';
+  }
+  saveCandProfile(p);
+
+  // Keep the top-bar profile email in sync with the primary.
+  const trig = document.getElementById("profileDropdownBtn");
+  if (trig) { const em = trig.querySelector(".email"); if (em) em.textContent = p.primaryEmail; }
+
+  const code = candVoucherCode();
+  if (p.secondaryStatus === 'pending') {
+    if (typeof spLogEmail === 'function') spLogEmail('Dual Email Association — Approval Requested');
+    showToastNotification(`Approval email sent to ${secVal}. Confirm to link both addresses to voucher ${code}.`, "mail");
+  } else {
+    showToastNotification("Account settings saved successfully!", "check_circle");
+  }
+
+  renderProfileEmails();
   newPass.value = "";
   confirmPass.value = "";
+}
+
+function executeAccountDeletion() {
+  const reason = document.getElementById("delete-reason-input").value.trim();
+  if (!reason) {
+    showToastNotification("A reason for deletion is required.", "error");
+    return;
+  }
+
+  const btn = document.getElementById("confirm-delete-btn");
+  const originalText = btn.innerHTML;
+  btn.innerHTML = `<i class="material-icons spin">sync</i> Deleting...`;
+  btn.disabled = true;
+
+  // Simulate network request
+  setTimeout(() => {
+    document.getElementById("delete-modal").classList.remove("active");
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+    
+    alert("Account successfully deleted. You will now be redirected to the login page.");
+    window.location.reload();
+  }, 1000);
 }
 
 function showToast(msg) {
@@ -1717,7 +2224,7 @@ function switchLmTab(tabId) {
               : ""
           }
           
-          <button class="mdbtn btn-tonal lm-card-cta" onclick="${ctaAction}">${btnText}</button>
+          <button class="btn-secondary lm-card-cta" onclick="${ctaAction}">${btnText}</button>
         </div>
       </div>
     `;
@@ -1865,3 +2372,577 @@ function showToastNotification(message, iconName) {
     setTimeout(() => toast.remove(), 300);
   }, 3000);
 }
+
+// ==========================================================================
+// CANDIDATE EXAM ENROLLMENT · PAYMENT · VOUCHER FLOW   (prototype / mock)
+// Single source of truth for the dashboard exam card states + statuses.
+// ==========================================================================
+const SP_EXAM_KEY = 'sp_candidate_exam_v1';
+function spLoadExam() {
+  const def = {
+    examName: 'Food Protection Manager Certification',
+    type: 'online',               // 'online' | 'in-class'
+    scheduledDisplay: 'Jun 21, 2026',
+    fee: 75.00,
+    paymentRequired: true,
+    paymentStatus: 'pending',     // 'not_required' | 'pending' | 'paid' | 'failed'
+    proctorUnlocked: false,
+    paidAt: null
+  };
+  try { return Object.assign(def, JSON.parse(localStorage.getItem(SP_EXAM_KEY) || '{}')); }
+  catch (e) { return def; }
+}
+function spSaveExam(s) { try { localStorage.setItem(SP_EXAM_KEY, JSON.stringify(s)); } catch (e) {} }
+let spExam = spLoadExam();
+
+function spBadge(text, kind, icon) {
+  const map = {
+    paid:   { bg: 'rgba(20,108,46,0.12)',  fg: '#146c2e' },
+    pending:{ bg: 'rgba(125,87,0,0.16)',   fg: '#7d5700' },
+    info:   { bg: 'rgba(0,99,155,0.12)',   fg: '#00639b' },
+    brand:  { bg: 'rgba(249,173,0,0.16)',  fg: '#7a4e00' },
+    neutral:{ bg: 'rgba(120,120,120,0.12)',fg: '#5d5962' }
+  };
+  const c = map[kind] || map.neutral;
+  const ic = icon ? `<i class="material-icons" style="font-size:14px;">${icon}</i>` : '';
+  return `<span class="sp-badge" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:9999px;font-size:12px;font-weight:700;letter-spacing:.02em;background:${c.bg};color:${c.fg};">${ic}${text}</span>`;
+}
+
+function spToast(msg, kind) {
+  let c = document.getElementById('sp-toast-container');
+  if (!c) {
+    c = document.createElement('div'); c.id = 'sp-toast-container';
+    c.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:99999;display:flex;flex-direction:column;gap:8px;';
+    document.body.appendChild(c);
+  }
+  const t = document.createElement('div');
+  const bg = kind === 'success' ? '#146c2e' : kind === 'error' ? '#b3261e' : '#1c1b1f';
+  const ic = kind === 'success' ? 'check_circle' : kind === 'error' ? 'error' : 'mail';
+  t.style.cssText = `background:${bg};color:#fff;padding:14px 18px;border-radius:12px;font-size:14px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.25);display:flex;align-items:center;gap:10px;max-width:380px;animation:fadeInUp .3s ease-out;`;
+  t.innerHTML = `<i class="material-icons" style="font-size:18px;">${ic}</i><span>${msg}</span>`;
+  c.appendChild(t);
+  setTimeout(() => { t.style.transition = 'opacity .3s'; t.style.opacity = '0'; setTimeout(() => t.remove(), 320); }, 4000);
+}
+function spLogEmail(type) {
+  try { const k = 'sp_sent_emails'; const a = JSON.parse(localStorage.getItem(k) || '[]');
+        a.push({ type, at: new Date().toISOString() }); localStorage.setItem(k, JSON.stringify(a)); } catch (e) {}
+}
+
+function renderExamCard() {
+  const s = spExam;
+  const strip = document.getElementById('exam-status-strip');
+  const help = document.getElementById('exam-help-text');
+  const helpIcon = document.getElementById('exam-help-icon');
+  const btn = document.getElementById('dash-start-exam-btn');
+  const label = document.querySelector('.scheduler-label');
+  const dateEl = document.getElementById('dash-date-display');
+  if (!strip || !btn) return;
+
+  if (label) label.textContent = s.type === 'online' ? 'Upcoming Internet-Proctored Exam' : 'Upcoming In-Class Exam';
+  if (dateEl && s.scheduledDisplay) dateEl.textContent = s.scheduledDisplay;
+
+  const badges = [];
+  badges.push(spBadge(s.type === 'online' ? 'Online · Internet-Proctored' : 'In-Class', 'info', s.type === 'online' ? 'videocam' : 'meeting_room'));
+  if (s.type === 'online' && s.paymentRequired) {
+    if (s.paymentStatus === 'paid') badges.push(spBadge('Exam fee paid', 'paid', 'check_circle'));
+    else if (s.paymentStatus === 'failed') badges.push(spBadge('Payment failed', 'pending', 'error'));
+    else badges.push(spBadge('Payment pending', 'pending', 'schedule'));
+  } else {
+    badges.push(spBadge('No payment required', 'neutral', 'check'));
+  }
+  if (s.type === 'online' && s.paymentRequired && s.paymentStatus !== 'paid') badges.push(spBadge('Awaiting payment', 'pending', 'lock'));
+  else if (!s.proctorUnlocked) badges.push(spBadge('Awaiting proctor', 'info', 'hourglass_top'));
+  else badges.push(spBadge('Ready to start', 'paid', 'play_circle'));
+  strip.innerHTML = badges.join('');
+
+  const needPay = s.type === 'online' && s.paymentRequired && s.paymentStatus !== 'paid';
+  if (needPay) {
+    if (helpIcon) helpIcon.textContent = 'lock';
+    if (help) help.textContent = `Upgrade: Pay your $${s.fee.toFixed(2)} exam fee to unlock this booking for online.`;
+    btn.disabled = false; btn.className = 'btn-primary'; btn.setAttribute('style', '');
+    btn.onclick = openExamPayment;
+    btn.innerHTML = `<i class="material-icons" style="font-size:18px;">lock_open</i> Pay $${s.fee.toFixed(2)} to unlock`;
+  } else if (!s.proctorUnlocked) {
+    if (helpIcon) helpIcon.textContent = 'info_outline';
+    if (help) help.textContent = s.paymentStatus === 'paid'
+      ? 'Paid ✓ — your proctor will unlock the exam at the scheduled time.'
+      : 'Exam launches automatically when unlocked by your proctor.';
+    btn.disabled = true; btn.className = 'btn-primary locked-cta-btn';
+    btn.setAttribute('style', 'background: var(--sur-var); color: var(--on-sur-var); border: 1px solid var(--out-var);');
+    btn.onclick = null;
+    btn.innerHTML = `<i class="material-icons spin" style="color: var(--pri);">sync</i> ${s.paymentStatus === 'paid' ? 'Paid ✓ · Waiting for Proctor' : 'Waiting for Proctor...'}`;
+  } else {
+    if (helpIcon) helpIcon.textContent = 'verified';
+    if (help) help.textContent = 'You are all set. Begin your proctored exam.';
+    btn.disabled = false; btn.className = 'btn-primary'; btn.setAttribute('style', '');
+    btn.onclick = () => window.open('secure_exam.html', '_blank');
+    btn.innerHTML = `<span>Start Exam</span> <i class="material-icons" style="font-size:18px;">arrow_forward</i>`;
+  }
+}
+
+function openExamPayment() {
+  const s = spExam; const fee = `$${s.fee.toFixed(2)}`;
+  ['exam-pay-fee1', 'exam-pay-fee2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = fee; });
+  const line = document.getElementById('exam-pay-line'); if (line) line.textContent = `Online Proctored Exam — ${s.examName}`;
+  const lbl = document.getElementById('exam-pay-btn-label'); if (lbl) lbl.textContent = `Pay ${fee}`;
+  const m = document.getElementById('exam-payment-modal'); if (m) m.classList.add('active', 'open');
+}
+
+async function confirmExamPayment() {
+  const btn = document.getElementById('exam-pay-btn'); const orig = btn ? btn.innerHTML : '';
+  if (btn) { btn.disabled = true; btn.innerHTML = `<i class="material-icons spin">sync</i> Processing…`; }
+  await new Promise(r => setTimeout(r, 1200));
+  spExam.paymentStatus = 'paid'; spExam.paidAt = new Date().toISOString();
+  // Online (Internet-Proctored) exams need no in-person proctor, so paying the
+  // fee unlocks the exam outright. In-class exams still wait for the proctor.
+  if (spExam.type === 'online') spExam.proctorUnlocked = true;
+  spSaveExam(spExam);
+  const m = document.getElementById('exam-payment-modal'); if (m) m.classList.remove('active', 'open');
+  if (btn) { btn.disabled = false; btn.innerHTML = orig; }
+  renderExamCard();
+  spToast('Payment successful — a receipt has been emailed to you.', 'success');
+  spLogEmail('Exam Payment Receipt');
+}
+
+// ==========================================================================
+// STUDENT SELF-ENROLMENT INTO A CLASS  (Phase E)
+// The student picks a published class. The class's resolved rules decide what
+// happens: online + student-pays → pay the exam fee to unlock; online +
+// org-pays → enrol free, ready (no in-person proctor); in-class → enrol and
+// wait for the proctor to unlock on exam day. Classes are mocked here (no
+// shared cross-portal store in this prototype); each carries its rule set.
+// ==========================================================================
+const SP_CLASSES = [
+  { id: 'sc_1', name: 'HACCP Certification — Evening', assessment: 'HACCP Certification', examMode: 'in-class', onlinePayer: 'organization', fee: 0 },
+  { id: 'sc_2', name: 'ServSafe Food Handler — Online (Org-paid)', assessment: 'ServSafe Food Handler', examMode: 'online', onlinePayer: 'organization', fee: 0 },
+  { id: 'sc_3', name: 'Food Safety Manager — Online (Student-paid)', assessment: 'Food Safety Manager', examMode: 'online', onlinePayer: 'student', fee: 75 }
+];
+
+function openClassEnrol() {
+  const sel = document.getElementById('enrol-class-select');
+  if (sel) sel.innerHTML = SP_CLASSES.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+  renderEnrolSummary();
+  const m = document.getElementById('class-enrol-modal'); if (m) m.classList.add('active', 'open');
+}
+
+function _enrolSelectedClass() {
+  const sel = document.getElementById('enrol-class-select');
+  return SP_CLASSES.find(c => c.id === (sel ? sel.value : '')) || SP_CLASSES[0];
+}
+
+function renderEnrolSummary() {
+  const c = _enrolSelectedClass();
+  const summary = document.getElementById('enrol-summary');
+  const label = document.getElementById('enrol-confirm-label');
+  if (!c || !summary) return;
+  const studentPays = c.examMode === 'online' && c.onlinePayer === 'student';
+  const rows = [
+    ['Assessment', c.assessment],
+    ['Exam mode', c.examMode === 'online' ? 'Online · Internet-Proctored' : 'In-Class'],
+    ['Who pays', c.examMode === 'online' ? (c.onlinePayer === 'student' ? 'You (student)' : 'Organisation') : 'N/A (in-class)'],
+    ['Exam fee', studentPays ? `$${c.fee.toFixed(2)}` : 'No charge to you']
+  ];
+  summary.innerHTML = rows.map(([k, v]) => `<div style="display:flex; justify-content:space-between; padding:3px 0;"><span style="color:var(--on-sur-var);">${k}</span><span style="font-weight:600;">${v}</span></div>`).join('');
+  if (label) label.textContent = studentPays ? `Enrol & Pay $${c.fee.toFixed(2)}` : 'Enrol';
+}
+
+function confirmClassEnrol() {
+  const c = _enrolSelectedClass();
+  if (!c) return;
+  const m = document.getElementById('class-enrol-modal'); if (m) m.classList.remove('active', 'open');
+  const studentPays = c.examMode === 'online' && c.onlinePayer === 'student';
+
+  if (c.examMode === 'online') {
+    Object.assign(spExam, {
+      type: 'online', examName: c.assessment, enrolledClass: c.name,
+      paymentRequired: studentPays, fee: studentPays ? c.fee : 0,
+      paymentStatus: studentPays ? 'pending' : 'paid',
+      proctorUnlocked: !studentPays   // org-paid online is ready immediately
+    });
+  } else {
+    Object.assign(spExam, {
+      type: 'in-class', examName: c.assessment, enrolledClass: c.name,
+      paymentRequired: false, fee: 0, paymentStatus: 'not_required', proctorUnlocked: false
+    });
+  }
+  spSaveExam(spExam);
+  renderExamCard();
+  spToast(`Enrolled in ${c.name}.`, 'success');
+
+  // Student-paid online: immediately open the existing exam-payment modal so the
+  // student pays the fee to unlock (confirmExamPayment unlocks online on success).
+  if (studentPays) setTimeout(openExamPayment, 300);
+}
+
+// ==========================================================================
+// CANDIDATE SELF-PURCHASE  (B2C — candidate buys their own voucher; mock pay)
+// Mirrors the exam-payment mock flow. The purchased voucher becomes the
+// dashboard exam card's single source of truth (spExam).
+// ==========================================================================
+const SP_API = 'index.html';
+let spPurchaseType = 'In-House';
+function spVoucherPrice(type) { return type === 'Internet Proctored' ? 75 : 42; }
+
+function openVoucherPurchase(type) {
+  spPurchaseType = type;
+  const isNet = type === 'Internet Proctored';
+  const fee = `$${spVoucherPrice(type).toFixed(2)}`;
+  const line = document.getElementById('vp-line'); if (line) line.textContent = (isNet ? 'Internet Proctored' : 'In-House Proctored') + ' Voucher';
+  ['vp-fee1', 'vp-fee2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = fee; });
+  const lbl = document.getElementById('vp-btn-label'); if (lbl) lbl.textContent = `Pay ${fee}`;
+  const desc = document.getElementById('vp-desc'); if (desc) desc.textContent = isNet
+    ? 'Buy an Internet-Proctored voucher and take your exam online immediately after a quick system check. A receipt and voucher code are emailed to you.'
+    : 'Buy an In-House voucher for a scheduled school session. Your proctor enters the code on exam day. A receipt and voucher code are emailed to you.';
+  const m = document.getElementById('voucher-purchase-modal'); if (m) m.classList.add('active', 'open');
+}
+
+async function confirmVoucherPurchase() {
+  const type = spPurchaseType;
+  const btn = document.getElementById('vp-pay-btn'); const orig = btn ? btn.innerHTML : '';
+  if (btn) { btn.disabled = true; btn.innerHTML = `<i class="material-icons spin">sync</i> Processing…`; }
+
+  let voucherId = null;
+  try {
+    await new Promise(r => setTimeout(r, 1200)); // mock payment delay
+    const candidateId = (typeof CANDIDATE_STATE !== 'undefined' && CANDIDATE_STATE.candidateId) || 'cand_001';
+    const res = await fetch(`${SP_API}/api/vouchers/self-purchase`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type, candidateId })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.message || 'purchase failed');
+    voucherId = data.voucherId;
+  } catch (e) {
+    console.error('Voucher purchase failed:', e);
+    if (btn) { btn.disabled = false; btn.innerHTML = orig; }
+    spToast('Payment could not be completed. Please try again.', 'error');
+    return;
+  }
+
+  // Reflect the new voucher on the dashboard exam card (single source of truth).
+  if (type === 'Internet Proctored') {
+    // Internet voucher → self-service: paid + unlocked, launches immediately.
+    Object.assign(spExam, { type: 'online', paymentRequired: false, paymentStatus: 'paid', proctorUnlocked: true, voucherId: voucherId, voucherType: type });
+  } else {
+    // In-House voucher → waits for the on-site proctor to redeem on exam day.
+    Object.assign(spExam, { type: 'in-class', paymentRequired: false, paymentStatus: 'not_required', proctorUnlocked: false, voucherId: voucherId, voucherType: type });
+  }
+  spSaveExam(spExam);
+
+  const m = document.getElementById('voucher-purchase-modal'); if (m) m.classList.remove('active', 'open');
+  if (btn) { btn.disabled = false; btn.innerHTML = orig; }
+  renderExamCard();
+
+  const out = document.getElementById('voucher-purchase-result');
+  if (out) {
+    const isNet = type === 'Internet Proctored';
+    const shareLine = isNet
+      ? 'You can start your exam now. A receipt was emailed to you.'
+      : 'Share this code with your proctor to redeem it for your exam on session day. A receipt was emailed to you.';
+    out.style.display = 'block';
+    out.innerHTML = `<div style="padding:14px;border-radius:10px;background:rgba(20,108,46,0.10);border:1px solid rgba(20,108,46,0.25);">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <i class="material-icons" style="color:#146c2e;">check_circle</i>
+        <div style="font-size:13px;color:#146c2e;line-height:1.45;">Voucher delivered (${type}). ${shareLine}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <code style="font-family:monospace;font-size:15px;font-weight:700;letter-spacing:.5px;background:var(--sur-var);color:var(--on-sur);padding:8px 12px;border-radius:8px;">${voucherId}</code>
+        <button class="mdbtn btn-outlined" type="button" style="padding:8px 14px;font-size:13px;" onclick="spCopyVoucherCode('${voucherId}', this)">
+          <i class="material-icons" style="font-size:16px;">content_copy</i> Copy code
+        </button>
+      </div>
+    </div>`;
+  }
+  // A self-purchased In-House voucher can still be upgraded to Internet later.
+  const up = document.getElementById('voucher-upgrade-container');
+  if (up) up.style.display = (type === 'In-House') ? 'block' : 'none';
+
+  spToast(`Voucher ${voucherId} purchased — receipt emailed.`, 'success');
+  spLogEmail('Voucher Purchase Receipt');
+}
+
+// Copy a voucher code to the clipboard so the candidate can share it with their
+// proctor. Falls back to a textarea+execCommand when the async Clipboard API is
+// unavailable (insecure context / older browser).
+function spCopyVoucherCode(code, btn) {
+  const done = () => {
+    if (btn) {
+      const orig = btn.innerHTML;
+      btn.innerHTML = `<i class="material-icons" style="font-size:16px;">check</i> Copied`;
+      setTimeout(() => { btn.innerHTML = orig; }, 1600);
+    }
+    spToast('Voucher code copied — share it with your proctor.', 'success');
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(code).then(done).catch(() => fallbackCopy());
+  } else { fallbackCopy(); }
+  function fallbackCopy() {
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = code; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta); done();
+    } catch (e) { spToast('Copy failed — code: ' + code, 'info'); }
+  }
+}
+
+// Reconcile the dashboard card with backend voucher state. Picks up an
+// in-house voucher the proctor has redeemed (→ unlock) or an upgrade applied
+// elsewhere (→ online self-service).
+async function spSyncVoucher() {
+  if (!spExam || !spExam.voucherId) return;
+  try {
+    const res = await fetch(`${SP_API}/api/vouchers`);
+    const list = await res.json();
+    const v = Array.isArray(list) ? list.find(x => x.voucherId === spExam.voucherId) : null;
+    if (!v) return;
+    let changed = false;
+    if (v.status === 'Redeemed' && !spExam.proctorUnlocked) { spExam.proctorUnlocked = true; changed = true; }
+    if (v.currentType === 'Internet Proctored' && spExam.type !== 'online') {
+      Object.assign(spExam, { type: 'online', paymentRequired: false, paymentStatus: 'paid', proctorUnlocked: true });
+      changed = true;
+    }
+    if (changed) { spSaveExam(spExam); renderExamCard(); }
+  } catch (e) { /* offline / mock — ignore */ }
+}
+
+// ---- Pre-login: Learning Material voucher redemption ----
+function toggleVoucherRedeem() {
+  const p = document.getElementById('lm-voucher-panel'); if (!p) return;
+  p.style.display = (p.style.display === 'none' || !p.style.display) ? 'block' : 'none';
+}
+function spVoucherStatus(msg, kind, icon) {
+  const el = document.getElementById('lm-voucher-status'); if (!el) return;
+  el.style.display = 'block'; el.innerHTML = spBadge(msg, kind, icon);
+  if (el.firstChild) { el.firstChild.style.whiteSpace = 'normal'; el.firstChild.style.textAlign = 'left'; el.firstChild.style.lineHeight = '1.45'; el.firstChild.style.alignItems = 'flex-start'; }
+}
+function requestVoucherRedeem() {
+  const code = (document.getElementById('lm-voucher-code').value || '').trim();
+  const btn = document.getElementById('lm-voucher-btn');
+  if (code.length < 4) { spVoucherStatus('That code doesn’t look valid. Please check and try again.', 'pending', 'error'); return; }
+  btn.disabled = true; btn.innerHTML = `<i class="material-icons spin">sync</i> Sending request…`;
+  setTimeout(() => {
+    spVoucherStatus('Code valid · Redemption requested — your proctor will approve it shortly.', 'info', 'hourglass_top');
+    btn.innerHTML = `<i class="material-icons">schedule</i> Awaiting proctor approval`;
+    setTimeout(() => {
+      spVoucherStatus('Voucher redeemed ✓ — your learning material is unlocked. A confirmation email has been sent.', 'paid', 'check_circle');
+      btn.disabled = false; btn.className = 'btn-primary'; btn.style.width = '100%';
+      btn.innerHTML = `<i class="material-icons">menu_book</i> Open learning material`;
+      btn.onclick = () => spToast('Sign in to access your unlocked learning material.', 'info');
+      spLogEmail('Learning Material Voucher Redeemed');
+    }, 2200);
+  }, 1200);
+}
+
+// ==========================================================================
+// MATERIAL + EXAM BUNDLES  (candidate buys a material; one purchase also
+// allocates the exam voucher. Self-buyers get INSTANT access — no code
+// re-entry. The emailed code + magic link is the receipt / transfer path,
+// used only when a code was ASSIGNED to someone.)
+// ==========================================================================
+const SP_MATERIALS = [
+  { id: 'mat_food_safety', title: 'Food Protection Manager', cert: 'Certified Restaurant Manager', desc: 'Full study guide, practice questions and flashcards for the Manager exam.', img: 'thumb_food_safety.png', material: 54, exam: 75 },
+  { id: 'mat_haccp',       title: 'HACCP Level 3',            cert: 'HACCP Advanced',                desc: 'Hazard analysis, critical control points and audit-ready coursework.',    img: 'thumb_haccp.png',       material: 64, exam: 75 },
+  { id: 'mat_allergen',    title: 'Allergen Awareness',       cert: 'Allergen Management',           desc: 'Allergen control, labelling and cross-contamination essentials.',          img: 'thumb_allergen.png',    material: 39, exam: 75 }
+];
+const SP_OWNED_KEY = 'sp_owned_materials';
+function spOwnedMaterials() { try { return JSON.parse(localStorage.getItem(SP_OWNED_KEY) || '[]'); } catch (e) { return []; } }
+function spAddOwnedMaterial(id) { if (!id) return; try { const a = spOwnedMaterials(); if (!a.includes(id)) { a.push(id); localStorage.setItem(SP_OWNED_KEY, JSON.stringify(a)); } } catch (e) {} }
+function spBundlePrice(m) { return (m.material || 0) + (m.exam || 0); }
+
+function renderMaterialBundles() {
+  const grid = document.getElementById('material-bundle-grid'); if (!grid) return;
+  const owned = spOwnedMaterials();
+  grid.innerHTML = SP_MATERIALS.map(m => {
+    const isOwned = owned.includes(m.id);
+    const price = spBundlePrice(m);
+    const cta = isOwned
+      ? `<button class="btn-secondary" onclick="openOwnedMaterial('${m.id}')" style="display:inline-flex; align-items:center; gap:6px;"><i class="material-icons" style="font-size:18px;">menu_book</i> Open material</button>`
+      : `<button class="btn-primary" onclick="openBundlePurchase('${m.id}')" style="display:inline-flex; align-items:center; gap:6px;"><i class="material-icons" style="font-size:18px;">shopping_bag</i> Buy bundle</button>`;
+    return `<div class="card" style="padding:0; overflow:hidden; display:flex; flex-direction:column;">
+      <div style="height:120px; background:#eef1f7 url('${m.img}') center/cover no-repeat;"></div>
+      <div style="padding:16px; display:flex; flex-direction:column; gap:8px; flex:1;">
+        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--on-sur-var);">${m.cert}</div>
+        <h3 style="margin:0; font-size:16px; font-weight:700;">${m.title}</h3>
+        <p style="margin:0; font-size:13px; color:var(--on-sur-var); line-height:1.45; flex:1;">${m.desc}</p>
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-top:8px;">
+          <span style="font-size:18px; font-weight:800;">$${price.toFixed(2)}</span>
+          ${cta}
+        </div>
+        ${isOwned ? `<span style="font-size:12px; color:#146c2e; font-weight:700;"><i class="material-icons" style="font-size:14px; vertical-align:middle;">check_circle</i> Owned · exam voucher allocated</span>` : `<span style="font-size:12px; color:var(--on-sur-var);">Material + ${m.cert} exam voucher</span>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+let spBundleMaterial = null;
+function openBundlePurchase(id) {
+  const m = SP_MATERIALS.find(x => x.id === id); if (!m) return;
+  spBundleMaterial = m;
+  const set = (i, t) => { const el = document.getElementById(i); if (el) el.textContent = t; };
+  set('bp-mat-line', `${m.title} — study material`); set('bp-mat-fee', `$${m.material.toFixed(2)}`);
+  set('bp-exam-line', `${m.cert} exam voucher`);      set('bp-exam-fee', `$${m.exam.toFixed(2)}`);
+  set('bp-total', `$${spBundlePrice(m).toFixed(2)}`); set('bp-btn-label', `Pay $${spBundlePrice(m).toFixed(2)}`);
+  const mod = document.getElementById('bundle-purchase-modal'); if (mod) mod.classList.add('active', 'open');
+}
+
+async function confirmBundlePurchase() {
+  const m = spBundleMaterial; if (!m) return;
+  const btn = document.getElementById('bp-pay-btn'); const orig = btn ? btn.innerHTML : '';
+  if (btn) { btn.disabled = true; btn.innerHTML = `<i class="material-icons spin">sync</i> Processing…`; }
+  let data = null;
+  try {
+    await new Promise(r => setTimeout(r, 1200)); // mock payment delay
+    const candidateId = (typeof CANDIDATE_STATE !== 'undefined' && CANDIDATE_STATE.candidateId) || 'cand_001';
+    const email = (typeof CANDIDATE_STATE !== 'undefined' && CANDIDATE_STATE.email) || (document.getElementById('login-email') || {}).value || '';
+    const res = await fetch(`${SP_API}/api/bundles/purchase`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ materialId: m.id, materialTitle: m.title, cert: m.cert, type: 'Internet Proctored', price: spBundlePrice(m), source: 'self-purchased', candidateId, email })
+    });
+    data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.message || 'purchase failed');
+  } catch (e) {
+    console.error('Bundle purchase failed:', e);
+    if (btn) { btn.disabled = false; btn.innerHTML = orig; }
+    spToast('Payment could not be completed. Please try again.', 'error');
+    return;
+  }
+
+  // Self-purchase → auto-activated: unlock material + reflect the exam voucher
+  // on the dashboard card. No code entry required.
+  spAddOwnedMaterial(m.id);
+  Object.assign(spExam, { type: 'online', examName: m.cert, paymentRequired: false, paymentStatus: 'paid', proctorUnlocked: true, voucherId: data.voucherId, voucherType: 'Internet Proctored' });
+  spSaveExam(spExam);
+
+  const mod = document.getElementById('bundle-purchase-modal'); if (mod) mod.classList.remove('active', 'open');
+  if (btn) { btn.disabled = false; btn.innerHTML = orig; }
+  renderMaterialBundles(); renderExamCard();
+  spToast(`Bundle purchased — ${m.title} unlocked. Receipt emailed.`, 'success');
+  spLogEmail('Material + Exam Bundle — Receipt & Access');
+}
+
+function openOwnedMaterial() {
+  try { if (typeof navigateTo === 'function') { navigateTo('cand-learn'); return; } } catch (e) {}
+  window.open('learning_material.html', '_blank');
+}
+
+// ---- First-time activation for ASSIGNED codes (magic link or manual entry) ----
+async function activateAccess(code, opts) {
+  opts = opts || {};
+  const statusEl = document.getElementById('activate-access-status');
+  const show = (msg, kind, icon) => { if (statusEl) { statusEl.style.display = 'block'; statusEl.innerHTML = spBadge(msg, kind, icon); } };
+  if (!code || code.trim().length < 4) { show('That code doesn’t look valid. Please check and try again.', 'pending', 'error'); return; }
+  code = code.trim();
+  show('Activating your access…', 'info', 'hourglass_top');
+  try {
+    const res = await fetch(`${SP_API}/api/vouchers/${encodeURIComponent(code)}/activate`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({})
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.message || 'activation failed');
+    const v = data.voucher;
+    if (v.materialId) spAddOwnedMaterial(v.materialId);
+    const isNet = v.currentType === 'Internet Proctored';
+    Object.assign(spExam, { type: isNet ? 'online' : 'in-class', examName: v.cert || spExam.examName, paymentRequired: false, paymentStatus: isNet ? 'paid' : 'not_required', proctorUnlocked: isNet, voucherId: v.voucherId, voucherType: v.currentType });
+    spSaveExam(spExam);
+    show(data.alreadyActive ? 'Already activated ✓ — your material and exam voucher are ready.' : 'Activated ✓ — your material and exam voucher are unlocked.', 'paid', 'check_circle');
+    renderMaterialBundles(); renderExamCard();
+    if (!opts.silent) spToast(`Voucher ${v.voucherId} activated.`, 'success');
+  } catch (e) {
+    console.error('Activation failed:', e);
+    show(e.message || 'We couldn’t activate that code. Please check it and try again.', 'pending', 'error');
+  }
+}
+function activateAccessFromInput() { const el = document.getElementById('activate-code-input'); activateAccess(el ? el.value : ''); }
+
+// ---- Pre-login: sign in with an exam voucher code -------------------------
+// A candidate who holds a voucher (bought online on the website or assigned by
+// a school) can enter it on the login screen to be signed straight into the
+// portal with the exam unlocked — no email/password required.
+function toggleVoucherLogin() {
+  const panel = document.getElementById('exam-voucher-panel');
+  if (!panel) return;
+  const open = panel.style.display !== 'none';
+  panel.style.display = open ? 'none' : 'block';
+  if (!open) { const inp = document.getElementById('exam-voucher-code'); if (inp) inp.focus(); }
+}
+
+async function handleVoucherLogin() {
+  const inp = document.getElementById('exam-voucher-code');
+  const btn = document.getElementById('exam-voucher-btn');
+  const statusEl = document.getElementById('exam-voucher-status');
+  const show = (msg, kind, icon) => { if (statusEl) { statusEl.style.display = 'block'; statusEl.innerHTML = spBadge(msg, kind, icon); } };
+  const code = inp ? inp.value.trim() : '';
+  if (code.length < 4) { show('That code doesn’t look valid. Please check and try again.', 'pending', 'error'); if (inp) inp.focus(); return; }
+
+  const orig = btn ? btn.innerHTML : '';
+  if (btn) { btn.disabled = true; btn.innerHTML = `<i class="material-icons spin">sync</i> Signing you in…`; }
+  show('Verifying your voucher…', 'info', 'hourglass_top');
+
+  let voucher = null;
+  try {
+    // Activate flips an Assigned voucher to Activated and returns it; an
+    // already-active voucher is returned unchanged. Works for online-purchased
+    // and school-assigned codes alike.
+    const res = await fetch(`${SP_API}/api/vouchers/${encodeURIComponent(code)}/activate`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({})
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.message || 'We couldn’t verify that voucher.');
+    voucher = data.voucher;
+  } catch (e) {
+    if (btn) { btn.disabled = false; btn.innerHTML = orig; }
+    show(e.message || 'We couldn’t verify that voucher. Please check it and try again.', 'pending', 'error');
+    return;
+  }
+
+  // Reflect the voucher on the dashboard exam card (single source of truth).
+  if (voucher.materialId) spAddOwnedMaterial(voucher.materialId);
+  const isNet = voucher.currentType === 'Internet Proctored';
+  Object.assign(spExam, {
+    type: isNet ? 'online' : 'in-class',
+    examName: voucher.cert || spExam.examName,
+    paymentRequired: false,
+    paymentStatus: isNet ? 'paid' : 'not_required',
+    proctorUnlocked: isNet,
+    voucherId: voucher.voucherId,
+    voucherType: voucher.currentType
+  });
+  spSaveExam(spExam);
+
+  // Sign the candidate in (mirrors handleLogin): reveal chrome, land on home.
+  show('Voucher verified ✓ — signing you in…', 'paid', 'check_circle');
+  setTimeout(() => {
+    CANDIDATE_STATE.examDate = new Date();
+    const mainHeader = document.getElementById('main-header');
+    if (mainHeader) mainHeader.classList.remove('hidden');
+    const mainNav = document.getElementById('main-nav');
+    if (mainNav) mainNav.classList.remove('hidden');
+    navigateTo('cand-home');
+    try { renderExamCard(); } catch (e) {}
+    try { checkVoucherStatus(); } catch (e) {}
+    spToast(`Signed in with voucher ${voucher.voucherId}. ${isNet ? 'Your exam is ready to start.' : 'Your in-class exam is set.'}`, 'success');
+    if (btn) { btn.disabled = false; btn.innerHTML = orig; }
+  }, 600);
+}
+
+// Render bundles + handle a one-click activation magic link (?activate=CODE).
+function spInitBundles() {
+  try { renderMaterialBundles(); } catch (e) {}
+  try {
+    const ap = new URLSearchParams(window.location.search).get('activate');
+    if (ap) {
+      const inp = document.getElementById('activate-code-input'); if (inp) inp.value = ap;
+      activateAccess(ap, { silent: false });
+    }
+  } catch (e) {}
+}
+
+function spReparentModals() {
+  // .mock-env carries a transform, which traps position:fixed modals inside it.
+  // Move overlay modals to <body> so they cover the viewport correctly.
+  try { document.querySelectorAll('.modal-overlay').forEach(m => { if (m.parentElement !== document.body) document.body.appendChild(m); }); } catch (e) {}
+}
+document.addEventListener('DOMContentLoaded', () => { try { renderExamCard(); } catch (e) {} try { spSyncVoucher(); } catch (e) {} spReparentModals(); spInitBundles(); });
+try { renderExamCard(); } catch (e) {}
+try { spReparentModals(); } catch (e) {}

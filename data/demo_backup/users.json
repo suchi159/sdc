@@ -1,0 +1,124 @@
+{
+  "currentUser": {
+    "id": "usr_001",
+    "name": "Dr. Sarah Jenkins",
+    "email": "sarah.jenkins@secureproctor.ai",
+    "phone": "+1 (415) 555-0142",
+    "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&auto=format&fit=crop&q=80",
+    "role": "Senior Proctor",
+    "organization": "SecureProctor AI",
+    "orgId": "ORG-SP-001",
+    "joinedAt": "2026-01-15T08:00:00Z",
+    "hasCompletedTraining": true,
+    "trainingWatchPercent": 100,
+    "accountStatus": "active",
+    "license": {
+      "number": "LIC-2026-0142",
+      "issuedAt": "2026-01-15T08:00:00Z",
+      "expiresAt": "2027-01-15T08:00:00Z",
+      "status": "active"
+    },
+    "permissions": {
+      "createClasses": true,
+      "manageEnrollments": true,
+      "assignVouchers": true,
+      "purchaseVouchers": true
+    },
+    "permissionsGrantedBy": "Org Admin (SecureProctor AI)",
+    "permissionsGrantedAt": "2026-02-01T09:00:00Z",
+    "password": "training123",
+    "twoFactorEnabled": true,
+    "notifications": {
+      "newIncident": true,
+      "retakeRequest": true,
+      "voucherUpdate": true,
+      "examStarting": true,
+      "aiFlag": true
+    },
+    "completedModules": [],
+    "quizScores": {},
+    "certified": false,
+    "certifiedAt": null,
+    "totalXP": 0,
+    "paymentMethod": {
+      "type": "bank",
+      "bankName": "Chase Bank",
+      "accountEnding": "4829",
+      "routingEnding": "1024"
+    }
+  },
+  "leaderboard": [
+    {
+      "id": "usr_010",
+      "name": "Marcus Williams",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      "xp": 920,
+      "modulesCompleted": 8,
+      "avgScore": 96,
+      "certified": true
+    },
+    {
+      "id": "usr_011",
+      "name": "Aisha Patel",
+      "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80",
+      "xp": 880,
+      "modulesCompleted": 8,
+      "avgScore": 93,
+      "certified": true
+    },
+    {
+      "id": "usr_012",
+      "name": "James Chen",
+      "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&auto=format&fit=crop&q=80",
+      "xp": 840,
+      "modulesCompleted": 8,
+      "avgScore": 90,
+      "certified": true
+    },
+    {
+      "id": "usr_013",
+      "name": "Elena Rodriguez",
+      "avatar": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&auto=format&fit=crop&q=80",
+      "xp": 720,
+      "modulesCompleted": 7,
+      "avgScore": 88,
+      "certified": false
+    },
+    {
+      "id": "usr_014",
+      "name": "David Kim",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80",
+      "xp": 680,
+      "modulesCompleted": 7,
+      "avgScore": 85,
+      "certified": false
+    },
+    {
+      "id": "usr_015",
+      "name": "Fatima Al-Hassan",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
+      "xp": 560,
+      "modulesCompleted": 6,
+      "avgScore": 82,
+      "certified": false
+    },
+    {
+      "id": "usr_016",
+      "name": "Ryan O'Connor",
+      "avatar": "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=100&auto=format&fit=crop&q=80",
+      "xp": 440,
+      "modulesCompleted": 5,
+      "avgScore": 79,
+      "certified": false
+    },
+    {
+      "id": "usr_017",
+      "name": "Priya Sharma",
+      "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80",
+      "xp": 320,
+      "modulesCompleted": 4,
+      "avgScore": 76,
+      "certified": false
+    }
+  ]
+}

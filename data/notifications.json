@@ -1,0 +1,47 @@
+[
+  {
+    "id": "ntf_005",
+    "type": "voucher_redeem",
+    "icon": "how_to_reg",
+    "title": "Voucher redeemed",
+    "message": "VCH-TEST9 (In-House) was redeemed for the exam session.",
+    "createdAt": "2026-06-26T15:02:03.794Z",
+    "read": false
+  },
+  {
+    "id": "ntf_004",
+    "type": "voucher_assign",
+    "icon": "confirmation_number",
+    "title": "Voucher assigned",
+    "message": "VCH-TEST9 (In-House) assigned to Redeem Test.",
+    "createdAt": "2026-06-26T15:02:03.780Z",
+    "read": false
+  },
+  {
+    "id": "ntf_003",
+    "type": "voucher_activate",
+    "icon": "lock_open",
+    "title": "Access activated",
+    "message": "VCH-W0010 (Internet Proctored) was activated by the candidate.",
+    "createdAt": "2026-06-25T09:51:23.818Z",
+    "read": false
+  },
+  {
+    "id": "ntf_002",
+    "type": "web_voucher_purchase",
+    "icon": "shopping_cart_checkout",
+    "title": "Online voucher purchase",
+    "message": "Acme purchased 2 Internet Proctored vouchers online.",
+    "createdAt": "2026-06-25T09:51:16.042Z",
+    "read": false
+  },
+  {
+    "id": "ntf_001",
+    "type": "license_expiry",
+    "icon": "card_membership",
+    "title": "Proctor license renewal",
+    "message": "Your proctor license LIC-2026-0142 is valid until 15 Jan 2027.",
+    "createdAt": "2026-06-01T09:00:00Z",
+    "read": true
+  }
+]

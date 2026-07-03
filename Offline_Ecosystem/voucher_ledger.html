@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" data-t="light">
+<head>
+    <script src="offline_mock_api.js"></script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzAwMCIvPjxnIGZpbGw9IiNmZmYiPjxjaXJjbGUgY3g9IjExIiBjeT0iMTMiIHI9IjQuMyIvPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTAuOCIgcj0iNSIvPjxjaXJjbGUgY3g9IjIxIiBjeT0iMTMiIHI9IjQuMyIvPjxyZWN0IHg9IjguOCIgeT0iMTMiIHdpZHRoPSIxNC40IiBoZWlnaHQ9IjciLz48cmVjdCB4PSI5LjIiIHk9IjE5LjUiIHdpZHRoPSIxMy42IiBoZWlnaHQ9IjUuOCIgcng9IjEuMyIvPjwvZz48ZyBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMC43Ij48bGluZSB4MT0iMTYiIHkxPSIxNC41IiB4Mj0iMTYiIHkyPSIxOSIvPjxsaW5lIHgxPSIxMi40IiB5MT0iMTQuOCIgeDI9IjEyLjQiIHkyPSIxOSIvPjxsaW5lIHgxPSIxOS42IiB5MT0iMTQuOCIgeDI9IjE5LjYiIHkyPSIxOSIvPjwvZz48L3N2Zz4="/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Organization Admin | SecureProctor AI</title>
+      <link rel="stylesheet" href="design_system.css">
+<link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <header class="global-header md-top-app-bar">
+    <div class="brand" style="display: flex; align-items: center; gap: 12px;">
+      <img src="sdc_full_logo.png" alt="SDC Certifications" style="height: 32px;">
+      <span style="font-weight: 600; font-size: 16px;">SDC Platform</span>
+    </div>
+    
+    <div class="header-actions">
+      <button class="header-btn" title="Notifications">
+        <i class="material-icons">notifications</i>
+      </button>
+      <button class="header-btn" id="globalThemeToggle" title="Toggle Dark/Light Mode">
+        <i class="material-icons">dark_mode</i>
+      </button>
+      <div class="profile-dropdown-container">
+        <button class="profile-trigger" id="profileDropdownBtn" style="display: flex; align-items: center; gap: 12px; background: transparent; border: none; cursor: pointer; text-align: left; padding: 4px; border-radius: 8px;">
+          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+          <div style="display: flex; flex-direction: column;">
+            <span class="name" style="font-size: 14px; font-weight: 600; color: var(--on-sur, var(--text-primary));">Dr. Sarah Jenkins</span>
+            <span class="email" style="font-size: 11px; color: var(--on-sur-var, var(--text-secondary));">s.jenkins@sdc.edu</span>
+          </div>
+          <i class="material-icons" style="color: var(--on-sur-var, var(--text-secondary));">arrow_drop_down</i>
+        </button>
+        <div class="dropdown-menu" id="profileDropdown">
+          <button class="dropdown-item">
+            <i class="material-icons">switch_account</i>
+            Switch Account
+          </button>
+          <button class="dropdown-item">
+            <i class="material-icons">person_add</i>
+            Add New Account
+          </button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item" style="color: #ef4444;" onclick="handleLogout()">
+            <i class="material-icons">logout</i>
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+<div id="main-view" class="view-panel active">
+  <div class="app-layout">
+<div class="app-body">
+<aside class="sidebar md-navigation-drawer" id="app-sidebar">
+      
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-view="dashboard" id="nav-dashboard">
+          <i class="material-icons">dashboard</i>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-view="monitoring" id="nav-monitoring">
+          <i class="material-icons">videocam</i>
+          <span>Exam Monitoring</span>
+        </button>
+        <button class="nav-item" data-view="sessions" id="nav-sessions">
+          <i class="material-icons">event</i>
+          <span>Classes</span>
+        </button>
+        <button class="nav-item" data-view="candidates" id="nav-candidates">
+          <i class="material-icons">people</i>
+          <span>Candidates</span>
+        </button>
+        <button class="nav-item" data-view="incidents" id="nav-incidents">
+          <i class="material-icons">gavel</i>
+          <span>Incident Hub</span>
+          <span class="nav-badge" id="incident-badge" style="display:none;">0</span>
+        </button>
+        <button class="nav-item" data-view="reports" id="nav-reports">
+          <i class="material-icons">bar_chart</i>
+          <span>Reports & Analytics</span>
+        </button>
+        <button class="nav-item" data-view="earnings" id="nav-earnings">
+          <i class="material-icons">account_balance_wallet</i>
+          <span>Earnings & Payments</span>
+        </button>
+        <button class="nav-item" data-view="settings" id="nav-settings">
+          <i class="material-icons">settings</i>
+          <span>Settings</span>
+        </button>
+      </nav>
+
+      <!-- Sidebar Footer -->
+      
+          </div>
+        </div>
+      </header>
+      <div class="view-container">
+        <div class="panel-section active">
+
+  
+
+  <!-- Main View Area -->
+  <div class="main-view">
+    
+    
+
+    <!-- Main Content -->
+    <main class="main-content md-main-content">
+      
+      <div class="content-header">
+        <p>Purchase, assign, track, and revoke digital assessment permissions.</p>
+        <button class="btn-primary" id="purchaseBtn"><span class="material-symbols-outlined">shopping_cart</span> Purchase Vouchers</button>
+      </div>
+
+      <!-- Controls Bar -->
+      <section class="controls-bar card">
+        <div class="search-box">
+          <span class="material-symbols-outlined">search</span>
+          <input type="text" id="globalSearch" placeholder="Search by Hash Key, Candidate, or Proctor ID...">
+        </div>
+        <div class="filter-group">
+          <select id="courseFilter">
+            <option value="">All Learning Materials</option>
+            <option value="Food Safety L1">Food Safety L1</option>
+            <option value="HACCP Advanced">HACCP Advanced</option>
+          </select>
+          <select id="statusFilter">
+            <option value="">All Statuses</option>
+            <option value="Available">Not Assigned</option>
+            <option value="Bound">Assigned</option>
+            <option value="Redeemed">Redeemed</option>
+            <option value="Revoked">Revoked</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Global Action Panel (Hidden by default) -->
+      <section class="global-action-panel hidden" id="actionPanel">
+        <div class="action-info">
+          <span class="material-symbols-outlined">info</span>
+          <span id="selectedCount">0</span> vouchers selected
+        </div>
+        <div class="action-buttons">
+          <button class="btn-danger" id="revokeSelectedBtn">Revoke Selected</button>
+          <button class="btn-secondary" id="clearSelectionBtn">Cancel</button>
+        </div>
+      </section>
+
+      <!-- Split View Layout -->
+      <div class="split-view">
+        
+        <!-- Ledger Table -->
+        <div class="ledger-container card">
+          <table >
+            <thead>
+              <tr>
+                <th><input type="checkbox" id="selectAllCheckbox"></th>
+                <th>Voucher Hash Key</th>
+                <th>Learning Material</th>
+                <th>Candidate</th>
+                <th>SDC Proctor ID</th>
+                <th>Status</th>
+                <th>Expiration</th>
+              </tr>
+            </thead>
+            <tbody id="ledgerTableBody">
+              <!-- Rows injected via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Proctor Supply Inbox -->
+        <aside class="supply-inbox card">
+          <div class="inbox-header">
+            <h3>Proctor Supply Inbox</h3>
+            <span class="badge">3 New</span>
+          </div>
+          <div class="bulk-storage-info">
+            <p>Available Bulk Storage: <strong>4,250</strong></p>
+          </div>
+          <ul class="request-list" id="requestList">
+            <!-- Requests injected via JS -->
+          </ul>
+        </aside>
+
+      </div>
+            </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+  <!-- Revocation Modal -->
+  <div class="modal-overlay hidden" id="revokeModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="material-symbols-outlined warning-icon">warning</span>
+        <h2>Confirm Bulk Revocation</h2>
+      </div>
+      <div class="modal-body">
+        <p id="revokeModalText">You are about to revoke X vouchers. This action will wipe database strings and candidates will lose access.</p>
+        <div id="defensiveWarning" class="alert-box error hidden">
+          <strong>CRITICAL WARNING:</strong> <span id="activeExamsCount"></span> candidates are currently testing. Revocation will pause exams gently at the next question save point.
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="cancelRevokeBtn">Cancel</button>
+        <button class="btn-danger" id="confirmRevokeBtn">Confirm Revocation</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="voucher_ledger.js"></script>
+    <script src="global_nav.js"></script>
+</div>
+</body>
+</html>

@@ -1,0 +1,298 @@
+{
+  "1": [
+    {
+      "q": "What is the primary role of a manager in SafeFood AI?",
+      "options": [
+        "Cook meals",
+        "Monitor temperature sensors and verify AI risk alerts",
+        "Serve customers",
+        "Repair kitchen appliances"
+      ],
+      "answer": 1
+    },
+    {
+      "q": "What percentage of critical control point deviations does the AI detect automatically?",
+      "options": [
+        "50%",
+        "75%",
+        "94.7%",
+        "100%"
+      ],
+      "answer": 2
+    },
+    {
+      "q": "Which of the following is NOT a manager responsibility?",
+      "options": [
+        "Monitoring live sensors",
+        "Documenting incidents for inspectors",
+        "Determining menu prices",
+        "Supporting staff with digital checklists"
+      ],
+      "answer": 2
+    }
+  ],
+  "2": [
+    {
+      "q": "What triggers a temperature tracking alert?",
+      "options": [
+        "Food cooking too quickly",
+        "Items falling into the danger zone for prolonged periods",
+        "Freezer running efficiently",
+        "Oven door being closed"
+      ],
+      "answer": 1
+    },
+    {
+      "q": "Where does the AI safety model run?",
+      "options": [
+        "Only on cloud servers",
+        "Only on the kitchen's tablet",
+        "Both locally on kitchen devices and on cloud servers",
+        "On the inspector's laptop"
+      ],
+      "answer": 2
+    },
+    {
+      "q": "What does the Inventory Expiry system detect?",
+      "options": [
+        "The flavor profile of ingredients",
+        "Expired ingredients and improper FIFO rotation",
+        "Supplier delivery times",
+        "Customer allergies"
+      ],
+      "answer": 1
+    },
+    {
+      "q": "Hygiene detection is designed to monitor which of the following?",
+      "options": [
+        "Background music volume",
+        "Staff washing hands and wearing proper uniforms",
+        "Dining room cleanliness",
+        "Kitchen temperature changes"
+      ],
+      "answer": 1
+    }
+  ],
+  "3": [
+    {
+      "q": "How many kitchen camera feeds can the zone grid show simultaneously?",
+      "options": [
+        "4",
+        "8",
+        "16",
+        "32"
+      ],
+      "answer": 2
+    },
+    {
+      "q": "What color border indicates a high-risk zone?",
+      "options": [
+        "Green",
+        "Blue",
+        "Yellow",
+        "Red"
+      ],
+      "answer": 3
+    },
+    {
+      "q": "Where are real-time AI flags displayed?",
+      "options": [
+        "In the zone grid",
+        "In the right sidebar alert panel",
+        "In an email",
+        "In a separate application"
+      ],
+      "answer": 1
+    }
+  ],
+  "4": [
+    {
+      "q": "What is the first step in the escalation ladder for minor infractions?",
+      "options": [
+        "Discard batch",
+        "Send an alert to the station",
+        "Escalate to Corporate",
+        "Halt prep"
+      ],
+      "answer": 1
+    },
+    {
+      "q": "When should you mandate the discarding of a batch?",
+      "options": [
+        "On the first minor flag",
+        "When food is perfectly safe",
+        "For severe temperature or hygiene violations",
+        "Whenever you are bored"
+      ],
+      "answer": 2
+    },
+    {
+      "q": "What does halting prep require staff to do?",
+      "options": [
+        "Take a lunch break",
+        "Stop their current task and clean the area",
+        "Clock out for the day",
+        "Start cooking faster"
+      ],
+      "answer": 1
+    },
+    {
+      "q": "When should you escalate to Corporate?",
+      "options": [
+        "For every single flag",
+        "For complex compliance or vendor-related issues",
+        "When a customer complains about taste",
+        "Only during night shifts"
+      ],
+      "answer": 1
+    }
+  ],
+  "5": [
+    {
+      "q": "What is the purpose of the interactive kitchen simulator?",
+      "options": [
+        "To order food",
+        "To practice monitoring and intervention in a safe environment",
+        "To train new chefs",
+        "To debug software issues"
+      ],
+      "answer": 1
+    },
+    {
+      "q": "How long should you review video context before issuing a warning?",
+      "options": [
+        "1 second",
+        "5 seconds",
+        "At least 15 seconds",
+        "1 minute"
+      ],
+      "answer": 2
+    },
+    {
+      "q": "What does the AI confidence score help you decide?",
+      "options": [
+        "The recipe's success",
+        "Whether to intervene or dismiss a flag",
+        "How long the shift lasts",
+        "Camera resolution quality"
+      ],
+      "answer": 1
+    }
+  ],
+  "6": [
+    {
+      "q": "What is the first step when investigating an AI flag?",
+      "options": [
+        "Immediately fire the employee",
+        "Review the 30-second video buffer around the flagged moment",
+        "Call the health inspector",
+        "Ignore it"
+      ],
+      "answer": 1
+    },
+    {
+      "q": "AI confidence scores above what percentage are considered highly reliable for temp drops?",
+      "options": [
+        "50%",
+        "65%",
+        "75%",
+        "85%"
+      ],
+      "answer": 3
+    },
+    {
+      "q": "Why is cross-referencing station history important?",
+      "options": [
+        "To discriminate against staff",
+        "Because equipment malfunctions show repeat patterns",
+        "To waste time",
+        "It's not important"
+      ],
+      "answer": 1
+    },
+    {
+      "q": "What must you do whether you dismiss or escalate a flag?",
+      "options": [
+        "Nothing",
+        "Record your corrective actions in the HACCP log",
+        "Call the supplier",
+        "Take a selfie"
+      ],
+      "answer": 1
+    }
+  ],
+  "7": [
+    {
+      "q": "What should you do for a verified sensor issue?",
+      "options": [
+        "Ignore it",
+        "Take temperature manually, log it, and mute the alarm",
+        "Close the restaurant",
+        "Wait 30 minutes"
+      ],
+      "answer": 1
+    },
+    {
+      "q": "What is required if equipment failure causes significant temperature variance?",
+      "options": [
+        "Just turn it off",
+        "Submit a work order and relocate food immediately",
+        "Nothing \u2014 managers can ignore it",
+        "AI approval"
+      ],
+      "answer": 1
+    },
+    {
+      "q": "How should you distinguish a technical issue from a real risk?",
+      "options": [
+        "You can't",
+        "By physically verifying with handheld probes and checking context",
+        "By throwing all food away",
+        "By asking the AI"
+      ],
+      "answer": 1
+    }
+  ],
+  "8": [
+    {
+      "q": "What is the fundamental Safety First principle?",
+      "options": [
+        "Save money",
+        "AI flags are absolute verdicts",
+        "When in doubt, throw it out \u2014 always verify",
+        "Staff must prove they are clean"
+      ],
+      "answer": 2
+    },
+    {
+      "q": "Which entities review your digital logs?",
+      "options": [
+        "Only local managers",
+        "Only customers",
+        "FDA and local health inspectors",
+        "Nobody"
+      ],
+      "answer": 2
+    },
+    {
+      "q": "When is it acceptable to falsify temperature logs?",
+      "options": [
+        "During rush hours",
+        "If the food looks fine",
+        "Never \u2014 it violates health codes",
+        "If you are short-staffed"
+      ],
+      "answer": 2
+    },
+    {
+      "q": "What is the most critical traceability requirement?",
+      "options": [
+        "Writing detailed emails",
+        "Recording every corrective action digitally",
+        "Taking photos of the dining room",
+        "Telling your supervisor verbally"
+      ],
+      "answer": 1
+    }
+  ]
+}

@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+
+<html data-t="light" lang="en">
+<head>
+    <script src="offline_mock_api.js"></script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzAwMCIvPjxnIGZpbGw9IiNmZmYiPjxjaXJjbGUgY3g9IjExIiBjeT0iMTMiIHI9IjQuMyIvPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTAuOCIgcj0iNSIvPjxjaXJjbGUgY3g9IjIxIiBjeT0iMTMiIHI9IjQuMyIvPjxyZWN0IHg9IjguOCIgeT0iMTMiIHdpZHRoPSIxNC40IiBoZWlnaHQ9IjciLz48cmVjdCB4PSI5LjIiIHk9IjE5LjUiIHdpZHRoPSIxMy42IiBoZWlnaHQ9IjUuOCIgcng9IjEuMyIvPjwvZz48ZyBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMC43Ij48bGluZSB4MT0iMTYiIHkxPSIxNC41IiB4Mj0iMTYiIHkyPSIxOSIvPjxsaW5lIHgxPSIxMi40IiB5MT0iMTQuOCIgeDI9IjEyLjQiIHkyPSIxOSIvPjxsaW5lIHgxPSIxOS42IiB5MT0iMTQuOCIgeDI9IjE5LjYiIHkyPSIxOSIvPjwvZz48L3N2Zz4="/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="InClass Proctor V2 - Unified operational ecosystem for exams." name="description"/>
+<title>InClass Proctor V2 — Command Center</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="design_system.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<!-- Styles -->
+<link href="v2.css" rel="stylesheet"/>
+</head>
+<body>
+<!-- ================= APP LAYOUT ================= -->
+<div class="v2-layout">
+<!-- ====== SIDEBAR ====== -->
+<div class="app-body">
+<aside class="v2-sidebar glass-panel">
+<div class="sidebar-brand">
+<div class="brand-logo">
+<i class="material-icons">radar</i>
+</div>
+<div class="brand-text">
+<h1>SecureProctor AI</h1>
+<span>Operations OS</span>
+</div>
+</div>
+<nav class="sidebar-nav">
+<button class="nav-btn active" data-target="dashboard">
+<i class="material-icons-outlined">dashboard</i>
+<span>Dashboard</span>
+</button>
+<button class="nav-btn" data-target="candidates">
+<i class="material-icons-outlined">people</i>
+<span>Candidates</span>
+</button>
+<button class="nav-btn" data-target="sessions">
+<i class="material-icons-outlined">event_available</i>
+<span>Classes</span>
+<span class="live-pulse"></span>
+</button>
+<button class="nav-btn" data-target="learning">
+<i class="material-icons-outlined">menu_book</i>
+<span>Learning Materials</span>
+</button>
+<button class="nav-btn" data-target="earnings">
+<i class="material-icons-outlined">account_balance_wallet</i>
+<span>Earnings &amp; Payments</span>
+</button>
+<button class="nav-btn" data-target="reports">
+<i class="material-icons-outlined">insights</i>
+<span>Reports &amp; Analytics</span>
+</button>
+<button class="nav-btn" data-target="settings">
+<i class="material-icons-outlined">settings</i>
+<span>Settings &amp; Profile</span>
+</button>
+</nav>
+<div class="sidebar-footer">
+<div class="user-card" style="margin-bottom:12px; border-bottom:1px solid var(--glass-border); padding-bottom:12px;">
+<img alt="Avatar" class="avatar" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&amp;q=80"/>
+<div class="user-info">
+<strong>Dr. Sarah Jenkins</strong>
+<span>Admin</span>
+</div>
+</div>
+<button class="nav-btn" onclick="v2App.showToast('Signing out...', 'info')" style="color:var(--err); width:100%; justify-content:flex-start; padding:8px 12px;">
+<i class="material-icons-outlined">logout</i>
+<span>Sign Out</span>
+</button>
+</div>
+</aside>
+<!-- ====== MAIN CONTENT ====== -->
+<main class="v2-main">
+<!-- HEADER -->
+<header class="v2-header glass-panel">
+<div class="header-left" style="display:flex; align-items:center; gap:16px;">
+<div style="background:white; color:black; font-weight:800; font-size:18px; padding:8px 12px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">SBC</div>
+<div class="greeting">
+<h2 id="greeting-text" style="font-size:18px; margin-bottom:2px;">Good morning, Sarah</h2>
+<span class="institution-name" style="font-size:12px; color:var(--on-sur-var);">SecureProctor University</span>
+</div>
+</div>
+<div style="flex:1;"></div>
+<div class="header-right" style="display:flex; align-items:center; gap:16px;">
+<div class="header-search" style="margin-right:16px; margin-left:0;">
+<i class="material-icons-outlined">search</i>
+<input placeholder="Search..." type="text"/>
+<div class="search-shortcut">⌘K</div>
+</div>
+<button class="icon-btn theme-toggle" id="theme-toggle">
+<i class="material-icons-outlined">dark_mode</i>
+</button>
+<button class="icon-btn action-btn">
+<i class="material-icons-outlined">notifications</i>
+<span class="badge">3</span>
+</button>
+<img alt="Profile Avatar" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&amp;q=80" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid var(--out);"/>
+</div>
+</header>
+<!-- VIEW CONTAINER -->
+<div class="view-container" id="view-container">
+<!-- ================= 1. DASHBOARD ================= -->
+<section class="view-section active" id="view-dashboard">
+<div class="section-header">
+<h3>Overview</h3>
+<div class="date-chip">Today, Oct 24</div>
+</div>
+<div class="dashboard-split" style="grid-template-columns: 2fr 1fr; align-items: stretch; margin-top:24px;">
+<!-- Upcoming Exam Card -->
+<div class="widget-panel glass-panel split-main" onclick="v2App.showSection('sessions')" style="cursor:pointer; display:flex; flex-direction:column; justify-content:center; padding:32px; background:linear-gradient(135deg, var(--pri), var(--pri-dk)); color:white;">
+<div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px;">
+<span class="status-chip" style="background:rgba(255,255,255,0.2); color:white; border:1px solid rgba(255,255,255,0.3);">Next Exam</span>
+<div style="text-align:right;">
+<div style="font-size:14px; opacity:0.9;">Starting in</div>
+<div id="exam-countdown" style="font-size:24px; font-weight:800; font-family:var(--font-mono); letter-spacing:1px;">15:00</div>
+</div>
+</div>
+<h2 style="font-size:32px; margin-bottom:8px; line-height:1.2;">CS101 Midterm Examination</h2>
+<div style="display:flex; gap:24px; margin-top:auto; padding-top:24px; border-top:1px solid rgba(255,255,255,0.2);">
+<div style="display:flex; align-items:center; gap:8px;">
+<i class="material-icons-outlined" style="opacity:0.9;">event</i>
+<span>Today, 2:00 PM</span>
+</div>
+<div style="display:flex; align-items:center; gap:8px;">
+<i class="material-icons-outlined" style="opacity:0.9;">people</i>
+<span>45 Candidates</span>
+</div>
+</div>
+</div>
+<!-- Actionable Highlights Feed -->
+<div class="widget-panel glass-panel split-side">
+<div class="widget-header">
+<h4 style="display:flex; align-items:center; gap:8px;"><i class="material-icons-outlined" style="color:var(--pri);">bolt</i> Action Required</h4>
+</div>
+<div class="activity-feed" id="dash-actionable-feed" style="margin-top:16px; display:flex; flex-direction:column; gap:16px;">
+<!-- Injected via JS -->
+</div>
+</div>
+</div>
+</section>
+<!-- ================= 2. CANDIDATES ================= -->
+<section class="view-section" id="view-candidates">
+<div class="section-header">
+<h3>Master Candidate Repository</h3>
+<div style="display:flex; flex-direction:row; gap:12px; align-items:center;">
+<button class="btn btn-outlined" onclick="v2App.openModal('Add Candidate', 'candidate', 'excel')"><i class="material-icons">file_upload</i> Upload CSV</button>
+<button class="btn btn-primary" onclick="v2App.openModal('Add Candidate', 'candidate')"><i class="material-icons">person_add</i> Add Candidate</button>
+</div>
+</div>
+<div class="table-container glass-panel" style="position:relative;">
+<div class="table-controls" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+<div class="filter-chips" id="cand-filter-chips">
+<span class="chip active" data-filter="all">All Candidates</span>
+<span class="chip" data-filter="enrolled">Enrolled</span>
+<span class="chip" data-filter="learning">Active</span>
+<span class="chip" data-filter="completed">Completed / Archived</span>
+</div>
+<div style="display:flex; gap:12px; align-items:center;">
+<div style="display:flex; align-items:center; background:var(--sur); border:1px solid var(--glass-border); padding:6px 12px; border-radius:var(--radius-sm);">
+<i class="material-icons-outlined" style="font-size:18px; color:var(--on-sur-var);">search</i>
+<input aria-label="Search candidates" id="cand-search" oninput="v2App.searchCandidates(this.value)" placeholder="Search candidates..." style="border:none; outline:none; background:transparent; font-size:13px; margin-left:8px; width:200px;" type="text"/>
+</div>
+</div>
+</div>
+<!-- Bulk Action Toolbar (Hidden by default) -->
+<div id="bulk-action-bar" style="display:none; position:absolute; top:0; left:0; right:0; background:var(--pri-con); padding:16px 24px; z-index:10; align-items:center; justify-content:space-between; border-bottom:1px solid var(--out);">
+<div style="display:flex; align-items:center; gap:12px;">
+<span id="bulk-count" style="font-weight:600; color:var(--pri-dk);">2 Selected</span>
+</div>
+<div style="display:flex; gap:8px;">
+<button class="btn btn-outlined" onclick="v2App.showToast('Message sent to selected candidates', 'success')" style="background:#fff;"><i class="material-icons">chat</i> Message</button>
+<button class="btn btn-outlined" onclick="v2App.removeBulkCandidates()" style="background:#fff; color:var(--err); border-color:var(--err);"><i class="material-icons">delete</i> Remove</button>
+<button aria-label="Clear selection" class="btn btn-text" onclick="v2App.clearBulkSelection()"><i class="material-icons">close</i></button>
+</div>
+</div>
+<table class="v2-table" id="master-candidate-table">
+<thead>
+<tr>
+<th style="width:40px;"><input aria-label="Select all candidates" id="select-all-candidates" name="selectAll" onchange="v2App.toggleAllCandidates(this)" type="checkbox"/></th>
+<th style="cursor:pointer;">Name &amp; Avatar <i class="material-icons" style="font-size:14px; vertical-align:middle;">arrow_drop_down</i></th>
+<th>Candidate ID</th>
+<th>Voucher Status</th>
+<th style="cursor:pointer;">Class Status <i class="material-icons" style="font-size:14px; vertical-align:middle;">arrow_drop_down</i></th>
+<th style="cursor:pointer;">Total Sessions <i class="material-icons" style="font-size:14px; vertical-align:middle;">arrow_drop_down</i></th>
+<th>Upcoming Exam (Date/Time)</th>
+</tr>
+</thead>
+<tbody id="candidates-tbody">
+<!-- Injected via JS -->
+</tbody>
+</table>
+</div>
+</section>
+<!-- ================= 3. SESSIONS ================= -->
+<section class="view-section" id="view-sessions">
+<div class="section-header">
+<h3>Classes</h3>
+<button class="btn btn-primary" onclick="v2App.openModal('Create Add Class', 'session')"><i class="material-icons">add</i> Add Class</button>
+</div>
+<div class="session-stages">
+<div class="stage-tab active" data-stage="all">All</div>
+<div class="stage-tab" data-stage="draft">Draft</div>
+<div class="stage-tab" data-stage="ongoing">Ongoing</div>
+<div class="stage-tab" data-stage="review">Review</div>
+<div class="stage-tab" data-stage="completed">Completed</div>
+</div>
+<div class="session-grid" id="session-grid-container">
+<!-- Injected via JS -->
+</div>
+</section>
+<!-- NOTE: #view-candidate-detail has been moved to a drawer -->
+<!-- ================= 4. LEARNING MATERIALS ================= -->
+<section class="view-section" id="view-learning">
+<!-- PHASE 1: Dashboard -->
+<div id="lm-phase1-dashboard">
+<div class="section-header" style="margin-bottom: 16px;">
+<h3><i class="material-icons" style="color:var(--sec); vertical-align:middle; margin-right:8px;">school</i>Curriculum Library</h3>
+<button class="btn btn-primary" onclick="v2App.showToast('Upload portal opened', 'success')"><i class="material-icons">add</i> Upload Content</button>
+</div>
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; margin-bottom:24px;">
+<div class="search-bar" style="max-width:300px; width:100%; border:1px solid var(--glass-border); padding:8px 12px; border-radius:100px; display:flex; align-items:center; gap:8px;">
+<i class="material-icons" style="color:var(--on-sur-var);">search</i>
+<input placeholder="Search curriculum..." style="border:none; background:transparent; width:100%; color:var(--on-sur); outline:none;" type="text"/>
+</div>
+<div class="filter-chips" id="lm-filter-chips">
+<button class="chip active" onclick="v2App.filterLM('all')">All</button>
+<button class="chip" onclick="v2App.filterLM('ebooks')">Ebooks</button>
+<button class="chip" onclick="v2App.filterLM('videos')">Videos</button>
+<button class="chip" onclick="v2App.filterLM('audio')">Audio</button>
+<button class="chip" onclick="v2App.filterLM('practice')">Practice Tests</button>
+</div>
+</div>
+<div class="lm-courses-grid" id="v2-lm-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:24px;">
+<!-- Rendered via JS -->
+</div>
+</div>
+<!-- PHASE 2: Detail Experience -->
+<div id="lm-phase2-detail" style="display:none;">
+<button class="btn btn-text" onclick="v2App.closeCourseDetail()" style="margin-bottom:16px; padding:0; color:var(--on-sur-var);"><i class="material-icons">arrow_back</i> Back to Library</button>
+<div class="glass-panel" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px; padding:24px; margin-bottom:24px;">
+<div>
+<h1 id="lm-detail-title" style="font-size:24px; margin-bottom:4px;">Learning Material Title</h1>
+<p id="lm-detail-instructor" style="color:var(--on-sur-var); font-size:14px; margin-bottom:16px;">Instructor Name</p>
+<div style="display:flex; align-items:center; gap:16px;">
+<div style="position:relative; width:48px; height:48px; display:flex; justify-content:center; align-items:center;">
+<svg style="width:100%; height:100%; transform: rotate(-90deg);" viewbox="0 0 100 100">
+<circle cx="50" cy="50" r="40" style="stroke:var(--out-var); stroke-width:8; fill:none;"></circle>
+<circle cx="50" cy="50" id="lm-detail-progress-ring" r="40" style="stroke:var(--sec); stroke-width:8; fill:none; stroke-dasharray:251.2; stroke-dashoffset:251.2; stroke-linecap:round; transition:1s;"></circle>
+</svg>
+<div id="lm-detail-progress-text" style="position:absolute; font-weight:800; font-size:12px; color:var(--sec);">0%</div>
+</div>
+<div style="display:flex; flex-direction:column;">
+<span style="font-weight:700; font-size:14px; color:var(--on-sur);">Candidate Avg Progress</span>
+<span id="lm-detail-status-text" style="font-size:12px; color:var(--on-sur-var);">In Progress</span>
+</div>
+</div>
+</div>
+<div style="display:flex; gap:12px; align-items:center;">
+<button class="btn btn-outlined" onclick="v2App.showToast('Curriculum edited', 'info')"><i class="material-icons">edit</i> Edit Material</button>
+</div>
+</div>
+<div class="stage-tabs" id="lm-detail-tabs" style="margin-bottom:24px;">
+<div class="stage-tab active" data-tab="ebooks" onclick="v2App.renderCourseTab('ebooks')">Ebooks</div>
+<div class="stage-tab" data-tab="videos" onclick="v2App.renderCourseTab('videos')">Videos</div>
+<div class="stage-tab" data-tab="audio" onclick="v2App.renderCourseTab('audio')">Podcasts / Audio</div>
+<div class="stage-tab" data-tab="practice" onclick="v2App.renderCourseTab('practice')">Practice Tests</div>
+</div>
+<div id="lm-tab-content-area" style="display:grid; grid-template-columns:1fr; gap:16px;">
+<!-- JS Rendered -->
+</div>
+</div>
+</section>
+<!-- ================= 5. EARNINGS & PAYMENTS ================= -->
+<section class="view-section" id="view-earnings">
+<div class="section-header">
+<h3>Earnings &amp; Payouts</h3>
+<button class="btn btn-primary" onclick="v2App.showToast('Payout requested successfully!', 'success')"><i class="material-icons">account_balance</i> Request Payout</button>
+</div>
+<div class="earnings-layout">
+<div class="finance-card glass-panel">
+<h4>Available Balance</h4>
+<div class="balance">$4,250.00</div>
+<span class="text-green">+15% vs last month</span>
+</div>
+<div class="finance-card glass-panel">
+<h4>Total Earned (YTD)</h4>
+<div class="balance">$24,800.00</div>
+<span>From 124 sessions</span>
+</div>
+<div class="table-container glass-panel" style="grid-column: 1 / -1;">
+<div class="table-controls">
+<h4>Recent Transactions</h4>
+</div>
+<table class="v2-table">
+<thead>
+<tr>
+<th>Tx ID</th>
+<th>Session</th>
+<th>Date</th>
+<th>Amount</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>#TX-9482</td>
+<td>Midterm CS101</td>
+<td>Oct 23, 2026</td>
+<td>$450.00</td>
+<td><span class="status-chip success">Paid</span></td>
+</tr>
+<tr>
+<td>#TX-9481</td>
+<td>Final Eval Math</td>
+<td>Oct 20, 2026</td>
+<td>$320.00</td>
+<td><span class="status-chip pending">Pending</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- ================= 6. REPORTS & ANALYTICS ================= -->
+<section class="view-section" id="view-reports">
+<div class="section-header">
+<h3>Institution Intelligence</h3>
+<button class="btn btn-outlined" onclick="v2App.showToast('Generating PDF Report...', 'success')"><i class="material-icons">download</i> Export PDF</button>
+</div>
+<div class="analytics-grid">
+<div class="chart-card glass-panel" style="grid-column: 1 / -1; min-height: 300px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+<i class="material-icons-outlined" style="font-size: 48px; color: var(--pri); margin-bottom: 16px;">bar_chart</i>
+<p style="color: var(--on-sur-var);">Interactive Analytics Dashboard rendering...</p>
+</div>
+<div class="chart-card glass-panel">
+<h4>Incident Distribution</h4>
+<ul class="stat-list">
+<li><span>Tab Switches</span> <strong>45%</strong></li>
+<li><span>Multiple Faces</span> <strong>25%</strong></li>
+<li><span>Audio Anomalies</span> <strong>20%</strong></li>
+<li><span>Other</span> <strong>10%</strong></li>
+</ul>
+</div>
+<div class="chart-card glass-panel">
+<h4>Readiness Scores</h4>
+<ul class="stat-list">
+<li><span>Avg. Material Completion</span> <strong>88%</strong></li>
+<li><span>Practice Test Pass Rate</span> <strong>76%</strong></li>
+<li><span>Voucher Activation</span> <strong>92%</strong></li>
+</ul>
+</div>
+</div>
+</section>
+<!-- ================= 7. SETTINGS & PROFILE ================= -->
+<section class="view-section" id="view-settings">
+<div class="section-header">
+<h3>Settings &amp; Preferences</h3>
+</div>
+<div class="settings-layout">
+<div class="settings-nav glass-panel" id="settings-nav">
+<div class="settings-tab active" data-tab="profile">Profile Details</div>
+<div class="settings-tab" data-tab="institution">Institution</div>
+<div class="settings-tab" data-tab="defaults">Session Defaults</div>
+<div class="settings-tab" data-tab="notifications">Notifications</div>
+<div class="settings-tab" data-tab="security">Security (2FA)</div>
+</div>
+<div class="settings-content glass-panel" id="settings-content-area">
+<h4>Profile Details</h4>
+<div class="form-group">
+<label for="input-5f467e31">Full Name</label>
+<input class="v2-input" id="input-5f467e31" type="text" value="Dr. Sarah Jenkins"/>
+</div>
+<div class="form-group">
+<label for="input-f5ce29de">Email Address</label>
+<input class="v2-input" id="input-f5ce29de" type="email" value="sarah.jenkins@secureproctor.ai"/>
+</div>
+<div class="form-group">
+<label for="input-cd667a01">Phone Number</label>
+<input class="v2-input" id="input-cd667a01" type="text" value="+1 (555) 019-2831"/>
+</div>
+<button class="btn btn-primary" onclick="v2App.showToast('Settings saved successfully', 'success')" style="margin-top:16px;"><i class="material-icons">save</i> Save Changes</button>
+</div>
+</div>
+</section>
+<!-- ================= SESSION DETAIL VIEW (HIDDEN INITIALLY) ================= -->
+<section class="view-section" id="view-session-detail">
+<div class="section-header">
+<div style="display:flex; align-items:center; gap:16px;">
+<button class="icon-btn" onclick="v2App.showSection('sessions')"><i class="material-icons">arrow_back</i></button>
+<div>
+<h3 id="sd-title">Session Title</h3>
+<div class="date-chip" id="sd-meta">Date • Candidates</div>
+</div>
+</div>
+<div class="header-actions" id="sd-header-actions">
+<button class="btn btn-outlined" onclick="v2App.showToast('Messages sent to all candidates', 'success')"><i class="material-icons-outlined">chat</i> Message All</button>
+<button class="btn btn-primary" id="sd-action-btn" onclick="v2App.showToast('Action triggered', 'success')"><i class="material-icons">play_arrow</i> Start Monitoring</button>
+</div>
+</div>
+<div class="session-stages" id="sd-tabs" style="margin-top:24px;">
+<div class="stage-tab active" data-tab="candidates">Candidates</div>
+<div class="stage-tab" data-tab="learning">Learning Materials</div>
+</div>
+<div id="sd-content-container" style="margin-top:24px;">
+<!-- Content injected by JS based on active tab -->
+</div>
+</section>
+</div>
+</main>
+</div>
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="v2-toast-container"></div>
+<!-- GLOBAL MODAL -->
+<div class="modal-overlay hidden" id="v2-modal-overlay" onclick="v2App.closeModal()">
+<div class="modal-card glass-panel" onclick="event.stopPropagation()">
+<div class="modal-header">
+<h3 id="modal-title">Modal Title</h3>
+<button class="icon-btn" onclick="v2App.closeModal()"><i class="material-icons">close</i></button>
+</div>
+<div class="modal-body" id="modal-body">
+<!-- Injected via JS -->
+</div>
+<div class="modal-footer" id="modal-footer">
+<button class="btn btn-outlined" onclick="v2App.closeModal()"><i class="material-icons">close</i> Cancel</button>
+<button class="btn btn-primary" id="modal-submit-btn" onclick="v2App.submitModal()"><i class="material-icons">check</i> Confirm</button>
+</div>
+</div>
+</div>
+<!-- CANDIDATE DETAILS RIGHT DRAWER -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="v2App.closeCandidateDrawer()"></div>
+<aside class="right-drawer" id="candidate-drawer">
+<div class="drawer-header">
+<div style="display:flex; align-items:center; gap:16px;">
+<img alt="Avatar" id="drawer-avatar" src="" style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:1px solid var(--out);"/>
+<div>
+<h3 id="drawer-name" style="font-size:18px; margin:0;">Candidate Name</h3>
+<p id="drawer-id" style="font-size:12px; color:var(--on-sur-var); margin-top:2px;">ID: C100</p>
+</div>
+</div>
+<button class="icon-btn" onclick="v2App.closeCandidateDrawer()"><i class="material-icons">close</i></button>
+</div>
+<div class="drawer-content">
+<!-- 1. Basic Details & Fixing Info -->
+<section>
+<h4 style="margin-bottom:16px; font-size:14px; color:var(--on-sur);">Basic Details</h4>
+<div id="drawer-basic-details" style="display:grid; grid-template-columns:1fr; gap:12px;">
+<!-- Injected via JS -->
+</div>
+</section>
+<hr style="border:none; border-top:1px solid var(--out-var);"/>
+<!-- 2. Study Progress -->
+<section>
+<h4 style="margin-bottom:16px; font-size:14px; color:var(--on-sur);">Study Progress</h4>
+<div id="drawer-study-progress" style="display:flex; flex-direction:column; gap:16px;">
+<!-- Injected via JS -->
+</div>
+</section>
+<hr style="border:none; border-top:1px solid var(--out-var);"/>
+<!-- 3. Practice Tests -->
+<section>
+<h4 style="margin-bottom:16px; font-size:14px; color:var(--on-sur);">Practice Tests</h4>
+<div id="drawer-practice-tests">
+<!-- Injected via JS -->
+</div>
+</section>
+</div>
+<!-- 4. Messages Inbox -->
+<div class="drawer-footer">
+<h4 style="font-size:13px; color:var(--on-sur-var); margin-bottom:12px;">Messages</h4>
+<div id="drawer-messages-feed" style="max-height:120px; overflow-y:auto; margin-bottom:12px; font-size:12px; display:flex; flex-direction:column; gap:8px;">
+<!-- Injected via JS -->
+</div>
+<div style="display:flex; gap:8px;">
+<input class="v2-input" id="drawer-msg-input" placeholder="Type reply..." style="flex:1;" type="text"/>
+<button class="btn btn-primary" onclick="v2App.sendDrawerMessage()"><i class="material-icons">send</i></button>
+</div>
+</div>
+</aside>
+<!-- VOUCHER DRAWER -->
+<aside class="right-drawer" id="voucher-drawer" style="z-index:1100;">
+<div class="drawer-header">
+<div>
+<h3 style="font-size:18px; margin:0;">Assign Voucher</h3>
+<p style="font-size:12px; color:var(--on-sur-var); margin-top:2px;">Candidate: Emma Davis</p>
+</div>
+<button class="icon-btn" onclick="v2App.closeVoucherDrawer()"><i class="material-icons">close</i></button>
+</div>
+<div class="drawer-content">
+<h4 style="font-size:14px; margin-bottom:16px;">Select Learning Materials</h4>
+<div style="display:flex; flex-direction:column; gap:12px;">
+<label style="display:flex; align-items:center; gap:8px; font-size:14px;">
+<input checked="" type="checkbox"/> CS101 Study Guide (E-Book)
+        </label>
+<label style="display:flex; align-items:center; gap:8px; font-size:14px;">
+<input checked="" type="checkbox"/> Lecture 4: Data Structures (Video)
+        </label>
+<label style="display:flex; align-items:center; gap:8px; font-size:14px;">
+<input checked="" type="checkbox"/> Practice Quiz 1
+        </label>
+</div>
+<h4 style="font-size:14px; margin-top:32px; margin-bottom:16px;">Expiry Date</h4>
+<input class="v2-input" type="date" value="2026-11-20"/>
+</div>
+<div class="drawer-footer">
+<button class="btn btn-primary" onclick="v2App.assignVoucher()" style="width:100%; justify-content:center; background:var(--pri); color:white; border-color:var(--pri);">Assign &amp; Send</button>
+</div>
+</aside>
+<script src="v2.js"></script>
+</div>
+</body>
+</html>

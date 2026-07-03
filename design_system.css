@@ -1,0 +1,1280 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap');
+
+:root {
+
+    /* ==========================================================================
+     M3 COLOR SYSTEM - LIGHT MODE (MEDIUM CONTRAST)
+     ========================================================================== */
+  
+  /* Unified Accent Color — Proctor Blue (single hue, M3 tonal roles).
+     Light: tone 30 carries interaction (white text, 8.7:1 AAA). */
+  --md-sys-color-primary: #1e40af;              /* tone 30 */
+  --md-sys-color-on-primary: #ffffff;           /* 8.7:1 AAA */
+  --md-sys-color-primary-container: #e7edff;    /* soft container */
+  --md-sys-color-on-primary-container: #0a1f5c; /* 12:1 AAA */
+
+  /* Secondary (MC: Tone 30) */
+  --md-sys-color-secondary: #3b4858;
+  --md-sys-color-on-secondary: #ffffff;
+  --md-sys-color-secondary-container: #707e90;
+  --md-sys-color-on-secondary-container: #000000;
+
+  /* Tertiary (MC: Tone 30) */
+  --md-sys-color-tertiary: #523f5f;
+  --md-sys-color-on-tertiary: #ffffff;
+  --md-sys-color-tertiary-container: #887496;
+  --md-sys-color-on-tertiary-container: #000000;
+
+  /* Error (MC: Tone 30) */
+  --md-sys-color-error: #8c0009;
+  --md-sys-color-on-error: #ffffff;
+  --md-sys-color-error-container: #da342e;
+  --md-sys-color-on-error-container: #000000;
+
+  /* Background & Surfaces — blue-biased neutrals (AAA on each surface) */
+  --md-sys-color-background: #f7f8fb;
+  --md-sys-color-on-background: #15171c;       /* 17.9:1 AAA */
+
+  --md-sys-color-surface: #ffffff;
+  --md-sys-color-on-surface: #15171c;          /* 17.9:1 AAA */
+  --md-sys-color-surface-variant: #f1f3f9;
+  --md-sys-color-on-surface-variant: #3a3f47;  /* 10.6:1 AAA */
+
+  --md-sys-color-surface-container-lowest: #ffffff;
+  --md-sys-color-surface-container-low: #f7f8fb;
+  --md-sys-color-surface-container: #f1f3f9;
+  --md-sys-color-surface-container-high: #e8ebf3;
+  --md-sys-color-surface-container-highest: #e1e5ef;
+
+  /* Outlines */
+  --md-sys-color-outline: #c5cbd6;
+  --md-sys-color-outline-variant: #dce0e9;
+
+  /* ==========================================================================
+     M3 TYPOGRAPHY
+     ========================================================================== */
+  --md-sys-typescale-display-large: 400 57px/64px 'Inter', sans-serif;
+  --md-sys-typescale-headline-large: 400 32px/40px 'Inter', sans-serif;
+  --md-sys-typescale-title-large: 400 22px/28px 'Inter', sans-serif;
+  --md-sys-typescale-label-large: 500 14px/20px 'Inter', sans-serif;
+  --md-sys-typescale-body-large: 400 16px/24px 'Inter', sans-serif;
+
+  /* ==========================================================================
+     M3 SHAPE & ELEVATION
+     ========================================================================== */
+  --md-sys-shape-corner-none: 0px;
+  --md-sys-shape-corner-extra-small: 4px;
+  --md-sys-shape-corner-small: 8px;
+  --md-sys-shape-corner-medium: 12px;
+  --md-sys-shape-corner-large: 16px;
+  --md-sys-shape-corner-extra-large: 28px;
+  --md-sys-shape-corner-full: 9999px;
+
+  --md-sys-elevation-level0: none;
+  --md-sys-elevation-level1: 0px 1px 2px 0px rgba(0,0,0,0.3), 0px 1px 3px 1px rgba(0,0,0,0.15);
+  --md-sys-elevation-level2: 0px 1px 2px 0px rgba(0,0,0,0.3), 0px 2px 6px 2px rgba(0,0,0,0.15);
+  --md-sys-elevation-level3: 0px 1px 3px 0px rgba(0,0,0,0.3), 0px 4px 8px 3px rgba(0,0,0,0.15);
+  --md-sys-elevation-level4: 0px 2px 3px 0px rgba(0,0,0,0.3), 0px 6px 10px 4px rgba(0,0,0,0.15);
+  --md-sys-elevation-level5: 0px 4px 4px 0px rgba(0,0,0,0.3), 0px 8px 12px 6px rgba(0,0,0,0.15);
+  
+  --md-sys-spacing-standard: 24px;
+
+  --pri: var(--md-sys-color-primary);
+  --pri-dk: var(--md-sys-color-primary-container);
+  --pri-text: var(--md-sys-color-primary);
+  --pri-con: var(--md-sys-color-primary-container);
+  --on-pri: var(--md-sys-color-on-primary);
+  
+  --sec: var(--md-sys-color-secondary);
+  --ter: var(--md-sys-color-tertiary);
+  --err: var(--md-sys-color-error);
+  --suc: #146c2e;
+  --wrn: #7d5700;
+  --inf: #00639b;
+  
+  --sur: var(--md-sys-color-surface);
+  --sur-var: var(--md-sys-color-surface-variant);
+  --out: var(--md-sys-color-outline);
+  --out-var: var(--md-sys-color-outline-variant);
+  
+  --on-sur: var(--md-sys-color-on-surface);
+  --on-sur-var: var(--md-sys-color-on-surface-variant);
+  
+  --surface: var(--md-sys-color-surface);
+  --surface-bg: var(--md-sys-color-surface-container);
+  --surface-light: var(--md-sys-color-surface-container-low);
+  --surface-hover: var(--md-sys-color-surface-variant);
+  --bg: var(--md-sys-color-background);
+  --border: var(--md-sys-color-outline-variant);
+  --border-light: var(--md-sys-color-outline-variant);
+  --border-color: var(--md-sys-color-outline);
+  --text-primary: var(--md-sys-color-on-surface);
+  --text-secondary: var(--md-sys-color-on-surface-variant);
+  --text-tertiary: var(--md-sys-color-outline);
+  
+  --radius-sm: var(--md-sys-shape-corner-small);
+  --radius-md: var(--md-sys-shape-corner-medium);
+  --radius-lg: var(--md-sys-shape-corner-large);
+
+  /* Core Brand Colors — Proctor Blue (single accent, tone 30).
+     White text on the fill clears 8.7:1 (WCAG AAA). */
+  --pri: #1e40af;          /* Primary Blue — fills, white text 8.7:1 AAA */
+  --pri-dk: #16308a;       /* Primary Dark (hover / pressed) */
+  --pri-ct: #ffffff;       /* Primary Contrast (text on fill) */
+  --pri-con: #e7edff;      /* Primary Container (soft) */
+  --pri-con-ct: #0a1f5c;   /* On Primary Container — 12:1 AAA */
+  /* Brand color as TEXT/links. Tone 30 on white is 8.7:1 (AAA); under
+     [data-t="dark"] it lifts to tone 80 (10.8:1). */
+  --pri-text: #1e40af;     /* 8.7:1 on white, AAA */
+
+  /* Secondary & Tertiary (neutral slate companions to the blue accent) */
+  --sec: #3a3f47;          /* Secondary Slate — AAA as text/fill */
+  --sec-ct: #ffffff;
+  --ter: #475569;          /* Tertiary Slate */
+  --ter-ct: #ffffff;
+
+  /* Semantic Feedback Colors */
+  --err: #b3261e;          /* Error Red */
+  --err-ct: #ffffff;
+  --suc: #146c2e;          /* Success Green */
+  --suc-ct: #ffffff;
+  --wrn: #7d5700;          /* Warning Yellow/Gold */
+  --wrn-ct: #ffffff;
+  --inf: #00639b;          /* Info Blue */
+  --inf-ct: #ffffff;
+  
+  /* Surfaces & Outlines — blue-biased neutrals */
+  --sur: #ffffff;          /* Surface White */
+  --sur-var: #f1f3f9;      /* Surface Variant (faint blue tint) */
+  --out: #c5cbd6;          /* Outline (strong) */
+  --out-var: #dce0e9;      /* Outline Variant (hairline) */
+
+  /* Typography / On-Surface Colors (AAA: body & secondary text ≥7:1 on white) */
+  --on-sur: #15171c;       /* Primary Text — 17.9:1 AAA */
+  --on-sur-var: #3a3f47;   /* Secondary Text — 10.6:1 AAA */
+  --on-pri: #ffffff;       /* Text on Primary (blue) — 8.7:1 AAA */
+
+  /* New Generic Tokens matching super admin */
+  --surface: #ffffff;
+  --surface-bg: #f7f8fb;
+  --surface-light: #ffffff;
+  --surface-hover: #e8ebf3;
+  --bg: #f7f8fb;
+  --border: #dce0e9;
+  --border-light: #eef1f6;
+  --border-color: #dce0e9;
+  --text-primary: #15171c;
+  --text-secondary: #3a3f47;   /* 10.6:1 AAA */
+  --text-tertiary: #4a505a;    /* 8.1:1 AAA */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  /* ════════════════════════════════════════════════════════════════
+     MATERIAL DESIGN 3 — SYSTEM FOUNDATION
+     One source of truth for every portal linked from the Central Hub.
+     ════════════════════════════════════════════════════════════════ */
+
+  /* ── M3 SPACING SCALE (4dp base grid) ── */
+  --md-space-0: 0px;
+  --md-space-1: 4px;
+  --md-space-2: 8px;
+  --md-space-3: 12px;
+  --md-space-4: 16px;
+  --md-space-5: 20px;
+  --md-space-6: 24px;
+  --md-space-7: 28px;
+  --md-space-8: 32px;
+  --md-space-9: 36px;
+  --md-space-10: 40px;
+  --md-space-12: 48px;
+  --md-space-14: 56px;
+  --md-space-16: 64px;
+
+  /* ── M3 SHAPE SCALE (corner radius) ── */
+  --md-shape-none: 0px;
+  --md-shape-xs: 4px;
+  --md-shape-sm: 8px;
+  --md-shape-md: 12px;
+  --md-shape-lg: 16px;
+  --md-shape-xl: 28px;
+  --md-shape-full: 9999px;
+
+  /* ── M3 ELEVATION (tonal shadow, tuned for light surfaces) ── */
+  --md-elevation-0: none;
+  --md-elevation-1: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --md-elevation-2: 0 2px 6px rgba(0,0,0,0.10), 0 1px 2px rgba(0,0,0,0.06);
+  --md-elevation-3: 0 4px 12px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.06);
+  --md-elevation-4: 0 8px 20px rgba(0,0,0,0.14), 0 3px 6px rgba(0,0,0,0.08);
+  --md-elevation-5: 0 12px 32px rgba(0,0,0,0.18), 0 6px 12px rgba(0,0,0,0.10);
+
+  /* ── M3 STATE-LAYER OPACITIES ── */
+  --md-state-hover: 0.08;
+  --md-state-focus: 0.12;
+  --md-state-pressed: 0.12;
+  --md-state-dragged: 0.16;
+
+  /* ── M3 MOTION (easing + duration) ── */
+  --md-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --md-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --md-easing-decelerate: cubic-bezier(0, 0, 0, 1);
+  --md-easing-accelerate: cubic-bezier(0.3, 0, 1, 1);
+  --md-duration-1: 100ms;
+  --md-duration-2: 200ms;
+  --md-duration-3: 300ms;
+  --md-duration-4: 400ms;
+
+  /* ── M3 TYPOGRAPHY families ── */
+  --md-font-brand: 'Inter', 'Roboto', system-ui, -apple-system, sans-serif;
+  --md-font-plain: 'Inter', 'Roboto', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg);
+    color: var(--text-primary);
+    font-family: 'Inter', 'Roboto', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    color: var(--text-primary);
+}
+
+a {
+    color: var(--pri-text);
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+/* Button-styled anchors must never underline on hover */
+a.btn-primary, a.btn-secondary, a.btn-tonal, a.btn-filled, a.btn-outlined, a.btn-text,
+a.btn-danger, a.btn-danger-outline, a.md-button, a.card-action-btn, a.btn-launch,
+a.btn-primary:hover, a.btn-secondary:hover, a.btn-tonal:hover, a.btn-filled:hover,
+a.btn-outlined:hover, a.btn-text:hover, a.btn-danger:hover, a.btn-danger-outline:hover,
+a.md-button:hover, a.card-action-btn:hover, a.btn-launch:hover {
+    text-decoration: none;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* ── Portal switcher (Organization ⇄ Proctor) ── */
+.portal-switch {
+    display: flex;
+    gap: 4px;
+    background: rgba(127, 127, 127, 0.14);
+    border: 1px solid rgba(127, 127, 127, 0.28);
+    border-radius: 9999px;
+    padding: 4px;
+}
+.portal-switch-opt {
+    flex: 1;
+    text-align: center;
+    padding: 8px 10px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--sidebar-text, var(--text-secondary));
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+    min-height: 0;
+}
+.portal-switch-opt:hover { color: var(--text-primary); text-decoration: none; }
+.portal-switch-opt.active { background: var(--pri); color: var(--on-pri); }
+
+/* ── Account switcher inside the profile dropdown ── */
+.dropdown-label {
+    padding: 8px 16px 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-tertiary, var(--text-secondary));
+}
+.account-switch-item { gap: 10px; }
+.account-switch-item .dd-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+.account-switch-item .dd-acct { display: flex; flex-direction: column; min-width: 0; }
+.account-switch-item .account-name {
+    font-size: 14px; font-weight: 600; color: var(--text-primary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.account-switch-item .account-email {
+    font-size: 11px; color: var(--text-secondary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+
+/* ═══════════════════════════════════════════════════ */
+/* STRIPE-PREMIUM POLISH                               */
+/* ═══════════════════════════════════════════════════ */
+
+/* ── Global Micro-Animations ── */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+@keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 rgba(30, 64, 175, 0.4); }
+    70% { box-shadow: 0 0 0 8px rgba(30, 64, 175, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(30, 64, 175, 0); }
+}
+
+/* ── Section Page Entry Animation ── */
+.section-page.active {
+    animation: fadeInUp 0.35s ease-out;
+}
+
+/* ── Premium Stat Cards ── */
+.stat-card {
+    background-color: var(--surface);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: default;
+}
+.stat-card:hover {
+    border-color: var(--pri-text);
+    box-shadow: 0 4px 16px rgba(30, 64, 175, 0.08);
+    transform: translateY(-2px);
+}
+.filter-card { cursor: pointer; }
+.filter-card.active {
+    border-color: var(--pri-text);
+    background: rgba(30, 64, 175, 0.04);
+    box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.15);
+}
+
+/* ── Premium Table Rows ── */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th {
+    text-align: left;
+    padding: 14px 16px;
+    border-bottom: 2px solid var(--border);
+    font-size: 12px;
+    color: var(--text-secondary); background: transparent;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+td {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    font-size: 14px;
+}
+tbody tr {
+    transition: background-color 0.15s ease;
+}
+tbody tr:hover {
+    background-color: rgba(30, 64, 175, 0.03);
+}
+
+/* ── Premium Buttons ── */
+.btn-primary {
+    background-color: var(--pri);
+    color: var(--on-pri);
+    border: none;
+    padding: 0 20px;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 3px rgba(30, 64, 175, 0.2);
+}
+.btn-primary:hover {
+    background-color: var(--pri-dk);
+    /* Removed glow shadow */
+    transform: translateY(-1px);
+}
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(30, 64, 175, 0.2);
+}
+
+.btn-secondary {
+    background: none;
+    color: var(--pri-text);
+    border: 1px solid var(--pri);
+    padding: 0 20px;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-secondary:hover {
+    border-color: var(--pri-text);
+    background: rgba(30, 64, 175, 0.08);
+    transform: translateY(-1px);
+}
+
+/* ── Premium Form Inputs ── */
+.form-control, .dark-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text-primary);
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+.form-control:focus, .dark-input:focus {
+    outline: none;
+    border-color: var(--pri-text);
+    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.12);
+}
+
+/* ── Premium Action Buttons (table icons) ── */
+.action-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-secondary); background: transparent;
+    border-radius: var(--radius-sm);
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.action-btn:hover {
+    background: rgba(30, 64, 175, 0.06);
+    color: var(--pri-text);
+    border-color: var(--pri-text);
+    transform: scale(1.05);
+}
+.action-btn .material-icons {
+    font-size: 18px;
+}
+
+/* ── Badges ── */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+.badge-active { background: rgba(20, 108, 46, 0.1); color: var(--suc); }
+.badge-trial { background: rgba(30, 64, 175, 0.1); color: var(--pri-dk); }
+.badge-pending { background: rgba(125, 87, 0, 0.1); color: var(--wrn); }
+.badge-suspended { background: rgba(179, 38, 30, 0.08); color: var(--err); }
+
+/* ── Side Drawers (Premium Slide) ── */
+.side-drawer {
+    position: fixed;
+    top: 0; right: 0;
+    width: 520px;
+    height: 100vh;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    box-shadow: -16px 0 48px rgba(0, 0, 0, 0.12);
+    z-index: 1001;
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.side-drawer.active {
+    transform: translateX(0);
+}
+.drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.drawer-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ── Modal Overlay ── */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(6px);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+.modal-overlay.active {
+    display: flex;
+}
+.modal-content {
+    background: var(--surface);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
+    max-width: 560px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    animation: fadeInUp 0.25s ease-out;
+}
+
+/* ── Tabs (Premium Underline Style) ── */
+.tabs-container {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 24px;
+}
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary); background: transparent;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s ease;
+}
+.tab-btn:hover {
+    color: var(--text-primary);
+}
+.tab-btn.active {
+    color: var(--pri-text);
+}
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--pri);
+    border-radius: 1px 1px 0 0;
+}
+
+/* ── Premium Search Bar ── */
+.search-bar {
+    position: relative;
+    margin-bottom: 24px;
+    max-width: 400px;
+}
+.search-bar-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-tertiary);
+    font-size: 20px;
+}
+.search-input {
+    width: 100%;
+    padding: 12px 16px 12px 48px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    color: var(--text-primary);
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+.search-input:focus {
+    outline: none;
+    border-color: var(--pri-text);
+    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+}
+
+/* ── Premium Toast ── */
+.toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9000;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.toast {
+    padding: 14px 20px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    animation: fadeInUp 0.3s ease-out;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.toast-success { background: var(--suc); }
+.toast-error { background: var(--err); }
+.toast-info { background: #1e40af; }
+
+/* ── Skeleton Loading ── */
+.skeleton {
+    background: linear-gradient(90deg, var(--surface-hover) 25%, var(--surface) 50%, var(--surface-hover) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: var(--radius-sm);
+}
+
+/* ── Material Icons sizing inside buttons ── */
+.material-icons {
+    font-size: 20px;
+    vertical-align: middle;
+}
+button .material-icons,
+a .material-icons {
+    font-size: 18px;
+}
+
+/* ── Scrollbar Styling ── */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-tertiary);
+}
+
+
+/* ── Danger Buttons ── */
+.btn-danger {
+    background-color: var(--err);
+    color: var(--err-ct);
+    border: none;
+    padding: 0 20px;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    
+}
+.btn-danger:hover {
+    background-color: #8c1d18;
+    
+    transform: translateY(-1px);
+}
+.btn-danger:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(179, 38, 30, 0.2);
+}
+
+.btn-danger-outline {
+    background: none;
+    color: var(--err);
+    border: 1px solid var(--err);
+    padding: 0 20px;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-danger-outline:hover {
+    background: rgba(179, 38, 30, 0.08);
+    transform: translateY(-1px);
+}
+
+
+/* ── FLAT DARK MODE TOKENS ── */
+[data-t="dark"] {
+  /* ==========================================================================
+     M3 COLOR SYSTEM - DARK MODE (MEDIUM CONTRAST)
+     ========================================================================== */
+  /* Unified Accent Color — Proctor Blue.
+     Dark: tone 80 carries interaction (deep text 7.2:1; as link 10.8:1 AAA). */
+  --md-sys-color-primary: #afc6fa;              /* tone 80 */
+  --md-sys-color-on-primary: #082c84;           /* 7.2:1 AAA on fill */
+  --md-sys-color-primary-container: #16233f;    /* soft container */
+  --md-sys-color-on-primary-container: #afc6fa; /* 9.1:1 AAA */
+
+  /* Secondary (neutral light slate) */
+  --md-sys-color-secondary: #c2c7d0;
+  --md-sys-color-on-secondary: #1a1d24;
+  --md-sys-color-secondary-container: #2e333d;
+  --md-sys-color-on-secondary-container: #eceef2;
+
+  /* Tertiary */
+  --md-sys-color-tertiary: #c2c7d0;
+  --md-sys-color-on-tertiary: #1a1d24;
+  --md-sys-color-tertiary-container: #2e333d;
+  --md-sys-color-on-tertiary-container: #eceef2;
+
+  /* Error */
+  --md-sys-color-error: #ffbab1;
+  --md-sys-color-on-error: #370001;
+  --md-sys-color-error-container: #93000a;
+  --md-sys-color-on-error-container: #ffdad6;
+
+  /* Background & Surfaces — blue-biased dark neutrals */
+  --md-sys-color-background: #0d0f13;
+  --md-sys-color-on-background: #eceef2;        /* 15.9:1 AAA */
+
+  --md-sys-color-surface: #16191f;
+  --md-sys-color-on-surface: #eceef2;           /* 14.5:1 AAA */
+  --md-sys-color-surface-variant: #21252e;
+  --md-sys-color-on-surface-variant: #c2c7d0;   /* 10.9:1 AAA */
+
+  --md-sys-color-surface-container-lowest: #0d0f13;
+  --md-sys-color-surface-container-low: #16191f;
+  --md-sys-color-surface-container: #1a1d24;
+  --md-sys-color-surface-container-high: #21252e;
+  --md-sys-color-surface-container-highest: #272c36;
+
+  /* Outlines */
+  --md-sys-color-outline: #4a5160;
+  --md-sys-color-outline-variant: #2e333d;
+
+  --bg: #0d0f13;
+  --surface: #16191f;
+  --surface-bg: #1a1d24;
+  --surface-light: #1a1d24;
+  --surface-hover: #21252e;
+  --border: #2e333d;
+  --border-light: #21252e;
+  --border-color: #2e333d;
+  --text-primary: #eceef2;
+  --text-secondary: #c2c7d0;   /* 10.9:1 AAA on dark */
+  --text-tertiary: #9aa1ad;    /* 7.1:1 AAA on dark */
+
+  --sidebar-bg: #16191f;
+  --sidebar-text: #c2c7d0;
+  --sidebar-active: rgba(175, 198, 250, 0.16);
+
+  --sur: #16191f;
+  --sur-var: #21252e;
+  --out: #2e333d;
+  --on-sur: #eceef2;
+  --on-sur-var: #c2c7d0;       /* 10.9:1 AAA on dark */
+
+  /* Accent aliases follow tone 80 on dark surfaces. */
+  --pri: #afc6fa;
+  --pri-dk: #c9d8ff;
+  --pri-ct: #082c84;
+  --pri-con: #16233f;
+  --pri-con-ct: #afc6fa;
+  --pri-text: #afc6fa;         /* 10.8:1 on #0d0f13, AAA */
+  --on-pri: #082c84;
+}
+
+/* ── GLOBAL HEADER ── */
+.global-header {
+  /* Static: a normal in-flow header that scrolls away with the page (not
+     pinned), so it never overlaps the content beneath it. */
+  position: static;
+  height: 64px;
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.global-header .brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.global-header .brand img {
+  height: 32px;
+  width: auto;
+}
+
+.global-header .header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.header-btn:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.profile-dropdown-container {
+  position: relative;
+}
+
+.profile-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid var(--border);
+  padding: 4px 12px 4px 4px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-primary);
+}
+.profile-trigger:hover {
+  background: var(--surface-hover);
+}
+.profile-trigger img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 240px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+}
+.dropdown-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+[data-t="dark"] .dropdown-menu {
+  box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+}
+
+.dropdown-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.dropdown-header .name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+.dropdown-header .email {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.dropdown-item {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+.dropdown-item:hover {
+  background: var(--surface-hover);
+  text-decoration: none;
+}
+.dropdown-item i {
+  color: var(--text-secondary);
+  font-size: 18px;
+}
+.dropdown-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
+
+/* The 64px header lives in normal flow *inside* .app-layout (position:static),
+   so the layout box must be the FULL viewport height: the flex column hands the
+   header its 64px and lets .app-body absorb the remaining 100vh - 64px.
+   Subtracting 64px here (the old behaviour) shrank the usable area by a second
+   header's worth and cropped the bottom of the dashboard across every portal. */
+.app-layout, .dashboard-container { height: 100vh !important; }
+/* With .app-layout at full height, .app-body is exactly 100vh - 64px, so the
+   sidebar's calc height now matches its container (no footer clip). top:64px is
+   a no-op for the static desktop sidebar and keeps the mobile fixed drawer below
+   the header. */
+.sidebar {
+  height: calc(100vh - 64px) !important;
+  top: 64px !important;
+}
+
+
+
+/* HIDE OLD HEADERS */
+header.topbar, header.hdr, header.main-header:not(.global-header) {
+    display: none !important;
+}
+
+
+.sidebar-footer { display: none !important; }
+
+
+
+html[data-t="light"] .global-header .brand img {
+  filter: brightness(0) opacity(0.8);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MATERIAL DESIGN 3 — TYPE SCALE
+   The 15 canonical M3 roles. Apply as classes; never hand-pick font sizes.
+   ═══════════════════════════════════════════════════════════════════════ */
+.md-display-large  { font-family: var(--md-font-brand); font-weight: 400; font-size: 57px; line-height: 64px; letter-spacing: -0.25px; }
+.md-display-medium { font-family: var(--md-font-brand); font-weight: 400; font-size: 45px; line-height: 52px; letter-spacing: 0; }
+.md-display-small  { font-family: var(--md-font-brand); font-weight: 400; font-size: 36px; line-height: 44px; letter-spacing: 0; }
+.md-headline-large { font-family: var(--md-font-brand); font-weight: 600; font-size: 32px; line-height: 40px; letter-spacing: 0; }
+.md-headline-medium{ font-family: var(--md-font-brand); font-weight: 600; font-size: 28px; line-height: 36px; letter-spacing: 0; }
+.md-headline-small { font-family: var(--md-font-brand); font-weight: 600; font-size: 24px; line-height: 32px; letter-spacing: 0; }
+.md-title-large    { font-family: var(--md-font-brand); font-weight: 600; font-size: 22px; line-height: 28px; letter-spacing: 0; }
+.md-title-medium   { font-family: var(--md-font-plain); font-weight: 600; font-size: 16px; line-height: 24px; letter-spacing: 0.15px; }
+.md-title-small    { font-family: var(--md-font-plain); font-weight: 600; font-size: 14px; line-height: 20px; letter-spacing: 0.1px; }
+.md-body-large     { font-family: var(--md-font-plain); font-weight: 400; font-size: 16px; line-height: 24px; letter-spacing: 0.5px; }
+.md-body-medium    { font-family: var(--md-font-plain); font-weight: 400; font-size: 14px; line-height: 20px; letter-spacing: 0.25px; }
+.md-body-small     { font-family: var(--md-font-plain); font-weight: 400; font-size: 12px; line-height: 16px; letter-spacing: 0.4px; }
+.md-label-large    { font-family: var(--md-font-plain); font-weight: 600; font-size: 14px; line-height: 20px; letter-spacing: 0.1px; }
+.md-label-medium   { font-family: var(--md-font-plain); font-weight: 600; font-size: 12px; line-height: 16px; letter-spacing: 0.5px; }
+.md-label-small    { font-family: var(--md-font-plain); font-weight: 600; font-size: 11px; line-height: 16px; letter-spacing: 0.5px; }
+
+/* ── Elevation & shape utilities ── */
+.md-elevation-0 { box-shadow: var(--md-elevation-0); }
+.md-elevation-1 { box-shadow: var(--md-elevation-1); }
+.md-elevation-2 { box-shadow: var(--md-elevation-2); }
+.md-elevation-3 { box-shadow: var(--md-elevation-3); }
+.md-elevation-4 { box-shadow: var(--md-elevation-4); }
+.md-elevation-5 { box-shadow: var(--md-elevation-5); }
+.md-shape-sm  { border-radius: var(--md-shape-sm); }
+.md-shape-md  { border-radius: var(--md-shape-md); }
+.md-shape-lg  { border-radius: var(--md-shape-lg); }
+.md-shape-xl  { border-radius: var(--md-shape-xl); }
+.md-shape-full{ border-radius: var(--md-shape-full); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MATERIAL DESIGN 3 — COMPONENT LIBRARY
+   Canonical components. Prefer these over hand-rolled inline styles.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Buttons (5 M3 types) — pill shape, label-large, state layers ── */
+.md-button {
+  position: relative; isolation: isolate;
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--md-space-2);
+  height: 40px; padding: 0 var(--md-space-6);
+  border: none; border-radius: var(--md-shape-full); cursor: pointer;
+  font-family: var(--md-font-plain); font-weight: 600; font-size: 14px; line-height: 20px; letter-spacing: 0.1px;
+  text-decoration: none; white-space: nowrap;
+  transition: box-shadow var(--md-duration-2) var(--md-easing-standard),
+              background-color var(--md-duration-2) var(--md-easing-standard);
+}
+.md-button::before { /* state layer */
+  content: ""; position: absolute; inset: 0; border-radius: inherit; z-index: -1;
+  background: currentColor; opacity: 0; transition: opacity var(--md-duration-1) var(--md-easing-standard);
+}
+.md-button:hover::before  { opacity: var(--md-state-hover); }
+.md-button:focus-visible::before { opacity: var(--md-state-focus); }
+.md-button:active::before { opacity: var(--md-state-pressed); }
+.md-button:focus-visible { outline: none; }
+.md-button .material-icons { font-size: 18px; }
+
+.md-button.filled   { background: var(--pri); color: var(--on-pri); }
+.md-button.tonal    { background: var(--pri-con); color: var(--pri-con-ct); }
+.md-button.elevated { background: var(--surface); color: var(--pri-text); box-shadow: var(--md-elevation-1); }
+.md-button.elevated:hover { box-shadow: var(--md-elevation-2); }
+.md-button.outlined { background: transparent; color: var(--pri-text); border: 1px solid var(--pri); }
+.md-button.text     { background: transparent; color: var(--pri-text); padding: 0 var(--md-space-3); }
+.md-button:disabled, .md-button[aria-disabled="true"] { opacity: 0.38; pointer-events: none; box-shadow: none; }
+
+/* FAB & icon button */
+.md-fab {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--md-space-2);
+  min-width: 56px; height: 56px; padding: 0 var(--md-space-5);
+  border: none; border-radius: var(--md-shape-lg); cursor: pointer;
+  background: var(--pri-con); color: var(--pri-con-ct); box-shadow: var(--md-elevation-3);
+  transition: box-shadow var(--md-duration-2) var(--md-easing-standard);
+}
+.md-fab:hover { box-shadow: var(--md-elevation-4); }
+.md-icon-button {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border: none; border-radius: var(--md-shape-full);
+  background: transparent; color: var(--on-sur-var); cursor: pointer;
+  transition: background-color var(--md-duration-1) var(--md-easing-standard);
+}
+.md-icon-button:hover { background: color-mix(in srgb, currentColor 8%, transparent); }
+
+/* ── Cards (3 M3 types) ── */
+.md-card { border-radius: var(--md-shape-md); padding: var(--md-space-4); background: var(--surface);
+           transition: box-shadow var(--md-duration-2) var(--md-easing-standard); }
+.md-card.elevated { box-shadow: var(--md-elevation-1); border: none; }
+.md-card.elevated:hover { box-shadow: var(--md-elevation-2); }
+.md-card.filled   { background: var(--sur-var); border: none; box-shadow: none; }
+.md-card.outlined { background: var(--surface); border: 1px solid var(--out-var); box-shadow: none; }
+
+/* ── Text fields (M3 outlined + filled) ── */
+.md-field { position: relative; display: flex; flex-direction: column; gap: var(--md-space-1); }
+.md-field > label { font-size: 12px; font-weight: 600; letter-spacing: 0.4px; color: var(--on-sur-var); }
+.md-field input, .md-field select, .md-field textarea {
+  height: 44px; padding: 0 var(--md-space-4); width: 100%;
+  font-family: var(--md-font-plain); font-size: 14px; color: var(--on-sur);
+  background: var(--surface); border: 1px solid var(--out-var); border-radius: var(--md-shape-xs);
+  transition: border-color var(--md-duration-1) var(--md-easing-standard),
+              box-shadow var(--md-duration-1) var(--md-easing-standard);
+}
+.md-field textarea { height: auto; padding: var(--md-space-3) var(--md-space-4); }
+.md-field.filled input, .md-field.filled select, .md-field.filled textarea {
+  background: var(--sur-var); border: none; border-bottom: 1px solid var(--out);
+  border-radius: var(--md-shape-xs) var(--md-shape-xs) 0 0;
+}
+.md-field input:focus, .md-field select:focus, .md-field textarea:focus {
+  outline: none; border-color: var(--pri-text); box-shadow: 0 0 0 1px var(--pri);
+}
+
+/* ── Chips ── */
+.md-chip {
+  display: inline-flex; align-items: center; gap: var(--md-space-2);
+  height: 32px; padding: 0 var(--md-space-4);
+  border: 1px solid var(--out-var); border-radius: var(--md-shape-sm);
+  background: transparent; color: var(--on-sur-var);
+  font-size: 14px; font-weight: 500; letter-spacing: 0.1px; cursor: pointer;
+  transition: background-color var(--md-duration-1) var(--md-easing-standard);
+}
+.md-chip:hover { background: color-mix(in srgb, var(--on-sur) 8%, transparent); }
+.md-chip.selected { background: var(--pri-con); color: var(--pri-con-ct); border-color: transparent; }
+.md-chip .material-icons { font-size: 18px; }
+
+/* ── List & divider ── */
+.md-list { display: flex; flex-direction: column; }
+.md-list-item { display: flex; align-items: center; gap: var(--md-space-4); min-height: 56px; padding: var(--md-space-2) var(--md-space-4); }
+.md-divider { height: 1px; background: var(--out-var); border: none; opacity: 0.5; }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   M3 ALIGNMENT of the existing shared components (propagates to every portal)
+   ═══════════════════════════════════════════════════════════════════════ */
+/* Buttons → M3 pill shape, label-large type, state-layer hover, standard motion */
+.btn-primary, .btn-secondary, .btn-danger, .btn-danger-outline {
+  border-radius: var(--md-shape-full);
+  font-weight: 600; letter-spacing: 0.1px;
+  transition: box-shadow var(--md-duration-2) var(--md-easing-standard),
+              background-color var(--md-duration-2) var(--md-easing-standard),
+              border-color var(--md-duration-2) var(--md-easing-standard),
+              transform var(--md-duration-1) var(--md-easing-standard);
+}
+.btn-primary  { box-shadow: var(--md-elevation-1); }
+.btn-primary:hover { box-shadow: var(--md-elevation-2); }
+/* Surfaces → standardized elevation + M3 shape */
+.stat-card, .modal-content, .side-drawer, .dropdown-menu { border-radius: var(--md-shape-lg); }
+.stat-card { box-shadow: var(--md-elevation-1); }
+.stat-card:hover { box-shadow: var(--md-elevation-2); }
+.modal-content { box-shadow: var(--md-elevation-3); }
+.toast { border-radius: var(--md-shape-md); box-shadow: var(--md-elevation-3); }
+/* Inputs → M3 focus ring via primary */
+.form-control, .dark-input, .search-input { border-radius: var(--md-shape-xs); }
+.badge { border-radius: var(--md-shape-full); letter-spacing: 0.5px; }
+
+
+/* Icons inherit their context's text color (currentColor) rather than a
+   hardcoded black/grey. Nav icons then follow --sidebar-text on dark
+   sidebars, button icons follow the button text, etc., correct in both
+   themes. Component-level rules below still override where needed. */
+.material-icons, .material-icons-outlined {
+  color: inherit;
+}
+
+/* Icons on filled/colored buttons must inherit the button's text color,
+   not the forced-black default above (which made them illegible). */
+.btn-primary .material-icons,
+.btn-primary .material-icons-outlined,
+.btn-danger .material-icons,
+.btn-danger .material-icons-outlined,
+.btn-filled .material-icons,
+.btn-filled .material-icons-outlined {
+  color: inherit !important;
+}
+
+/* ==========================================================================
+   M3 GLOBAL LAYOUT BOILERPLATE
+   ========================================================================== */
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--md-sys-color-background);
+  color: var(--md-sys-color-on-background);
+  overflow: hidden;
+}
+
+.md-top-app-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  padding: 0 var(--md-sys-spacing-standard);
+  background-color: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  z-index: 1000;
+}
+
+.app-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.md-navigation-drawer {
+  width: 280px;
+  background-color: var(--md-sys-color-surface-container-low);
+  border-right: 1px solid var(--md-sys-color-outline-variant);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s cubic-bezier(0.2, 0, 0, 1);
+  overflow-y: auto;
+}
+
+.md-navigation-drawer.md-rail {
+  width: 80px;
+}
+
+.md-main-content {
+  flex: 1;
+  padding: var(--md-sys-spacing-standard);
+  overflow-y: auto;
+  background-color: var(--md-sys-color-background);
+}
+
+/* Filter chips — shared pill-style list filters with an active state. */
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 9999px;
+  border: 1px solid var(--out, var(--border, #e5e7eb));
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--on-sur-var, var(--text-secondary, #475569));
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  line-height: 1;
+  white-space: nowrap;
+}
+.filter-chip:hover {
+  border-color: var(--pri);
+  color: var(--on-sur, var(--text-primary, #111827));
+}
+.filter-chip.active {
+  background: var(--pri);
+  border-color: var(--pri);
+  color: var(--pri-ct, #000);
+}
+
+.md-content-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--md-sys-spacing-standard);
+}
+
+.md-card {
+  background-color: var(--md-sys-color-surface-container-lowest);
+  border-radius: var(--md-sys-shape-corner-medium);
+  padding: var(--md-sys-spacing-standard);
+}
+.md-card-elevated {
+  box-shadow: var(--md-sys-elevation-level1);
+  border: none;
+}
+.md-card-outlined {
+  border: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.md-title-large { font: var(--md-sys-typescale-title-large); }
+.md-title-medium { font: var(--md-sys-typescale-label-large); }
+.md-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  border: none;
+  border-radius: var(--md-sys-shape-corner-large);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--md-sys-elevation-level3);
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+.md-fab:hover { box-shadow: var(--md-sys-elevation-level4); }

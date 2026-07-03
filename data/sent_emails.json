@@ -1,0 +1,18 @@
+[
+  {
+    "id": "eml_002",
+    "type": "Voucher Purchase Receipt (Web)",
+    "to": "buyer@acme.com",
+    "subject": "Your 2 Internet Proctored exam vouchers — receipt ($280) · codes enclosed",
+    "sentAt": "2026-06-25T09:51:16.042Z",
+    "status": "Delivered"
+  },
+  {
+    "id": "eml_001",
+    "type": "Proctor License Issued",
+    "to": "sarah.jenkins@secureproctor.ai",
+    "subject": "Your proctor license LIC-2026-0142 is active",
+    "sentAt": "2026-01-15T08:05:00Z",
+    "status": "Delivered"
+  }
+]

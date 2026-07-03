@@ -7,31 +7,31 @@
   --font-mono: "JetBrains Mono", monospace;
 
   /* MD3 LIGHT TOKEN ALIGNMENT - Refined for Professional Contrast */
-  --pri: #f9ad00;
-  --pri-dk: #e69d00;
-  --pri-ct: #000000;
-  --pri-con: #fff8e6;
-  --pri-con-ct: #7a4e00;
-  --sec: var(--pri); /* Shifted to professional blue for accents */
-  --sec-ct: var(--pri-ct);
-  --ter: #625b71;
-  --ter-ct: #ffffff;
-  --err: #b3261e;
-  --err-ct: #ffffff;
-  --suc: #146c2e;
-  --suc-ct: #ffffff;
-  --wrn: #7d5700;
-  --wrn-ct: #ffffff;
-  --inf: #00639b;
-  --inf-ct: #ffffff;
+  
+  
+  
+  
+  
+   /* Shifted to professional blue for accents */
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
-  --sur: #ffffff;
-  --sur-var: #f8f9fa;
-  --out: #5d5962;
-  --out-var: #e0e0e0; /* Crisper borders */
-  --on-sur: #1c1b1f;
-  --on-sur-var: #49454f;
-  --on-pri: #000000;
+  
+  
+  
+   /* Crisper borders */
+  
+  
+  
 
   --md-bg: #f4f5f7; /* Very light grey background for enterprise feel */
   --chip-bg: #f4eff4;
@@ -52,35 +52,63 @@
 
   --nav-height: 64px;
   --bottom-nav-height: 64px;
+
+  /* ════════════════════════════════════════════════════════════════
+     CANDIDATE ACCENT — SDC GOLD (deliberately diverges from the blue
+     admin/proctor system). The shared design_system.css now ships a blue
+     accent; this portal re-pins every accent token to warm gold so the
+     candidate-facing experience reads as its own, friendlier brand.
+     Body/secondary TEXT stays dark-on-light at AAA (≥7:1); gold is used
+     for fills (with dark text), gradients, and decorative accents.
+     ════════════════════════════════════════════════════════════════ */
+  --pri:        #f9ad00;   /* SDC Gold — fills & gradients */
+  --pri-dk:     #c77f00;   /* deeper gold — hover / pressed */
+  --pri-ct:     #2e1f00;   /* text on gold fill — 8.4:1 AAA */
+  --pri-con:    #fff3d6;   /* soft gold container */
+  --pri-con-ct: #5e3d00;   /* on gold container — 8.1:1 AAA */
+  --pri-text:   #6e4900;   /* gold-as-text on white — 7.6:1 AAA */
+  --on-pri:     #2e1f00;   /* on-primary = dark on gold — 8.4:1 AAA */
+
+  --sec:    #6e4900;       /* dark amber — links / secondary text, AAA */
+  --sec-ct: #c77f00;
+
+  /* Gradient identity tokens (decorative). */
+  --grad-accent:      linear-gradient(135deg, #ffd24d 0%, #f9ad00 48%, #e08600 100%);
+  --grad-accent-soft: linear-gradient(135deg, #fff6df 0%, #ffe7b0 100%);
+  --grad-surface:     radial-gradient(900px 460px at 100% -8%, #fff3d6 0%, rgba(255,243,214,0) 62%),
+                      linear-gradient(180deg, #fcfbf8 0%, #f4f5f7 100%);
+  --grad-header:      linear-gradient(180deg, rgba(255,255,255,.92) 0%, rgba(255,248,233,.82) 100%);
+  --grad-modal-head:  linear-gradient(135deg, #fff3d6 0%, #ffe7b0 100%);
+  --ring-gold:        0 0 0 3px rgba(249, 173, 0, 0.45);
 }
 
 /* Polished Dark Mode */
 html[data-t="dark"] {
-  --pri: #ffc873;
-  --pri-dk: #ffedaa;
-  --pri-ct: #000000;
-  --pri-con: #ffedaa;
-  --pri-con-ct: #1c1100;
-  --sec: var(--pri);
-  --sec-ct: var(--pri-ct);
-  --ter: #cbbfdc;
-  --ter-ct: #1a1128;
-  --err: #f2b8b5;
-  --err-ct: #601410;
-  --suc: #6dd58c;
-  --suc-ct: #003917;
-  --wrn: #ffb945;
-  --wrn-ct: #3c2800;
-  --inf: #7fcfff;
-  --inf-ct: #003350;
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
-  --sur: #151419;
-  --sur-var: #242229;
-  --out: #c2beca;
-  --out-var: #333333;
-  --on-sur: #fefdff;
-  --on-sur-var: #b0aab5;
-  --on-pri: #000000;
+  
+  
+  
+  
+  
+  
+  
 
   --md-bg: #09090a;
   --chip-bg: #2b2930;
@@ -93,6 +121,41 @@ html[data-t="dark"] {
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
+
+  /* Gold accent on dark surfaces — lighter tones so gold stays AAA. */
+  --pri:        #ffc24d;   /* bright gold — fills/gradients on dark */
+  --pri-dk:     #ffd277;
+  --pri-ct:     #3c2800;   /* dark text on bright gold */
+  --pri-con:    #4a3300;   /* gold container on dark */
+  --pri-con-ct: #ffdd99;   /* on gold container (dark) — AAA */
+  --pri-text:   #ffc24d;   /* gold-as-text on dark — ~11:1 AAA */
+  --on-pri:     #3c2800;
+
+  --sec:    #ffb951;       /* light amber link/secondary on dark */
+  --sec-ct: #ffd277;
+
+  /* Gradient identity — warm, low-glow on dark. */
+  --grad-accent:      linear-gradient(135deg, #ffd277 0%, #ffc24d 48%, #f0a000 100%);
+  --grad-accent-soft: linear-gradient(135deg, #3a2c08 0%, #2a2008 100%);
+  --grad-surface:     radial-gradient(900px 460px at 100% -8%, #241c0a 0%, rgba(36,28,10,0) 60%),
+                      linear-gradient(180deg, #121116 0%, #09090a 100%);
+  --grad-header:      linear-gradient(180deg, rgba(21,20,25,.92) 0%, rgba(36,28,10,.7) 100%);
+  --grad-modal-head:  linear-gradient(135deg, #3a2c08 0%, #2a2008 100%);
+  --ring-gold:        0 0 0 3px rgba(255, 194, 77, 0.5);
+}
+
+/* The Notes/AI drawer tab chips (.chip / .chip.active) inherit a light background
+   from the shared design system that isn't dark-aware, leaving light labels on a
+   light fill (~1:1) in dark mode. Re-pin them to themed tokens. */
+html[data-t="dark"] .chip {
+  background: var(--chip-bg);
+  color: var(--on-sur-var);
+  border: 1px solid var(--chip-border);
+}
+html[data-t="dark"] .chip.active {
+  background: var(--pri);
+  color: var(--on-pri);
+  border-color: transparent;
 }
 
 * {
@@ -129,7 +192,9 @@ a {
 }
 a:hover,
 a:focus-visible {
-  color: var(--sec-ct);
+  /* --sec-ct is "text on a --sec fill" (light), too low-contrast as link text on a
+     light page. Use --pri-text, which is AAA on the page background in both themes. */
+  color: var(--pri-text);
   text-decoration: underline;
 }
 input,
@@ -223,7 +288,7 @@ textarea {
 .badge {
   width: 32px;
   height: 32px;
-  border-radius: 6px;
+  border-radius: 8px;
   background: var(--pri);
   color: var(--on-pri);
   font-weight: 800;
@@ -295,7 +360,7 @@ textarea {
   width: 64px;
   transition: all var(--transition-fast);
   border-radius: 4px;
-  padding: 6px 0;
+  padding: 8px 0;
 }
 .nav-item:hover {
   color: var(--on-sur);
@@ -318,7 +383,7 @@ textarea {
   width: 40px;
   height: 3px;
   background: var(--sec);
-  border-radius: 0 0 2px 2px;
+  border-radius: 0 0 4px 4px;
 }
 
 /* Logout ghost button in nav */
@@ -333,7 +398,7 @@ textarea {
   color: var(--err);
   opacity: 0.7;
   width: 64px;
-  padding: 6px 0;
+  padding: 8px 0;
   border-radius: 4px;
   transition: all var(--transition-fast);
   font-family: inherit;
@@ -349,7 +414,7 @@ textarea {
 }
 
 .nav-logout-btn span {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
 }
 
@@ -372,10 +437,10 @@ textarea {
   justify-content: center;
   gap: 8px;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 14px;
   border: none;
-  border-radius: 6px;
-  padding: 10px 20px;
+  border-radius: 8px;
+  padding: 12px 20px;
   cursor: pointer;
   transition: all var(--transition-fast);
   text-decoration: none !important;
@@ -407,18 +472,21 @@ textarea {
 .btn-tonal:hover {
   background: #ffe9b3;
 }
+html[data-t="dark"] .btn-tonal:hover {
+  background: #5c4000; /* darker gold container so light-gold text stays AAA on hover */
+}
 .btn-outlined {
   background: var(--sur);
-  color: var(--on-sur);
-  border: 1px solid var(--out-var);
+  color: var(--pri-text);
+  border: 1px solid var(--pri);
 }
 .btn-outlined:hover {
-  border-color: var(--on-sur-var);
+  border-color: var(--pri-text);
   background: var(--sur-var);
 }
 .btn-text {
   background: transparent;
-  color: var(--sec);
+  color: var(--pri-text);
   padding: 8px 16px;
 }
 .btn-text:hover {
@@ -427,7 +495,7 @@ textarea {
 .icon-btn {
   width: 36px;
   height: 36px;
-  border-radius: 6px;
+  border-radius: 8px;
   border: 1px solid transparent;
   background: transparent;
   color: var(--on-sur);
@@ -451,7 +519,7 @@ textarea {
   font-size: 12px;
   font-weight: 600;
   color: var(--on-sur-var);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 .inp-wrapper {
   position: relative;
@@ -461,14 +529,16 @@ textarea {
 .inp-icon {
   position: absolute;
   left: 14px;
-  color: var(--out);
+  /* --out is a border token (too faint as an icon, ~1.6:1). Use the on-surface
+     variant token so leading input icons stay legible in light AND dark. */
+  color: var(--on-sur-var);
   font-size: 18px;
 }
 .inp {
   width: 100%;
-  padding: 12px 14px;
+  padding: 12px 16px;
   border: 1px solid var(--out-var);
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 14px;
   background: var(--sur);
   color: var(--on-sur);
@@ -519,7 +589,7 @@ textarea {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 4px 10px;
+  padding: 4px 12px;
   border-radius: 4px;
   font-size: 11px;
   font-weight: 700;
@@ -671,18 +741,18 @@ textarea {
     padding: 12px 16px;
     gap: 12px;
     width: 100%;
-    border-radius: 6px;
+    border-radius: 8px;
   }
   .nav-logout-btn {
     flex-direction: row;
     padding: 12px 16px;
     gap: 12px;
     width: 100%;
-    border-radius: 6px;
+    border-radius: 8px;
   }
   .nav-item span {
     display: inline;
-    font-size: 13px;
+    font-size: 14px;
   }
   .view-panel {
     padding-left: 220px;
@@ -703,6 +773,212 @@ textarea {
   align-items: center;
   justify-content: center;
   padding: 24px;
+}
+
+/* Sign-in method switcher — segmented control (Email / Voucher) */
+.login-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 24px;
+  background: var(--sur-var);
+  border: 1px solid var(--out-var);
+  border-radius: 12px;
+}
+.login-tab {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 8px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--on-sur-var);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+.login-tab i {
+  font-size: 18px;
+}
+.login-tab:hover:not(.active) {
+  color: var(--on-sur);
+}
+.login-tab.active {
+  background: var(--sur);
+  color: var(--pri);
+  box-shadow: var(--shadow-sm);
+}
+.login-tab:focus-visible {
+  outline: 2px solid var(--pri);
+  outline-offset: 2px;
+}
+
+/* Login/auth screen has no top navigation */
+body:has(#cand-auth-view.active) .global-header { display: none; }
+
+/* Keep the top app bar pinned and full-height so it reads as a persistent
+   top nav bar across the portal — matching the other SDC portals. */
+.global-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-height);
+  z-index: 1000;
+}
+/* Offset the active content below the fixed top bar. The login/auth screen
+   hides the bar, so it keeps its full-height centered layout. */
+body:not(:has(#cand-auth-view.active)) .view-panel.active {
+  padding-top: var(--nav-height);
+}
+
+/* Full-screen overlays (reader / video / audio / flashcards / credential hub)
+   are siblings of the fixed global header, which sits above them (z-index) and
+   would otherwise paint over the overlay's own header — hiding the overlay's
+   back/exit control. Hide the global header so overlays are true takeovers and
+   their sticky .reader-header is the reachable top nav. */
+body:has(.reader-view.open) .global-header { display: none; }
+/* The shared design system pins .app-layout to a fixed (100vh - 64px) height
+   with overflow:hidden, which clips the dashboard and disables scrolling. The
+   candidate portal scrolls the whole page under the fixed top bar instead, so
+   let the layout grow to its content. */
+.app-layout {
+  height: auto !important;
+  min-height: 100vh;
+  overflow: visible;
+}
+
+/* Dashboard cohesion: consistent section labels + equal-width card rows. */
+.dash-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--on-sur-var);
+  margin: 0 0 14px;
+}
+.dash-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  align-items: stretch;
+}
+
+/* ---- Compact dashboard (fit-in-viewport bento) ---- */
+.dash-container {
+  padding-top: 20px;
+  padding-bottom: calc(var(--bottom-nav-height) + 16px);
+}
+.dash-greeting {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.dash-greeting-title {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 2px;
+}
+.dash-greeting-sub {
+  font-size: 14px;
+  color: var(--on-sur-var);
+}
+.dash-time-pill {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--pri);
+  background: var(--pri-con, #fff8e6);
+  border: 1px solid var(--out-var);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+.dash-section-title {
+  margin: 0 0 10px;
+}
+/* Bento: exams stacked in a wide left column, progress summary on the right;
+   the shorter right column tucks beside the taller exam stack. */
+.dash-bento {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+  margin-bottom: 16px;
+}
+.dash-bento-main,
+.dash-bento-side {
+  min-width: 0;
+}
+.dash-exam-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+/* Progress stacks in the narrow right column */
+.dash-bento-side .dash-content-grid {
+  grid-template-columns: 1fr !important;
+  gap: 14px !important;
+}
+.dash-bento-side .dash-content-grid .card {
+  padding: 16px;
+}
+/* Get-ready: full-width band of two side-by-side cards */
+.dash-band {
+  margin-bottom: 0;
+  gap: 16px;
+}
+.dash-band .card {
+  padding: 16px;
+}
+@media (max-width: 920px) {
+  .dash-bento {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* Compact exam scheduler cards on the dashboard */
+.exam-scheduler-card {
+  padding: 16px;
+  gap: 8px;
+}
+.exam-scheduler-card .scheduler-icon-wrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+}
+.exam-scheduler-card .scheduler-icon-wrapper i {
+  font-size: 20px;
+}
+.exam-scheduler-card .scheduler-info-block {
+  gap: 12px;
+}
+.exam-scheduler-card .scheduler-label {
+  margin-bottom: 2px;
+}
+.exam-scheduler-card .scheduler-title {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+.exam-scheduler-card .scheduler-action-row {
+  padding-top: 10px;
+}
+.exam-scheduler-card .scheduler-help-text {
+  font-size: 13px;
+}
+.exam-scheduler-card .scheduler-countdown-badge {
+  padding: 5px 11px;
+  font-size: 13px;
 }
 .anchor-card {
   max-width: 420px;
@@ -726,8 +1002,8 @@ textarea {
 }
 .date-picker-wrap input[type="date"] {
   width: 100%;
-  padding: 14px;
-  border-radius: 6px;
+  padding: 16px;
+  border-radius: 8px;
   border: 1px solid var(--out-var);
   font-size: 16px;
   font-weight: 600;
@@ -792,7 +1068,7 @@ textarea {
   box-shadow:
     inset 4px 0 10px rgba(0, 0, 0, 0.1),
     0 4px 8px rgba(0, 0, 0, 0.2);
-  background: linear-gradient(135deg, #1d4368 0%, #10263f 100%);
+  background: linear-gradient(135deg, #6b4400 0%, #4a2e00 100%);
   color: #fff;
   padding: 12px 8px;
   position: relative;
@@ -831,7 +1107,7 @@ textarea {
   opacity: 0.7;
 }
 .book-cover.concise {
-  background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%);
+  background: linear-gradient(135deg, #9a6500 0%, #7a4e00 100%);
 }
 
 /* Podcast Cover CSS */
@@ -852,11 +1128,11 @@ textarea {
 }
 .podcast-cover i {
   font-size: 24px;
-  color: var(--pri);
+  color: var(--pri-text);
   margin-bottom: 4px;
 }
 .podcast-title {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 800;
   text-align: center;
   padding: 0 4px;
@@ -977,7 +1253,7 @@ textarea {
   font-size: 20px;
 }
 .track-name {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--on-sur);
   font-family: var(--font-mono);
@@ -1110,7 +1386,7 @@ textarea {
   right: 16px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--out);
   background: var(--sur-var);
@@ -1123,7 +1399,7 @@ textarea {
   border: 1px solid var(--out-var);
   border-left: 3px solid var(--sec);
   padding: 16px;
-  border-radius: 6px;
+  border-radius: 8px;
   margin-top: 12px;
   display: none;
 }
@@ -1202,11 +1478,11 @@ html[data-t="dark"] .mock-env {
   margin-bottom: 16px;
 }
 .mock-sidebar-title {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--on-sur);
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 .mock-sidebar-stats {
   display: flex;
@@ -1216,8 +1492,8 @@ html[data-t="dark"] .mock-env {
   flex: 1;
   font-size: 11px;
   font-weight: 700;
-  padding: 6px 4px;
-  border-radius: 6px;
+  padding: 8px 4px;
+  border-radius: 8px;
   text-align: center;
 }
 .answered-badge {
@@ -1254,7 +1530,7 @@ html[data-t="dark"] .flagged-badge {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   border-radius: 8px;
   border: 1px solid var(--out-var);
@@ -1264,7 +1540,7 @@ html[data-t="dark"] .flagged-badge {
   transition: all 0.15s ease-in-out;
 }
 .mock-grid-btn:hover {
-  border-color: var(--pri);
+  border-color: var(--pri-text);
   color: var(--on-sur);
   background: var(--sur-var);
 }
@@ -1326,7 +1602,7 @@ html[data-t="dark"] .mock-grid-btn.flagged {
   background: var(--sur);
   cursor: pointer;
   transition: all 0.15s ease-in-out;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 .flag-btn:hover {
   border-color: var(--wrn);
@@ -1455,7 +1731,7 @@ html[data-t="dark"] .mock-grid-btn.flagged {
 }
 .toc-title {
   font-weight: 700;
-  font-size: 13px;
+  font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--on-sur-var);
@@ -1499,6 +1775,7 @@ html[data-t="dark"] .mock-grid-btn.flagged {
 
 .reader-header {
   height: 64px;
+  min-height: 64px;
   background: var(--sur);
   border-bottom: 3px solid var(--pri);
   display: flex;
@@ -1506,7 +1783,11 @@ html[data-t="dark"] .mock-grid-btn.flagged {
   align-items: center;
   padding: 0 24px;
   box-shadow: var(--shadow-sm);
-  z-index: 10;
+  /* Pin the back/exit control so it is always reachable even when the
+     overlay body scrolls (esp. the credential hub on narrow screens). */
+  position: sticky;
+  top: 0;
+  z-index: 30;
 }
 
 .reader-content-wrap {
@@ -1566,11 +1847,11 @@ html[data-t="dark"] .mock-grid-btn.flagged {
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 12px;
   font-weight: 600;
   color: var(--on-sur-var);
-  padding: 6px 12px;
+  padding: 8px 12px;
   border-radius: 4px;
   transition: all 0.2s ease;
 }
@@ -1608,7 +1889,7 @@ html[data-t="dark"] .mock-grid-btn.flagged {
 }
 .drawer-title {
   font-weight: 700;
-  font-size: 13px;
+  font-size: 14px;
   text-transform: uppercase;
   color: var(--on-sur-var);
 }
@@ -1630,7 +1911,7 @@ html[data-t="dark"] .mock-grid-btn.flagged {
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   font-style: italic;
-  font-size: 13px;
+  font-size: 14px;
   color: #1a1a1a;
 }
 
@@ -1643,7 +1924,7 @@ html[data-t="dark"] .mock-grid-btn.flagged {
   border-radius: 4px;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.02);
   font-family: inherit;
-  font-size: 13px;
+  font-size: 14px;
   outline: none;
   color: var(--on-sur);
 }
@@ -1655,7 +1936,7 @@ html[data-t="dark"] .mock-grid-btn.flagged {
 .chat-bubble {
   padding: 12px 16px;
   border-radius: 12px;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.5;
   max-width: 85%;
   margin-bottom: 8px;
@@ -1742,11 +2023,11 @@ html[data-t="dark"] .mock-grid-btn.flagged {
   color: var(--on-sur);
 }
 .lm-card-meta {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--on-sur-var);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   margin-bottom: 20px;
   font-weight: 500;
 }
@@ -1758,19 +2039,19 @@ html[data-t="dark"] .mock-grid-btn.flagged {
   justify-content: space-between;
   font-size: 12px;
   font-weight: 600;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 .lm-progress-bg {
   width: 100%;
   height: 6px;
   background: var(--out-var);
-  border-radius: 3px;
+  border-radius: 4px;
   overflow: hidden;
 }
 .lm-progress-fill {
   height: 100%;
   background: var(--sec);
-  border-radius: 3px;
+  border-radius: 4px;
   transition: width 0.3s ease;
 }
 .lm-card-cta {
@@ -1780,6 +2061,34 @@ html[data-t="dark"] .mock-grid-btn.flagged {
   padding: 12px;
   font-weight: 700;
   letter-spacing: 0.02em;
+  /* Filled primary action (matches the design skin) — solid amber on light,
+     pale-gold on dark. Overrides the shared outlined .btn-secondary. */
+  background: var(--pri);
+  color: var(--on-pri);
+  border: none;
+}
+.lm-card-cta:hover {
+  background: var(--pri-dk);
+  border: none;
+}
+html[data-t="dark"] .lm-card-cta {
+  background: #ffedaa;
+  color: #1c1100;
+}
+html[data-t="dark"] .lm-card-cta:hover {
+  background: #ffe9b3;
+}
+
+/* Candidate secondary buttons keep a neutral outline (matches the skin),
+   not the suite-wide amber outline. Filled CTAs above are excluded. */
+body .btn-secondary:not(.lm-card-cta) {
+  color: var(--on-sur);
+  border: 1px solid var(--out-var);
+  background: transparent;
+}
+body .btn-secondary:not(.lm-card-cta):hover {
+  border-color: var(--on-sur-var);
+  background: var(--sur-var);
 }
 
 .report-table {
@@ -1791,7 +2100,7 @@ html[data-t="dark"] .mock-grid-btn.flagged {
 .report-table th,
 .report-table td {
   text-align: left;
-  padding: 6px 0;
+  padding: 8px 0;
   border-bottom: 1px solid var(--out-var);
 }
 .report-table th {
@@ -1856,16 +2165,16 @@ html[data-t="dark"] .mock-grid-btn.flagged {
   font-size: 22px;
   font-weight: 800;
   color: var(--on-sur);
-  margin: 0 0 6px 0;
+  margin: 0 0 8px 0;
   line-height: 1.2;
 }
 .scheduler-date-subtext {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--on-sur-var);
   font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 .scheduler-date-subtext i {
   font-size: 16px;
@@ -1879,12 +2188,12 @@ html[data-t="dark"] .mock-grid-btn.flagged {
   color: var(--sec);
   border: 1px solid rgba(0, 99, 155, 0.15);
   padding: 8px 16px;
-  border-radius: 50px;
+  border-radius: 9999px;
   font-weight: 750;
   font-size: 14px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   align-self: flex-start;
 }
 html[data-t="dark"] .scheduler-countdown-badge {
@@ -1907,12 +2216,12 @@ html[data-t="dark"] .scheduler-countdown-badge {
   gap: 12px;
 }
 .scheduler-help-text {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--on-sur-var);
   font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 .scheduler-help-text i {
   font-size: 16px;
@@ -1926,7 +2235,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 20px;
+  padding: 12px 20px;
   font-weight: 700;
   font-size: 14px;
   border: 1px solid transparent !important;
@@ -1983,12 +2292,12 @@ html[data-t="dark"] .scheduler-countdown-badge {
   color: var(--on-sur);
   border: none;
   padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 13px;
+  border-radius: 16px;
+  font-size: 14px;
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   cursor: pointer;
   transition: background 0.2s;
   height: 36px;
@@ -2021,7 +2330,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
   align-items: center;
   margin-bottom: 16px;
   border-bottom: 1px solid #2d2d2d;
-  padding-bottom: 10px;
+  padding-bottom: 12px;
 }
 .transcript-lines-list {
   display: flex;
@@ -2035,8 +2344,8 @@ html[data-t="dark"] .scheduler-countdown-badge {
   display: flex;
   align-items: flex-start;
   gap: 16px;
-  padding: 6px 8px;
-  border-radius: 6px;
+  padding: 8px 8px;
+  border-radius: 8px;
   cursor: pointer;
   transition: background 0.15s;
 }
@@ -2046,13 +2355,13 @@ html[data-t="dark"] .scheduler-countdown-badge {
 .transcript-timestamp {
   font-family: var(--font-mono);
   font-weight: 700;
-  color: var(--pri);
-  font-size: 13px;
+  color: var(--pri-text);
+  font-size: 14px;
   flex-shrink: 0;
   min-width: 48px;
 }
 .transcript-text {
-  font-size: 13px;
+  font-size: 14px;
   color: #e1e1e1;
   line-height: 1.4;
 }
@@ -2074,7 +2383,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
   display: flex;
   gap: 12px;
   cursor: pointer;
-  padding: 6px;
+  padding: 8px;
   border-radius: 8px;
   transition: background 0.2s;
 }
@@ -2090,7 +2399,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
   height: 68px;
   background-size: cover;
   background-position: center;
-  border-radius: 6px;
+  border-radius: 8px;
   flex-shrink: 0;
   position: relative;
   background-color: #000;
@@ -2103,7 +2412,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
   flex: 1;
 }
 .yt-sidebar-title {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: #f1f1f1;
   line-height: 1.3;
@@ -2217,7 +2526,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
   width: 100%;
   height: 4px;
   background: #4d4d4d;
-  border-radius: 2px;
+  border-radius: 4px;
   position: relative;
   margin-bottom: 8px;
   cursor: pointer;
@@ -2227,7 +2536,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
   width: 30%; /* Example progress */
   height: 100%;
   background: #fff;
-  border-radius: 2px;
+  border-radius: 4px;
 }
 
 .spotify-progress-thumb {
@@ -2402,7 +2711,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
   font-size: 11px;
   font-family: var(--font-mono);
   color: var(--on-sur-var);
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .cred-pass-badge {
@@ -2411,8 +2720,8 @@ html[data-t="dark"] .scheduler-countdown-badge {
   color: var(--suc);
   font-size: 12px;
   font-weight: 700;
-  padding: 3px 10px;
-  border-radius: 20px;
+  padding: 3px 12px;
+  border-radius: 16px;
 }
 
 /* Mobile triple-dot button */
@@ -2470,7 +2779,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
   color: var(--on-sur-var);
   font-size: 11px;
   font-weight: 700;
-  padding: 6px;
+  padding: 8px;
   border-radius: 8px;
   transition: background 0.15s, color 0.15s;
 }
@@ -2529,7 +2838,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
   display: flex;
   background: var(--sur-var);
   border: 1px solid var(--glass-border);
-  border-radius: 100px;
+  border-radius: 9999px;
   padding: 4px;
   gap: 4px;
   width: 100%;
@@ -2539,13 +2848,13 @@ html[data-t="dark"] .scheduler-countdown-badge {
 
 .cred-seg-btn {
   flex: 1;
-  padding: 10px 16px;
-  font-size: 13px;
+  padding: 12px 16px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--on-sur-var);
   background: transparent;
   border: none;
-  border-radius: 100px;
+  border-radius: 9999px;
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -2554,13 +2863,13 @@ html[data-t="dark"] .scheduler-countdown-badge {
 }
 .cred-seg-btn.active {
   background: var(--sur);
-  color: var(--pri);
+  color: var(--pri-text);
   box-shadow: var(--shadow-sm);
 }
 
 .cred-seg-btn.active {
   background: var(--sur);
-  color: var(--pri);
+  color: var(--pri-text);
   box-shadow: var(--shadow-sm);
 }
 
@@ -2614,8 +2923,8 @@ html[data-t="dark"] .scheduler-countdown-badge {
 
 .cred-cert-divider {
   height: 1px;
-  background: linear-gradient(to right, transparent, #4a7ab5, transparent);
-  margin: 10px 0;
+  background: linear-gradient(to right, transparent, #e0a320, transparent);
+  margin: 12px 0;
 }
 
 .cred-cert-footer {
@@ -2631,14 +2940,14 @@ html[data-t="dark"] .scheduler-countdown-badge {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #1a3a6b, #2a5aa0);
+  background: linear-gradient(135deg, #5c3a00, #a86e00);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-size: 20px;
   font-weight: 900;
-  border: 3px solid #4a7ab5;
+  border: 3px solid #e0a320;
   margin: 0 auto 4px;
 }
 
@@ -2651,7 +2960,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
 }
 
 .cred-badge-bg {
-  background: linear-gradient(180deg, #0f4c8a 0%, #1e6ab5 50%, #2a7fd4 100%);
+  background: linear-gradient(180deg, #7a4e00 0%, #c08400 50%, #e8a000 100%);
   border-radius: 16px;
   padding: 16px;
   position: relative;
@@ -2664,7 +2973,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   color: rgba(255,255,255,0.06);
   letter-spacing: 0.1em;
@@ -2703,7 +3012,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
 .cred-badge-ribbon {
   background: #6db33f;
   margin: 0 -16px;
-  padding: 10px 20px;
+  padding: 12px 20px;
 }
 
 /* Web Preview Frame */
@@ -2718,15 +3027,15 @@ html[data-t="dark"] .scheduler-countdown-badge {
 }
 
 .cred-web-header {
-  background: linear-gradient(135deg, #0f4c8a, #1e6ab5);
+  background: linear-gradient(135deg, #7a4e00, #c08400);
   padding: 12px 16px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .cred-web-profile {
-  background: linear-gradient(180deg, #1e6ab5 0%, #2a7fd4 100%);
+  background: linear-gradient(180deg, #c08400 0%, #e8a000 100%);
   padding: 16px;
 }
 
@@ -2738,8 +3047,8 @@ html[data-t="dark"] .scheduler-countdown-badge {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #0f4c8a, #1e6ab5);
-  border: 3px solid #4a7ab5;
+  background: linear-gradient(135deg, #7a4e00, #c08400);
+  border: 3px solid #e0a320;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2765,7 +3074,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
   flex: 1;
   font-size: 11px;
   font-family: var(--font-mono);
-  color: var(--pri);
+  color: var(--pri-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2775,13 +3084,13 @@ html[data-t="dark"] .scheduler-countdown-badge {
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   background: var(--pri);
   color: var(--on-pri);
   border: none;
   border-radius: 8px;
   padding: 8px 16px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -2821,7 +3130,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   padding: 16px 8px;
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
@@ -2831,7 +3140,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
 }
 
 .cred-status-label {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -2839,7 +3148,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
 }
 
 .cred-status-value {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 800;
   color: var(--on-sur);
 }
@@ -2867,7 +3176,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
   box-shadow: 0 4px 12px rgba(0, 119, 181, 0.3);
   border-radius: 12px;
   padding: 16px 20px;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -2893,7 +3202,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
   border: 1px solid var(--glass-border);
   box-shadow: var(--shadow-sm);
   border-radius: 12px;
-  padding: 14px 20px;
+  padding: 16px 20px;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
@@ -2901,16 +3210,16 @@ html[data-t="dark"] .scheduler-countdown-badge {
 }
 .cred-action-btn:hover {
   background: var(--sur-var);
-  border-color: var(--pri);
-  color: var(--pri);
+  border-color: var(--pri-text);
+  color: var(--pri-text);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
 
 .cred-action-btn:hover {
   background: var(--sur-var);
-  border-color: var(--pri);
-  color: var(--pri);
+  border-color: var(--pri-text);
+  color: var(--pri-text);
 }
 
 .cred-action-btn i {
@@ -2922,7 +3231,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
 .cred-wallet-row {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .cred-wallet-label {
@@ -2936,7 +3245,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
 .cred-wallet-chips {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 12px;
 }
 
 .cred-wallet-chip {
@@ -2982,7 +3291,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 16px;
+  padding: 16px 16px;
   cursor: pointer;
   background: var(--sur);
   transition: background 0.2s;
@@ -2999,8 +3308,8 @@ html[data-t="dark"] .scheduler-countdown-badge {
   gap: 4px;
   background: var(--sur-var);
   border: 1px solid var(--out-var);
-  border-radius: 6px;
-  padding: 4px 10px;
+  border-radius: 8px;
+  padding: 4px 12px;
   font-size: 11px;
   font-weight: 700;
   color: var(--on-sur-var);
@@ -3011,7 +3320,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
 
 .cred-copy-schema-btn:hover {
   background: var(--pri-con);
-  color: var(--pri);
+  color: var(--pri-text);
 }
 
 .cred-accordion-body {
@@ -3056,7 +3365,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
 .cred-mobile-sheet-panel {
   width: 100%;
   background: var(--sur);
-  border-radius: 20px 20px 0 0;
+  border-radius: 16px 16px 0 0;
   padding: 12px 0 24px;
   transform: translateY(100%);
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -3070,7 +3379,7 @@ html[data-t="dark"] .scheduler-countdown-badge {
   width: 36px;
   height: 4px;
   background: var(--out-var);
-  border-radius: 2px;
+  border-radius: 4px;
   margin: 0 auto 12px;
 }
 
@@ -3079,11 +3388,11 @@ html[data-t="dark"] .scheduler-countdown-badge {
   align-items: center;
   gap: 16px;
   width: 100%;
-  padding: 14px 20px;
+  padding: 16px 20px;
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--on-sur);
   transition: background 0.15s;
@@ -3099,15 +3408,15 @@ html[data-t="dark"] .scheduler-countdown-badge {
   pointer-events: all;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   background: var(--sur);
   color: var(--on-sur);
   border: 1px solid var(--glass-border);
   border-left: 4px solid var(--suc);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 12px 16px;
   box-shadow: var(--shadow-lg);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   min-width: 260px;
   max-width: 360px;
@@ -3158,8 +3467,8 @@ html[data-t="dark"] .scheduler-countdown-badge {
   background: transparent;
   border: none;
   padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 13px;
+  border-radius: 8px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--on-sur-var);
   cursor: pointer;
@@ -3198,4 +3507,151 @@ html[data-t="dark"] .scheduler-countdown-badge {
 .fc-history-a {
   font-weight: 700;
   font-size: 14px;
+}
+
+/* Material Tabs (Refactored) */
+.learning-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--glass-border);
+  gap: 16px;
+  padding: 0 16px;
+}
+.learning-tabs .l-tab {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 16px 8px;
+  font-weight: 600;
+  color: var(--on-sur-var);
+  position: relative;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+.learning-tabs .l-tab:hover {
+  color: var(--on-sur);
+}
+.learning-tabs .l-tab.active {
+  color: var(--pri-text);
+}
+.learning-tabs .l-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--pri);
+  border-radius: 4px 4px 0 0;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   CANDIDATE IDENTITY LAYER — GRADIENT + POPUP
+   Appended last so it wins the cascade. Gives the candidate portal a warmer,
+   more "pop" character than the flat blue admin/proctor system: gradient
+   ground & surfaces, gold gradient calls-to-action, and modals that scale in
+   with a tinted, blurred backdrop. All accent text remains AAA (see tokens).
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* — Ambient gradient ground — */
+body {
+  background: var(--grad-surface) fixed;
+}
+
+/* — App header: translucent gradient + blur — */
+.app-header {
+  background: var(--grad-header);
+  -webkit-backdrop-filter: saturate(1.5) blur(10px);
+  backdrop-filter: saturate(1.5) blur(10px);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+/* — Brand badge & any --pri chip read as a gold gradient coin — */
+.badge {
+  background: var(--grad-accent);
+  color: var(--pri-ct);
+  box-shadow: 0 2px 8px rgba(249, 173, 0, 0.35);
+}
+
+/* — Primary action: gold gradient, dark text (AAA), lifts on hover — */
+.btn-filled,
+.mdbtn.btn-filled {
+  background: var(--grad-accent);
+  color: var(--pri-ct);
+  border: none;
+  box-shadow: 0 4px 14px rgba(249, 173, 0, 0.30);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+}
+.btn-filled:hover,
+.mdbtn.btn-filled:hover {
+  filter: saturate(1.08);
+  box-shadow: 0 8px 22px rgba(249, 173, 0, 0.42);
+  transform: translateY(-1px);
+}
+.btn-filled:active,
+.mdbtn.btn-filled:active { transform: translateY(0); box-shadow: 0 3px 10px rgba(249,173,0,.3); }
+
+/* — Tonal button: soft gold container — */
+.btn-tonal,
+.mdbtn.btn-tonal {
+  background: var(--grad-accent-soft);
+  color: var(--pri-con-ct);
+  border: 1px solid rgba(249, 173, 0, 0.28);
+}
+
+/* — Cards: faint warm wash + gold top hairline so surfaces feel lit — */
+.card {
+  background:
+    linear-gradient(180deg, rgba(255, 243, 214, 0.30) 0%, rgba(255, 243, 214, 0) 38%),
+    var(--sur);
+}
+html[data-t="dark"] .card {
+  background:
+    linear-gradient(180deg, rgba(255, 194, 77, 0.06) 0%, rgba(255, 194, 77, 0) 40%),
+    var(--sur);
+}
+
+/* ── POPUPS / MODALS — make them pop ── */
+.modal-overlay {
+  background: radial-gradient(120% 120% at 50% 0%, rgba(46, 31, 0, 0.45) 0%, rgba(0, 0, 0, 0.65) 100%);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  transition: opacity 0.22s var(--transition-normal);
+}
+.modal-content {
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;                 /* clip the gradient cap to rounded corners */
+  padding-top: 38px;                /* 32 base + room under the 6px cap */
+  border: 1px solid rgba(249, 173, 0, 0.22);
+  box-shadow:
+    0 24px 64px -16px rgba(46, 31, 0, 0.45),
+    0 2px 0 rgba(255, 255, 255, 0.6) inset;
+  transform: translateY(12px) scale(0.96);
+  opacity: 0;
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease;
+}
+.modal-overlay.open .modal-content {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+/* Gold gradient cap pinned to the top edge — announces the popup without
+   disturbing the modal's own padding. */
+.modal-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: var(--grad-accent);
+  pointer-events: none;
+}
+
+/* Respect reduced-motion: no scale/slide, just fade */
+@media (prefers-reduced-motion: reduce) {
+  .modal-content { transition: opacity 0.2s ease; transform: none; }
+  .btn-filled, .mdbtn.btn-filled { transition: none; }
+  .btn-filled:hover, .mdbtn.btn-filled:hover { transform: none; }
 }

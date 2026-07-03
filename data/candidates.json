@@ -12,14 +12,26 @@
     "voucherAssignedAt": "2026-05-16T10:00:00Z",
     "examStatus": "completed",
     "learningProgress": 100,
-    "lastActive": "2026-05-22T11:56:45.990Z",
+    "lastActive": "2026-06-17T10:38:10.346Z",
     "currentQuestion": 28,
     "totalQuestions": 40,
     "timeRemaining": 2400,
     "warningCount": 0,
     "aiRisk": "green",
     "enrolledAt": "2026-05-15T08:30:00Z",
-    "examScore": 0
+    "examScore": 0,
+    "candidateId": "SDC-CAN-6001",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": true,
+      "note": "Extra 30 minutes \u2014 documented learning disability."
+    },
+    "rules": {
+      "examMode": "online",
+      "retakeAllowed": true,
+      "retakeMode": "online",
+      "onlinePayer": "student"
+    }
   },
   {
     "id": "cand_002",
@@ -40,7 +52,14 @@
     "timeRemaining": 1800,
     "warningCount": 0,
     "aiRisk": "green",
-    "enrolledAt": "2026-05-15T08:30:00Z"
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "candidateId": "SDC-CAN-6002",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
   },
   {
     "id": "cand_003",
@@ -61,7 +80,14 @@
     "timeRemaining": 3600,
     "warningCount": 3,
     "aiRisk": "red",
-    "enrolledAt": "2026-05-15T08:30:00Z"
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "candidateId": "SDC-CAN-6003",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
   },
   {
     "id": "cand_004",
@@ -82,7 +108,14 @@
     "timeRemaining": 900,
     "warningCount": 2,
     "aiRisk": "amber",
-    "enrolledAt": "2026-05-15T08:30:00Z"
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "candidateId": "SDC-CAN-6004",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
   },
   {
     "id": "cand_005",
@@ -103,7 +136,14 @@
     "timeRemaining": 3000,
     "warningCount": 0,
     "aiRisk": "green",
-    "enrolledAt": "2026-05-15T08:30:00Z"
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "candidateId": "SDC-CAN-6005",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
   },
   {
     "id": "cand_006",
@@ -124,7 +164,14 @@
     "timeRemaining": 600,
     "warningCount": 0,
     "aiRisk": "green",
-    "enrolledAt": "2026-05-15T08:30:00Z"
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "candidateId": "SDC-CAN-6001",
+    "examAssessment": "Food Protection Manager",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
   },
   {
     "id": "cand_007",
@@ -145,7 +192,14 @@
     "timeRemaining": 3300,
     "warningCount": 4,
     "aiRisk": "red",
-    "enrolledAt": "2026-05-15T08:30:00Z"
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "candidateId": "SDC-CAN-6002",
+    "examAssessment": "Food Protection Manager",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
   },
   {
     "id": "cand_008",
@@ -166,7 +220,14 @@
     "timeRemaining": 7200,
     "warningCount": 0,
     "aiRisk": "green",
-    "enrolledAt": "2026-05-18T10:00:00Z"
+    "enrolledAt": "2026-05-18T10:00:00Z",
+    "candidateId": "SDC-CAN-6010",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
   },
   {
     "id": "cand_009",
@@ -187,7 +248,14 @@
     "timeRemaining": 7200,
     "warningCount": 0,
     "aiRisk": "green",
-    "enrolledAt": "2026-05-18T10:00:00Z"
+    "enrolledAt": "2026-05-18T10:00:00Z",
+    "candidateId": "SDC-CAN-6011",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
   },
   {
     "id": "cand_010",
@@ -208,7 +276,14 @@
     "timeRemaining": 3600,
     "warningCount": 0,
     "aiRisk": "green",
-    "enrolledAt": "2026-05-20T16:00:00Z"
+    "enrolledAt": "2026-05-20T16:00:00Z",
+    "candidateId": "SDC-CAN-6001",
+    "examAssessment": "HACCP Certification",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
   },
   {
     "id": "cand_011",
@@ -230,7 +305,14 @@
     "warningCount": 0,
     "aiRisk": "green",
     "enrolledAt": "2026-05-12T09:00:00Z",
-    "examScore": 88
+    "examScore": 88,
+    "candidateId": "SDC-CAN-6001",
+    "examAssessment": "Allergen Awareness",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
   },
   {
     "id": "cand_012",
@@ -252,7 +334,14 @@
     "warningCount": 1,
     "aiRisk": "green",
     "enrolledAt": "2026-05-12T09:00:00Z",
-    "examScore": 76
+    "examScore": 76,
+    "candidateId": "SDC-CAN-6002",
+    "examAssessment": "Allergen Awareness",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
   },
   {
     "id": "cand_013",
@@ -273,7 +362,14 @@
     "timeRemaining": 3557,
     "warningCount": 1,
     "aiRisk": "green",
-    "enrolledAt": "2026-05-15T08:30:00Z"
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "candidateId": "SDC-CAN-6113",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
   },
   {
     "id": "cand_014",
@@ -294,7 +390,14 @@
     "timeRemaining": 950,
     "warningCount": 2,
     "aiRisk": "amber",
-    "enrolledAt": "2026-05-15T08:30:00Z"
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "candidateId": "SDC-CAN-6114",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
   },
   {
     "id": "cand_015",
@@ -315,7 +418,14 @@
     "timeRemaining": 1040,
     "warningCount": 0,
     "aiRisk": "green",
-    "enrolledAt": "2026-05-15T08:30:00Z"
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "candidateId": "SDC-CAN-6115",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
   },
   {
     "id": "cand_016",
@@ -336,7 +446,14 @@
     "timeRemaining": 1819,
     "warningCount": 1,
     "aiRisk": "green",
-    "enrolledAt": "2026-05-15T08:30:00Z"
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "candidateId": "SDC-CAN-6116",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
   },
   {
     "id": "cand_017",
@@ -357,7 +474,14 @@
     "timeRemaining": 2321,
     "warningCount": 0,
     "aiRisk": "green",
-    "enrolledAt": "2026-05-15T08:30:00Z"
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "candidateId": "SDC-CAN-6117",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
   },
   {
     "id": "cand_018",
@@ -378,7 +502,14 @@
     "timeRemaining": 3045,
     "warningCount": 1,
     "aiRisk": "green",
-    "enrolledAt": "2026-05-15T08:30:00Z"
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "candidateId": "SDC-CAN-6118",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
   },
   {
     "id": "cand_019",
@@ -399,7 +530,14 @@
     "timeRemaining": 1827,
     "warningCount": 1,
     "aiRisk": "green",
-    "enrolledAt": "2026-05-15T08:30:00Z"
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "candidateId": "SDC-CAN-6119",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
   },
   {
     "id": "cand_020",
@@ -420,7 +558,14 @@
     "timeRemaining": 2567,
     "warningCount": 0,
     "aiRisk": "green",
-    "enrolledAt": "2026-05-15T08:30:00Z"
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "candidateId": "SDC-CAN-6120",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
   },
   {
     "id": "cand_021",
@@ -441,7 +586,14 @@
     "timeRemaining": 1949,
     "warningCount": 2,
     "aiRisk": "green",
-    "enrolledAt": "2026-05-15T08:30:00Z"
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "candidateId": "SDC-CAN-6121",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
   },
   {
     "id": "cand_022",
@@ -462,7 +614,14 @@
     "timeRemaining": 1309,
     "warningCount": 0,
     "aiRisk": "green",
-    "enrolledAt": "2026-05-15T08:30:00Z"
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "candidateId": "SDC-CAN-6122",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
   },
   {
     "id": "cand_023",
@@ -483,7 +642,14 @@
     "timeRemaining": 1989,
     "warningCount": 0,
     "aiRisk": "red",
-    "enrolledAt": "2026-05-15T08:30:00Z"
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "candidateId": "SDC-CAN-6123",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
   },
   {
     "id": "cand_024",
@@ -504,6 +670,332 @@
     "timeRemaining": 2007,
     "warningCount": 0,
     "aiRisk": "amber",
-    "enrolledAt": "2026-05-15T08:30:00Z"
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "candidateId": "SDC-CAN-6124",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
+  },
+  {
+    "id": "cand_025",
+    "rollNo": "R-2026-0025",
+    "name": "Olivia Bennett",
+    "email": "olivia.bennett@sdc-exam.com",
+    "subject": "ServSafe Food Handler",
+    "photo": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&auto=format&fit=crop&q=80",
+    "sessionId": "sess_002",
+    "voucherCode": "VCH-B2000",
+    "voucherStatus": "redeemed",
+    "voucherAssignedAt": "2026-05-16T10:00:00Z",
+    "examStatus": "passed",
+    "learningProgress": 100,
+    "lastActive": "2026-06-17T10:38:10.346Z",
+    "currentQuestion": 28,
+    "totalQuestions": 40,
+    "timeRemaining": 2400,
+    "warningCount": 0,
+    "aiRisk": "green",
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "examScore": 0,
+    "candidateId": "SDC-CAN-0025",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
+  },
+  {
+    "id": "cand_026",
+    "rollNo": "R-2026-0026",
+    "name": "Liam Carter",
+    "email": "liam.carter@sdc-exam.com",
+    "subject": "ServSafe Food Handler",
+    "photo": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&auto=format&fit=crop&q=80",
+    "sessionId": "sess_002",
+    "voucherCode": "VCH-B2001",
+    "voucherStatus": "redeemed",
+    "voucherAssignedAt": "2026-05-16T10:00:00Z",
+    "examStatus": "failed",
+    "learningProgress": 100,
+    "lastActive": "2026-06-17T10:38:10.346Z",
+    "currentQuestion": 28,
+    "totalQuestions": 40,
+    "timeRemaining": 2400,
+    "warningCount": 0,
+    "aiRisk": "green",
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "examScore": 0,
+    "candidateId": "SDC-CAN-0026",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
+  },
+  {
+    "id": "cand_027",
+    "rollNo": "R-2026-0027",
+    "name": "Sophia Nguyen",
+    "email": "sophia.nguyen@sdc-exam.com",
+    "subject": "ServSafe Food Handler",
+    "photo": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&auto=format&fit=crop&q=80",
+    "sessionId": "sess_002",
+    "voucherCode": "VCH-B2002",
+    "voucherStatus": "redeemed",
+    "voucherAssignedAt": "2026-05-16T10:00:00Z",
+    "examStatus": "flagged",
+    "learningProgress": 100,
+    "lastActive": "2026-06-17T10:38:10.346Z",
+    "currentQuestion": 28,
+    "totalQuestions": 40,
+    "timeRemaining": 2400,
+    "warningCount": 0,
+    "aiRisk": "green",
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "examScore": 0,
+    "candidateId": "SDC-CAN-0027",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
+  },
+  {
+    "id": "cand_028",
+    "rollNo": "R-2026-0028",
+    "name": "Noah Patel",
+    "email": "noah.patel@sdc-exam.com",
+    "subject": "ServSafe Food Handler",
+    "photo": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&auto=format&fit=crop&q=80",
+    "sessionId": "sess_002",
+    "voucherCode": "VCH-B2003",
+    "voucherStatus": "expired",
+    "voucherAssignedAt": "2026-05-16T10:00:00Z",
+    "examStatus": "no_show",
+    "learningProgress": 40,
+    "lastActive": "2026-06-17T10:38:10.346Z",
+    "currentQuestion": 28,
+    "totalQuestions": 40,
+    "timeRemaining": 2400,
+    "warningCount": 0,
+    "aiRisk": "green",
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "examScore": 0,
+    "candidateId": "SDC-CAN-0028",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
+  },
+  {
+    "id": "cand_029",
+    "rollNo": "R-2026-0029",
+    "name": "Emma Rodriguez",
+    "email": "emma.rodriguez@sdc-exam.com",
+    "subject": "ServSafe Food Handler",
+    "photo": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&auto=format&fit=crop&q=80",
+    "sessionId": "sess_002",
+    "voucherCode": "VCH-B2004",
+    "voucherStatus": "redeemed",
+    "voucherAssignedAt": "2026-05-16T10:00:00Z",
+    "examStatus": "pending_review",
+    "learningProgress": 100,
+    "lastActive": "2026-06-17T10:38:10.346Z",
+    "currentQuestion": 28,
+    "totalQuestions": 40,
+    "timeRemaining": 2400,
+    "warningCount": 0,
+    "aiRisk": "green",
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "examScore": 0,
+    "candidateId": "SDC-CAN-0029",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
+  },
+  {
+    "id": "cand_030",
+    "rollNo": "R-2026-0030",
+    "name": "Marcus Reed",
+    "email": "marcus.reed@sdc-exam.com",
+    "subject": "ServSafe Food Handler",
+    "photo": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&auto=format&fit=crop&q=80",
+    "sessionId": "sess_002",
+    "voucherCode": "VCH-C3000",
+    "voucherStatus": "redeemed",
+    "voucherAssignedAt": "2026-05-16T10:00:00Z",
+    "examStatus": "in_progress",
+    "learningProgress": 60,
+    "lastActive": "2026-06-17T10:38:10.346Z",
+    "currentQuestion": 28,
+    "totalQuestions": 40,
+    "timeRemaining": 2400,
+    "warningCount": 0,
+    "aiRisk": "green",
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "examScore": 0,
+    "candidateId": "SDC-CAN-0030",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
+  },
+  {
+    "id": "cand_031",
+    "rollNo": "R-2026-0031",
+    "name": "Priya Anand",
+    "email": "priya.anand@sdc-exam.com",
+    "subject": "ServSafe Food Handler",
+    "photo": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&auto=format&fit=crop&q=80",
+    "sessionId": "sess_002",
+    "voucherCode": "VCH-C3001",
+    "voucherStatus": "redeemed",
+    "voucherAssignedAt": "2026-05-16T10:00:00Z",
+    "examStatus": "in_progress",
+    "learningProgress": 75,
+    "lastActive": "2026-06-17T10:38:10.346Z",
+    "currentQuestion": 28,
+    "totalQuestions": 40,
+    "timeRemaining": 2400,
+    "warningCount": 0,
+    "aiRisk": "green",
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "examScore": 0,
+    "candidateId": "SDC-CAN-0031",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
+  },
+  {
+    "id": "cand_032",
+    "rollNo": "R-2026-0032",
+    "name": "Diego Santos",
+    "email": "diego.santos@sdc-exam.com",
+    "subject": "ServSafe Food Handler",
+    "photo": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&auto=format&fit=crop&q=80",
+    "sessionId": "sess_002",
+    "voucherCode": "VCH-C3002",
+    "voucherStatus": "redeemed",
+    "voucherAssignedAt": "2026-05-16T10:00:00Z",
+    "examStatus": "in_progress",
+    "learningProgress": 80,
+    "lastActive": "2026-06-17T10:38:10.346Z",
+    "currentQuestion": 28,
+    "totalQuestions": 40,
+    "timeRemaining": 2400,
+    "warningCount": 0,
+    "aiRisk": "green",
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "examScore": 0,
+    "candidateId": "SDC-CAN-0032",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
+  },
+  {
+    "id": "cand_033",
+    "rollNo": "R-2026-0033",
+    "name": "Hannah Kim",
+    "email": "hannah.kim@sdc-exam.com",
+    "subject": "ServSafe Food Handler",
+    "photo": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&auto=format&fit=crop&q=80",
+    "sessionId": "sess_002",
+    "voucherCode": "VCH-C3003",
+    "voucherStatus": "redeemed",
+    "voucherAssignedAt": "2026-05-16T10:00:00Z",
+    "examStatus": "in_progress",
+    "learningProgress": 90,
+    "lastActive": "2026-06-17T10:38:10.346Z",
+    "currentQuestion": 28,
+    "totalQuestions": 40,
+    "timeRemaining": 2400,
+    "warningCount": 0,
+    "aiRisk": "green",
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "examScore": 0,
+    "candidateId": "SDC-CAN-0033",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
+  },
+  {
+    "id": "cand_034",
+    "rollNo": "R-2026-0034",
+    "name": "Yusuf Demir",
+    "email": "yusuf.demir@sdc-exam.com",
+    "subject": "ServSafe Food Handler",
+    "photo": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&auto=format&fit=crop&q=80",
+    "sessionId": "sess_002",
+    "voucherCode": "VCH-C3004",
+    "voucherStatus": "redeemed",
+    "voucherAssignedAt": "2026-05-16T10:00:00Z",
+    "examStatus": "in_progress",
+    "learningProgress": 100,
+    "lastActive": "2026-06-17T10:38:10.346Z",
+    "currentQuestion": 28,
+    "totalQuestions": 40,
+    "timeRemaining": 2400,
+    "warningCount": 0,
+    "aiRisk": "green",
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "examScore": 0,
+    "candidateId": "SDC-CAN-0034",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
+  },
+  {
+    "id": "cand_035",
+    "rollNo": "R-2026-0035",
+    "name": "Grace Mueller",
+    "email": "grace.mueller@sdc-exam.com",
+    "subject": "ServSafe Food Handler",
+    "photo": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&auto=format&fit=crop&q=80",
+    "sessionId": "sess_002",
+    "voucherCode": "VCH-C3005",
+    "voucherStatus": "redeemed",
+    "voucherAssignedAt": "2026-05-16T10:00:00Z",
+    "examStatus": "in_progress",
+    "learningProgress": 45,
+    "lastActive": "2026-06-17T10:38:10.346Z",
+    "currentQuestion": 28,
+    "totalQuestions": 40,
+    "timeRemaining": 2400,
+    "warningCount": 0,
+    "aiRisk": "green",
+    "enrolledAt": "2026-05-15T08:30:00Z",
+    "examScore": 0,
+    "candidateId": "SDC-CAN-0035",
+    "examAssessment": "ServSafe Food Handler",
+    "accommodation": {
+      "enabled": false,
+      "note": ""
+    },
+    "rules": {}
   }
 ]

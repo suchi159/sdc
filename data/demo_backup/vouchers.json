@@ -1,0 +1,109 @@
+[
+  {
+    "voucherId": "VCH-A1001",
+    "sessionId": "sess_002",
+    "assignedToCandidateId": "cand_001",
+    "originalType": "In-House",
+    "currentType": "Internet Proctored",
+    "status": "Redeemed",
+    "upgrade": {
+      "isUpgraded": true,
+      "upgradeDate": "2026-06-20T16:54:10.896Z",
+      "upgradeFee": 25,
+      "paidBy": "Candidate",
+      "transactionId": "txn_43049"
+    }
+  },
+  {
+    "voucherId": "VCH-B2001",
+    "sessionId": "sess_001",
+    "assignedToCandidateId": "cand_008",
+    "originalType": "In-House",
+    "currentType": "In-House",
+    "status": "Assigned",
+    "upgrade": {
+      "isUpgraded": false
+    }
+  },
+  {
+    "voucherId": "VCH-C3001",
+    "sessionId": "sess_004",
+    "assignedToCandidateId": "cand_011",
+    "originalType": "In-House",
+    "currentType": "Internet Proctored",
+    "status": "Redeemed",
+    "upgrade": {
+      "isUpgraded": true,
+      "upgradeDate": "2026-06-01T10:00:00Z",
+      "upgradeFee": 25,
+      "paidBy": "Company",
+      "transactionId": "txn_mock_001"
+    }
+  },
+  {
+    "voucherId": "VCH-A1004",
+    "sessionId": "sess_004",
+    "assignedToCandidateId": null,
+    "originalType": "In-House",
+    "currentType": "In-House",
+    "status": "Available",
+    "upgrade": {
+      "isUpgraded": false
+    }
+  },
+  {
+    "voucherId": "VCH-A1005",
+    "sessionId": "sess_004",
+    "assignedToCandidateId": "cand_009",
+    "originalType": "In-House",
+    "currentType": "In-House",
+    "status": "Expired",
+    "upgrade": {
+      "isUpgraded": false
+    }
+  },
+  {
+    "voucherId": "VCH-A1006",
+    "sessionId": "sess_004",
+    "assignedToCandidateId": "cand_010",
+    "originalType": "In-House",
+    "currentType": "In-House",
+    "status": "Assigned",
+    "upgrade": {
+      "isUpgraded": false
+    }
+  },
+  {
+    "voucherId": "VCH-A1007",
+    "sessionId": "sess_004",
+    "assignedToCandidateId": null,
+    "originalType": "In-House",
+    "currentType": "In-House",
+    "status": "Revoked",
+    "upgrade": {
+      "isUpgraded": false
+    }
+  },
+  {
+    "voucherId": "VCH-A1008",
+    "sessionId": "sess_004",
+    "assignedToCandidateId": "cand_011",
+    "originalType": "In-House",
+    "currentType": "In-House",
+    "status": "Redeemed",
+    "upgrade": {
+      "isUpgraded": false
+    }
+  },
+  {
+    "voucherId": "VCH-A1009",
+    "sessionId": "sess_004",
+    "assignedToCandidateId": null,
+    "originalType": "In-House",
+    "currentType": "In-House",
+    "status": "Available",
+    "upgrade": {
+      "isUpgraded": false
+    }
+  }
+]

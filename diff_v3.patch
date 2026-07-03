@@ -1,0 +1,1037 @@
+diff --git a/v3.js b/v3.js
+index d27ed8f..b009388 100644
+--- a/v3.js
++++ b/v3.js
+@@ -31,7 +31,30 @@ const v3App = {
+     sessionViewMode: 'grid',
+     materialViewMode: 'grid',
+     monitorSse: null,
+-    monitorState: { session: null, candidates: [], alerts: [] }
++    monitorState: { session: null, candidates: [], alerts: [] },
++    LM_DATA: {
++      ebooks: [
++        { id: 'm1', title: "The Food Protection Manager's Handbook", thumb: "course_thumb_food_safety.png", type: "document" },
++        { id: 'm2', title: "HACCP Principles Guide", thumb: "course_thumb_haccp.png", type: "document" },
++        { id: 'm3', title: "Allergen Management Manual", thumb: "course_thumb_food_safety.png", type: "document" }
++      ],
++      videos: [
++        { id: 'm4', title: "Temperature Danger Zone Explained", thumb: "course_thumb_food_safety.png", type: "video" },
++        { id: 'm5', title: "Cross-Contamination Prevention", thumb: "course_thumb_haccp.png", type: "video" }
++      ],
++      podcasts: [
++        { id: 'm6', title: "01 Handling Food Safely", thumb: "course_thumb_food_safety.png", type: "podcast" },
++        { id: 'm7', title: "02 Bad Bugs and Foodborne Illness", thumb: "course_thumb_food_safety.png", type: "podcast" }
++      ],
++      flashcards: [
++        { id: 'm8', title: "Temperature Controls", thumb: "course_thumb_food_safety.png", type: "flashcard", cards: 20 },
++        { id: 'm9', title: "Pathogens & Bacteria", thumb: "course_thumb_haccp.png", type: "flashcard", cards: 15 }
++      ],
++      practice: [
++        { id: 'm10', title: "Module 1 Assessment", thumb: "course_thumb_food_safety.png", type: "practice exam" },
++        { id: 'm11', title: "Final Certification Mock", thumb: "course_thumb_haccp.png", type: "practice exam" }
++      ]
++    }
+   },
+ 
+   async init() {
+@@ -93,16 +116,15 @@ const v3App = {
+   signOut() {
+     this.showToast('Signing out...', 'info');
+     setTimeout(() => {
+-      document.body.innerHTML = `
+-        <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; background:var(--bg-color);">
+-           <div style="background:var(--surface-color); padding:40px; border-radius:12px; border:1px solid var(--border-color); text-align:center; box-shadow:var(--shadow-lg);">
+-              <i class="material-icons-outlined" style="font-size:48px; color:var(--brand-primary); margin-bottom:16px;">lock</i>
+-              <h2>SecureProctor AI</h2>
+-              <p style="color:var(--text-secondary); margin:8px 0 24px 0;">You have been safely signed out.</p>
+-              <button class="btn btn-primary" onclick="location.reload()">Sign In Again</button>
+-           </div>
+-        </div>
+-      `;
++      // Show the auth overlay again and reset views
++      const overlay = document.getElementById('auth-overlay');
++      if (overlay) {
++        overlay.classList.remove('fade-out');
++        document.querySelectorAll('.view-step').forEach(el => el.classList.remove('active'));
++        document.getElementById('view-login').classList.add('active');
++        document.getElementById('flow-title').textContent = 'Proctor Sign In';
++        document.getElementById('flow-subtitle').textContent = 'Access your control center';
++      }
+     }, 1000);
+   },
+ 
+@@ -205,6 +227,16 @@ const v3App = {
+       'settings': 'Platform Settings'
+     };
+     document.getElementById('view-title').textContent = titles[viewId] || 'SecureProctor AI';
++    
++    // Toggle Proctor Resources side panel
++    const pPanel = document.getElementById('proctor-resources-panel');
++    if (pPanel) {
++      if (viewId === 'dashboard') {
++        pPanel.style.transform = 'translateX(0)';
++      } else {
++        pPanel.style.transform = 'translateX(100%)';
++      }
++    }
+ 
+     this.renderCurrentView();
+   },
+@@ -334,7 +366,7 @@ const v3App = {
+       let statusBadge = '';
+       if (c.examStatus === 'completed') statusBadge = `<span class="badge badge-success">Completed</span>`;
+       else if (c.examStatus === 'in_progress') statusBadge = `<span class="badge badge-warning">Active</span>`;
+-      else statusBadge = `<span class="badge" style="background:var(--border-color); color:var(--text-secondary);">Enrolled</span>`;
++      else statusBadge = `<span class="badge badge-info">Enrolled</span>`;
+ 
+       // Voucher Status
+       let vStatus = (c.voucherStatus || '').toLowerCase();
+@@ -353,6 +385,15 @@ const v3App = {
+         voucherHtml = `<div style="display:flex; align-items:center; gap:8px;"><span class="font-mono" style="background:var(--border-light); padding:4px 8px; border-radius:4px; font-size:12px;">${c.voucherCode || 'VOUCH'}</span><span class="badge">${c.voucherStatus}</span></div>`;
+       }
+ 
++      let examResult = '<span style="color:var(--text-tertiary);">-</span>';
++      if (c.examStatus === 'completed') {
++        if (c.examScore === undefined) {
++           c.examScore = Math.floor(Math.random() * 80) + 20;
++        }
++        const passed = c.examScore > 50;
++        examResult = passed ? '<span style="color:var(--status-success); font-weight:600;">Pass</span>' : '<span style="color:var(--status-error); font-weight:600;">Fail</span>';
++      }
++
+       return `
+         <tr style="cursor:pointer;" onclick="if(!event.target.closest('input') && !event.target.closest('button')) v3App.openCandidateDrawer('${c.id}')">
+           <td><input type="checkbox" class="cand-checkbox" onchange="v3App.updateBulkActions()"></td>
+@@ -368,6 +409,7 @@ const v3App = {
+           <td class="font-mono" style="font-size:13px; color:var(--text-secondary);">${c.rollNo || c.id}</td>
+           <td>${voucherHtml}</td>
+           <td>${statusBadge}</td>
++          <td>${examResult}</td>
+           <td><button class="btn btn-secondary" style="padding:4px 12px; font-size:12px;" onclick="v3App.openCandidateDrawer('${c.id}')">Manage</button></td>
+         </tr>
+       `;
+@@ -583,9 +625,146 @@ const v3App = {
+     }
+   },
+ 
++  // ==========================================================================
++  // AUTHENTICATION FLOW (LOGIN / REGISTRATION)
++  // ==========================================================================
++  authStartRegistration() {
++    document.getElementById('view-login').classList.remove('active');
++    document.getElementById('view-reg-0').classList.add('active');
++    document.getElementById('flow-title').textContent = 'Proctor Certification';
++    document.getElementById('flow-subtitle').textContent = 'Complete onboarding to get approved';
++  },
++  authNextStep(step) {
++    document.querySelectorAll('.view-step').forEach(el => el.classList.remove('active'));
++    document.getElementById('view-reg-' + step).classList.add('active');
++  },
++  authPlayVideo(el) {
++    el.innerHTML = '<div style="color:rgba(255,255,255,0.9); font-weight:600; font-size:16px;">Video Playing... (Simulated)</div>';
++    el.style.background = '#1a1a1a';
++    setTimeout(() => {
++      el.innerHTML = '<i class="material-icons" style="color:var(--status-success);">check_circle</i><div style="position:absolute; bottom:16px; text-align:center; width:100%; color:var(--status-success); font-weight:600; font-size:12px;">Training Completed</div>';
++      document.getElementById('btn-reg-1').disabled = false;
++    }, 2000);
++  },
++  authCheckQuiz() {
++    const q1 = document.querySelector('input[name="q1"]:checked');
++    const q2 = document.querySelector('input[name="q2"]:checked');
++    if (!q1 || !q2) {
++      alert('Please answer all questions before verifying.');
++      return;
++    }
++    if (q1.value === 'correct' && q2.value === 'correct') {
++      this.authNextStep(3);
++    } else {
++      alert('One or more answers are incorrect. Please review the training material and try again.');
++    }
++  },
++  authSubmitApproval() {
++    localStorage.setItem('proctor_approved', 'true');
++    const renewalDate = new Date();
++    renewalDate.setFullYear(renewalDate.getFullYear() + 1);
++    localStorage.setItem('proctor_renewal_date', renewalDate.toISOString());
++
++    document.querySelectorAll('.view-step').forEach(el => el.classList.remove('active'));
++    document.getElementById('view-reg-success').classList.add('active');
++    document.getElementById('flow-title').textContent = 'Welcome Aboard';
++    document.getElementById('flow-subtitle').textContent = '';
++    
++    // Switch to active profile on approval (assumes Sarah by default)
++    this.switchProfile('sarah');
++  },
++  completeAuth() {
++    // Hide the overlay smoothly and initialize the main app
++    const overlay = document.getElementById('auth-overlay');
++    if (overlay) {
++      overlay.classList.add('fade-out');
++    }
++  },
++
+   // ==========================================================================
+   // LEARNING MATERIALS RENDERING
+   // ==========================================================================
++  switchProfile(profileId) {
++    const profiles = {
++      'sarah.jenkins@secureproctor.ai': {
++        name: 'Dr. Sarah Jenkins',
++        avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&q=80',
++        email: 'sarah.jenkins@secureproctor.ai',
++        phone: '+1 (555) 123-4567',
++        organization: 'SecureProctor AI (Headquarters)'
++      },
++      'michael.chang@secureproctor.ai': {
++        name: 'Michael Chang',
++        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80',
++        email: 'michael.chang@secureproctor.ai',
++        phone: '+1 (555) 987-6543',
++        organization: 'SecureProctor AI (East Campus)'
++      },
++      'emily.rodriguez@secureproctor.ai': {
++        name: 'Emily Rodriguez',
++        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80',
++        email: 'emily.rodriguez@secureproctor.ai',
++        phone: '+1 (555) 456-7890',
++        organization: 'Global Audit Division'
++      }
++    };
++
++    // Support for fallback 'sarah' key from earlier auth logic
++    const p = profiles[profileId] || profiles['sarah.jenkins@secureproctor.ai'];
++    if (!p) return;
++
++    if (!this.state.settings) this.state.settings = {};
++    this.state.settings.name = p.name;
++    this.state.settings.avatar = p.avatar;
++    this.state.settings.email = p.email;
++    this.state.settings.phone = p.phone;
++    this.state.settings.organization = p.organization;
++
++    const sName = document.getElementById('sidebar-name');
++    const sAvatar = document.getElementById('sidebar-avatar');
++    const sEmail = document.getElementById('sidebar-email');
++    if (sName) sName.textContent = p.name;
++    if (sAvatar) sAvatar.src = p.avatar;
++    if (sEmail) sEmail.textContent = p.email;
++
++    // Close the dropdown menu if open
++    const menu = document.getElementById('account-switcher-menu');
++    if (menu) menu.classList.add('hidden');
++
++    const dTitle = document.querySelector('#view-dashboard h2');
++    if (dTitle) {
++      const parts = p.name.split(' ');
++      let firstName = parts[0];
++      if (parts[0].includes('.')) firstName = parts[1]; // Handle 'Dr. Sarah'
++      dTitle.textContent = 'Good morning, ' + firstName;
++    }
++
++    this.renderSettings();
++  },
++
++  setRoleMode(mode) {
++    const proctorBtn = document.getElementById('role-toggle-proctor');
++    const adminBtn = document.getElementById('role-toggle-admin');
++    
++    if (mode === 'proctor') {
++      proctorBtn.style.background = 'var(--brand-primary)';
++      proctorBtn.style.color = '#000';
++      proctorBtn.style.fontWeight = '700';
++      
++      adminBtn.style.background = 'transparent';
++      adminBtn.style.color = 'rgba(255,255,255,0.6)';
++      adminBtn.style.fontWeight = '600';
++    } else {
++      adminBtn.style.background = 'var(--brand-primary)';
++      adminBtn.style.color = '#000';
++      adminBtn.style.fontWeight = '700';
++      
++      proctorBtn.style.background = 'transparent';
++      proctorBtn.style.color = 'rgba(255,255,255,0.6)';
++      proctorBtn.style.fontWeight = '600';
++    }
++  },
++
+   setMaterialViewMode(mode) {
+     this.state.materialViewMode = mode;
+     
+@@ -648,9 +827,9 @@ const v3App = {
+ 
+         return `
+           <div class="card" style="padding:0; overflow:hidden; display:flex; flex-direction:column; position:relative;">
+-            <img src="${thumb}" style="width:100%; height:140px; object-fit:cover; border-bottom:1px solid var(--border-light);" alt="Thumbnail">
++            <img src="${thumb}" style="width:100%; height:140px; object-fit:cover; border-bottom:1px solid var(--border-light); cursor:pointer;" alt="Thumbnail" onclick="v3App.openHubMaterialDetail('${m.title.replace(/'/g, "\\'")}')">
+             <div style="padding:20px; display:flex; flex-direction:column; flex:1;">
+-              <div style="font-size:18px; font-weight:700; color:var(--text-primary); margin-bottom:6px; line-height:1.3;">${m.title}</div>
++              <div style="font-size:18px; font-weight:700; color:var(--text-primary); margin-bottom:6px; line-height:1.3; cursor:pointer;" onclick="v3App.openHubMaterialDetail('${m.title.replace(/'/g, "\\'")}')">${m.title}</div>
+               <div style="font-size:13px; color:var(--text-secondary); display:flex; align-items:center; gap:6px; margin-bottom:16px;">
+                 <i class="material-icons-outlined" style="font-size:16px;">${icon}</i> 
+                 ${m.type || 'Ebook'} • ${m.duration || '120 mins'}
+@@ -667,7 +846,7 @@ const v3App = {
+                 </div>
+               </div>
+ 
+-              <button class="btn btn-secondary" style="width:100%; margin-top:auto;" onclick="v3App.showToast('Launching Material...', 'success')">${ctaText}</button>
++              <button class="btn btn-secondary" style="width:100%; margin-top:auto;" onclick="v3App.openMaterialManageClasses('${m.id}', '${m.title.replace(/'/g, "\\'")}', '${type}')">${ctaText}</button>
+             </div>
+           </div>
+         `;
+@@ -696,9 +875,9 @@ const v3App = {
+         return `
+           <tr>
+             <td style="width: 60px;">
+-              <img src="${thumb}" style="width:40px; height:40px; border-radius:4px; object-fit:cover;">
++              <img src="${thumb}" style="width:40px; height:40px; border-radius:4px; object-fit:cover; cursor:pointer;" onclick="v3App.openHubMaterialDetail('${m.title.replace(/'/g, "\\'")}')">
+             </td>
+-            <td style="font-weight:600;">${m.title}</td>
++            <td style="font-weight:600; cursor:pointer;" onclick="v3App.openHubMaterialDetail('${m.title.replace(/'/g, "\\'")}')">${m.title}</td>
+             <td>
+               <div style="display:flex; align-items:center; gap:6px;">
+                 <i class="material-icons-outlined" style="font-size:16px;">${icon}</i> 
+@@ -709,7 +888,7 @@ const v3App = {
+             <td>${Math.floor(Math.random()*20+5)}</td>
+             <td style="font-weight:600; color:var(--brand-primary);">${Math.floor(Math.random()*40+50)}%</td>
+             <td>
+-               <button class="btn btn-secondary" style="padding:4px 12px; font-size:12px;" onclick="v3App.showToast('Launching Material...', 'success')">
++               <button class="btn btn-secondary" style="padding:4px 12px; font-size:12px;" onclick="v3App.openMaterialManageClasses('${m.id}', '${m.title.replace(/'/g, "\\'")}', '${type}')">
+                  ${ctaText}
+                </button>
+             </td>
+@@ -794,8 +973,8 @@ const v3App = {
+             </td>
+             <td>
+               <div style="display:flex; gap:8px;">
+-                <div style="width:40px; height:30px; background:var(--bg-color); border-radius:4px; display:flex; align-items:center; justify-content:center; color:var(--brand-primary);"><i class="material-icons-outlined" style="font-size:16px;">videocam</i></div>
+-                <div style="width:40px; height:30px; background:var(--bg-color); border-radius:4px; display:flex; align-items:center; justify-content:center; color:var(--brand-primary);"><i class="material-icons-outlined" style="font-size:16px;">desktop_windows</i></div>
++                <div style="width:40px; height:30px; background:var(--bg-color); border-radius:4px; display:flex; align-items:center; justify-content:center; color:#494949;"><i class="material-icons-outlined" style="font-size:16px;">videocam</i></div>
++                <div style="width:40px; height:30px; background:var(--bg-color); border-radius:4px; display:flex; align-items:center; justify-content:center; color:#494949;"><i class="material-icons-outlined" style="font-size:16px;">desktop_windows</i></div>
+               </div>
+             </td>
+             <td style="font-weight:600; font-variant-numeric: tabular-nums;">${timeMins}:00</td>
+@@ -996,8 +1175,32 @@ const v3App = {
+           <label style="display:block; margin-bottom:8px; font-size:13px; font-weight:600;">Organization</label>
+           <input type="text" value="${data.organization}" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color);" disabled>
+         </div>
++        
++        <div style="margin-top:24px; margin-bottom:24px; padding:20px; background:var(--bg-color); border:1px solid var(--border-color); border-radius:8px;">
++          <h4 style="margin:0 0 12px 0; font-size:14px; font-weight:600; display:flex; align-items:center; gap:8px;">
++            <i class="material-icons-outlined" style="color:var(--status-success);">verified</i> Proctor Certification
++          </h4>
++          <p style="font-size:13px; color:var(--text-secondary); margin-bottom:16px; line-height:1.5;">
++            Status: <strong style="color:var(--status-success);">Approved</strong><br>
++            <span id="cert-renewal-text"></span>
++          </p>
++          <button class="btn btn-secondary" onclick="window.location.href='proctor_auth.html'">Renew Certification</button>
++        </div>
++
+         <button class="btn btn-primary" onclick="v3App.showToast('Profile updated.', 'success')">Save Profile</button>
+       `;
++      
++      // Update renewal date dynamically
++      const savedDate = localStorage.getItem('proctor_renewal_date');
++      const textEl = document.getElementById('cert-renewal-text');
++      if (textEl) {
++        if (savedDate) {
++          const d = new Date(savedDate);
++          textEl.textContent = "Valid until: " + d.toLocaleDateString('default', { month: 'long', year: 'numeric' });
++        } else {
++          textEl.textContent = "Valid until: June 2027";
++        }
++      }
+     }
+ 
+     const securityForm = document.getElementById('settings-security-form');
+@@ -1032,43 +1235,55 @@ const v3App = {
+   // ==========================================================================
+   // DRAWER & ACTIONS
+   // ==========================================================================
+-  openFormDrawer(type) {
+-    document.getElementById('drawer-subtitle').textContent = 'Create New Record';
++  openFormDrawer(type, editId = null) {
++    document.getElementById('drawer-subtitle').textContent = editId ? 'Edit Record' : 'Create New Record';
+     document.getElementById('drawer-action-btn').style.display = 'block';
+     const content = document.getElementById('drawer-content');
+     
+     if (type === 'candidate') {
+-      document.getElementById('drawer-title').textContent = 'Add Candidate';
++      let cand = editId ? this.state.candidates.find(c => c.id === editId) : null;
++      document.getElementById('drawer-title').textContent = cand ? 'Edit Candidate' : 'Add Candidate';
+       content.innerHTML = `
+         <div class="form-group mb-4">
+           <label style="display:block; margin-bottom:8px; font-size:13px; font-weight:600;">Full Name</label>
+-          <input type="text" id="form-name" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color);" placeholder="e.g. John Doe">
++          <input type="text" id="form-name" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color);" placeholder="e.g. John Doe" value="${cand ? cand.name : ''}">
+         </div>
+         <div class="form-group mb-4">
+           <label style="display:block; margin-bottom:8px; font-size:13px; font-weight:600;">Email Address</label>
+-          <input type="email" id="form-email" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color);" placeholder="e.g. john@example.com">
++          <input type="email" id="form-email" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color);" placeholder="e.g. john@example.com" value="${cand ? cand.email : ''}">
+         </div>
+         <div class="form-group mb-4">
+           <label style="display:block; margin-bottom:8px; font-size:13px; font-weight:600;">Roll Number</label>
+-          <input type="text" id="form-roll" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color);" placeholder="e.g. CS-2026-001">
++          <input type="text" id="form-roll" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color);" placeholder="e.g. CS-2026-001" value="${cand ? cand.rollNo || '' : ''}">
+         </div>
+       `;
+-      document.getElementById('drawer-action-btn').textContent = 'Add Candidate';
++      document.getElementById('drawer-action-btn').textContent = cand ? 'Save Changes' : 'Add Candidate';
+       document.getElementById('drawer-action-btn').onclick = () => {
+         const name = document.getElementById('form-name').value;
+         const email = document.getElementById('form-email').value;
++        const rollNo = document.getElementById('form-roll').value || 'N/A';
++        
+         if (!name || !email) { this.showToast('Name and Email are required.', 'error'); return; }
+-        this.state.candidates.unshift({
+-          id: 'cand_' + Math.random().toString(36).substr(2, 9),
+-          name: name,
+-          email: email,
+-          rollNo: document.getElementById('form-roll').value || 'N/A',
+-          examStatus: 'enrolled',
+-          photo: 'https://via.placeholder.com/150'
+-        });
++        
++        if (cand) {
++          cand.name = name;
++          cand.email = email;
++          cand.rollNo = rollNo;
++          this.showToast('Candidate successfully updated.', 'success');
++        } else {
++          this.state.candidates.unshift({
++            id: 'cand_' + Math.random().toString(36).substr(2, 9),
++            name: name,
++            email: email,
++            rollNo: rollNo,
++            examStatus: 'enrolled',
++            photo: 'https://via.placeholder.com/150'
++          });
++          this.showToast('Candidate successfully added.', 'success');
++        }
++        
+         this.renderCandidates('all');
+         this.closeDrawer();
+-        this.showToast('Candidate successfully added.', 'success');
+       };
+ 
+     } else if (type === 'session') {
+@@ -1105,6 +1320,14 @@ const v3App = {
+             <label style="display:block; margin-bottom:4px; font-size:12px;">Location</label>
+             <input type="text" id="form-s-loc" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color);" placeholder="e.g. Room 101 or Online">
+           </div>
++          <div style="margin-bottom:16px;">
++            <label style="display:block; margin-bottom:8px; font-size:12px; font-weight:600;">Voucher Payment Method</label>
++            <select id="form-s-payment" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color); color:var(--text-primary); outline:none; font-family:var(--font-sans);">
++              <option value="org">Organization Pays</option>
++              <option value="student">Student Pays</option>
++            </select>
++            <p style="font-size:11px; color:var(--text-secondary); margin-top:4px;">If "Student Pays" is selected, candidates will be prompted to pay upon accessing the materials.</p>
++          </div>
+           <div style="display:flex; justify-content:space-between; align-items:center;">
+             <label style="font-size:12px; font-weight:600;">Allow Retake</label>
+             <label class="switch">
+@@ -1114,7 +1337,7 @@ const v3App = {
+           </div>
+         </div>
+       `;
+-      document.getElementById('drawer-action-btn').textContent = 'Add Class';
++      document.getElementById('drawer-action-btn').textContent = 'Save';
+       document.getElementById('drawer-action-btn').onclick = () => {
+         const name = document.getElementById('form-s-name').value;
+         if (!name) { this.showToast('Class name is required.', 'error'); return; }
+@@ -1189,29 +1412,65 @@ const v3App = {
+     else if ((voucherState === 'assigned' || voucherState === 'pending') && classStatus === 'enrolled') scenario = 3;
+     else scenario = 4;
+ 
++    let certHtml = classStatus === 'completed' ? `<button class="btn btn-primary" style="margin-top:12px; width:100%;" onclick="window.open('#', '_blank')"><i class="material-icons-outlined">file_download</i> Download Certificate</button>` : '';
++
+     let contentHtml = `
+       <div style="background:var(--bg-color); padding:16px; border-radius:8px; display:flex; align-items:center; gap:16px; margin-bottom:20px; border:1px solid var(--border-color);">
+         <img src="${cand.photo || 'https://via.placeholder.com/150'}" style="width:56px; height:56px; border-radius:50%; object-fit:cover; border:2px solid var(--brand-primary);">
+-        <div>
+-          <h3 style="margin:0 0 4px 0; font-size:16px; color:var(--text-primary);">${cand.name}</h3>
+-          <div style="font-size:12px; color:var(--text-secondary); margin-bottom:4px;"><i class="material-icons-outlined" style="font-size:14px; vertical-align:middle;">email</i> ${cand.email}</div>
+-          <div style="font-size:12px; color:var(--text-secondary);"><i class="material-icons-outlined" style="font-size:14px; vertical-align:middle;">badge</i> Roll No: ${cand.rollNo || 'N/A'}</div>
++        <div style="flex: 1; display: flex; justify-content: space-between; align-items: flex-start;">
++          <div>
++            <h3 style="margin:0 0 4px 0; font-size:16px; color:var(--text-primary);">${cand.name}</h3>
++            <div style="font-size:12px; color:var(--text-secondary); margin-bottom:4px;"><i class="material-icons-outlined" style="font-size:14px; vertical-align:middle;">email</i> ${cand.email}</div>
++            <div style="font-size:12px; color:var(--text-secondary);"><i class="material-icons-outlined" style="font-size:14px; vertical-align:middle;">badge</i> Roll No: ${cand.rollNo || 'N/A'}</div>
++          </div>
++          <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;" onclick="v3App.openFormDrawer('candidate', '${cand.id}')">
++            <i class="material-icons-outlined" style="font-size: 14px;">edit</i> Edit Details
++          </button>
+         </div>
+       </div>
++      ${certHtml}
+       
+-      <div style="border:1px solid var(--border-color); padding:16px; border-radius:8px; margin-bottom:20px;">
++      <div style="border:1px solid var(--border-color); padding:16px; border-radius:8px; margin-bottom:20px; margin-top:20px;">
+         <h4 style="margin:0 0 12px 0; font-size:13px; color:var(--text-primary);">Accommodations</h4>
+         <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:12px; cursor:pointer; color:var(--text-primary);">
+-          <input type="checkbox" id="acc-checkbox" onchange="document.getElementById('acc-notes').disabled = !this.checked">
++          <input type="checkbox" id="acc-checkbox" onchange="document.getElementById('acc-type').disabled = !this.checked; document.getElementById('acc-notes').disabled = !this.checked">
+           Accommodations Applied
+         </label>
+-        <div class="form-group mb-0">
+-          <label style="display:block; margin-bottom:8px; font-size:12px; font-weight:600; color:var(--text-secondary);">Conditions & Reasons</label>
+-          <textarea id="acc-notes" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color); color:var(--text-primary); resize:vertical; min-height:60px;" disabled placeholder="Enter specific accommodation details..."></textarea>
++        <div class="form-group mb-0" style="display:flex; flex-direction:column; gap:12px;">
++          <div>
++            <label style="display:block; margin-bottom:4px; font-size:12px; font-weight:600; color:var(--text-secondary);">Accommodation Type</label>
++            <select id="acc-type" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color); color:var(--text-primary);" disabled>
++              <option value="extra_time">Extra Time</option>
++              <option value="reader">Reader</option>
++              <option value="other">Other</option>
++            </select>
++          </div>
++          <div>
++            <label style="display:block; margin-bottom:4px; font-size:12px; font-weight:600; color:var(--text-secondary);">Details / Amount</label>
++            <textarea id="acc-notes" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color); color:var(--text-primary); resize:vertical; min-height:40px;" disabled placeholder="e.g. 30 extra minutes..."></textarea>
++          </div>
+         </div>
+       </div>
+     `;
+ 
++    let textbookHtml = `
++      <div style="border:1px solid var(--border-color); padding:16px; border-radius:8px; margin-bottom:20px;">
++        <h4 style="margin:0 0 12px 0; font-size:13px; color:var(--text-primary);">Textbook Voucher</h4>
++        <div class="inp-group" style="margin-bottom:12px;">
++          <input type="text" placeholder="Enter Physical Textbook Code" id="txt-voucher-${cand.id}" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-color);">
++        </div>
++    `;
++    if (voucherState === 'pending' || voucherState === 'assigned') {
++      textbookHtml += `<button class="btn btn-secondary" style="width:100%;" onclick="v3App.showToast('Textbook voucher applied. Assigned voucher removed.', 'success'); v3App.closeDrawer();">Apply & Remove Assigned Voucher</button>`;
++    } else if (voucherState === 'redeemed' || voucherState === 'activated') {
++      textbookHtml += `<button class="btn btn-secondary" style="width:100%;" onclick="v3App.showToast('Textbook voucher applied. Org voucher returned to pool.', 'success'); v3App.closeDrawer();">Apply & Return Org Voucher</button>`;
++    } else {
++      textbookHtml += `<button class="btn btn-secondary" style="width:100%;" onclick="v3App.showToast('Textbook voucher applied.', 'success'); v3App.closeDrawer();">Enter Textbook Voucher Code</button>`;
++    }
++    textbookHtml += `</div>`;
++    
++    contentHtml += textbookHtml;
++
+     let scenarioContent = '';
+     
+     // Retake Logic Guard
+@@ -1447,7 +1706,7 @@ const v3App = {
+ 
+     if (session.status === 'draft' || session.status === 'upcoming') {
+       const btnText = session.status === 'draft' ? 'Save Class' : 'Start Class';
+-      const actionFn = session.status === 'draft' ? `v3App.showToast('Class Saved Successfully', 'success'); v3App.switchView('sessions');` : `v3App.startSession('${id}')`;
++      const actionFn = session.status === 'draft' ? `v3App.showToast('Class Saved Successfully', 'success'); v3App.switchView('sessions');` : `v3App.confirmStartExam('${id}')`;
+       
+       topActions.innerHTML = `
+         <button class="btn btn-secondary" onclick="v3App.openFormDrawer('candidate')"><i class="material-icons-outlined">person_add</i> Add Candidate</button>
+@@ -1460,6 +1719,13 @@ const v3App = {
+       } else {
+         voucherWarning.style.display = 'none';
+       }
++    } else if (session.status === 'ongoing') {
++      topActions.innerHTML = `
++        <button class="btn btn-primary" style="display:flex; align-items:center; gap:8px;" onclick="v3App.confirmStartExam('${id}')">
++          <i class="material-icons">play_circle_filled</i> Start Exam
++        </button>
++      `;
++      voucherWarning.style.display = 'none';
+     } else {
+       topActions.innerHTML = ``;
+       voucherWarning.style.display = 'none';
+@@ -1546,423 +1812,6 @@ const v3App = {
+             <select style="padding:6px; border-radius:4px; border:1px solid var(--border-color); font-size:12px; background:var(--bg-color);">
+               <option>Not Eligible</option>
+               <option>In Class</option>
+-              <option>Online</option>
+-            </select>
+-          </td>
+-          
+-          <!-- Accommodations -->
+-          <td>
+-            <div style="display:flex; flex-direction:column; gap:8px;">
+-              <label style="display:flex; align-items:center; gap:8px; font-size:12px; cursor:pointer;">
+-                <input type="checkbox" onchange="window.toggleAccom(this, '${c.id}')"> Enable
+-              </label>
+-              <div id="accom-container-${c.id}" style="display:none; animation: fadeSlideUp 0.2s ease;">
+-                <input type="text" placeholder="Reason..." style="width:100%; padding:4px 8px; font-size:11px; border:1px solid var(--border-color); border-radius:4px; margin-bottom:4px; background:var(--bg-color);">
+-                <button class="btn btn-primary" style="padding:2px 8px; font-size:11px; width:100%;" onclick="v3App.showToast('Accommodation Saved', 'success')">Save</button>
+-              </div>
+-            </div>
+-          </td>
+-          
+-          <td>
+-            <div style="display:flex; align-items:center; gap:8px;">
+-              <span class="badge" style="background:var(--border-light); color:var(--text-secondary); font-family:monospace;">${c.voucherCode || 'UNASSIGNED'}</span>
+-              ${!c.voucherCode ? '<span class="badge badge-warning">Unassigned</span>' : ''}
+-            </div>
+-          </td>
+-          <td>
+-            <div style="display:flex; gap:8px;">
+-              <button class="btn btn-secondary" style="padding:4px 12px; font-size:12px;" onclick="v3App.showToast('Voucher Redeemed', 'success')">Redeem</button>
+-              <button class="icon-button" style="color:var(--status-error); padding:4px;" onclick="v3App.showToast('Candidate removed from draft', 'info')"><i class="material-icons-outlined" style="font-size:18px;">delete</i></button>
+-            </div>
+-          </td>
+-        </tr>
+-      `).join('');
+-        } else if (session.status === 'ongoing') {
+-      thead.innerHTML = `
+-        <tr>
+-          <th>Candidate Name & Email</th>
+-          <th>ID / Roll No</th>
+-          <th>Voucher Status</th>
+-          <th style="min-width:140px;">Learning Progress</th>
+-          <th>Accommodations</th>
+-          <th>Exam Mode</th>
+-          <th>Retake Eligible</th>
+-          <th>Action</th>
+-        </tr>
+-      `;
+-      if (cands.length === 0) {
+-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:32px; color:var(--text-secondary);">No candidates enrolled yet.</td></tr>`;
+-        return;
+-      }
+-      
+-      tbody.innerHTML = cands.map((c, idx) => {
+-        // Mock specific states for the prompt
+-        let vStatus = 'Active';
+-        let vBadge = '<span class="badge badge-success">Active</span>';
+-        let progBar = `<div style="width:100%; height:6px; background:var(--border-light); border-radius:3px; overflow:hidden;"><div style="width:${c.learningProgress||45}%; height:100%; background:var(--brand-primary);"></div></div>`;
+-        
+-        if (idx === 1) {
+-          vStatus = 'Unused';
+-          vBadge = '<span class="badge" style="background:var(--bg-color); border:1px solid var(--border-color);">Unused</span>';
+-          progBar = `<div style="width:100%; height:6px; background:var(--border-light); border-radius:3px; overflow:hidden;"><div style="width:0%; height:100%; background:var(--brand-primary);"></div></div>`;
+-        } else if (idx === 2) {
+-          vStatus = 'Not Assigned';
+-          vBadge = '<button class="btn btn-primary" style="padding:4px 8px; font-size:11px;">Assign Voucher</button>';
+-          progBar = `<span style="color:var(--text-tertiary);">--</span>`;
+-        }
+-        
+-        let accomHtml = `<span class="badge" style="background:var(--bg-color); border:1px solid var(--border-color);">NO</span>`;
+-        if (idx === 0) {
+-          accomHtml = `<span class="badge badge-warning" title="Extended time (1.5x) required due to documented IEP.">YES</span>`;
+-        }
+-        
+-        return `
+-        <tr style="cursor:pointer;" onclick="if(event.target.tagName !== 'SELECT' && event.target.tagName !== 'BUTTON') v3App.openLearningDeepDive('${c.id}', '${c.name}', '${session.name}', ${c.learningProgress||45})">
+-          <td>
+-            <div style="font-weight:600; font-size:14px; color:var(--text-primary);">${c.name}</div>
+-            <div style="font-size:12px; color:var(--text-secondary);">${c.email || 'student@domain.com'}</div>
+-          </td>
+-          <td class="font-mono" style="font-size:13px; color:var(--text-secondary);">${c.rollNo || c.id}</td>
+-          
+-          <!-- Voucher Status -->
+-          <td>${vBadge}</td>
+-          
+-          <!-- Learning Material Progress -->
+-          <td>${progBar}</td>
+-          
+-          <!-- Accommodations -->
+-          <td>${accomHtml}</td>
+-          
+-          <!-- Exam Mode -->
+-          <td><span style="font-size:13px; font-weight:600;">${idx%2===0?'In-Class':'Online'}</span></td>
+-          
+-          <!-- Retake Config -->
+-          <td>
+-            <select style="padding:6px; border-radius:4px; border:1px solid var(--border-color); font-size:12px; background:var(--bg-color);" onclick="event.stopPropagation();">
+-              <option>YES</option>
+-              <option>NO</option>
+-            </select>
+-          </td>
+-          
+-          <!-- Row Action -->
+-          <td>
+-            <button class="icon-button" style="color:var(--status-error); padding:4px;" onclick="event.stopPropagation(); v3App.showToast('Candidate removed from active roster', 'info')">
+-              <i class="material-icons-outlined" style="font-size:18px;">delete</i>
+-            </button>
+-          </td>
+-        </tr>
+-      `}).join('');
+-
+-    } else if (session.status === 'completed') {
+-      thead.innerHTML = `
+-        <tr>
+-          <th>Candidate Name</th>
+-          <th>Email ID</th>
+-          <th>ID / Roll No</th>
+-          <th>Score (out of 100)</th>
+-          <th>Result</th>
+-          <th>Flags / Incident</th>
+-          <th>Retake Status</th>
+-        </tr>
+-      `;
+-      if (cands.length === 0) {
+-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:32px; color:var(--text-secondary);">No candidates enrolled yet.</td></tr>`;
+-        return;
+-      }
+-      tbody.innerHTML = cands.map(c => {
+-        // Mock data generation
+-        const score = Math.floor(Math.random() * 100);
+-        let result = '';
+-        let resultClass = '';
+-        let retakeDate = '--';
+-        
+-        if (score > 75) {
+-          result = 'Passed';
+-          resultClass = 'badge-success';
+-        } else if (score > 40) {
+-          result = 'Failed';
+-          resultClass = 'badge-error';
+-          // Mock retake date
+-          const date = new Date();
+-          date.setDate(date.getDate() + 7);
+-          retakeDate = date.toLocaleDateString();
+-        } else {
+-          result = 'Suspended';
+-          resultClass = 'badge-error';
+-        }
+-        
+-        // Mock flags
+-        const flagsCount = Math.floor(Math.random() * 3);
+-        let flagsHtml = '--';
+-        if (flagsCount > 0) {
+-          const reasons = ['Multiple Faces', 'Looking Away', 'Background Noise'];
+-          const reason = reasons[Math.floor(Math.random() * reasons.length)];
+-          flagsHtml = `<div style="display:flex; flex-direction:column; gap:4px;">
+-            <span style="color:var(--status-error); font-weight:600; font-size:12px;">${flagsCount} Flag(s)</span>
+-            <span style="font-size:11px; color:var(--text-secondary);">${reason}</span>
+-          </div>`;
+-        }
+-        
+-        return `
+-          <tr>
+-            <td><div style="font-weight:600; font-size:14px;">${c.name}</div></td>
+-            <td style="font-size:13px; color:var(--text-secondary);">${c.email}</td>
+-            <td class="font-mono" style="font-size:13px; color:var(--text-secondary);">${c.rollNo || c.id}</td>
+-            <td style="font-weight:600; font-variant-numeric: tabular-nums;">${score} / 100</td>
+-            <td><span class="badge ${resultClass}">${result}</span></td>
+-            <td>${flagsHtml}</td>
+-            <td>
+-              <select style="padding:6px; border-radius:4px; border:1px solid var(--border-color); font-size:12px; background:var(--bg-color);" onchange="v3App.showToast('Retake status updated.', 'success')">
+-                <option>Not Eligible</option>
+-                <option>In Class</option>
+-                <option>Online</option>
+-              </select>
+-            </td>
+-          </tr>
+-        `;
+-      }).join('');
+-    } else {
+-      thead.innerHTML = `
+-        <tr>
+-          <th>Candidate Name</th>
+-          <th>Email ID</th>
+-          <th>ID / Roll No</th>
+-          <th>Voucher Status</th>
+-          <th>Learning Progress</th>
+-          <th>Accommodations</th>
+-          <th>Exam Mode</th>
+-          <th>Retake Config</th>
+-          <th>Actions</th>
+-        </tr>
+-      `;
+-      if (cands.length === 0) {
+-        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:32px; color:var(--text-secondary);">No candidates enrolled yet.</td></tr>`;
+-        return;
+-      }
+-      tbody.innerHTML = cands.map(c => {
+-        const voucherStatuses = ['Active', 'Unused', 'Not Assigned'];
+-        const vStatus = voucherStatuses[Math.floor(Math.random() * voucherStatuses.length)];
+-        
+-        let vBadge = '';
+-        let progressHtml = '';
+-        
+-        if (vStatus === 'Not Assigned') {
+-          vBadge = `<button class="btn btn-primary" style="padding:4px 8px; font-size:11px;" onclick="event.stopPropagation(); v3App.showToast('Voucher Assigned', 'success')">Assign Voucher</button>`;
+-          progressHtml = `<span style="color:var(--text-secondary);">-- (Locked)</span>`;
+-        } else {
+-          vBadge = `<span class="badge ${vStatus === 'Active' ? 'badge-success' : 'badge-info'}">${vStatus}</span>`;
+-          const prog = Math.floor(Math.random() * 80) + 10;
+-          progressHtml = `
+-            <div style="display:flex; align-items:center; gap:8px;">
+-              <span style="font-size:12px; font-weight:600;">${prog}%</span>
+-              <div style="flex:1; height:4px; background:var(--border-light); border-radius:2px; overflow:hidden;">
+-                <div style="width:${prog}%; height:100%; background:var(--brand-primary);"></div>
+-              </div>
+-            </div>`;
+-        }
+-
+-        const accommYes = Math.random() > 0.7;
+-        const accommHtml = accommYes ? 
+-          `<span class="badge badge-warning" style="cursor:help;" title="Extended time (1.5x)">YES</span>` : 
+-          `<span class="badge" style="background:var(--border-light); color:var(--text-secondary);">NO</span>`;
+-
+-        return `
+-          <tr style="cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='var(--hover-bg)'" onmouseout="this.style.background=''" onclick="v3App.openLearningDeepDive('${c.id}', '${vStatus}')">
+-            <td><div style="font-weight:600; font-size:14px;">${c.name}</div></td>
+-            <td style="font-size:13px; color:var(--text-secondary);">${c.email}</td>
+-            <td class="font-mono" style="font-size:13px; color:var(--text-secondary);">${c.rollNo || c.id}</td>
+-            <td>${vBadge}</td>
+-            <td style="min-width:120px;">${progressHtml}</td>
+-            <td>${accommHtml}</td>
+-            <td><span class="badge" style="background:var(--bg-color); border:1px solid var(--border-color); color:var(--text-primary);">In-Class</span></td>
+-            <td onclick="event.stopPropagation();">
+-              <div style="display:flex; align-items:center; gap:8px;">
+-                <label class="switch" style="transform:scale(0.8); margin:0;">
+-                  <input type="checkbox" onchange="this.parentElement.nextElementSibling.style.display = this.checked ? 'block' : 'none'">
+-                  <span class="switch-slider"></span>
+-                </label>
+-                <select style="display:none; padding:4px; border-radius:4px; border:1px solid var(--border-color); font-size:11px; background:var(--bg-color);">
+-                  <option>In Class</option>
+-                  <option>Online</option>
+-                </select>
+-              </div>
+-            </td>
+-            <td onclick="event.stopPropagation();">
+-              <button class="icon-button" style="color:var(--status-error); padding:4px;" onclick="v3App.showToast('Candidate removed', 'info')"><i class="material-icons-outlined" style="font-size:18px;">delete</i></button>
+-            </td>
+-          </tr>
+-        `;
+-      }).join('');
+-    }
+-
+-  },
+-
+-  renderSessionDetailMaterials() {
+-    const session = this.state.sessions.find(s => s.id === this.currentSessionId);
+-    const grid = document.getElementById('sd-materials-grid');
+-    const materials = this.state.materials || [];
+-
+-    if (materials.length === 0) {
+-      grid.innerHTML = '<div style="text-align:center; padding:32px; color:var(--text-secondary);">No materials attached to this session.</div>';
+-      return;
+-    }
+-
+-    // For ongoing sessions, use the Split-Action Asset Card framework
+-    if (session && session.status === 'ongoing') {
+-      const cands = this.state.candidates.slice(0, session.candidateCount || 4);
+-      const thumbMap = { 'document': '/thumb_food_safety.png', 'ebook': '/thumb_food_safety.png', 'video': '/thumb_culinary.png', 'podcast': '/thumb_culinary.png', 'flashcard': '/thumb_haccp.png', 'practice exam': '/thumb_practice_exam.png' };
+-      const thumbFallbacks = ['/thumb_food_safety.png', '/thumb_haccp.png', '/thumb_allergen.png', '/thumb_culinary.png', '/thumb_practice_exam.png'];
+-
+-      grid.innerHTML = '<div class="asset-card-grid">' + materials.map((m, i) => {
+-        const type = (m.type || 'ebook').toLowerCase();
+-        let icon = 'menu_book', ctaText = 'Read';
+-        if (type === 'video') { icon = 'play_circle'; ctaText = 'Watch'; }
+-        else if (type === 'podcast') { icon = 'mic'; ctaText = 'Listen'; }
+-        else if (type === 'flashcard') { icon = 'style'; ctaText = 'Review Cards'; }
+-        else if (type === 'practice exam') { icon = 'quiz'; ctaText = 'Start Exam'; }
+-
+-        let lbl1, lbl2, lbl3;
+-        if (type === 'video' || type === 'podcast') { lbl1='Watched'; lbl2='Watching'; lbl3='Not Started'; }
+-        else if (type === 'practice exam') { lbl1='Passed'; lbl2='In-Progress'; lbl3='Failed'; }
+-        else if (type === 'flashcard') { lbl1='Mastered'; lbl2='Reviewing'; lbl3='Not Started'; }
+-        else { lbl1='Completed'; lbl2='Reading'; lbl3='Not Started'; }
+-
+-        const thumb = m.thumb || thumbMap[type] || thumbFallbacks[i % thumbFallbacks.length];
+-        const c1 = Math.floor(Math.random()*6+4), c2 = Math.floor(Math.random()*5+2), c3 = Math.floor(Math.random()*3), c4 = Math.floor(Math.random()*2);
+-        const avgProg = Math.floor(Math.random()*30+55);
+-
+-        // Build tooltip names from the session candidates
+-        const ttNames = cands.map(c => '<div class="tt-item"><span>' + c.name + '</span><span>(' + Math.floor(Math.random()*100) + '%)</span></div>').join('');
+-
+-        return '<div class="asset-card" style="animation-delay:' + (i * 0.08) + 's;">' +
+-          '<img src="' + thumb + '" class="asset-cover" alt="Thumbnail">' +
+-          '<div class="asset-header">' +
+-            '<div class="asset-title">' + m.title + '</div>' +
+-            '<div class="asset-meta"><i class="material-icons-outlined" style="font-size:14px;">' + icon + '</i> ' + (m.type || 'Ebook') + ' • ' + (m.duration || '120 mins') + ' total</div>' +
+-          '</div>' +
+-          '<div class="asset-toggles">' +
+-            '<button class="asset-toggle-btn active" onclick="this.parentElement.children[0].classList.add(\x27active\x27);this.parentElement.children[1].classList.remove(\x27active\x27);document.getElementById(\x27sd-card-view-' + m.id + '\x27).style.display=\x27flex\x27;document.getElementById(\x27sd-card-prog-' + m.id + '\x27).style.display=\x27none\x27;"><i class="material-icons-outlined" style="font-size:16px; vertical-align:text-bottom;">construction</i> View Material</button>' +
+-            '<button class="asset-toggle-btn" onclick="this.parentElement.children[1].classList.add(\x27active\x27);this.parentElement.children[0].classList.remove(\x27active\x27);document.getElementById(\x27sd-card-view-' + m.id + '\x27).style.display=\x27none\x27;document.getElementById(\x27sd-card-prog-' + m.id + '\x27).style.display=\x27flex\x27;"><i class="material-icons-outlined" style="font-size:16px; vertical-align:text-bottom;">analytics</i> Candidate Progress</button>' +
+-          '</div>' +
+-          '<div class="asset-body" id="sd-card-view-' + m.id + '">' +
+-            '<div class="asset-kpi-row">' +
+-              '<div class="asset-kpi"><div class="asset-kpi-val">' + (c1+c2+c3+c4) + '</div><div class="asset-kpi-lbl">Assigned</div></div>' +
+-              '<div class="asset-kpi"><div class="asset-kpi-val" style="color:var(--brand-primary);">' + avgProg + '%</div><div class="asset-kpi-lbl">Avg. Complete</div></div>' +
+-              '<div class="asset-kpi"><div class="asset-kpi-val" style="color:var(--status-success);">' + c2 + '</div><div class="asset-kpi-lbl">Active Now</div></div>' +
+-            '</div>' +
+-            '<div style="margin-bottom:16px;">' +
+-              '<div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px;"><span style="color:var(--text-secondary);">Overall Class Progress</span><span style="font-weight:700; color:var(--brand-primary);">' + avgProg + '%</span></div>' +
+-              '<div style="height:6px; background:var(--border-light); border-radius:3px; overflow:hidden;"><div class="asset-prog-fill" style="width:' + avgProg + '%; height:100%; background:var(--brand-primary);"></div></div>' +
+-            '</div>' +
+-            '<div style="font-size:11px; color:var(--text-tertiary); margin-bottom:16px; display:flex; align-items:center; gap:4px;"><i class="material-icons-outlined" style="font-size:12px;">schedule</i> Last updated: ' + new Date().toLocaleDateString() + '</div>' +
+-            '<button class="asset-cta" onclick="v3App.showToast(\x27Launching Material...\x27, \x27success\x27)">' + ctaText + '</button>' +
+-          '</div>' +
+-          '<div class="asset-body" id="sd-card-prog-' + m.id + '" style="display:none; padding:12px;">' +
+-            '<div class="batch-list-item" onclick="v3App.openBatchModal(\x27Batch 2026 - A (' + session.name.split(' — ')[0] + ')\x27, \x27' + btoa('<div class="prog-grid">' +
+-              '<div class="prog-col"><div class="prog-val lbl-green">' + c1 + '</div><div class="prog-lbl">' + lbl1 + '</div><div class="tt-list">' + ttNames + '</div></div>' +
+-              '<div class="prog-col"><div class="prog-val lbl-cyan">' + c2 + '</div><div class="prog-lbl">' + lbl2 + '</div><div class="tt-list">' + ttNames + '</div></div>' +
+-              '<div class="prog-col"><div class="prog-val lbl-grey">' + c3 + '</div><div class="prog-lbl">' + lbl3 + '</div></div>' +
+-              '<div class="prog-col" style="cursor:default;"><div class="prog-val lbl-muted">' + c4 + '</div><div class="prog-lbl lbl-muted">No Voucher</div></div>' +
+-            '</div>') + '\x27)">' +
+-              '<div style="font-weight:600; font-size:14px;">Batch 2026 - A (' + session.name.split(' — ')[0] + ')</div>' +
+-              '<i class="material-icons-outlined">chevron_right</i>' +
+-            '</div>' +
+-            '<div class="batch-list-item" onclick="v3App.openBatchModal(\x27Batch 2026 - B (Retakes)\x27, \x27' + btoa('<div class="prog-grid">' +
+-              '<div class="prog-col"><div class="prog-val lbl-green">' + Math.floor(c1/2) + '</div><div class="prog-lbl">' + lbl1 + '</div></div>' +
+-              '<div class="prog-col"><div class="prog-val lbl-cyan">' + Math.floor(c2/2) + '</div><div class="prog-lbl">' + lbl2 + '</div></div>' +
+-              '<div class="prog-col"><div class="prog-val lbl-grey">' + Math.floor(c3/2) + '</div><div class="prog-lbl">' + lbl3 + '</div></div>' +
+-              '<div class="prog-col" style="cursor:default;"><div class="prog-val lbl-muted">' + Math.floor(c4/2) + '</div><div class="prog-lbl lbl-muted">No Voucher</div></div>' +
+-            '</div>') + '\x27)">' +
+-              '<div style="font-weight:600; font-size:14px;">Batch 2026 - B (Retakes)</div>' +
+-              '<i class="material-icons-outlined">chevron_right</i>' +
+-            '</div>' +
+-          '</div>' +
+-        '</div>';
+-      }).join('') + '</div>';
+-      return;
+-    }
+-
+-    // For non-ongoing sessions, keep the existing category-based layout
+-    const categories = ['FAQs', 'E-books', 'Audios', 'Videos', 'Practice Tests'];
+-    
+-    grid.innerHTML = categories.map(cat => {
+-      const catMats = materials.filter(m => {
+-         if (cat === 'Videos' && m.type === 'video') return true;
+-         if (cat === 'E-books' && m.type === 'document') return true;
+-         return false;
+-      });
+-      const items = catMats.length > 0 ? catMats : [{ title: 'Sample ' + cat + ' Resource', desc: 'Essential ' + cat.toLowerCase() + ' for exam preparation.', icon: cat === 'Videos' ? 'play_circle' : cat === 'Audios' ? 'headphones' : cat === 'Practice Tests' ? 'quiz' : 'menu_book' }];
+-
+-      return '<div>' +
+-          '<h3 style="font-size:14px; font-weight:600; margin-bottom:12px; border-bottom:1px solid var(--border-color); padding-bottom:8px; display:flex; align-items:center; gap:8px;">' +
+-            cat + ' <span class="badge" style="background:var(--border-light); color:var(--text-secondary); font-size:10px;">VIEW ONLY</span>' +
+-          '</h3>' +
+-          '<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:16px;">' +
+-            items.map(m => '<div style="background:var(--bg-color); border:1px solid var(--border-color); border-radius:8px; padding:16px; display:flex; align-items:flex-start; gap:12px;">' +
+-                '<i class="material-icons-outlined" style="color:var(--brand-primary); font-size:24px;">' + (m.icon || 'menu_book') + '</i>' +
+-                '<div><div style="font-size:14px; font-weight:600; margin-bottom:4px;">' + m.title + '</div><div style="font-size:12px; color:var(--text-secondary);">' + m.desc + '</div></div>' +
+-              '</div>').join('') +
+-          '</div>' +
+-        '</div>';
+-    }).join('');
+-  },
+-
+-  closeDrawer() {
+-    document.getElementById('drawer-overlay').classList.remove('open');
+-    document.getElementById('universal-drawer').classList.remove('open');
+-  },
+-
+-  // ==========================================================================
+-  // UTILITIES
+-  // ==========================================================================
+-  showToast(message, type = 'success') {
+-    const container = document.getElementById('toast-container');
+-    const toast = document.createElement('div');
+-    toast.className = `toast ${type}`;
+-    
+-    let icon = 'check_circle';
+-    if (type === 'error') icon = 'error';
+-    if (type === 'warning') icon = 'warning';
+-    if (type === 'info') icon = 'info';
+-
+-    toast.innerHTML = `<i class="material-icons-outlined">${icon}</i> ${message}`;
+-    container.appendChild(toast);
+-
+-    setTimeout(() => {
+-      toast.style.opacity = '0';
+-      toast.style.transform = 'translateX(100%)';
+-      setTimeout(() => toast.remove(), 300);
+-    }, 3000);
+-  },
+-
+-  simulateCsvUpload() {
+-    this.showToast('Uploading CSV...', 'info');
+-    setTimeout(() => {
+-      this.fetchData(); // Re-fetch to simulate new data arrival
+-      this.showToast('Import successful. Candidates refreshed.', 'success');
+-    }, 1500);
+-  },
+-
+-  assignVoucher(candId) {
+-    this.showToast('Voucher generation requested...', 'info');
+-    setTimeout(() => {
+-      // Optimistic mock update for UI
+-      const cand = this.state.candidates.find(c => c.id === candId);
+-      if (cand) cand.voucherCode = 'VCH-' + Math.floor(Math.random()*10000);
+-      this.renderCandidates('all');
+-      this.openCandidateDrawer(candId); // Refresh drawer
+-      this.showToast('Voucher successfully assigned.', 'success');
+-    }, 800);
+-  }
+-,
+-
+-  openSessionSupervisor(cId) {
+-    let c = this.state.monitorState.candidates.find(x => x.id === cId) || this.state.candidates.find(x => x.id === cId);
+-    if(!c) return;
+-
+-    let overlay = document.getElementById('session-supervisor-modal');
+-    if (!overlay) {
+-      overlay = document.createElement('div');
+       overlay.id = 'session-supervisor-modal';
+       overlay.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; display:flex; align-items:center; justify-content:center;';
+       document.body.appendChild(overlay);
+@@ -2037,8 +1886,72 @@ const v3App = {
+       </div>
+     `;
+     overlay.style.display = 'flex';
+-  }
++  },
++
++  openRedeemModal(candId) {
++    this.currentActionCandId = candId;
++    document.getElementById('redeem-voucher-input').value = '';
++    document.getElementById('redeem-voucher-modal').classList.add('open');
++  },
++  
++  submitRedeemVoucher() {
++    const code = document.getElementById('redeem-voucher-input').value.trim();
++    if (!code) {
++      this.showToast('Please enter a voucher code', 'error');
++      return;
++    }
++    const cand = this.state.candidates.find(c => c.id === this.currentActionCandId);
++    if (cand) {
++      cand.voucherCode = code;
++      cand.voucherStatus = 'assigned';
++    }
++    document.getElementById('redeem-voucher-modal').classList.remove('open');
++    this.showToast('Voucher code applied successfully', 'success');
++    this.renderSessionDetailCandidates();
++  },
++
++  openDeleteModal(candId) {
++    this.currentActionCandId = candId;
++    document.getElementById('delete-reason-input').value = '';
++    document.getElementById('delete-reason-modal').classList.add('open');
++  },
+ 
++  submitDeleteCandidate() {
++    const reason = document.getElementById('delete-reason-input').value.trim();
++    if (!reason) {
++      this.showToast('Please provide a reason for deletion', 'error');
++      return;
++    }
++    
++    this.state.candidates = this.state.candidates.filter(c => c.id !== this.currentActionCandId);
++    
++    // Decrease count for visual consistency in the session
++    const session = this.state.sessions.find(s => s.id === this.currentSessionId);
++    if (session && session.candidateCount > 0) {
++      session.candidateCount -= 1;
++    }
++    
++    document.getElementById('delete-reason-modal').classList.remove('open');
++    this.showToast('Candidate removed successfully', 'success');
++    this.renderSessionDetailCandidates();
++  },
++
++  openAccommodationModal(candId) {
++    this.currentActionCandId = candId;
++    document.getElementById('accommodation-reason-input').value = '';
++    document.getElementById('accommodation-reason-modal').classList.add('open');
++  },
++
++  submitAccommodationReason() {
++    const reason = document.getElementById('accommodation-reason-input').value.trim();
++    if (!reason) {
++      this.showToast('Please provide a reason for the accommodation', 'error');
++      return;
++    }
++    document.getElementById('accommodation-reason-modal').classList.remove('open');
++    this.showToast('Accommodation saved successfully', 'success');
++    this.renderSessionDetailCandidates();
++  }
+ };
+ 
+ document.addEventListener('DOMContentLoaded', () => {

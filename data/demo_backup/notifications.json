@@ -1,0 +1,11 @@
+[
+  {
+    "id": "ntf_001",
+    "type": "license_expiry",
+    "icon": "card_membership",
+    "title": "Proctor license renewal",
+    "message": "Your proctor license LIC-2026-0142 is valid until 15 Jan 2027.",
+    "createdAt": "2026-06-01T09:00:00Z",
+    "read": true
+  }
+]

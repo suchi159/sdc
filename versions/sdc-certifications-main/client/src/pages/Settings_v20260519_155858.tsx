@@ -134,6 +134,35 @@ export default function Settings() {
               <p className="text-xs mt-1" style={{ color: "var(--sdc-subheading)" }}>Email cannot be changed. Contact support if needed.</p>
             </div>
 
+            <div className="p-5 rounded-xl border space-y-4" style={{ background: "#0f172a", borderColor: "#d4a017" }}>
+              <div>
+                <label className="block text-sm font-semibold mb-1.5" style={{ color: "#d4a017" }}>Proctor Certificate Code</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="e.g. PROCTOR-AUTH-2026-XXXX"
+                    className="flex-1 px-4 py-2.5 rounded-xl text-sm text-white focus:outline-none"
+                    style={{ background: "#1e293b", border: "1px solid #334155" }}
+                  />
+                  <button
+                    onClick={() => toast.success("Certificate verified successfully.")}
+                    className="px-5 py-2.5 rounded-xl font-semibold text-sm transition-all text-white"
+                    style={{ background: "linear-gradient(135deg,#b8860b,#d4a017)" }}>
+                    Verify
+                  </button>
+                </div>
+              </div>
+              <div className="flex justify-between items-center text-xs">
+                <span style={{ color: "var(--sdc-text-muted)" }}>Required for live proctoring.</span>
+                <button
+                  onClick={() => setLocation("/proctor/onboarding")}
+                  className="px-3 py-1.5 rounded-lg font-medium transition-colors"
+                  style={{ background: "#1e293b", color: "#e2e8f0", border: "1px solid #334155" }}>
+                  No Code? Start Training
+                </button>
+              </div>
+            </div>
+
             <button
               onClick={() => updateProfile.mutate({ name })}
               disabled={updateProfile.isPending || !name || name === user?.name}
